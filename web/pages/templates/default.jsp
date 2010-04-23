@@ -18,15 +18,25 @@
 
             <title>${pageTitle}</title>
 
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css">
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.custom.css">
+
+            <!--link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css">
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/b3p.css">
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/gui.css">
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/gui.css"-->
             <!--[if lte IE 6]>
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main-ie.css">
             <![endif]-->
 
-            <script type="text/javascript" src="${contextPath}/scripts/utils.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/simple_treeview.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/utils.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/simple_treeview.js"></script-->
+
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-ui-latest.custom.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-tablesorter.custom.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.history.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.form.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.validate.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.form.wizard-2.0.1-min.js"></script>
 
             <stripes:layout-component name="head"/>
         </head>

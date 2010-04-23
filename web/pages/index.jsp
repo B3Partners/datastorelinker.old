@@ -5,4 +5,4 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<jsp:forward page="/ProcessOverview.action"/>
+<jsp:forward page="/pages/main.jsp"/>
