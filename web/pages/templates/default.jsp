@@ -31,12 +31,11 @@
             <script type="text/javascript" src="${contextPath}/scripts/simple_treeview.js"></script-->
 
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-ui-latest.custom.min.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-tablesorter.custom.min.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.history.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.form.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.validate.min.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery.form.wizard-2.0.1-min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.history/jquery.history.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.min.js"></script>
 
             <stripes:layout-component name="head"/>
         </head>
