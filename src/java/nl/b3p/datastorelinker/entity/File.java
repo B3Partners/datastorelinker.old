@@ -6,12 +6,14 @@
 package nl.b3p.datastorelinker.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -26,18 +28,26 @@ import javax.persistence.Table;
     @NamedQuery(name = "File.findById", query = "SELECT f FROM File f WHERE f.id = :id")})
 public class File implements Serializable {
     private static final long serialVersionUID = 1L;
+    @Basic(optional = false)
     @Column(name = "name")
     private String name;
     @Id
     @Basic(optional = false)
     @Column(name = "id")
     private Long id;
+    @OneToMany(mappedBy = "fileId")
+    private List<Inout> inoutList;
 
     public File() {
     }
 
     public File(Long id) {
         this.id = id;
+    }
+
+    public File(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public String getName() {
@@ -54,6 +64,14 @@ public class File implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Inout> getInoutList() {
+        return inoutList;
+    }
+
+    public void setInoutList(List<Inout> inoutList) {
+        this.inoutList = inoutList;
     }
 
     @Override

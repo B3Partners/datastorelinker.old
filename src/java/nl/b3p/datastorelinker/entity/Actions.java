@@ -7,13 +7,12 @@ package nl.b3p.datastorelinker.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -29,6 +28,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "Actions.findAll", query = "SELECT a FROM Actions a"),
     @NamedQuery(name = "Actions.findByProcessId", query = "SELECT a FROM Actions a WHERE a.processId = :processId"),
     @NamedQuery(name = "Actions.findByActionId", query = "SELECT a FROM Actions a WHERE a.actionId = :actionId"),
+    @NamedQuery(name = "Actions.findByInputParameters", query = "SELECT a FROM Actions a WHERE a.inputParameters = :inputParameters"),
     @NamedQuery(name = "Actions.findById", query = "SELECT a FROM Actions a WHERE a.id = :id"),
     @NamedQuery(name = "Actions.findByNextId", query = "SELECT a FROM Actions a WHERE a.nextId = :nextId")})
 public class Actions implements Serializable {
@@ -39,9 +39,8 @@ public class Actions implements Serializable {
     @Basic(optional = false)
     @Column(name = "action_id")
     private long actionId;
-    @Lob
-    @Column(name = "parameters")
-    private Object parameters;
+    @Column(name = "input_parameters")
+    private String inputParameters;
     @Id
     @Basic(optional = false)
     @Column(name = "id")
@@ -49,7 +48,7 @@ public class Actions implements Serializable {
     @Column(name = "next_id")
     private BigInteger nextId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "actionsId")
-    private Collection<Process> processCollection;
+    private List<Process> processList;
 
     public Actions() {
     }
@@ -80,12 +79,12 @@ public class Actions implements Serializable {
         this.actionId = actionId;
     }
 
-    public Object getParameters() {
-        return parameters;
+    public String getInputParameters() {
+        return inputParameters;
     }
 
-    public void setParameters(Object parameters) {
-        this.parameters = parameters;
+    public void setInputParameters(String inputParameters) {
+        this.inputParameters = inputParameters;
     }
 
     public Long getId() {
@@ -104,12 +103,12 @@ public class Actions implements Serializable {
         this.nextId = nextId;
     }
 
-    public Collection<Process> getProcessCollection() {
-        return processCollection;
+    public List<Process> getProcessList() {
+        return processList;
     }
 
-    public void setProcessCollection(Collection<Process> processCollection) {
-        this.processCollection = processCollection;
+    public void setProcessList(List<Process> processList) {
+        this.processList = processList;
     }
 
     @Override

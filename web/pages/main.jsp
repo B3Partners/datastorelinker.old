@@ -12,7 +12,6 @@
         <script type="text/javascript">
             $(function() {
                 $('#tabs').tabs( {
-                    // deze nietszeggende ajaxoptions zijn nodig om een error te voorkomen. beetje jammer, maar het werkt zo.
                     ajaxOptions: {
                         error: function(xhr, status, index, anchor) {
                             $(anchor.hash).html("Couldn't load this tab.");

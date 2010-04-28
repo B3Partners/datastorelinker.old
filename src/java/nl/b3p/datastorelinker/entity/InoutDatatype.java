@@ -6,7 +6,7 @@
 package nl.b3p.datastorelinker.entity;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,7 +36,7 @@ public class InoutDatatype implements Serializable {
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "datatypeId")
-    private Collection<Inout> inoutCollection;
+    private List<Inout> inoutList;
 
     public InoutDatatype() {
     }
@@ -61,12 +61,12 @@ public class InoutDatatype implements Serializable {
         this.name = name;
     }
 
-    public Collection<Inout> getInoutCollection() {
-        return inoutCollection;
+    public List<Inout> getInoutList() {
+        return inoutList;
     }
 
-    public void setInoutCollection(Collection<Inout> inoutCollection) {
-        this.inoutCollection = inoutCollection;
+    public void setInoutList(List<Inout> inoutList) {
+        this.inoutList = inoutList;
     }
 
     @Override

@@ -6,8 +6,7 @@
 package nl.b3p.datastorelinker.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,8 +29,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "Inout.findAll", query = "SELECT i FROM Inout i"),
     @NamedQuery(name = "Inout.findById", query = "SELECT i FROM Inout i WHERE i.id = :id"),
     @NamedQuery(name = "Inout.findByTypeId", query = "SELECT i FROM Inout i WHERE i.typeId = :typeId"),
-    @NamedQuery(name = "Inout.findByTableName", query = "SELECT i FROM Inout i WHERE i.tableName = :tableName"),
-    @NamedQuery(name = "Inout.findByDataconnectionId", query = "SELECT i FROM Inout i WHERE i.dataconnectionId = :dataconnectionId")})
+    @NamedQuery(name = "Inout.findByTableName", query = "SELECT i FROM Inout i WHERE i.tableName = :tableName")})
 public class Inout implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -43,12 +41,16 @@ public class Inout implements Serializable {
     private int typeId;
     @Column(name = "table_name")
     private String tableName;
-    @Column(name = "dataconnection_id")
-    private BigInteger dataconnectionId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "inputId")
-    private Collection<Process> processCollection;
+    private List<Process> processList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "outputId")
-    private Collection<Process> processCollection1;
+    private List<Process> processList1;
+    @JoinColumn(name = "database_id", referencedColumnName = "id")
+    @ManyToOne
+    private Database databaseId;
+    @JoinColumn(name = "file_id", referencedColumnName = "id")
+    @ManyToOne
+    private File fileId;
     @JoinColumn(name = "datatype_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private InoutDatatype datatypeId;
@@ -89,28 +91,36 @@ public class Inout implements Serializable {
         this.tableName = tableName;
     }
 
-    public BigInteger getDataconnectionId() {
-        return dataconnectionId;
+    public List<Process> getProcessList() {
+        return processList;
     }
 
-    public void setDataconnectionId(BigInteger dataconnectionId) {
-        this.dataconnectionId = dataconnectionId;
+    public void setProcessList(List<Process> processList) {
+        this.processList = processList;
     }
 
-    public Collection<Process> getProcessCollection() {
-        return processCollection;
+    public List<Process> getProcessList1() {
+        return processList1;
     }
 
-    public void setProcessCollection(Collection<Process> processCollection) {
-        this.processCollection = processCollection;
+    public void setProcessList1(List<Process> processList1) {
+        this.processList1 = processList1;
     }
 
-    public Collection<Process> getProcessCollection1() {
-        return processCollection1;
+    public Database getDatabaseId() {
+        return databaseId;
     }
 
-    public void setProcessCollection1(Collection<Process> processCollection1) {
-        this.processCollection1 = processCollection1;
+    public void setDatabaseId(Database databaseId) {
+        this.databaseId = databaseId;
+    }
+
+    public File getFileId() {
+        return fileId;
+    }
+
+    public void setFileId(File fileId) {
+        this.fileId = fileId;
     }
 
     public InoutDatatype getDatatypeId() {
