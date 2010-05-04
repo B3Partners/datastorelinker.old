@@ -6,6 +6,8 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <style type="text/css">
+    .step {margin-bottom: 10px}
+
     #inputList { width: 50%; margin-top: 10px; margin-bottom: 10px }
     #inputList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
     #inputList .ui-state-hover { background: #FECA40; }
@@ -26,6 +28,11 @@
         $("#newProcessBackButton").button();
         $("#newProcessNextButton").button();
 
+        $("#newInputDB").button();
+        $("#newInputFile").button();
+        $("#editInput").button();
+        $("#deleteInput").button();
+
         $("#newProcessWizardForm").formwizard( {
             //form wizard settings
             historyEnabled : false,
@@ -44,13 +51,36 @@
             target: "#ui-tabs-1",
             success: function() {
                 log("success!");
-                //log($("#newProcessContainer"));
-                //$("#newProcessContainer").dialog("destroy");
-                //log(newProcessDialog);
-                //
                 newProcessDialog.dialog("close");
             }
         });
+
+        $("#newInputDB").click(function() {
+            $("<div id='newInputDBContainer'/>").appendTo($(document.body));
+
+            newInputDBDialog = $("#newInputDBContainer").dialog({
+                title: "Nieuwe Database Invoer...", // TODO: localization
+                width: 800,
+                height: 500,
+                modal: true,
+                close: function() {
+                    log("newInputDBDialog closing");
+                    if ($("#newInOutForm")) {
+                        $("#newInOutForm").formwizard("destroy");
+                    }
+                    newInputDBDialog.dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    newInputDBDialog.remove();
+                }
+            });
+
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InOutAction"/>", "new_", function(data) {
+                $("#newInputDBContainer").html(data);
+            });
+
+            return false;
+        });
+
     });
 
 </script>
@@ -75,6 +105,12 @@
                     </c:if>
                 </stripes:label>
             </c:forEach>
+        </div>
+        <div>
+            <stripes:button id="newInputDB" name="newInputDB"/>
+            <stripes:button id="newInputFile" name="newInputFile"/>
+            <stripes:button id="editInput" name="edit"/>
+            <stripes:button id="deleteInput" name="delete"/>
         </div>
     </div>
     <div id="SelecteerUitvoer" class="step">

@@ -2,7 +2,7 @@
  * Needs jquery.
  * 
  */
-function invoke(formSelector, event, containerSelector, callback) {
+function ajaxFormEventInto(formSelector, event, containerSelector, callback) {
     form = $(formSelector).first();
     params = {};
     if (event != null) params = event + '&' + form.serialize();

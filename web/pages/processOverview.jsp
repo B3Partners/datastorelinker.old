@@ -22,9 +22,11 @@
         $("#executeProcess").button();
 
         $("#newProcess").click(function() {
+            $("<div id='newProcessContainer'/>").appendTo($(document.body));
+
             newProcessDialog = $("#newProcessContainer").dialog({
                 title: "Nieuw Proces...", // TODO: localization
-                width: 800,
+                width: 900,
                 height: 600,
                 modal: true,
                 close: function() {
@@ -38,34 +40,32 @@
                 }
             });
             
-            // ajax:
-            invoke("#processForm", "new_", "#newProcessContainer");
+            ajaxFormEventInto("#processForm", "new_", "#newProcessContainer");
             
             return false;
         });
 
         $("#executeProcess").click(function() {
-            $("#executeContainer").dialog({
-                title: "Process uitvoeren...", // TODO: localization
-                width: 800,
+            $("<div id='executeContainer'/>").appendTo($(document.body));
+
+            executeProcessDialog = $("#executeContainer").dialog({
+                title: "Proces uitvoeren...", // TODO: localization
+                width: 900,
                 height: 600,
                 modal: true,
                 buttons: {
                     "Annuleren": function() { // TODO: localize
-                        // dit goed checken!!
                         $(this).dialog("close");
-                        //$(this).dialog("destroy");
                     }
                 },
                 close: function() {
-                    // dit goed checken!!
-                    //$(this).dialog("close");
-                    //$(this).dialog("destroy");
+                    executeProcessDialog.dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    executeProcessDialog.remove();
                 }
             });
             
-            // ajax:
-            invoke("#processForm", "execute", "#executeContainer");
+            ajaxFormEventInto("#processForm", "execute", "#executeContainer");
 
             return false;
         });
@@ -91,7 +91,3 @@
     </div>
         
 </stripes:form>
-
-<div id="executeContainer"/>
-
-<div id="newProcessContainer"/>
