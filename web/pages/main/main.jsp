@@ -27,7 +27,7 @@
         <div id="tabs">
             <ul>
                 <li>
-                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessOverviewAction" >
+                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction" >
                         <stripes:label for="menu.home"/> <%-- TODO: !!! moet eigenlijk met <fmt:message key="menu.home"/> etc. !!!--%>
                     </stripes:link>
                 </li>

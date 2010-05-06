@@ -16,31 +16,33 @@
     $(function() {
         $("#processesList").buttonset();
 
-        $("#newProcess").button();
-        $("#editProcess").button();
+        $("#createProcess").button();
+        $("#updateProcess").button();
         $("#deleteProcess").button();
         $("#executeProcess").button();
 
-        $("#newProcess").click(function() {
-            $("<div id='newProcessContainer'/>").appendTo($(document.body));
+        $("#createProcess").click(function() {
+            $("<div id='createProcessContainer'/>").appendTo(document.body);
 
-            newProcessDialog = $("#newProcessContainer").dialog({
+            createProcessDialog = $("#createProcessContainer").dialog({
                 title: "Nieuw Proces...", // TODO: localization
                 width: 900,
                 height: 600,
                 modal: true,
                 close: function() {
-                    log("newProcessDialog closing");
-                    if ($("#newProcessWizardForm")) {
-                        $("#newProcessWizardForm").formwizard("destroy");
+                    log("createProcessDialog closing");
+                    if ($("#createProcessWizardForm")) {
+                        $("#createProcessWizardForm").formwizard("destroy");
                     }
-                    newProcessDialog.dialog("destroy");
+                    createProcessDialog.dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    newProcessDialog.remove();
+                    createProcessDialog.remove();
                 }
             });
             
-            ajaxFormEventInto("#processForm", "new_", "#newProcessContainer");
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InOutAction"/>", "create", function(data) {
+                $("#createProcessContainer").html(data);
+            });
             
             return false;
         });
@@ -73,8 +75,8 @@
 
 </script>
 
-<stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessOverviewAction">
-    <stripes:label for="processesOverview.text.overview"/>:
+<stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+    <stripes:label for="main.process.overview.text.overview"/>:
 
     <div id="processesList">
         <c:forEach var="process" items="${actionBean.processes}" varStatus="status">
@@ -84,8 +86,8 @@
     </div>
 
     <div id="buttonPanel">
-        <stripes:button id="newProcess" name="new_"/>
-        <stripes:button id="editProcess" name="edit"/>
+        <stripes:button id="createProcess" name="create"/>
+        <stripes:button id="updateProcess" name="update"/>
         <stripes:button id="deleteProcess" name="delete"/>
         <stripes:button id="executeProcess" name="execute"/>
     </div>

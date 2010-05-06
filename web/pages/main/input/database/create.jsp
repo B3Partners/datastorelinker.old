@@ -1,5 +1,5 @@
 <%-- 
-    Document   : newInOut
+    Document   : create
     Created on : 3-mei-2010, 18:03:12
     Author     : Erik van de Pol
 --%>
@@ -16,16 +16,16 @@
 
 <script type="text/javascript">
     $(function() {
-        $("#newDB").button();
-        $("#editDB").button();
+        $("#createDB").button();
+        $("#updateDB").button();
         $("#deleteDB").button();
 
         $("#databasesList").buttonset();
 
-        $("#newInOutBackButton").button();
-        $("#newInOutNextButton").button();
+        $("#createInputBackButton").button();
+        $("#createInputNextButton").button();
 
-        $("#newInOutForm").formwizard( {
+        $("#createInputForm").formwizard( {
             //form wizard settings
             historyEnabled : false,
             formPluginEnabled : true,
@@ -40,32 +40,42 @@
             //validation settings
         }, {
             // form plugin settings
-            target: "#databasesList",
-            beforeSend: function(XMLHttpRequest) {
-                // TODO: newComplete toevoegen als argument!!!!
-            },
+            //target: "#databasesList",
+            beforeSend: function() {
+                // beetje een lelijke hack, maar werkt wel mooi:
+                ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#databasesList", function() {
+                    log("success!");
+                    createInputDBDialog.dialog("close");
+                });
+                return false;
+            }/*,
             success: function() {
                 log("success!");
-                newInputDBDialog.dialog("close");
-            }/*,
-            error: function(xhr, status, index, anchor) {
-                $(anchor.hash).html("Couldn't load this tab." + status);
+                createInputDBDialog.dialog("close");
             }*/
         });
+
+        $("#createDB").click(function() {
+            
+
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>", "create", function(data) {
+                $("#createInputDBContainer").html(data);
+            });
+        })
 
     });
 
 </script>
 
-<stripes:form id="newInOutForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InOutAction">
+<stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <div id="SelecteerDatabaseconnectie" class="step">
         <h1>Selecteer databaseconnectie:</h1>
         <div id="databasesList">
-            <%@include file="/pages/inoutList.jsp" %>
+            <%@include file="/pages/main/database/list.jsp" %>
         </div>
         <div>
-            <stripes:button id="newDB" name="new_"/>
-            <stripes:button id="editDB" name="edit"/>
+            <stripes:button id="createDB" name="create"/>
+            <stripes:button id="updateDB" name="update"/>
             <stripes:button id="deleteDB" name="delete"/>
         </div>
     </div>
@@ -73,6 +83,6 @@
         <h1>Selecteer tabel:</h1>
     </div>
 
-    <stripes:reset id="newInOutBackButton" name="resetDummyName"/>
-    <stripes:submit id="newInOutNextButton" name="newComplete"/>
+    <stripes:reset id="createInputBackButton" name="resetDummyName"/>
+    <stripes:submit id="createInputNextButton" name="createDatabaseInputComplete"/>
 </stripes:form>

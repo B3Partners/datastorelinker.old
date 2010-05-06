@@ -1,5 +1,5 @@
 <%-- 
-    Document   : newProcess
+    Document   : create
     Created on : 23-apr-2010, 19:25:55
     Author     : Erik van de Pol
 --%>
@@ -25,15 +25,15 @@
         $("#inputList").buttonset();
         $("#outputList").buttonset();
 
-        $("#newProcessBackButton").button();
-        $("#newProcessNextButton").button();
+        $("#createProcessBackButton").button();
+        $("#createProcessNextButton").button();
 
-        $("#newInputDB").button();
-        $("#newInputFile").button();
-        $("#editInput").button();
+        $("#createInputDB").button();
+        $("#createInputFile").button();
+        $("#updateInput").button();
         $("#deleteInput").button();
 
-        $("#newProcessWizardForm").formwizard( {
+        $("#createProcessWizardForm").formwizard( {
             //form wizard settings
             historyEnabled : false,
             formPluginEnabled : true,
@@ -51,31 +51,31 @@
             target: "#ui-tabs-1",
             success: function() {
                 log("success!");
-                newProcessDialog.dialog("close");
+                createProcessDialog.dialog("close");
             }
         });
 
-        $("#newInputDB").click(function() {
-            $("<div id='newInputDBContainer'/>").appendTo($(document.body));
+        $("#createInputDB").click(function() {
+            $("<div id='createInputDBContainer'/>").appendTo($(document.body));
 
-            newInputDBDialog = $("#newInputDBContainer").dialog({
+            createInputDBDialog = $("#createInputDBContainer").dialog({
                 title: "Nieuwe Database Invoer...", // TODO: localization
                 width: 800,
                 height: 500,
                 modal: true,
                 close: function() {
-                    log("newInputDBDialog closing");
-                    if ($("#newInOutForm")) {
-                        $("#newInOutForm").formwizard("destroy");
+                    log("createInputDBDialog closing");
+                    if ($("#createInputForm")) {
+                        $("#createInputForm").formwizard("destroy");
                     }
-                    newInputDBDialog.dialog("destroy");
+                    createInputDBDialog.dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    newInputDBDialog.remove();
+                    createInputDBDialog.remove();
                 }
             });
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InOutAction"/>", "new_", function(data) {
-                $("#newInputDBContainer").html(data);
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>", "createDatabaseInput", function(data) {
+                $("#createInputDBContainer").html(data);
             });
 
             return false;
@@ -85,43 +85,23 @@
 
 </script>
 
-<stripes:form id="newProcessWizardForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessOverviewAction">
+<stripes:form id="createProcessWizardForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <div id="SelecteerInvoer" class="step">
         <h1>Selecteer bestand- of database-invoer:</h1>
         <div id="inputList">
-            <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
-                <stripes:radio id="input${status.index}" name="inputId" value="${input.id}"/>
-                <stripes:label for="input${status.index}">
-                    <c:choose>
-                        <c:when test="${input.datatypeId.id == 1}">
-                            <c:out value="${input.databaseId.name}"/>
-                        </c:when>
-                        <c:when test="${input.datatypeId.id == 2}">
-                            <c:out value="${input.fileId.name}"/>
-                        </c:when>
-                    </c:choose>
-                    <c:if test="${input.tableName != ''}">
-                        (<c:out value="${input.tableName}"/>)
-                    </c:if>
-                </stripes:label>
-            </c:forEach>
+            <%@include file="/pages/main/input/list.jsp" %>
         </div>
         <div>
-            <stripes:button id="newInputDB" name="newInputDB"/>
-            <stripes:button id="newInputFile" name="newInputFile"/>
-            <stripes:button id="editInput" name="edit"/>
+            <stripes:button id="createInputDB" name="createInputDB"/>
+            <stripes:button id="createInputFile" name="createInputFile"/>
+            <stripes:button id="updateInput" name="update"/>
             <stripes:button id="deleteInput" name="delete"/>
         </div>
     </div>
     <div id="SelecteerUitvoer" class="step">
         <h1>Selecteer database om naar uit te voeren:</h1>
         <div id="outputList">
-            <c:forEach var="output" items="${actionBean.outputs}" varStatus="status">
-                <stripes:radio id="output${status.index}" name="outputId" value="${output.id}"/>
-                <stripes:label for="output${status.index}">
-                    <c:out value="${output.databaseId.name}"/>
-                </stripes:label>
-            </c:forEach>
+            <%@include file="/pages/main/output/list.jsp" %>
         </div>
     </div>
     <!--div id="secondStep" class="step">
@@ -150,6 +130,6 @@
         <input  type="text" value="" /><br />
         <input  type="text" value="" /><br />
     </div-->
-    <stripes:reset id="newProcessBackButton" name="resetDummyName"/>
-    <stripes:submit id="newProcessNextButton" name="newComplete"/>
+    <stripes:reset id="createProcessBackButton" name="resetDummyName"/>
+    <stripes:submit id="createProcessNextButton" name="createComplete"/>
 </stripes:form>

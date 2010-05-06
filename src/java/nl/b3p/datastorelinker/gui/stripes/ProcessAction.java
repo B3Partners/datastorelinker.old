@@ -19,29 +19,30 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
-public class ProcessOverviewAction extends DefaultAction {
+public class ProcessAction extends DefaultAction {
 
-    private final static Log log = Log.getInstance(ProcessOverviewAction.class);
+    private final static Log log = Log.getInstance(ProcessAction.class);
     
-    private final static String JSP = "/pages/processOverview.jsp";
-    private final static String NEW_PROCESS_JSP = "/pages/newProcess.jsp";
-    private final static String EXECUTE_PROCESS_JSP = "/pages/executeProcess.jsp";
+    private final static String JSP = "/pages/main/process/overview.jsp";
+    private final static String CREATE_JSP = "/pages/main/process/create.jsp";
+    private final static String EXECUTE_JSP = "/pages/main/process/execute.jsp";
     
     private List<Process> processes;
-    
+
     private List<Inout> inputs;
     private List<Inout> inputsFile;
     private List<Inout> inputsDB;
     private List<Inout> outputs;
     
     private Long processId;
+
     private Long inputId;
     private Long outputId;
     private Long actionsId;
-    
+
 
     @DefaultHandler
-    public Resolution processesOverview() {
+    public Resolution overview() {
         //ValidationErrors errors = new ValidationErrors();
 
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -59,30 +60,31 @@ public class ProcessOverviewAction extends DefaultAction {
         return new ForwardResolution(JSP);
     }
 
-    public Resolution new_() {
+    public Resolution create() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
         inputs = session.createQuery("from Inout where typeId = 1").list();
-        inputsFile = session.createQuery("from Inout where typeId = 1 and datatypeId = 2").list();
-        inputsDB = session.createQuery("from Inout where typeId = 1 and datatypeId = 1").list();
+        //inputsFile = session.createQuery("from Inout where typeId = 1 and datatypeId = 2").list();
+        //inputsDB = session.createQuery("from Inout where typeId = 1 and datatypeId = 1").list();
         outputs = session.createQuery("from Inout where typeId = 2").list();
-        
-        return new ForwardResolution(NEW_PROCESS_JSP);
+
+        return new ForwardResolution(CREATE_JSP);
+        //return new ForwardResolution(InputAction.class, "createProcess");
     }
 
     @Transactional
-    public Resolution newComplete() {
+    public Resolution createComplete() {
         log.debug("newComplete; inputId: " + inputId);
         log.debug("newComplete; outputId: " + outputId);
         //log.debug("newComplete; actionsId: " + actionsId);
 
         // ...
 
-        return processesOverview(); // TODO: auto-select just created process
+        return overview(); // TODO: auto-select just created process
     }
 
-    public Resolution edit() {
+    public Resolution update() {
         return new ForwardResolution(JSP);
     }
 
@@ -95,7 +97,7 @@ public class ProcessOverviewAction extends DefaultAction {
 
         // ...
         
-        return new ForwardResolution(EXECUTE_PROCESS_JSP);
+        return new ForwardResolution(EXECUTE_JSP);
     }
 
     public List<Process> getProcesses() {

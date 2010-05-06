@@ -6,6 +6,7 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback) {
     form = $(formSelector).first();
     params = {};
     if (event != null) params = event + '&' + form.serialize();
+    log(params);
     $.post(form[0].action,
             params,
             function (xml) {
