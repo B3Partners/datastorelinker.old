@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : create
     Created on : 3-mei-2010, 18:03:12
     Author     : Erik van de Pol
@@ -43,9 +43,10 @@
             //target: "#databasesList",
             beforeSend: function() {
                 // beetje een lelijke hack, maar werkt wel mooi:
-                ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#databasesList", function() {
+                ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputList", function() {
                     log("success!");
                     createInputDBDialog.dialog("close");
+                    $("#inputList").buttonset();
                 });
                 return false;
             }/*,
@@ -56,10 +57,32 @@
         });
 
         $("#createDB").click(function() {
-            
+            $("<div id='createDBContainer'/>").appendTo(document.body);
+
+            createDBDialog = $("#createDBContainer").dialog({
+                title: "Nieuwe Database...", // TODO: localization
+                width: 700,
+                height: 600,
+                modal: true,
+                buttons: { // TODO: localize button name:
+                    "Voltooien" : function() {
+                        // is deze button wel disabled totdat dialog alles ready is
+                        ajaxFormEventInto("#databaseInputAccordion .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
+                            createDBDialog.dialog("close");
+                            $("#databasesList").buttonset();
+                        });
+                    }
+                },
+                close: function() {
+                    log("createDBContainer closing");
+                    createDBDialog.dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    createDBDialog.remove();
+                }
+            });
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>", "create", function(data) {
-                $("#createInputDBContainer").html(data);
+                $("#createDBContainer").html(data);
             });
         })
 

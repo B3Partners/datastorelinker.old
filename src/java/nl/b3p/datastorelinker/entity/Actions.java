@@ -25,12 +25,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "actions")
 @NamedQueries({
-    @NamedQuery(name = "Actions.findAll", query = "SELECT a FROM Actions a"),
-    @NamedQuery(name = "Actions.findByProcessId", query = "SELECT a FROM Actions a WHERE a.processId = :processId"),
-    @NamedQuery(name = "Actions.findByActionId", query = "SELECT a FROM Actions a WHERE a.actionId = :actionId"),
-    @NamedQuery(name = "Actions.findByInputParameters", query = "SELECT a FROM Actions a WHERE a.inputParameters = :inputParameters"),
-    @NamedQuery(name = "Actions.findById", query = "SELECT a FROM Actions a WHERE a.id = :id"),
-    @NamedQuery(name = "Actions.findByNextId", query = "SELECT a FROM Actions a WHERE a.nextId = :nextId")})
+    @NamedQuery(name = "Actions.findAll", query = "SELECT a FROM Actions a")})
 public class Actions implements Serializable {
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)

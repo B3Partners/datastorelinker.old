@@ -21,9 +21,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "inout_type")
 @NamedQueries({
-    @NamedQuery(name = "InoutType.findAll", query = "SELECT i FROM InoutType i"),
-    @NamedQuery(name = "InoutType.findById", query = "SELECT i FROM InoutType i WHERE i.id = :id"),
-    @NamedQuery(name = "InoutType.findByName", query = "SELECT i FROM InoutType i WHERE i.name = :name")})
+    @NamedQuery(name = "InoutType.findAll", query = "SELECT i FROM InoutType i")})
 public class InoutType implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

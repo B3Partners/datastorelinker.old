@@ -23,9 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "file")
 @NamedQueries({
-    @NamedQuery(name = "File.findAll", query = "SELECT f FROM File f"),
-    @NamedQuery(name = "File.findByName", query = "SELECT f FROM File f WHERE f.name = :name"),
-    @NamedQuery(name = "File.findById", query = "SELECT f FROM File f WHERE f.id = :id")})
+    @NamedQuery(name = "File.findAll", query = "SELECT f FROM File f")})
 public class File implements Serializable {
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)

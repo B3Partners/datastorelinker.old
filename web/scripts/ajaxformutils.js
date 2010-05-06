@@ -18,6 +18,6 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback) {
 }
 
 function log(text) {
-    if (window.console)
+    if (window.console && window.console.log)
         console.log(text);
 }

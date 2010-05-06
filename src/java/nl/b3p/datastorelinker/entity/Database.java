@@ -25,9 +25,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "database")
 @NamedQueries({
-    @NamedQuery(name = "Database.findAll", query = "SELECT d FROM Database d"),
-    @NamedQuery(name = "Database.findById", query = "SELECT d FROM Database d WHERE d.id = :id"),
-    @NamedQuery(name = "Database.findByName", query = "SELECT d FROM Database d WHERE d.name = :name")})
+    @NamedQuery(name = "Database.findAll", query = "SELECT d FROM Database d")})
 public class Database implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -36,6 +34,30 @@ public class Database implements Serializable {
     private Long id;
     @Column(name = "name")
     private String name;
+    @Column(name = "host")
+    private String host;
+    @Column(name = "database_name")
+    private String databaseName;
+    @Column(name = "username")
+    private String username;
+    @Column(name = "password")
+    private String password;
+    @Column(name = "schema")
+    private String schema;
+    @Column(name = "port")
+    private Integer port;
+    @Column(name = "instance")
+    private String instance;
+    @Column(name = "alias")
+    private String alias;
+    @Column(name = "url")
+    private String url;
+    @Column(name = "srs")
+    private String srs;
+    @Column(name = "col_x")
+    private String colX;
+    @Column(name = "col_y")
+    private String colY;
     @OneToMany(mappedBy = "databaseId")
     private List<Inout> inoutList;
     @JoinColumn(name = "type_id", referencedColumnName = "id")
@@ -63,6 +85,102 @@ public class Database implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    public String getInstance() {
+        return instance;
+    }
+
+    public void setInstance(String instance) {
+        this.instance = instance;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getSrs() {
+        return srs;
+    }
+
+    public void setSrs(String srs) {
+        this.srs = srs;
+    }
+
+    public String getColX() {
+        return colX;
+    }
+
+    public void setColX(String colX) {
+        this.colX = colX;
+    }
+
+    public String getColY() {
+        return colY;
+    }
+
+    public void setColY(String colY) {
+        this.colY = colY;
     }
 
     public List<Inout> getInoutList() {

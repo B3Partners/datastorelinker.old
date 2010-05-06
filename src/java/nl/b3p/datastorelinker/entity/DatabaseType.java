@@ -24,9 +24,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "database_type")
 @NamedQueries({
-    @NamedQuery(name = "DatabaseType.findAll", query = "SELECT d FROM DatabaseType d"),
-    @NamedQuery(name = "DatabaseType.findById", query = "SELECT d FROM DatabaseType d WHERE d.id = :id"),
-    @NamedQuery(name = "DatabaseType.findByName", query = "SELECT d FROM DatabaseType d WHERE d.name = :name")})
+    @NamedQuery(name = "DatabaseType.findAll", query = "SELECT d FROM DatabaseType d")})
 public class DatabaseType implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

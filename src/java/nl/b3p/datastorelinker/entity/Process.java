@@ -23,9 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "process")
 @NamedQueries({
-    @NamedQuery(name = "Process.findAll", query = "SELECT p FROM Process p"),
-    @NamedQuery(name = "Process.findById", query = "SELECT p FROM Process p WHERE p.id = :id"),
-    @NamedQuery(name = "Process.findByName", query = "SELECT p FROM Process p WHERE p.name = :name")})
+    @NamedQuery(name = "Process.findAll", query = "SELECT p FROM Process p")})
 public class Process implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
