@@ -8,7 +8,6 @@
 <style type="text/css">
     .step {margin-bottom: 10px}
 
-    #databasesList { width: 50%; margin-top: 10px; margin-bottom: 10px }
     #databasesList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
     #databasesList .ui-state-hover { background: #FECA40; }
     #databasesList .ui-state-active { background: #f2d81c; }
@@ -78,6 +77,10 @@
                     createDBDialog.dialog("destroy");
                     // volgende regel heel belangrijk!!
                     createDBDialog.remove();
+                },
+                beforeclose: function(event, ui) {
+                    // TODO: check connection. if bad return false
+                    return true;
                 }
             });
 
@@ -93,7 +96,7 @@
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <div id="SelecteerDatabaseconnectie" class="step">
         <h1>Selecteer databaseconnectie:</h1>
-        <div id="databasesList">
+        <div id="databasesList" class="radioList">
             <%@include file="/pages/main/database/list.jsp" %>
         </div>
         <div>
@@ -106,6 +109,8 @@
         <h1>Selecteer tabel:</h1>
     </div>
 
-    <stripes:reset id="createInputBackButton" name="resetDummyName"/>
-    <stripes:submit id="createInputNextButton" name="createDatabaseInputComplete"/>
+    <div class="wizardButtonsArea">
+        <stripes:reset id="createInputBackButton" name="resetDummyName"/>
+        <stripes:submit id="createInputNextButton" name="createDatabaseInputComplete"/>
+    </div>
 </stripes:form>

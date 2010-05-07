@@ -18,7 +18,9 @@
 
             <title>${pageTitle}</title>
 
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.custom.css">
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.custom.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.uploadify/uploadify.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/extra.css" />
 
             <!--link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css">
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/b3p.css">
@@ -36,6 +38,8 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.history/jquery.history.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.uploadify/swfobject.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.uploadify/jquery.uploadify.latest.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajaxformutils.js"></script>
 
             <stripes:layout-component name="head"/>

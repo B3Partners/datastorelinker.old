@@ -40,7 +40,7 @@
                 }
             });
             
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InOutAction"/>", "create", function(data) {
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>", "create", function(data) {
                 $("#createProcessContainer").html(data);
             });
             

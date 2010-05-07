@@ -18,7 +18,7 @@ import nl.b3p.commons.stripes.Transactional;
  */
 public class ManagementAction extends DefaultAction {
     private final static Log log = Log.getInstance(ManagementAction.class);
-    private final static String JSP = "/pages/management.jsp";
+    private final static String JSP = "/pages/management/management.jsp";
 
     @DefaultHandler
     @Transactional

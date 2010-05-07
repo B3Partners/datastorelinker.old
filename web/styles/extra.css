@@ -1,0 +1,25 @@
+/* 
+    Document   : extra
+    Created on : 7-mei-2010, 18:17:45
+    Author     : Erik van de Pol
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.radioList {
+    /*width: 50%;*/
+    max-height: 250px;
+    overflow: auto;
+    margin: 10px 0 10px 0;
+}
+
+.wizardButtonsArea {
+    text-align: right;
+    border-top: 1px solid blue;
+    padding-top: 10px;
+}

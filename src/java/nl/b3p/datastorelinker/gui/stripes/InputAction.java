@@ -13,6 +13,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
+import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
 import org.hibernate.Session;
 
@@ -28,7 +29,12 @@ public class InputAction extends DefaultAction {
     private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
 
     private List<Inout> inputs;
+
     private List<Database> databases;
+    private Database selectedDatabase;
+
+    private List<File> files;
+    private File selectedFile;
 
     /*@DefaultHandler
     public Resolution overview() {
@@ -48,6 +54,11 @@ public class InputAction extends DefaultAction {
     }
 
     public Resolution createFileInput() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        files = session.createQuery("from File").list();
+
         return new ForwardResolution(CREATE_FILE_JSP);
     }
 
@@ -84,6 +95,30 @@ public class InputAction extends DefaultAction {
 
     public void setDatabases(List<Database> databases) {
         this.databases = databases;
+    }
+
+    public Database getSelectedDatabase() {
+        return selectedDatabase;
+    }
+
+    public void setSelectedDatabase(Database selectedDatabase) {
+        this.selectedDatabase = selectedDatabase;
+    }
+
+    public List<File> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<File> files) {
+        this.files = files;
+    }
+
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
+    public void setSelectedFile(File selectedFile) {
+        this.selectedFile = selectedFile;
     }
 
 }

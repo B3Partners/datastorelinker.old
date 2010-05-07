@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : create
     Created on : 3-mei-2010, 18:03:12
     Author     : Erik van de Pol
@@ -25,7 +25,7 @@
         $("#createInOutBackButton").button();
         $("#createInOutNextButton").button();
 
-        $("#createInOutForm").formwizard( {
+        $("#createOutputForm").formwizard( {
             //form wizard settings
             historyEnabled : false,
             formPluginEnabled : true,
@@ -43,7 +43,7 @@
             //target: "#databasesList",
             beforeSend: function() {
                 // beetje een lelijke hack, maar werkt wel mooi:
-                ajaxFormEventInto("#createInOutForm", "createComplete", "#databasesList", function() {
+                ajaxFormEventInto("#createOutputForm", "createComplete", "#databasesList", function() {
                     log("success!");
                     createInputDBDialog.dialog("close");
                 });
@@ -56,7 +56,7 @@
         });
 
         $("#createDB").click(function() {
-            
+
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseInAction"/>", "create", function(data) {
                 $("#createInputDBContainer").html(data);
@@ -67,11 +67,11 @@
 
 </script>
 
-<stripes:form id="createInOutForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InOutAction">
+<stripes:form id="createOutputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction">
     <div id="SelecteerDatabaseconnectie" class="step">
         <h1>Selecteer databaseconnectie:</h1>
         <div id="databasesList">
-            <%@include file="/pages/main/inout/inputList.jsp" %>
+            <%@include file="/pages/main/output/list.jsp" %>
         </div>
         <div>
             <stripes:button id="createDB" name="create"/>

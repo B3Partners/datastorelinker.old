@@ -18,7 +18,7 @@ import nl.b3p.commons.stripes.Transactional;
  */
 public class OptionsAction extends DefaultAction {
     private final static Log log = Log.getInstance(OptionsAction.class);
-    private final static String JSP = "/pages/options.jsp";
+    private final static String JSP = "/pages/options/options.jsp";
 
     @DefaultHandler
     @Transactional

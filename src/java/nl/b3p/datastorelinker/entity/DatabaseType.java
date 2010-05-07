@@ -16,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.hibernate.Session;
 
 /**
  *
@@ -31,6 +32,7 @@ public class DatabaseType implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
+    @Basic(optional = false)
     @Column(name = "name")
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "typeId")
@@ -41,6 +43,11 @@ public class DatabaseType implements Serializable {
 
     public DatabaseType(Integer id) {
         this.id = id;
+    }
+
+    public DatabaseType(Integer id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Integer getId() {

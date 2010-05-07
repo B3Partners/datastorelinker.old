@@ -8,12 +8,10 @@
 <style type="text/css">
     .step {margin-bottom: 10px}
 
-    #inputList { width: 50%; margin-top: 10px; margin-bottom: 10px }
     #inputList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
     #inputList .ui-state-hover { background: #FECA40; }
     #inputList .ui-state-active { background: #f2d81c; }
 
-    #outputList { width: 50%; margin-top: 10px; margin-bottom: 10px }
     #outputList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
     #outputList .ui-state-hover { background: #FECA40; }
     #outputList .ui-state-active { background: #f2d81c; }
@@ -56,10 +54,10 @@
         });
 
         $("#createInputDB").click(function() {
-            $("<div id='createInputDBContainer'/>").appendTo($(document.body));
+            $("<div id='createInputDBContainer'/>").appendTo(document.body);
 
             createInputDBDialog = $("#createInputDBContainer").dialog({
-                title: "Nieuwe Database Invoer...", // TODO: localization
+                title: "Nieuwe Database-invoer...", // TODO: localization
                 width: 800,
                 height: 500,
                 modal: true,
@@ -81,6 +79,32 @@
             return false;
         });
 
+        $("#createInputFile").click(function() {
+            $("<div id='createInputFileContainer'/>").appendTo(document.body);
+
+            createInputFileDialog = $("#createInputFileContainer").dialog({
+                title: "Nieuwe Bestandsinvoer...", // TODO: localization
+                width: 800,
+                height: 500,
+                modal: true,
+                close: function() {
+                    log("createInputDBDialog closing");
+                    if ($("#createInputForm")) {
+                        $("#createInputForm").formwizard("destroy");
+                    }
+                    createInputFileDialog.dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    createInputFileDialog.remove();
+                }
+            });
+
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>", "createFileInput", function(data) {
+                $("#createInputFileContainer").html(data);
+            });
+
+            return false;
+        });
+
     });
 
 </script>
@@ -88,7 +112,7 @@
 <stripes:form id="createProcessWizardForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <div id="SelecteerInvoer" class="step">
         <h1>Selecteer bestand- of database-invoer:</h1>
-        <div id="inputList">
+        <div id="inputList" class="radioList">
             <%@include file="/pages/main/input/list.jsp" %>
         </div>
         <div>
@@ -100,7 +124,7 @@
     </div>
     <div id="SelecteerUitvoer" class="step">
         <h1>Selecteer database om naar uit te voeren:</h1>
-        <div id="outputList">
+        <div id="outputList" class="radioList">
             <%@include file="/pages/main/output/list.jsp" %>
         </div>
     </div>
@@ -130,6 +154,8 @@
         <input  type="text" value="" /><br />
         <input  type="text" value="" /><br />
     </div-->
-    <stripes:reset id="createProcessBackButton" name="resetDummyName"/>
-    <stripes:submit id="createProcessNextButton" name="createComplete"/>
+    <div class="wizardButtonsArea">
+        <stripes:reset id="createProcessBackButton" name="resetDummyName"/>
+        <stripes:submit id="createProcessNextButton" name="createComplete"/>
+    </div>
 </stripes:form>

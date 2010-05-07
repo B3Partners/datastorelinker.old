@@ -45,7 +45,7 @@ public class OutputAction extends DefaultAction {
 
         // TODO: stop in DB...
 
-        outputs = session.createQuery("from Inout where typeId = 1").list();
+        outputs = session.createQuery("from Inout where typeId = 2").list();
 
         // TODO: zet nieuwe record voor jsp om te selecteren
 

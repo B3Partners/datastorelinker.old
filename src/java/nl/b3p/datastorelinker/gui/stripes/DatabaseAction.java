@@ -5,13 +5,16 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.entity.Database;
+import nl.b3p.datastorelinker.entity.DatabaseType;
 import org.hibernate.Session;
 
 /**
@@ -19,13 +22,16 @@ import org.hibernate.Session;
  * @author Erik van de Pol
  */
 public class DatabaseAction extends DefaultAction {
+    private final static Log log = Log.getInstance(DatabaseAction.class);
+
     private final static String CREATE_JSP = "/pages/main/database/create.jsp";
     private final static String LIST_JSP = "/pages/main/database/list.jsp";
 
     private List<Database> databases;
+    private Database selectedDatabase;
 
     // PostGIS specific:
-    private String dbType;
+    private Integer dbType;
     private String host;
     private String databaseName;
     private String username;
@@ -50,19 +56,53 @@ public class DatabaseAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
+        Database database = new Database();
         // TODO: serverside en clientside validation
 
-        if (dbType.equalsIgnoreCase("PostGIS")) {
-            
-        } else if (dbType.equalsIgnoreCase("Oracle")) {
+        DatabaseType dbt = (DatabaseType)session.createQuery("from DatabaseType where id = :id")
+                .setParameter("id", dbType)
+                .uniqueResult();
 
-        } else if (dbType.equalsIgnoreCase("MSAccess")) {
-            
+        database.setName(host + "/" + databaseName);
+        database.setTypeId(dbt);
+
+        switch(dbt.getId()) {
+            case 1: // Oracle
+                database.setHost(host);
+                database.setDatabaseName(databaseName);
+                database.setUsername(username);
+                database.setPassword(password);
+                database.setPort(port);
+                database.setSchema(schema);
+                database.setInstance(instance);
+                database.setAlias(alias);
+                break;
+            case 2: // MS Access
+                database.setUrl(url);
+                database.setSrs(srs);
+                database.setColX(colX);
+                database.setColY(colY);
+                break;
+            case 3: // PostGIS
+                database.setHost(host);
+                database.setDatabaseName(databaseName);
+                database.setUsername(username);
+                database.setPassword(password);
+                database.setPort(port);
+                database.setSchema(schema);
+                break;
+            default:
+                log.error("Unsupported database type");
+                return null;
         }
 
+        // TODO: wat als DB met zelfde inhoud al aanwezig is?
+        // waarschuwing? saveOrUpdate? gaat dat wel goed met niet gepersiste "new Database()"?
+        Serializable newId = session.save(database);
+        
         databases = session.createQuery("from Database").list();
 
-        //TODO: select nieuwe db in lijst
+        selectedDatabase = database;
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -75,11 +115,11 @@ public class DatabaseAction extends DefaultAction {
         this.databases = databases;
     }
 
-    public String getDbType() {
+    public Integer getDbType() {
         return dbType;
     }
 
-    public void setDbType(String dbType) {
+    public void setDbType(Integer dbType) {
         this.dbType = dbType;
     }
 
@@ -177,6 +217,14 @@ public class DatabaseAction extends DefaultAction {
 
     public void setColY(String colY) {
         this.colY = colY;
+    }
+
+    public Database getSelectedDatabase() {
+        return selectedDatabase;
+    }
+
+    public void setSelectedDatabase(Database selectedDatabase) {
+        this.selectedDatabase = selectedDatabase;
     }
 
 }

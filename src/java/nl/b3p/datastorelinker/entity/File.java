@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -32,6 +33,7 @@ public class File implements Serializable {
     @Id
     @Basic(optional = false)
     @Column(name = "id")
+    @GeneratedValue
     private Long id;
     @OneToMany(mappedBy = "fileId")
     private List<Inout> inoutList;

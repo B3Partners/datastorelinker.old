@@ -15,7 +15,7 @@
     <h3><a href="#">PostGIS</a></h3>
     <div>
         <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-            <stripes:hidden name="dbType" value="postgis" />
+            <stripes:hidden name="dbType" value="3" />
             <table>
                 <tbody>
                     <tr>
@@ -28,7 +28,7 @@
                     </tr>
                     <tr>
                         <td><stripes:label name="username" for="postgisusername"/></td>
-                        <td><stripes:password id="postgisusername" name="username"/></td>
+                        <td><stripes:text id="postgisusername" name="username"/></td>
                     </tr>
                     <tr>
                         <td><stripes:label name="password" for="postgispassword"/></td>
@@ -49,7 +49,7 @@
     <h3><a href="#">Oracle</a></h3>
     <div>
         <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-            <stripes:hidden name="dbType" value="oracle" />
+            <stripes:hidden name="dbType" value="1" />
             <table>
                 <tbody>
                     <tr>
@@ -62,7 +62,7 @@
                     </tr>
                     <tr>
                         <td><stripes:label name="username" for="oracleusername"/></td>
-                        <td><stripes:password id="oracleusername" name="username"/></td>
+                        <td><stripes:text id="oracleusername" name="username"/></td>
                     </tr>
                     <tr>
                         <td><stripes:label name="password" for="oraclepassword"/></td>
@@ -91,7 +91,7 @@
     <h3><a href="#">MS Access</a></h3>
     <div>
         <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-            <stripes:hidden name="dbType" value="msaccess" />
+            <stripes:hidden name="dbType" value="2" />
             <table>
                 <tbody>
                     <tr>
@@ -104,11 +104,11 @@
                     </tr>
                     <tr>
                         <td><stripes:label name="colX" for="msaccesscolX"/></td>
-                        <td><stripes:password id="msaccesscolX" name="colX" value="POINT_X"/></td>
+                        <td><stripes:text id="msaccesscolX" name="colX" value="POINT_X"/></td>
                     </tr>
                     <tr>
                         <td><stripes:label name="colY" for="msaccesscolY"/></td>
-                        <td><stripes:password id="msaccesscolY" name="colY" value="POINT_Y"/></td>
+                        <td><stripes:text id="msaccesscolY" name="colY" value="POINT_Y"/></td>
                     </tr>
                 </tbody>
             </table>
