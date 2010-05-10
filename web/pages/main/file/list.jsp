@@ -8,11 +8,11 @@
 <stripes:form partial="true" action="/">
     <c:forEach var="file" items="${actionBean.files}" varStatus="status">
         <c:choose>
-            <c:when test="${not empty actionBean.selectedFile and file.id == actionBean.selectedFile.id}">
-                <input type="radio" id="file{status.index}" name="fileId" value="${file.id}" checked="checked" />
+            <c:when test="${not empty actionBean.selectedFileId and file.id == actionBean.selectedFileId}">
+                <input type="radio" id="file${status.index}" name="selectedFileId" value="${file.id}" checked="checked" />
             </c:when>
             <c:otherwise>
-                <input type="radio" id="file{status.index}" name="fileId" value="${file.id}" />
+                <input type="radio" id="file${status.index}" name="selectedFileId" value="${file.id}" />
             </c:otherwise>
         </c:choose>
         <stripes:label for="file${status.index}">

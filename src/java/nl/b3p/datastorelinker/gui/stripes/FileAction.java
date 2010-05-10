@@ -18,6 +18,7 @@ import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.controller.StripesRequestWrapper;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
+import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hibernate.Session;
@@ -32,8 +33,9 @@ public class FileAction extends DefaultAction {
     private final static String CREATE_JSP = "/pages/main/file/create.jsp";
     private final static String LIST_JSP = "/pages/main/file/list.jsp";
     private List<File> files;
-    private File selectedFile;
-    //private String uploadDirectory;
+
+    //@org.stripesstuff.....Session
+    private Long selectedFileId;
 
     private FileBean filedata;
 
@@ -46,7 +48,8 @@ public class FileAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-
+        files = session.createQuery("from File").list();
+        
         return new ForwardResolution(LIST_JSP);
     }
 
@@ -80,7 +83,11 @@ public class FileAction extends DefaultAction {
                 java.io.File tempFile = java.io.File.createTempFile(filedata.getFileName() + ".", null, dirFile);
 
                 filedata.save(tempFile);
-                log.info("Saved file " + tempFile.getAbsolutePath() + ", Successfully!");
+                String absolutePath = tempFile.getAbsolutePath();
+                log.info("Saved file " + absolutePath + ", Successfully!");
+
+                saveOrUpdateFileInDB(absolutePath);
+                
             } catch (IOException e) {
                 errorMsg = e.getMessage();
                 log.error("Error while writing file :" + filedata.getFileName() + " / " + errorMsg);
@@ -91,6 +98,22 @@ public class FileAction extends DefaultAction {
         return new StreamingResolution("text/xml", "An unknown error has occurred!");
     }
 
+    @Transactional
+    private void saveOrUpdateFileInDB(String absolutePath) {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session) em.getDelegate();
+
+        File file = new File();
+        file.setName(absolutePath);
+
+        // TODO: file already exists? we now add an uuid to the filename.
+        session.saveOrUpdate(file);
+        // TODO: get id from saveOrUpdate
+        
+        // TODO: dit moet gewoon anders met (doorzichtig) flash achter jquery-button.
+        //selectedFileId = file.getId();
+    }
+
     public List<File> getFiles() {
         return files;
     }
@@ -99,19 +122,16 @@ public class FileAction extends DefaultAction {
         this.files = files;
     }
 
-    public File getSelectedFile() {
-        return selectedFile;
-    }
-
-    public void setSelectedFile(File selectedFile) {
-        this.selectedFile = selectedFile;
-    }
-
     public String getUploadDirectory() {
         return getContext().getServletContext().getInitParameter("uploadDirectory");
     }
 
-    /*public void setUploadDirectory(String uploadDirectory) {
-        this.uploadDirectory = uploadDirectory;
-    }*/
+    public Long getSelectedFileId() {
+        return selectedFileId;
+    }
+
+    public void setSelectedFileId(Long selectedFileId) {
+        this.selectedFileId = selectedFileId;
+    }
+
 }

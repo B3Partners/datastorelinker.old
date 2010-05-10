@@ -59,17 +59,18 @@
             $("<div id='createFileContainer'/>").appendTo(document.body);
 
             createFileDialog = $("#createFileContainer").dialog({
-                title: "Nieuwe bestandsinvoer...", // TODO: localization
+                title: "Nieuw Bestand...", // TODO: localization
                 width: 700,
                 height: 600,
                 modal: true,
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
                         // is deze button wel disabled totdat dialog alles ready is
-                        /*ajaxFormEventInto("#fileInputAccordion .ui-accordion-content-active form", "createComplete", "#filesList", function() {
+                        $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>", "createComplete", function(data) {
                             createFileDialog.dialog("close");
+                            $("#filesList").html(data);
                             $("#filesList").buttonset();
-                        });*/
+                        });
                     }
                 },
                 close: function() {
@@ -77,10 +78,6 @@
                     createFileDialog.dialog("destroy");
                     // volgende regel heel belangrijk!!
                     createFileDialog.remove();
-                },
-                beforeclose: function(event, ui) {
-                    // TODO: ?
-                    return true;
                 }
             });
 

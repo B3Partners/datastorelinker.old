@@ -6,7 +6,9 @@
 package nl.b3p.datastorelinker.entity;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -71,6 +73,28 @@ public class Database implements Serializable {
 
     public Database(Long id) {
         this.id = id;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("dbtype", typeId.getName());
+        map.put("host", host);
+        map.put("port", port);
+        map.put("database", databaseName);
+        map.put("user", username);
+        map.put("password", password);
+        // Oracle specific:
+        map.put("schema", schema);
+        map.put("instance", instance);
+        // MS Access specific:
+        map.put("url", url);
+        map.put("srs", srs);
+        // TODO: check of deze ok zijn!
+        map.put("column_x", colX);
+        map.put("column_y", colY);
+
+        return map;
     }
 
     public Long getId() {

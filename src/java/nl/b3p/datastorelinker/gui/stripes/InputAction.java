@@ -15,6 +15,9 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.entity.InoutDatatype;
+import nl.b3p.geotools.data.linker.util.DataStoreUtil;
+import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.hibernate.Session;
 
 /**
@@ -25,16 +28,22 @@ public class InputAction extends DefaultAction {
     private final static Log log = Log.getInstance(InputAction.class);
 
     private final static String LIST_JSP = "/pages/main/input/list.jsp";
+    private final static String TABLE_LIST_JSP = "/pages/main/input/table/list.jsp";
     private final static String CREATE_DATABASE_JSP = "/pages/main/input/database/create.jsp";
     private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
 
     private List<Inout> inputs;
+    private Long selectedInputId;
 
     private List<Database> databases;
-    private Database selectedDatabase;
+    private Long selectedDatabaseId;
 
     private List<File> files;
-    private File selectedFile;
+    private Long selectedFileId;
+
+    private List<String> tables;
+    private List<String> failedTables;
+    private String selectedTable;
 
     /*@DefaultHandler
     public Resolution overview() {
@@ -67,11 +76,19 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        // TODO: stop in DB...
+        Database selectedDatabase = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
+
+        Inout dbInput = new Inout();
+        dbInput.setTypeId(1); // input
+        dbInput.setDatatypeId(new InoutDatatype(1)); // database
+        dbInput.setDatabaseId(selectedDatabase);
+        dbInput.setTableName(selectedTable);
+
+        Long newId = (Long)session.save(dbInput);
 
         inputs = session.createQuery("from Inout where typeId = 1").list();
 
-        // TODO: zet nieuwe record voor jsp om te selecteren
+        selectedInputId = newId;
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -79,6 +96,31 @@ public class InputAction extends DefaultAction {
     @Transactional
     public Resolution createFileInputComplete() {
         return new ForwardResolution(LIST_JSP);
+    }
+
+    public Resolution createTablesList() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        Database selectedDatabase = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
+
+        try {
+            DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toMap());
+
+            if (dataTypeList != null) {
+
+                tables = dataTypeList.getGood();
+                failedTables = dataTypeList.getBad();
+
+                return new ForwardResolution(TABLE_LIST_JSP);
+            } else {
+                throw new Exception("Error getting datatypes from DataStore.");
+            }
+        } catch(Exception e) {
+            log.error("Tables fetch error.");
+            // TODO: error to screen? Stripes / jQuery
+            return new ForwardResolution(TABLE_LIST_JSP);
+        }
     }
 
     public List<Inout> getInputs() {
@@ -97,12 +139,12 @@ public class InputAction extends DefaultAction {
         this.databases = databases;
     }
 
-    public Database getSelectedDatabase() {
-        return selectedDatabase;
+    public Long getSelectedDatabaseId() {
+        return selectedDatabaseId;
     }
 
-    public void setSelectedDatabase(Database selectedDatabase) {
-        this.selectedDatabase = selectedDatabase;
+    public void setSelectedDatabaseId(Long selectedDatabaseId) {
+        this.selectedDatabaseId = selectedDatabaseId;
     }
 
     public List<File> getFiles() {
@@ -113,12 +155,44 @@ public class InputAction extends DefaultAction {
         this.files = files;
     }
 
-    public File getSelectedFile() {
-        return selectedFile;
+    public Long getSelectedFileId() {
+        return selectedFileId;
     }
 
-    public void setSelectedFile(File selectedFile) {
-        this.selectedFile = selectedFile;
+    public void setSelectedFileId(Long selectedFileId) {
+        this.selectedFileId = selectedFileId;
+    }
+
+    public Long getSelectedInputId() {
+        return selectedInputId;
+    }
+
+    public void setSelectedInputId(Long selectedInputId) {
+        this.selectedInputId = selectedInputId;
+    }
+
+    public List<String> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<String> tables) {
+        this.tables = tables;
+    }
+
+    public String getSelectedTable() {
+        return selectedTable;
+    }
+
+    public void setSelectedTable(String selectedTable) {
+        this.selectedTable = selectedTable;
+    }
+
+    public List<String> getFailedTables() {
+        return failedTables;
+    }
+
+    public void setFailedTables(List<String> failedTables) {
+        this.failedTables = failedTables;
     }
 
 }

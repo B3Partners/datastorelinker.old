@@ -30,13 +30,14 @@ public class ProcessAction extends DefaultAction {
     private List<Process> processes;
 
     private List<Inout> inputs;
+    private Long selectedInputId;
     private List<Inout> inputsFile;
     private List<Inout> inputsDB;
     private List<Inout> outputs;
     
     private Long processId;
 
-    private Long inputId;
+
     private Long outputId;
     private Long actionsId;
 
@@ -75,8 +76,8 @@ public class ProcessAction extends DefaultAction {
 
     @Transactional
     public Resolution createComplete() {
-        log.debug("newComplete; inputId: " + inputId);
-        log.debug("newComplete; outputId: " + outputId);
+        log.debug("newComplete; inputId: " + selectedInputId);
+        //log.debug("newComplete; outputId: " + outputId);
         //log.debug("newComplete; actionsId: " + actionsId);
 
         // ...
@@ -148,14 +149,6 @@ public class ProcessAction extends DefaultAction {
         this.processId = processId;
     }
 
-    public Long getInputId() {
-        return inputId;
-    }
-
-    public void setInputId(Long inputId) {
-        this.inputId = inputId;
-    }
-
     public Long getOutputId() {
         return outputId;
     }
@@ -170,5 +163,13 @@ public class ProcessAction extends DefaultAction {
 
     public void setActionsId(Long actionsId) {
         this.actionsId = actionsId;
+    }
+
+    public Long getSelectedInputId() {
+        return selectedInputId;
+    }
+
+    public void setSelectedInputId(Long selectedInputId) {
+        this.selectedInputId = selectedInputId;
     }
 }

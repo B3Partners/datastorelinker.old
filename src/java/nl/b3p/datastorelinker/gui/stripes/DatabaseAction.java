@@ -28,7 +28,7 @@ public class DatabaseAction extends DefaultAction {
     private final static String LIST_JSP = "/pages/main/database/list.jsp";
 
     private List<Database> databases;
-    private Database selectedDatabase;
+    private Long selectedDatabaseId;
 
     // PostGIS specific:
     private Integer dbType;
@@ -97,12 +97,13 @@ public class DatabaseAction extends DefaultAction {
         }
 
         // TODO: wat als DB met zelfde inhoud al aanwezig is?
-        // waarschuwing? saveOrUpdate? gaat dat wel goed met niet gepersiste "new Database()"?
+        // waarschuwing? saveOrUpdate? 
         Serializable newId = session.save(database);
+        log.debug(newId);
         
         databases = session.createQuery("from Database").list();
 
-        selectedDatabase = database;
+        selectedDatabaseId = database.getId();
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -219,12 +220,12 @@ public class DatabaseAction extends DefaultAction {
         this.colY = colY;
     }
 
-    public Database getSelectedDatabase() {
-        return selectedDatabase;
+    public Long getSelectedDatabaseId() {
+        return selectedDatabaseId;
     }
 
-    public void setSelectedDatabase(Database selectedDatabase) {
-        this.selectedDatabase = selectedDatabase;
+    public void setSelectedDatabase(Long selectedDatabaseId) {
+        this.selectedDatabaseId = selectedDatabaseId;
     }
 
 }

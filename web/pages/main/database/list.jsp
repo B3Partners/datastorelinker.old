@@ -8,11 +8,11 @@
 <stripes:form partial="true" action="/">
     <c:forEach var="database" items="${actionBean.databases}" varStatus="status">
         <c:choose>
-            <c:when test="${not empty actionBean.selectedDatabase and database.id == actionBean.selectedDatabase.id}">
-                <input type="radio" id="database${status.index}" name="databaseId" value="${database.id}" checked="checked" />
+            <c:when test="${not empty actionBean.selectedDatabaseId and database.id == actionBean.selectedDatabaseId}">
+                <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" checked="checked" />
             </c:when>
             <c:otherwise>
-                <input type="radio" id="database${status.index}" name="databaseId" value="${database.id}" />
+                <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" />
             </c:otherwise>
         </c:choose>
         <stripes:label for="database${status.index}">

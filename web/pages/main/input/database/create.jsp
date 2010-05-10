@@ -33,8 +33,24 @@
             textNext : "Volgende",
             textBack : "Vorige",
             textSubmit : "Voltooien",
-            inAnimation : "slideDown", //"show",
-            outAnimation : "slideUp" //"hide"
+            inAnimation : "slideDown",
+            outAnimation : "slideUp",
+            afterNext : function(wizardData) {
+                log(wizardData.currentStep);
+                if (wizardData.currentStep === "SelecteerTabel") {
+                    log("createTablesList&selectedDatabaseId=" + $("#createInputForm")[0].selectedDatabaseId);
+                    $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                        // the Form Wizard plugin messes up the form, therefore this abomination:
+                        // still doesn't work, still messed up
+                        // Use ui-selected -> send
+                        "createTablesList&selectedDatabaseId=" + $("#createInputForm")[0].selectedDatabaseId,
+                        function(data) {
+                            log("table success!");
+                            $("#tablesList").html(data);
+                            $("#tablesList").buttonset();
+                    });
+                }
+            }
         }, {
             //validation settings
         }, {
@@ -107,6 +123,9 @@
     </div>
     <div id="SelecteerTabel" class="step submitstep">
         <h1>Selecteer tabel:</h1>
+        <div id="tablesList" class="radioList">
+            Bezig met laden...
+        </div>
     </div>
 
     <div class="wizardButtonsArea">

@@ -18,7 +18,7 @@
 
             <title>${pageTitle}</title>
 
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.custom.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.1.custom.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.uploadify/uploadify.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/extra.css" />
 
