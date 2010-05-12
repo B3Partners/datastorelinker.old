@@ -32,11 +32,36 @@
                     createProcessDialog.remove();
                 }
             });
-            
+
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>", "create", function(data) {
                 $("#createProcessContainer").html(data);
             });
-            
+
+            return false;
+        });
+
+        $("#updateProcess").click(function() {
+            $("<div id='updateProcessContainer'/>").appendTo(document.body);
+
+            createProcessDialog = $("#updateProcessContainer").dialog({
+                title: "Bewerk Proces...", // TODO: localization
+                width: 900,
+                height: 600,
+                modal: true,
+                close: function() {
+                    log("updateProcessDialog closing");
+                    // beetje lelijk dat we hier hetzelfde id als bij create gebruiken:
+                    if ($("#createProcessForm")) {
+                        $("#createProcessForm").formwizard("destroy");
+                    }
+                    createProcessDialog.dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    createProcessDialog.remove();
+                }
+            });
+
+            ajaxFormEventInto("#processForm", "update", "#updateProcessContainer");
+
             return false;
         });
 

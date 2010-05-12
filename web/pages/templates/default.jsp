@@ -41,6 +41,7 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.uploadify/swfobject.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.uploadify/jquery.uploadify.latest.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajaxformutils.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard.config.js.jsp"></script>
 
             <stripes:layout-component name="head"/>
         </head>

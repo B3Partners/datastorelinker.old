@@ -77,17 +77,19 @@ public class ProcessAction extends DefaultAction {
 
     @Transactional
     public Resolution createComplete() {
-        log.debug("Process createComplete; inputId: " + selectedInputId);
-        log.debug("Process createComplete; outputId: " + selectedOutputId);
-        //log.debug("newComplete; actionsId: " + actionsId);
-
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
         Inout input = (Inout)session.get(Inout.class, selectedInputId);
         Inout output = (Inout)session.get(Inout.class, selectedOutputId);
 
-        nl.b3p.datastorelinker.entity.Process process = new nl.b3p.datastorelinker.entity.Process();
+        nl.b3p.datastorelinker.entity.Process process;
+        if (selectedProcessId == null)
+            process = new nl.b3p.datastorelinker.entity.Process();
+        else
+            process = (nl.b3p.datastorelinker.entity.Process)
+                    session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+        
         // TODO: custom name:
         process.setName(input.getName() + " -> " + output.getName());
         process.setInputId(input);
@@ -95,14 +97,28 @@ public class ProcessAction extends DefaultAction {
 
         // TODO: actionsId erbij
 
-        selectedProcessId = (Long)session.save(process);
+        if (selectedProcessId == null)
+            selectedProcessId = (Long)session.save(process);
+        //else // automatic saveOrUpdate
+            //session.saveOrUpdate(process);
+        
         processes = session.createQuery("from Process order by name").list();
 
         return new ForwardResolution(LIST_JSP);
     }
 
     public Resolution update() {
-        return new ForwardResolution(JSP);
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+        selectedInputId = process.getInputId().getId();
+        selectedOutputId = process.getOutputId().getId();
+        // TODO: add actions id(s)
+
+        return create();
     }
 
     public Resolution delete() {

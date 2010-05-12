@@ -16,22 +16,10 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
-        $("#createInputForm").formwizard( {
-            //form wizard settings
-            historyEnabled : false,
-            formPluginEnabled : true,
-            validationEnabled : false,
-            focusFirstInput : true,
-            textNext : "Volgende",
-            textBack : "Vorige",
-            textSubmit : "Voltooien",
-            inAnimation : "slideDown",
-            outAnimation : "slideUp"
-        }, {
+        $("#createInputForm").formwizard(formWizardConfig, {
             //validation settings
         }, {
             // form plugin settings
-            //target: "#filesList",
             beforeSend: function() {
                 // beetje een lelijke hack, maar werkt wel mooi:
                 ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputList", function() {
@@ -40,11 +28,7 @@
                     $("#inputList").buttonset();
                 });
                 return false;
-            }/*,
-            success: function() {
-                log("success!");
-                createInputFileDialog.dialog("close");
-            }*/
+            }
         });
 
         $("#createFile").click(function() {

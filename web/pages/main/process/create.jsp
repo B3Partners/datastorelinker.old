@@ -22,26 +22,11 @@
         $("#updateOutput").button();
         $("#deleteOutput").button();
 
-        $("#createProcessForm").formwizard( {
-            //form wizard settings
-            historyEnabled : false,
-            formPluginEnabled : true,
-            validationEnabled : false,
-            focusFirstInput : true,
-            textNext : "Volgende",
-            textBack : "Vorige",
-            textSubmit : "Voltooien",
-            inAnimation : "slideDown", //"show",
-            outAnimation : "slideUp" //"hide"
-        }, {
+        $("#createProcessForm").formwizard(
+        formWizardConfig, {
             //validation settings
         }, {
             // form plugin settings
-            /*target: "#ui-tabs-1",
-            success: function() {
-                log("success!");
-                createProcessDialog.dialog("close");
-            },*/
             beforeSend: function() {
                 // beetje een lelijke hack, maar werkt wel mooi:
                 ajaxFormEventInto("#createProcessForm", "createComplete", "#processesList", function() {
@@ -115,7 +100,6 @@
                 modal: true,
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
-                        // is deze button wel disabled totdat dialog alles ready is
                         ajaxFormEventInto("#postgisForm", "createComplete", "#outputList", function() {
                             createOutputDialog.dialog("close");
                             $("#outputList").buttonset();
@@ -144,6 +128,8 @@
 </script>
 
 <stripes:form id="createProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+    <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->
+    <stripes:wizard-fields/>
     <div id="SelecteerInvoer" class="step">
         <h1>Selecteer bestand- of database-invoer:</h1>
         <div id="inputList" class="radioList">

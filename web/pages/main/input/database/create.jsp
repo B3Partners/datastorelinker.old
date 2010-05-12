@@ -16,35 +16,27 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
-        $("#createInputForm").formwizard( {
-            //form wizard settings
-            historyEnabled : false,
-            formPluginEnabled : true,
-            validationEnabled : false,
-            focusFirstInput : true,
-            textNext : "Volgende",
-            textBack : "Vorige",
-            textSubmit : "Voltooien",
-            inAnimation : "slideDown",
-            outAnimation : "slideUp",
-            afterNext : function(wizardData) {
-                log(wizardData.currentStep);
-                if (wizardData.currentStep === "SelecteerTabel") {
-                    log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value);
-                    $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                        "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value,
-                        function(data) {
-                            log("table success!");
-                            $("#tablesList").html(data);
-                            $("#tablesList").buttonset();
-                    });
-                }
+        // originele config wordt hier gecloned zodat we extra config kunnen toevoegen (bv afterNext)
+        // die we niet in andere form wizards willen hebben
+        formWizardConfigInputForm = eval(formWizardConfig.toSource());
+        formWizardConfigInputForm.afterNext = function(wizardData) {
+            log(wizardData.currentStep);
+            if (wizardData.currentStep === "SelecteerTabel") {
+                log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value);
+                $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                    "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value,
+                    function(data) {
+                        log("table success!");
+                        $("#tablesList").html(data);
+                        $("#tablesList").buttonset();
+                });
             }
-        }, {
+        };
+
+        $("#createInputForm").formwizard(formWizardConfigInputForm, {
             //validation settings
         }, {
             // form plugin settings
-            //target: "#databasesList",
             beforeSend: function() {
                 // beetje een lelijke hack, maar werkt wel mooi:
                 ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputList", function() {
@@ -53,11 +45,7 @@
                     $("#inputList").buttonset();
                 });
                 return false;
-            }/*,
-            success: function() {
-                log("success!");
-                createInputDBDialog.dialog("close");
-            }*/
+            }
         });
 
         $("#createDB").click(function() {

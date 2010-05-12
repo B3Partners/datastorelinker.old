@@ -8,7 +8,7 @@
 <stripes:form partial="true" action="/">
     <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
         <c:choose>
-            <c:when test="${not empty actionBean.selectedInputId and file.id == actionBean.selectedInputId}">
+            <c:when test="${not empty actionBean.selectedInputId and input.id == actionBean.selectedInputId}">
                 <input type="radio" id="input${status.index}" name="selectedInputId" value="${input.id}" checked="checked"/>
             </c:when>
             <c:otherwise>
@@ -16,18 +16,7 @@
             </c:otherwise>
         </c:choose>
         <stripes:label for="input${status.index}">
-            <!-- TODO: alleen opgeslagen naam (+ tabelname) gebruiken -->
-            <c:choose>
-                <c:when test="${input.datatypeId.id == 1}">
-                    <c:out value="${input.name}"/>
-                </c:when>
-                <c:when test="${input.datatypeId.id == 2}">
-                    <c:out value="${input.name}"/>
-                </c:when>
-            </c:choose>
-            <c:if test="${not empty input.tableName}">
-                (<c:out value="${input.tableName}"/>)
-            </c:if>
+            <c:out value="${input.name}"/>
         </stripes:label>
     </c:forEach>
 </stripes:form>
