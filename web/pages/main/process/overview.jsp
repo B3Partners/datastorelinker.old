@@ -5,13 +5,6 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<style type="text/css">
-    #processesList { width: 50%; margin-top: 10px; margin-bottom: 10px }
-    #processesList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
-    #processesList .ui-state-hover { background: #FECA40; }
-    #processesList .ui-state-active { background: #f2d81c; }
-</style>
-
 <script type="text/javascript">
     $(function() {
         $("#processesList").buttonset();
@@ -31,8 +24,8 @@
                 modal: true,
                 close: function() {
                     log("createProcessDialog closing");
-                    if ($("#createProcessWizardForm")) {
-                        $("#createProcessWizardForm").formwizard("destroy");
+                    if ($("#createProcessForm")) {
+                        $("#createProcessForm").formwizard("destroy");
                     }
                     createProcessDialog.dialog("destroy");
                     // volgende regel heel belangrijk!!
@@ -78,11 +71,8 @@
 <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <stripes:label for="main.process.overview.text.overview"/>:
 
-    <div id="processesList">
-        <c:forEach var="process" items="${actionBean.processes}" varStatus="status">
-            <stripes:radio id="process${status.index}" name="processId" value="${process.id}"/>
-            <stripes:label for="process${status.index}"><c:out value="${process.name}"/></stripes:label>
-        </c:forEach>
+    <div id="processesList" class="radioList">
+        <%@include file="/pages/main/process/list.jsp" %>
     </div>
 
     <div id="buttonPanel">

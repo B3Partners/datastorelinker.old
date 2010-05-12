@@ -9,10 +9,10 @@
     <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
         <c:choose>
             <c:when test="${not empty actionBean.selectedInputId and file.id == actionBean.selectedInputId}">
-                <stripes:radio id="input${status.index}" name="selectedInputId" value="${input.id}" checked="checked"/>
+                <input type="radio" id="input${status.index}" name="selectedInputId" value="${input.id}" checked="checked"/>
             </c:when>
             <c:otherwise>
-                <stripes:radio id="input${status.index}" name="selectedInputId" value="${input.id}"/>
+                <input type="radio" id="input${status.index}" name="selectedInputId" value="${input.id}"/>
             </c:otherwise>
         </c:choose>
         <stripes:label for="input${status.index}">

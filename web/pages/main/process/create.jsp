@@ -5,19 +5,6 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<style type="text/css">
-    .step {margin-bottom: 10px}
-
-    #inputList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
-    #inputList .ui-state-hover { background: #FECA40; }
-    #inputList .ui-state-active { background: #f2d81c; }
-
-    #outputList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
-    #outputList .ui-state-hover { background: #FECA40; }
-    #outputList .ui-state-active { background: #f2d81c; }
-
-</style>
-
 <script type="text/javascript">
     $(function() {
         $("#inputList").buttonset();
@@ -31,7 +18,7 @@
         $("#updateInput").button();
         $("#deleteInput").button();
 
-        $("#createProcessWizardForm").formwizard( {
+        $("#createProcessForm").formwizard( {
             //form wizard settings
             historyEnabled : false,
             formPluginEnabled : true,
@@ -46,10 +33,19 @@
             //validation settings
         }, {
             // form plugin settings
-            target: "#ui-tabs-1",
+            /*target: "#ui-tabs-1",
             success: function() {
                 log("success!");
                 createProcessDialog.dialog("close");
+            },*/
+            beforeSend: function() {
+                // beetje een lelijke hack, maar werkt wel mooi:
+                ajaxFormEventInto("#createProcessForm", "createComplete", "#processesList", function() {
+                    log("success!");
+                    createProcessDialog.dialog("close");
+                    $("#processesList").buttonset();
+                });
+                return false;
             }
         });
 
@@ -109,7 +105,7 @@
 
 </script>
 
-<stripes:form id="createProcessWizardForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+<stripes:form id="createProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <div id="SelecteerInvoer" class="step">
         <h1>Selecteer bestand- of database-invoer:</h1>
         <div id="inputList" class="radioList">

@@ -24,21 +24,22 @@ public class ProcessAction extends DefaultAction {
     private final static Log log = Log.getInstance(ProcessAction.class);
     
     private final static String JSP = "/pages/main/process/overview.jsp";
+    private final static String LIST_JSP = "/pages/main/process/list.jsp";
     private final static String CREATE_JSP = "/pages/main/process/create.jsp";
     private final static String EXECUTE_JSP = "/pages/main/process/execute.jsp";
     
     private List<Process> processes;
-
+    private Long selectedProcessId;
+    
     private List<Inout> inputs;
     private Long selectedInputId;
+
     private List<Inout> inputsFile;
     private List<Inout> inputsDB;
-    private List<Inout> outputs;
     
-    private Long processId;
-
-
-    private Long outputId;
+    private List<Inout> outputs;
+    private Long selectedOutputId;
+    
     private Long actionsId;
 
 
@@ -76,13 +77,28 @@ public class ProcessAction extends DefaultAction {
 
     @Transactional
     public Resolution createComplete() {
-        log.debug("newComplete; inputId: " + selectedInputId);
-        //log.debug("newComplete; outputId: " + outputId);
+        log.debug("Process createComplete; inputId: " + selectedInputId);
+        log.debug("Process createComplete; outputId: " + selectedOutputId);
         //log.debug("newComplete; actionsId: " + actionsId);
 
-        // ...
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
 
-        return overview(); // TODO: auto-select just created process
+        Inout input = (Inout)session.get(Inout.class, selectedInputId);
+        Inout output = (Inout)session.get(Inout.class, selectedOutputId);
+
+        nl.b3p.datastorelinker.entity.Process process = new nl.b3p.datastorelinker.entity.Process();
+        // TODO: custom name:
+        process.setName(input.getName() + " -> " + output.getName());
+        process.setInputId(input);
+        process.setOutputId(output);
+
+        // TODO: actionsId erbij
+
+        selectedProcessId = (Long)session.save(process);
+        processes = session.createQuery("from Process order by name").list();
+
+        return new ForwardResolution(LIST_JSP);
     }
 
     public Resolution update() {
@@ -94,7 +110,7 @@ public class ProcessAction extends DefaultAction {
     }
 
     public Resolution execute() {
-        log.debug("Executing process with id: " + processId);
+        log.debug("Executing process with id: " + selectedProcessId);
 
         // ...
         
@@ -141,22 +157,6 @@ public class ProcessAction extends DefaultAction {
         this.inputsDB = inputsDB;
     }
 
-    public Long getProcessId() {
-        return processId;
-    }
-
-    public void setProcessId(Long processId) {
-        this.processId = processId;
-    }
-
-    public Long getOutputId() {
-        return outputId;
-    }
-
-    public void setOutputId(Long outputId) {
-        this.outputId = outputId;
-    }
-
     public Long getActionsId() {
         return actionsId;
     }
@@ -171,5 +171,21 @@ public class ProcessAction extends DefaultAction {
 
     public void setSelectedInputId(Long selectedInputId) {
         this.selectedInputId = selectedInputId;
+    }
+
+    public Long getSelectedOutputId() {
+        return selectedOutputId;
+    }
+
+    public void setSelectedOutputId(Long selectedOutputId) {
+        this.selectedOutputId = selectedOutputId;
+    }
+
+    public Long getSelectedProcessId() {
+        return selectedProcessId;
+    }
+
+    public void setSelectedProcessId(Long selectedProcessId) {
+        this.selectedProcessId = selectedProcessId;
     }
 }

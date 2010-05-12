@@ -5,14 +5,6 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<style type="text/css">
-    .step {margin-bottom: 10px}
-
-    #databasesList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
-    #databasesList .ui-state-hover { background: #FECA40; }
-    #databasesList .ui-state-active { background: #f2d81c; }
-</style>
-
 <script type="text/javascript">
     $(function() {
         $("#createDB").button();
@@ -38,12 +30,9 @@
             afterNext : function(wizardData) {
                 log(wizardData.currentStep);
                 if (wizardData.currentStep === "SelecteerTabel") {
-                    log("createTablesList&selectedDatabaseId=" + $("#createInputForm")[0].selectedDatabaseId);
+                    log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value);
                     $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                        // the Form Wizard plugin messes up the form, therefore this abomination:
-                        // still doesn't work, still messed up
-                        // Use ui-selected -> send
-                        "createTablesList&selectedDatabaseId=" + $("#createInputForm")[0].selectedDatabaseId,
+                        "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value,
                         function(data) {
                             log("table success!");
                             $("#tablesList").html(data);

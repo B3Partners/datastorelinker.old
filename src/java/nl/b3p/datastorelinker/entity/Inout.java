@@ -53,6 +53,9 @@ public class Inout implements Serializable {
     @JoinColumn(name = "datatype_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private InoutDatatype datatypeId;
+    @Basic(optional = false)
+    @Column(name = "name")
+    private String name;
 
     public Inout() {
     }
@@ -128,6 +131,14 @@ public class Inout implements Serializable {
 
     public void setDatatypeId(InoutDatatype datatypeId) {
         this.datatypeId = datatypeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

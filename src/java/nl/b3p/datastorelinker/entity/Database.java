@@ -36,6 +36,7 @@ public class Database implements Serializable {
     @Column(name = "id")
     @GeneratedValue
     private Long id;
+    @Basic(optional = false)
     @Column(name = "name")
     private String name;
     @Column(name = "host")

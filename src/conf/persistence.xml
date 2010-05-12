@@ -5,8 +5,11 @@
     <properties>
       <property name="hibernate.connection.username" value="postgres"/>
       <property name="hibernate.connection.password" value="***REMOVED***"/>
-      <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
       <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/>
+      <!--property name="hibernate.connection.username" value="dsl"/>
+      <property name="hibernate.connection.password" value="dsl"/>
+      <property name="hibernate.connection.url" value="jdbc:postgresql://x5.b3p.nl:5432/datastorelinker"/-->
+      <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
 
       <!--property name="hibernate.dialect" value="org.hibernatespatial.postgis.PostgisDialect"/-->

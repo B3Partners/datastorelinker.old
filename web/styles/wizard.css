@@ -1,4 +1,4 @@
-/* 
+/*
     Document   : extra
     Created on : 7-mei-2010, 18:17:45
     Author     : Erik van de Pol
@@ -6,16 +6,37 @@
         Purpose of the stylesheet follows.
 */
 
-/* 
+/*
    TODO customize this sample style
    Syntax recommendation http://www.w3.org/TR/REC-CSS2/
 */
 
+.step {
+    margin-bottom: 10px
+}
+
 .radioList {
     /*width: 50%;*/
+    height: 250px;
     max-height: 250px;
     overflow: auto;
     margin: 10px 0 10px 0;
+}
+
+.radioList .ui-button {
+    margin: 3px;
+    display: block;
+    text-align: left;
+    background: #eeeeee;
+    color: black
+}
+
+.radioList .ui-state-hover {
+    background: #FECA40;
+}
+
+.radioList .ui-state-active {
+    background: #f2d81c;
 }
 
 .wizardButtonsArea {

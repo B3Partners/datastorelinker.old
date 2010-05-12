@@ -20,7 +20,7 @@
 
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.1.custom.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.uploadify/uploadify.css" />
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/extra.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
 
             <!--link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css">
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/b3p.css">

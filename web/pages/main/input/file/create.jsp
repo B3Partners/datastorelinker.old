@@ -5,14 +5,6 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<style type="text/css">
-    .step {margin-bottom: 10px}
-
-    #filesList .ui-button { margin: 3px; display: block; text-align: left; background: #eeeeee; color: black }
-    #filesList .ui-state-hover { background: #FECA40; }
-    #filesList .ui-state-active { background: #f2d81c; }
-</style>
-
 <script type="text/javascript">
     $(function() {
         $("#createFile").button();

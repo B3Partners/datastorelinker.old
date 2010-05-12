@@ -117,7 +117,7 @@ public class InputAction extends DefaultAction {
                 throw new Exception("Error getting datatypes from DataStore.");
             }
         } catch(Exception e) {
-            log.error("Tables fetch error.");
+            log.error("Tables fetch error: " + e.getMessage());
             // TODO: error to screen? Stripes / jQuery
             return new ForwardResolution(TABLE_LIST_JSP);
         }

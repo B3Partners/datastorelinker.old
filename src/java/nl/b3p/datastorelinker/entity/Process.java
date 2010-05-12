@@ -36,7 +36,7 @@ public class Process implements Serializable {
     @Column(name = "name")
     private String name;
     @JoinColumn(name = "actions_id", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Actions actionsId;
     @JoinColumn(name = "input_id", referencedColumnName = "id")
     @ManyToOne(optional = false)

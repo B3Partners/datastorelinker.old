@@ -7,7 +7,7 @@
 
 <stripes:form partial="true" action="/">
     <c:forEach var="output" items="${actionBean.outputs}" varStatus="status">
-        <stripes:radio id="output${status.index}" name="outputId" value="${output.id}"/>
+        <stripes:radio id="output${status.index}" name="selectedOutputId" value="${output.id}"/>
         <stripes:label for="output${status.index}">
             <c:out value="${output.databaseId.name}"/>
         </stripes:label>
