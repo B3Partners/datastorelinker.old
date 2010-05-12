@@ -12,42 +12,43 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
+import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.entity.InoutDatatype;
 import org.hibernate.Session;
 
 /**
  *
  * @author Erik van de Pol
  */
-public class OutputAction extends DefaultAction {
-    private final static Log log = Log.getInstance(OutputAction.class);
+public class OutputAction extends DatabaseAction {
+    static {
+        log = Log.getInstance(OutputAction.class);
 
-    private final static String LIST_JSP = "/pages/main/output/list.jsp";
-
-    private List<Inout> outputs;
-
-    /*@DefaultHandler
-    public Resolution overview() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        return new ForwardResolution(JSP);
-    }*/
-
-    public Resolution create() {
-        return new ForwardResolution(LIST_JSP);
+        CREATE_JSP = "/pages/main/output/create.jsp";
+        LIST_JSP = "/pages/main/output/list.jsp";
     }
 
+    private List<Inout> outputs;
+    private Long selectedOutputId;
+
+    @Override
     @Transactional
     public Resolution createComplete() {
+        Database database = saveDatabase();
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        // TODO: stop in DB...
+        Inout output = new Inout();
+        output.setTypeId(2); // output
+        output.setDatatypeId(new InoutDatatype(1)); // database
+        output.setDatabaseId(database);
+        output.setName(database.getName());
+        // no tablename needed.
 
+        selectedOutputId = (Long)session.save(output);
         outputs = session.createQuery("from Inout where typeId = 2").list();
-
-        // TODO: zet nieuwe record voor jsp om te selecteren
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -58,6 +59,14 @@ public class OutputAction extends DefaultAction {
 
     public void setOutputs(List<Inout> outputs) {
         this.outputs = outputs;
+    }
+
+    public Long getSelectedOutputId() {
+        return selectedOutputId;
+    }
+
+    public void setSelectedOutputId(Long selectedOutputId) {
+        this.selectedOutputId = selectedOutputId;
     }
 
 }

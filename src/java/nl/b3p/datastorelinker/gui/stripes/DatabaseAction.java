@@ -22,10 +22,10 @@ import org.hibernate.Session;
  * @author Erik van de Pol
  */
 public class DatabaseAction extends DefaultAction {
-    private final static Log log = Log.getInstance(DatabaseAction.class);
+    protected static Log log = Log.getInstance(DatabaseAction.class);
 
-    private final static String CREATE_JSP = "/pages/main/database/create.jsp";
-    private final static String LIST_JSP = "/pages/main/database/list.jsp";
+    protected static String CREATE_JSP = "/pages/main/database/create.jsp";
+    protected static String LIST_JSP = "/pages/main/database/list.jsp";
 
     private List<Database> databases;
     private Long selectedDatabaseId;
@@ -53,6 +53,17 @@ public class DatabaseAction extends DefaultAction {
     }
 
     public Resolution createComplete() {
+        Database db = saveDatabase();
+        selectedDatabaseId = db.getId();
+
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        databases = session.createQuery("from Database").list();
+
+        return new ForwardResolution(LIST_JSP);
+    }
+
+    protected Database saveDatabase() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -96,17 +107,11 @@ public class DatabaseAction extends DefaultAction {
                 return null;
         }
 
-        // TODO: wat als DB met zelfde inhoud al aanwezig is?
-        // waarschuwing? saveOrUpdate? 
-        Serializable newId = session.save(database);
-        log.debug(newId);
+        // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing?
+        session.save(database);
         
-        databases = session.createQuery("from Database").list();
-
-        selectedDatabaseId = database.getId();
-
-        return new ForwardResolution(LIST_JSP);
-    }
+        return database;
+     }
 
     public List<Database> getDatabases() {
         return databases;

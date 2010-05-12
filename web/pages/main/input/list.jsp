@@ -16,12 +16,13 @@
             </c:otherwise>
         </c:choose>
         <stripes:label for="input${status.index}">
+            <!-- TODO: alleen opgeslagen naam (+ tabelname) gebruiken -->
             <c:choose>
                 <c:when test="${input.datatypeId.id == 1}">
-                    <c:out value="${input.databaseId.name}"/>
+                    <c:out value="${input.name}"/>
                 </c:when>
                 <c:when test="${input.datatypeId.id == 2}">
-                    <c:out value="${input.fileId.name}"/>
+                    <c:out value="${input.name}"/>
                 </c:when>
             </c:choose>
             <c:if test="${not empty input.tableName}">

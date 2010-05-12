@@ -2,12 +2,15 @@
  * Needs jquery.
  * 
  */
-function ajaxFormEventInto(formSelector, event, containerSelector, callback) {
-    form = $(formSelector).first();
-    params = {};
-    if (event != null) params = event + '&' + form.serialize();
+function ajaxFormEventInto(formSelector, event, containerSelector, callback, action) {
+    var form = $(formSelector).first();
+    var params = {};
+    if (!!event)
+        params = event + '&' + form.serialize();
     log(params);
-    $.post(form[0].action,
+    if (!action)
+        action = form[0].action
+    $.post(action,
             params,
             function (xml) {
                 $(containerSelector).first().html(xml);

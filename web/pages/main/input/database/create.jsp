@@ -71,7 +71,7 @@
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
                         // is deze button wel disabled totdat dialog alles ready is
-                        ajaxFormEventInto("#databaseInputAccordion .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
+                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
                             createDBDialog.dialog("close");
                             $("#databasesList").buttonset();
                         });

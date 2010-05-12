@@ -18,6 +18,10 @@
         $("#updateInput").button();
         $("#deleteInput").button();
 
+        $("#createOutput").button();
+        $("#updateOutput").button();
+        $("#deleteOutput").button();
+
         $("#createProcessForm").formwizard( {
             //form wizard settings
             historyEnabled : false,
@@ -101,6 +105,40 @@
             return false;
         });
 
+        $("#createOutput").click(function() {
+            $("<div id='createOutputContainer'/>").appendTo(document.body);
+
+            createOutputDialog = $("#createOutputContainer").dialog({
+                title: "Nieuwe Uitvoer Database...", // TODO: localization
+                width: 700,
+                height: 600,
+                modal: true,
+                buttons: { // TODO: localize button name:
+                    "Voltooien" : function() {
+                        // is deze button wel disabled totdat dialog alles ready is
+                        ajaxFormEventInto("#postgisForm", "createComplete", "#outputList", function() {
+                            createOutputDialog.dialog("close");
+                            $("#outputList").buttonset();
+                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+                    }
+                },
+                close: function() {
+                    log("createOutputContainer closing");
+                    createOutputDialog.dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    createOutputDialog.remove();
+                },
+                beforeclose: function(event, ui) {
+                    // TODO: check connection. if bad return false
+                    return true;
+                }
+            });
+
+            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>", "create", function(data) {
+                $("#createOutputContainer").html(data);
+            });
+        })
+
     });
 
 </script>
@@ -122,6 +160,11 @@
         <h1>Selecteer database om naar uit te voeren:</h1>
         <div id="outputList" class="radioList">
             <%@include file="/pages/main/output/list.jsp" %>
+        </div>
+        <div>
+            <stripes:button id="createOutput" name="create"/>
+            <stripes:button id="updateOutput" name="update"/>
+            <stripes:button id="deleteOutput" name="delete"/>
         </div>
     </div>
     <!--div id="secondStep" class="step">

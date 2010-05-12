@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
+import net.sourceforge.stripes.util.StringUtil;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
@@ -45,14 +46,6 @@ public class InputAction extends DefaultAction {
     private List<String> failedTables;
     private String selectedTable;
 
-    /*@DefaultHandler
-    public Resolution overview() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        return new ForwardResolution(JSP);
-    }*/
-
     public Resolution createDatabaseInput() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -83,6 +76,10 @@ public class InputAction extends DefaultAction {
         dbInput.setDatatypeId(new InoutDatatype(1)); // database
         dbInput.setDatabaseId(selectedDatabase);
         dbInput.setTableName(selectedTable);
+        String name = selectedDatabase.getName();
+        if (selectedTable != null && !selectedTable.equals(""))
+            name += " (" + selectedTable + ")";
+        dbInput.setName(name);
 
         Long newId = (Long)session.save(dbInput);
 
