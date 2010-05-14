@@ -28,6 +28,7 @@ public class DatabaseAction extends DefaultAction {
     protected static String LIST_JSP = "/pages/main/database/list.jsp";
 
     private List<Database> databases;
+    private Database selectedDatabase;
     private Long selectedDatabaseId;
 
     // PostGIS specific:
@@ -50,6 +51,15 @@ public class DatabaseAction extends DefaultAction {
     @DontValidate
     public Resolution create() {
         return new ForwardResolution(CREATE_JSP);
+    }
+    
+    public Resolution update() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
+
+        return create();
     }
 
     public Resolution createComplete() {
@@ -229,8 +239,16 @@ public class DatabaseAction extends DefaultAction {
         return selectedDatabaseId;
     }
 
-    public void setSelectedDatabase(Long selectedDatabaseId) {
+    public void setSelectedDatabaseId(Long selectedDatabaseId) {
         this.selectedDatabaseId = selectedDatabaseId;
+    }
+
+    public Database getSelectedDatabase() {
+        return selectedDatabase;
+    }
+
+    public void setSelectedDatabase(Database selectedDatabase) {
+        this.selectedDatabase = selectedDatabase;
     }
 
 }

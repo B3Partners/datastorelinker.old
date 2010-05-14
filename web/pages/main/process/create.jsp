@@ -22,26 +22,27 @@
         $("#updateOutput").button();
         $("#deleteOutput").button();
 
-        $("#createProcessForm").formwizard(
-        formWizardConfig, {
-            //validation settings
-        }, {
-            // form plugin settings
-            beforeSend: function() {
-                // beetje een lelijke hack, maar werkt wel mooi:
-                ajaxFormEventInto("#createProcessForm", "createComplete", "#processesList", function() {
-                    log("success!");
-                    createProcessDialog.dialog("close");
-                    $("#processesList").buttonset();
-                });
-                return false;
+        $("#createUpdateProcessForm").formwizard(
+            formWizardConfig, {
+                //validation settings
+            }, {
+                // form plugin settings
+                beforeSend: function() {
+                    // beetje een lelijke hack, maar werkt wel mooi:
+                    ajaxFormEventInto("#createUpdateProcessForm", "createComplete", "#processesList", function() {
+                        log("success!");
+                        $("#processContainer").dialog("close");
+                        $("#processesList").buttonset();
+                    });
+                    return false;
+                }
             }
-        });
+        );
 
         $("#createInputDB").click(function() {
             $("<div id='createInputDBContainer'/>").appendTo(document.body);
 
-            createInputDBDialog = $("#createInputDBContainer").dialog({
+            $("#createInputDBContainer").dialog({
                 title: "Nieuwe Database-invoer...", // TODO: localization
                 width: 800,
                 height: 500,
@@ -51,9 +52,9 @@
                     if ($("#createInputForm")) {
                         $("#createInputForm").formwizard("destroy");
                     }
-                    createInputDBDialog.dialog("destroy");
+                    $("#createInputDBContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createInputDBDialog.remove();
+                    $("#createInputDBContainer").remove();
                 }
             });
 
@@ -67,7 +68,7 @@
         $("#createInputFile").click(function() {
             $("<div id='createInputFileContainer'/>").appendTo(document.body);
 
-            createInputFileDialog = $("#createInputFileContainer").dialog({
+            $("#createInputFileContainer").dialog({
                 title: "Nieuwe Bestandsinvoer...", // TODO: localization
                 width: 800,
                 height: 500,
@@ -77,9 +78,9 @@
                     if ($("#createInputForm")) {
                         $("#createInputForm").formwizard("destroy");
                     }
-                    createInputFileDialog.dialog("destroy");
+                    $("#createInputFileContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createInputFileDialog.remove();
+                    $("#createInputFileContainer").remove();
                 }
             });
 
@@ -90,10 +91,36 @@
             return false;
         });
 
+        $("#updateInput").click(function() {
+            $("<div id='updateInputContainer'/>").appendTo(document.body);
+
+            $("#updateInputContainer").dialog({
+                title: "Bewerk Invoer...", // TODO: localization
+                width: 800,
+                height: 500,
+                modal: true,
+                close: function() {
+                    log("updateProcessDialog closing");
+                    // beetje lelijk dat we hier hetzelfde id als bij create gebruiken:
+                    if ($("#processForm")) {
+                        $("#processForm").formwizard("destroy");
+                    }
+                    $("#updateInputContainer").dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    $("#updateInputContainer").remove();
+                }
+            });
+
+            ajaxFormEventInto("#processForm", "update", "#updateProcessContainer");
+
+            return false;
+        });
+
+
         $("#createOutput").click(function() {
             $("<div id='createOutputContainer'/>").appendTo(document.body);
 
-            createOutputDialog = $("#createOutputContainer").dialog({
+            $("#createOutputContainer").dialog({
                 title: "Nieuwe Uitvoer Database...", // TODO: localization
                 width: 700,
                 height: 600,
@@ -101,16 +128,16 @@
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
                         ajaxFormEventInto("#postgisForm", "createComplete", "#outputList", function() {
-                            createOutputDialog.dialog("close");
+                            $("#createOutputContainer").dialog("close");
                             $("#outputList").buttonset();
                         }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
                     }
                 },
                 close: function() {
                     log("createOutputContainer closing");
-                    createOutputDialog.dialog("destroy");
+                    $("#createOutputContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createOutputDialog.remove();
+                    $("#createOutputContainer").remove();
                 },
                 beforeclose: function(event, ui) {
                     // TODO: check connection. if bad return false
@@ -127,7 +154,7 @@
 
 </script>
 
-<stripes:form id="createProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+<stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->
     <stripes:wizard-fields/>
     <div id="SelecteerInvoer" class="step">

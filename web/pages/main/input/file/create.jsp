@@ -16,25 +16,28 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
-        $("#createInputForm").formwizard(formWizardConfig, {
-            //validation settings
-        }, {
-            // form plugin settings
-            beforeSend: function() {
-                // beetje een lelijke hack, maar werkt wel mooi:
-                ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputList", function() {
-                    log("success!");
-                    createInputFileDialog.dialog("close");
-                    $("#inputList").buttonset();
-                });
-                return false;
+        $("#createInputForm").formwizard(
+            formWizardConfig, {
+                //validation settings
+            }, {
+                // form plugin settings
+                beforeSend: function() {
+                    // beetje een lelijke hack, maar werkt wel mooi:
+                    ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputList", function() {
+                        log("success!");
+                        if ($("#createInputFileContainer"))
+                            $("#createInputFileContainer").dialog("close");
+                        $("#inputList").buttonset();
+                    });
+                    return false;
+                }
             }
-        });
+        );
 
         $("#createFile").click(function() {
             $("<div id='createFileContainer'/>").appendTo(document.body);
 
-            createFileDialog = $("#createFileContainer").dialog({
+            $("#createFileContainer").dialog({
                 title: "Nieuw Bestand...", // TODO: localization
                 width: 700,
                 height: 600,
@@ -43,7 +46,7 @@
                     "Voltooien" : function() {
                         // is deze button wel disabled totdat dialog alles ready is
                         $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>", "createComplete", function(data) {
-                            createFileDialog.dialog("close");
+                            $("#createFileContainer").dialog("close");
                             $("#filesList").html(data);
                             $("#filesList").buttonset();
                         });
@@ -51,9 +54,9 @@
                 },
                 close: function() {
                     log("createFileContainer closing");
-                    createFileDialog.dialog("destroy");
+                    $("#createFileContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createFileDialog.remove();
+                    $("#createFileContainer").remove();
                 }
             });
 

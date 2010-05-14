@@ -8,6 +8,10 @@
 <script type="text/javascript">
     $(function() {
         $("#databaseAccordion").accordion();
+        if (${not empty actionBean.selectedDatabase}) {
+            $("#databaseAccordion").accordion("activate", 
+                $("#databaseAccordion :hidden[name='dbtype'][value='${actionBean.selectedDatabase.typeId}']").parent().parent().prev()); // TODO: parent.parent.prev nog niet ok
+        }
     });
 </script>
 

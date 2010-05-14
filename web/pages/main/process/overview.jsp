@@ -15,60 +15,59 @@
         $("#executeProcess").button();
 
         $("#createProcess").click(function() {
-            $("<div id='createProcessContainer'/>").appendTo(document.body);
+            $("<div id='processContainer'/>").appendTo(document.body);
 
-            createProcessDialog = $("#createProcessContainer").dialog({
+            $("#processContainer").dialog({
                 title: "Nieuw Proces...", // TODO: localization
                 width: 900,
                 height: 600,
                 modal: true,
                 close: function() {
-                    log("createProcessDialog closing");
-                    if ($("#createProcessForm")) {
-                        $("#createProcessForm").formwizard("destroy");
+                    log("processDialog closing");
+                    if ($("#createUpdateProcessForm")) {
+                        $("#createUpdateProcessForm").formwizard("destroy");
                     }
-                    createProcessDialog.dialog("destroy");
+                    $("#processContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createProcessDialog.remove();
+                    $("#processContainer").remove();
                 }
             });
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>", "create", function(data) {
-                $("#createProcessContainer").html(data);
+                $("#processContainer").html(data);
             });
 
             return false;
         });
 
         $("#updateProcess").click(function() {
-            $("<div id='updateProcessContainer'/>").appendTo(document.body);
+            $("<div id='processContainer'/>").appendTo(document.body);
 
-            createProcessDialog = $("#updateProcessContainer").dialog({
+            $("#processContainer").dialog({
                 title: "Bewerk Proces...", // TODO: localization
                 width: 900,
                 height: 600,
                 modal: true,
                 close: function() {
-                    log("updateProcessDialog closing");
-                    // beetje lelijk dat we hier hetzelfde id als bij create gebruiken:
-                    if ($("#createProcessForm")) {
-                        $("#createProcessForm").formwizard("destroy");
+                    log("processDialog closing");
+                    if ($("#createUpdateProcessForm")) {
+                        $("#createUpdateProcessForm").formwizard("destroy");
                     }
-                    createProcessDialog.dialog("destroy");
+                    $("#processContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createProcessDialog.remove();
+                    $("#processContainer").remove();
                 }
             });
 
-            ajaxFormEventInto("#processForm", "update", "#updateProcessContainer");
+            ajaxFormEventInto("#processForm", "update", "#processContainer");
 
             return false;
         });
 
         $("#executeProcess").click(function() {
-            $("<div id='executeContainer'/>").appendTo($(document.body));
+            $("<div id='processContainer'/>").appendTo($(document.body));
 
-            executeProcessDialog = $("#executeContainer").dialog({
+            $("#processContainer").dialog({
                 title: "Proces uitvoeren...", // TODO: localization
                 width: 900,
                 height: 600,
@@ -79,13 +78,13 @@
                     }
                 },
                 close: function() {
-                    executeProcessDialog.dialog("destroy");
+                    $("#processContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    executeProcessDialog.remove();
+                    $("#processContainer").remove();
                 }
             });
             
-            ajaxFormEventInto("#processForm", "execute", "#executeContainer");
+            ajaxFormEventInto("#processForm", "execute", "#processContainer");
 
             return false;
         });

@@ -33,25 +33,28 @@
             }
         };
 
-        $("#createInputForm").formwizard(formWizardConfigInputForm, {
-            //validation settings
-        }, {
-            // form plugin settings
-            beforeSend: function() {
-                // beetje een lelijke hack, maar werkt wel mooi:
-                ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputList", function() {
-                    log("success!");
-                    createInputDBDialog.dialog("close");
-                    $("#inputList").buttonset();
-                });
-                return false;
+        $("#createInputForm").formwizard(
+            formWizardConfigInputForm, {
+                //validation settings
+            }, {
+                // form plugin settings
+                beforeSend: function() {
+                    // beetje een lelijke hack, maar werkt wel mooi:
+                    ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputList", function() {
+                        log("success!");
+                        if ($("#createInputDBContainer"))
+                            $("#createInputDBContainer").dialog("close");
+                        $("#inputList").buttonset();
+                    });
+                    return false;
+                }
             }
-        });
+        );
 
         $("#createDB").click(function() {
-            $("<div id='createDBContainer'/>").appendTo(document.body);
+            $("<div id='dbContainer'/>").appendTo(document.body);
 
-            createDBDialog = $("#createDBContainer").dialog({
+            $("#dbContainer").dialog({
                 title: "Nieuwe Database...", // TODO: localization
                 width: 700,
                 height: 600,
@@ -60,16 +63,16 @@
                     "Voltooien" : function() {
                         // is deze button wel disabled totdat dialog alles ready is
                         ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
-                            createDBDialog.dialog("close");
+                            $("#dbContainer").dialog("close");
                             $("#databasesList").buttonset();
                         });
                     }
                 },
                 close: function() {
-                    log("createDBContainer closing");
-                    createDBDialog.dialog("destroy");
+                    log("dbContainer closing");
+                    $("#dbContainer").dialog("destroy");
                     // volgende regel heel belangrijk!!
-                    createDBDialog.remove();
+                    $("#dbContainer").remove();
                 },
                 beforeclose: function(event, ui) {
                     // TODO: check connection. if bad return false
@@ -78,8 +81,41 @@
             });
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>", "create", function(data) {
-                $("#createDBContainer").html(data);
+                $("#dbContainer").html(data);
             });
+        })
+
+        $("#updateDB").click(function() {
+            $("<div id='dbContainer'/>").appendTo(document.body);
+
+            $("#dbContainer").dialog({
+                title: "Bewerk Database...", // TODO: localization
+                width: 700,
+                height: 600,
+                modal: true,
+                buttons: { // TODO: localize button name:
+                    "Voltooien" : function() {
+                        // is deze button wel disabled totdat dialog alles ready is
+                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
+                            $("#dbContainer").dialog("close");
+                            $("#databasesList").buttonset();
+                        });
+                    }
+                },
+                close: function() {
+                    log("dbContainer closing");
+                    $("#dbContainer").dialog("destroy");
+                    // volgende regel heel belangrijk!!
+                    $("#dbContainer").remove();
+                },
+                beforeclose: function(event, ui) {
+                    // TODO: check connection. if bad return false
+                    return true;
+                }
+            });
+
+            ajaxFormEventInto("#createInputForm", "update", "#dbContainer", null,
+                "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>");
         })
 
     });

@@ -81,17 +81,34 @@ public class InputAction extends DefaultAction {
             name += " (" + selectedTable + ")";
         dbInput.setName(name);
 
-        Long newId = (Long)session.save(dbInput);
+        selectedInputId = (Long)session.save(dbInput);
 
         inputs = session.createQuery("from Inout where typeId = 1").list();
-
-        selectedInputId = newId;
 
         return new ForwardResolution(LIST_JSP);
     }
 
     @Transactional
     public Resolution createFileInputComplete() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        File selectedFile = (File)session.get(nl.b3p.datastorelinker.entity.File.class, selectedFileId);
+
+        Inout fileInput = new Inout();
+        fileInput.setTypeId(1); // input
+        fileInput.setDatatypeId(new InoutDatatype(2)); // file
+        fileInput.setFileId(selectedFile);
+        fileInput.setTableName(selectedTable);
+        String name = selectedFile.getName();
+        if (selectedTable != null && !selectedTable.equals(""))
+            name += " (" + selectedTable + ")";
+        fileInput.setName(name);
+
+        selectedInputId = (Long)session.save(fileInput);
+
+        inputs = session.createQuery("from Inout where typeId = 1").list();
+
         return new ForwardResolution(LIST_JSP);
     }
 
