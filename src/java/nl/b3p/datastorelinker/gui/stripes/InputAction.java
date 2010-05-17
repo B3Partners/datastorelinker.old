@@ -10,7 +10,6 @@ import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
-import net.sourceforge.stripes.util.StringUtil;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
@@ -45,6 +44,26 @@ public class InputAction extends DefaultAction {
     private List<String> tables;
     private List<String> failedTables;
     private String selectedTable;
+
+    public Resolution update() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        Inout input = (Inout)session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedInputId);
+        selectedTable = input.getTableName();
+
+        switch(input.getDatatypeId().getId()) {
+            case 1:
+                selectedDatabaseId = input.getDatabaseId().getId();
+                return createDatabaseInput();
+            case 2:
+                selectedFileId = input.getFileId().getId();
+                return createFileInput();
+            default:
+                log.error("Unknown input type.");
+                return null;
+        }
+    }
 
     public Resolution createDatabaseInput() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -209,4 +228,8 @@ public class InputAction extends DefaultAction {
         this.failedTables = failedTables;
     }
 
+    public String getUploadDirectory() {
+        return getContext().getServletContext().getInitParameter("uploadDirectory");
+    }
+    
 }

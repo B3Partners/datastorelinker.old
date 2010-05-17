@@ -22,15 +22,32 @@ import org.hibernate.Session;
  * @author Erik van de Pol
  */
 public class OutputAction extends DatabaseAction {
-    static {
-        log = Log.getInstance(OutputAction.class);
-
-        CREATE_JSP = "/pages/main/output/create.jsp";
-        LIST_JSP = "/pages/main/output/list.jsp";
-    }
+    private Log log = Log.getInstance(OutputAction.class);
 
     private List<Inout> outputs;
     private Long selectedOutputId;
+
+    @Override
+    protected String getCreateJsp() {
+        return "/pages/main/output/create.jsp";
+    }
+
+    @Override
+    protected String getListJsp() {
+        return "/pages/main/output/list.jsp";
+    }
+
+    @Override
+    public Resolution update() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        
+        Inout output = (Inout)session.get(Inout.class, selectedOutputId);
+
+        selectedDatabaseId = output.getDatabaseId().getId();
+
+        return super.update();
+    }
 
     @Override
     @Transactional
@@ -40,17 +57,24 @@ public class OutputAction extends DatabaseAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Inout output = new Inout();
+        Inout output;
+        if (selectedOutputId == null)
+            output = new Inout();
+        else
+            output = (Inout)session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedOutputId);
+
         output.setTypeId(2); // output
         output.setDatatypeId(new InoutDatatype(1)); // database
         output.setDatabaseId(database);
         output.setName(database.getName());
         // no tablename needed.
 
-        selectedOutputId = (Long)session.save(output);
+        if (selectedOutputId == null)
+            selectedOutputId = (Long)session.save(output);
+
         outputs = session.createQuery("from Inout where typeId = 2").list();
 
-        return new ForwardResolution(LIST_JSP);
+        return new ForwardResolution(getListJsp());
     }
 
     public List<Inout> getOutputs() {

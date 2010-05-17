@@ -10,29 +10,30 @@
 <script type="text/javascript">
     $(function() {
         if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
-            $("#oraclehost")[0].value = "${actionBean.selectedDatabase.host}";
-            $("#oracledatabaseName")[0].value = "${actionBean.selectedDatabase.databaseName}";
-            $("#oracleusername")[0].value = "${actionBean.selectedDatabase.username}";
-            $("#oraclepassword")[0].value = "${actionBean.selectedDatabase.password}";
-            $("#oracleport")[0].value = "${actionBean.selectedDatabase.port}";
-            $("#oracleschema")[0].value = "${actionBean.selectedDatabase.schema}";
-            $("#oracleinstance")[0].value = "${actionBean.selectedDatabase.instance}";
-            $("#oraclealias")[0].value = "${actionBean.selectedDatabase.alias}";
+            $("#oraclehost").val("${actionBean.selectedDatabase.host}");
+            $("#oracledatabaseName").val("${actionBean.selectedDatabase.databaseName}");
+            $("#oracleusername").val("${actionBean.selectedDatabase.username}");
+            $("#oraclepassword").val("${actionBean.selectedDatabase.password}");
+            $("#oracleport").val("${actionBean.selectedDatabase.port}");
+            $("#oracleschema").val("${actionBean.selectedDatabase.schema}");
+            $("#oracleinstance").val("${actionBean.selectedDatabase.instance}");
+            $("#oraclealias").val("${actionBean.selectedDatabase.alias}");
         } else {
-            $("#oraclehost")[0].value = "";
-            $("#oracledatabaseName")[0].value = "";
-            $("#oracleusername")[0].value = "";
-            $("#oraclepassword")[0].value = "";
-            $("#oracleport")[0].value = "1521";
-            $("#oracleschema")[0].value = "ORCL";
-            $("#oracleinstance")[0].value = "ORCL";
-            $("#oraclealias")[0].value = "";
+            $("#oraclehost").val("");
+            $("#oracledatabaseName").val("");
+            $("#oracleusername").val("");
+            $("#oraclepassword").val("");
+            $("#oracleport").val("1521");
+            $("#oracleschema").val("ORCL");
+            $("#oracleinstance").val("ORCL");
+            $("#oraclealias").val("");
         }
     });
 </script>
 
 <stripes:form id="oracleForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
     <stripes:hidden name="dbType" value="${dbTypeId}" />
+    <stripes:wizard-fields/>
     <table>
         <tbody>
             <tr>

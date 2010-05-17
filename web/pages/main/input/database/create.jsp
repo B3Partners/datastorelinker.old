@@ -123,6 +123,7 @@
 </script>
 
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
+    <stripes:wizard-fields/>
     <div id="SelecteerDatabaseconnectie" class="step">
         <h1>Selecteer databaseconnectie:</h1>
         <div id="databasesList" class="radioList">

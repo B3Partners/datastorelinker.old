@@ -5,7 +5,6 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.io.Serializable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DontValidate;
@@ -13,6 +12,7 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
+import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.DatabaseType;
 import org.hibernate.Session;
@@ -22,14 +22,11 @@ import org.hibernate.Session;
  * @author Erik van de Pol
  */
 public class DatabaseAction extends DefaultAction {
-    protected static Log log = Log.getInstance(DatabaseAction.class);
-
-    protected static String CREATE_JSP = "/pages/main/database/create.jsp";
-    protected static String LIST_JSP = "/pages/main/database/list.jsp";
+    private Log log = Log.getInstance(DatabaseAction.class);
 
     private List<Database> databases;
     private Database selectedDatabase;
-    private Long selectedDatabaseId;
+    protected Long selectedDatabaseId;
 
     // PostGIS specific:
     private Integer dbType;
@@ -48,9 +45,17 @@ public class DatabaseAction extends DefaultAction {
     private String colX;
     private String colY;
 
+    protected String getCreateJsp() {
+        return "/pages/main/database/create.jsp";
+    }
+
+    protected String getListJsp() {
+        return "/pages/main/database/list.jsp";
+    }
+
     @DontValidate
     public Resolution create() {
-        return new ForwardResolution(CREATE_JSP);
+        return new ForwardResolution(getCreateJsp());
     }
     
     public Resolution update() {
@@ -70,14 +75,20 @@ public class DatabaseAction extends DefaultAction {
         Session session = (Session)em.getDelegate();
         databases = session.createQuery("from Database").list();
 
-        return new ForwardResolution(LIST_JSP);
+        return new ForwardResolution(getListJsp());
     }
 
+    @Transactional
     protected Database saveDatabase() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Database database = new Database();
+        Database database;
+        if (selectedDatabaseId == null)
+            database = new Database();
+        else
+            database = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
+
         // TODO: serverside en clientside validation
 
         DatabaseType dbt = (DatabaseType)session.createQuery("from DatabaseType where id = :id")
@@ -117,8 +128,9 @@ public class DatabaseAction extends DefaultAction {
                 return null;
         }
 
-        // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing?
-        session.save(database);
+        // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
+        if (selectedDatabaseId == null)
+            session.save(database);
         
         return database;
      }

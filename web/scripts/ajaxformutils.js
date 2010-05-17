@@ -20,6 +20,16 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
     return false;
 }
 
+function ajaxActionEventInto(action, event, containerSelector, callback) {
+    var url = action + "?" + event;
+    $.get(url, function (xml) {
+                   $(containerSelector).first().html(xml);
+                   if (callback)
+                       callback();
+            });
+    return false;
+}
+
 function log(text) {
     if (window.console && window.console.log)
         console.log(text);

@@ -86,20 +86,22 @@ public class FileAction extends DefaultAction {
                 String absolutePath = tempFile.getAbsolutePath();
                 log.info("Saved file " + absolutePath + ", Successfully!");
 
-                saveOrUpdateFileInDB(absolutePath);
+                File file = saveFile(absolutePath);
+                selectedFileId = file.getId();
                 
             } catch (IOException e) {
                 errorMsg = e.getMessage();
                 log.error("Error while writing file :" + filedata.getFileName() + " / " + errorMsg);
                 return new StreamingResolution("text/xml", errorMsg);
             }
-            return new StreamingResolution("text/xml", "success");
+            return createComplete();
+            //return new StreamingResolution("text/xml", "success");
         }
         return new StreamingResolution("text/xml", "An unknown error has occurred!");
     }
 
     @Transactional
-    private void saveOrUpdateFileInDB(String absolutePath) {
+    private File saveFile(String absolutePath) {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
@@ -107,11 +109,12 @@ public class FileAction extends DefaultAction {
         file.setName(absolutePath);
 
         // TODO: file already exists? we now add an uuid to the filename.
-        session.saveOrUpdate(file);
-        // TODO: get id from saveOrUpdate
+        //session.saveOrUpdate(file);
+        session.save(file);
         
         // TODO: dit moet gewoon anders met (doorzichtig) flash achter jquery-button.
         //selectedFileId = file.getId();
+        return file;
     }
 
     public List<File> getFiles() {

@@ -16,23 +16,36 @@ $(function() {
         buttonText     : "Zoek bestand...", // TODO: localize
         //hideButton     : true,
         onComplete     : function(event, queueID, fileObj, response, data){
-            if (response !== "success") {
-                alert(response);
+            if ($(response).first().attr("id") == "filesListWrapper") {
+                $("#filesList").html(response);
+                $("#filesList").buttonset();
             } else {
-                // TODO: roep <stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/> met createComplete ?
+                showErrorDialog();
             }
         },
         onCancel       : function(event, queueID, fileObj, data){
             // TODO: delete tempfile
         },
         onError        : function(event, queueID, fileObj, errorObj) {
-            
+            showErrorDialog();
         }/*,
         fileExt        : "*.shp;*.ext2;*.ext3",
         fileDesc       : "*.shp;*.ext2;*.ext3"*/
     });
 });
+
+function showErrorDialog() {
+    $("#messageBox").dialog({
+        buttons: {
+            "Ok": function() {
+                $(this).dialog("close");
+            }
+        }
+    });
+}
 </script>
 
-Upload een file:
-<input type="file" name="uploadify" id="uploadify" />
+<span><input type="file" name="uploadify" id="uploadify" /></span>
+
+<!-- TODO: localize -->
+<div id="messageBox" style="display: none" title="Fout...">Er is een fout opgetreden bij het uploaden van het bestand</div>

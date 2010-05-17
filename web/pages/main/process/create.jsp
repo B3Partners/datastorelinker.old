@@ -40,117 +40,116 @@
         );
 
         $("#createInputDB").click(function() {
-            $("<div id='createInputDBContainer'/>").appendTo(document.body);
+            $("<div id='inputContainer'/>").appendTo(document.body);
 
-            $("#createInputDBContainer").dialog({
-                title: "Nieuwe Database-invoer...", // TODO: localization
-                width: 800,
-                height: 500,
-                modal: true,
-                close: function() {
-                    log("createInputDBDialog closing");
-                    if ($("#createInputForm")) {
-                        $("#createInputForm").formwizard("destroy");
-                    }
-                    $("#createInputDBContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#createInputDBContainer").remove();
-                }
-            });
+            var inputDialog = getInputDialog();
+            inputDialog.dialog("option", "title", "Nieuwe Database Invoer...");// TODO: localization
+            inputDialog.dialog("open");
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>", "createDatabaseInput", function(data) {
-                $("#createInputDBContainer").html(data);
+                $("#inputContainer").html(data);
             });
 
             return false;
         });
 
         $("#createInputFile").click(function() {
-            $("<div id='createInputFileContainer'/>").appendTo(document.body);
+            $("<div id='inputContainer'/>").appendTo(document.body);
 
-            $("#createInputFileContainer").dialog({
-                title: "Nieuwe Bestandsinvoer...", // TODO: localization
-                width: 800,
-                height: 500,
-                modal: true,
-                close: function() {
-                    log("createInputDBDialog closing");
-                    if ($("#createInputForm")) {
-                        $("#createInputForm").formwizard("destroy");
-                    }
-                    $("#createInputFileContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#createInputFileContainer").remove();
-                }
-            });
+            var inputDialog = getInputDialog();
+            inputDialog.dialog("option", "title", "Nieuwe Bestand Invoer...");// TODO: localization
+            inputDialog.dialog("open");
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>", "createFileInput", function(data) {
-                $("#createInputFileContainer").html(data);
+                $("#inputContainer").html(data);
             });
 
             return false;
         });
 
         $("#updateInput").click(function() {
-            $("<div id='updateInputContainer'/>").appendTo(document.body);
+            $("<div id='inputContainer'/>").appendTo(document.body);
 
-            $("#updateInputContainer").dialog({
-                title: "Bewerk Invoer...", // TODO: localization
-                width: 800,
-                height: 500,
-                modal: true,
-                close: function() {
-                    log("updateProcessDialog closing");
-                    // beetje lelijk dat we hier hetzelfde id als bij create gebruiken:
-                    if ($("#processForm")) {
-                        $("#processForm").formwizard("destroy");
-                    }
-                    $("#updateInputContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#updateInputContainer").remove();
-                }
-            });
+            var inputDialog = getInputDialog();
+            inputDialog.dialog("option", "title", "Bewerk X...");// TODO: localization
+            inputDialog.dialog("open");
 
-            ajaxFormEventInto("#processForm", "update", "#updateProcessContainer");
+            ajaxFormEventInto("#createUpdateProcessForm", "update", "#inputContainer", null,
+                "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>");
 
             return false;
         });
 
 
         $("#createOutput").click(function() {
-            $("<div id='createOutputContainer'/>").appendTo(document.body);
+            $("<div id='outputContainer'/>").appendTo(document.body);
 
-            $("#createOutputContainer").dialog({
-                title: "Nieuwe Uitvoer Database...", // TODO: localization
-                width: 700,
-                height: 600,
-                modal: true,
-                buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        ajaxFormEventInto("#postgisForm", "createComplete", "#outputList", function() {
-                            $("#createOutputContainer").dialog("close");
-                            $("#outputList").buttonset();
-                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
-                    }
-                },
-                close: function() {
-                    log("createOutputContainer closing");
-                    $("#createOutputContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#createOutputContainer").remove();
-                },
-                beforeclose: function(event, ui) {
-                    // TODO: check connection. if bad return false
-                    return true;
-                }
-            });
+            var outputDialog = getOutputDialog();
+            outputDialog.dialog("option", "title", "Nieuwe Uitvoer Database...");// TODO: localization
+            outputDialog.dialog("open");
 
             $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>", "create", function(data) {
-                $("#createOutputContainer").html(data);
+                $("#outputContainer").html(data);
             });
         })
 
+        $("#updateOutput").click(function() {
+            $("<div id='outputContainer'/>").appendTo(document.body);
+
+            var outputDialog = getOutputDialog();
+            outputDialog.dialog("option", "title", "Bewerk Uitvoer Database...");// TODO: localization
+            outputDialog.dialog("open");
+
+            ajaxFormEventInto("#createUpdateProcessForm", "update", "#outputContainer", null,
+                "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+        })
+
     });
+
+    function getInputDialog() {
+        return $("#inputContainer").dialog({
+            autoOpen: false,
+            width: 800,
+            height: 500,
+            modal: true,
+            close: function() {
+                log("inputContainer closing");
+                if ($("#createInputForm")) {
+                    $("#createInputForm").formwizard("destroy");
+                }
+                $("#inputContainer").dialog("destroy");
+                // volgende regel heel belangrijk!!
+                $("#inputContainer").remove();
+            }
+        });
+    }
+
+    function getOutputDialog() {
+        return $("#outputContainer").dialog({
+            autoOpen: false,
+            width: 700,
+            height: 600,
+            modal: true,
+            buttons: { // TODO: localize button name:
+                "Voltooien" : function() {
+                    ajaxFormEventInto("#postgisForm", "createComplete", "#outputList", function() {
+                        $("#outputContainer").dialog("close");
+                        $("#outputList").buttonset();
+                    }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+                }
+            },
+            close: function() {
+                log("outputContainer closing");
+                $("#outputContainer").dialog("destroy");
+                // volgende regel heel belangrijk!!
+                $("#outputContainer").remove();
+            },
+            beforeclose: function(event, ui) {
+                // TODO: check connection. if bad return false
+                return true;
+            }
+        });
+    }
 
 </script>
 

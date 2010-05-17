@@ -10,25 +10,29 @@
 <script type="text/javascript">
     $(function() {
         if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
-            $("#postgishost")[0].value = "${actionBean.selectedDatabase.host}";
-            $("#postgisdatabaseName")[0].value = "${actionBean.selectedDatabase.databaseName}";
-            $("#postgisusername")[0].value = "${actionBean.selectedDatabase.username}";
-            $("#postgispassword")[0].value = "${actionBean.selectedDatabase.password}";
-            $("#postgisport")[0].value = "${actionBean.selectedDatabase.port}";
-            $("#postgisschema")[0].value = "${actionBean.selectedDatabase.schema}";
+            $("#postgishost").val("${actionBean.selectedDatabase.host}");
+            $("#postgisdatabaseName").val("${actionBean.selectedDatabase.databaseName}");
+            $("#postgisusername").val("${actionBean.selectedDatabase.username}");
+            $("#postgispassword").val("${actionBean.selectedDatabase.password}");
+            $("#postgisport").val("${actionBean.selectedDatabase.port}");
+            $("#postgisschema").val("${actionBean.selectedDatabase.schema}");
         } else {
-            $("#postgishost")[0].value = "";
-            $("#postgisdatabaseName")[0].value = "";
-            $("#postgisusername")[0].value = "";
-            $("#postgispassword")[0].value = "";
-            $("#postgisport")[0].value = "5432";
-            $("#postgisschema")[0].value = "public";
+            $("#postgishost").val("");
+            $("#postgisdatabaseName").val("");
+            $("#postgisusername").val("");
+            $("#postgispassword").val("");
+            $("#postgisport").val("5432");
+            $("#postgisschema").val("public");
         }
     });
 </script>
 
 <stripes:form id="postgisForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
     <stripes:hidden name="dbType" value="${dbTypeId}" />
+    <c:if test="${not empty actionBean.selectedDatabase}">
+        <stripes:hidden name="selectedDatabaseId" value="${actionBean.selectedDatabase.id}"/>
+    </c:if>
+    <stripes:wizard-fields/>
     <table>
         <tbody>
             <tr>

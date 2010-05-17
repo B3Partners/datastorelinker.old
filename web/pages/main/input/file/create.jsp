@@ -70,14 +70,16 @@
 </script>
 
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
+    <stripes:wizard-fields/>
     <div id="SelecteerBestand" class="step">
         <h1>Selecteer bestand:</h1>
         <div id="filesList" class="radioList">
             <%@include file="/pages/main/file/list.jsp" %>
         </div>
         <div>
-            <stripes:button id="createFile" name="create"/>
-            <stripes:button id="updateFile" name="update"/>
+            <%--stripes:button id="createFile" name="create"/>
+            <stripes:button id="updateFile" name="update"/--%>
+            <%@include file="/pages/main/file/create.jsp" %>
             <stripes:button id="deleteFile" name="delete"/>
         </div>
     </div>

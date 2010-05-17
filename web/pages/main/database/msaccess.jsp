@@ -10,21 +10,22 @@
 <script type="text/javascript">
     $(function() {
         if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
-            $("#msaccessurl")[0].value = "${actionBean.selectedDatabase.url}";
-            $("#msaccesssrs")[0].value = "${actionBean.selectedDatabase.srs}";
-            $("#msaccesscolX")[0].value = "${actionBean.selectedDatabase.colX}";
-            $("#msaccesscolY")[0].value = "${actionBean.selectedDatabase.colY}";
+            $("#msaccessurl").val("${actionBean.selectedDatabase.url}");
+            $("#msaccesssrs").val("${actionBean.selectedDatabase.srs}");
+            $("#msaccesscolX").val("${actionBean.selectedDatabase.colX}");
+            $("#msaccesscolY").val("${actionBean.selectedDatabase.colY}");
         } else {
-            $("#msaccessurl")[0].value = "*.mdb";
-            $("#msaccesssrs")[0].value = "EPSG:28992";
-            $("#msaccesscolX")[0].value = "POINT_X";
-            $("#msaccesscolY")[0].value = "POINT_Y";
+            $("#msaccessurl").val("*.mdb");
+            $("#msaccesssrs").val("EPSG:28992");
+            $("#msaccesscolX").val("POINT_X");
+            $("#msaccesscolY").val("POINT_Y");
         }
     });
 </script>
 
 <stripes:form id="msaccessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
     <stripes:hidden name="dbType" value="${dbTypeId}" />
+    <stripes:wizard-fields/>
     <table>
         <tbody>
             <tr>
