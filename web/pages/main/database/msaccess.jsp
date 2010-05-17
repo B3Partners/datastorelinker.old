@@ -5,9 +5,11 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<c:set var="dbTypeId" value="2"/>
+
 <script type="text/javascript">
     $(function() {
-        if (${not empty actionBean.selectedDatabase}) {
+        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
             $("#msaccessurl")[0].value = "${actionBean.selectedDatabase.url}";
             $("#msaccesssrs")[0].value = "${actionBean.selectedDatabase.srs}";
             $("#msaccesscolX")[0].value = "${actionBean.selectedDatabase.colX}";
@@ -22,7 +24,7 @@
 </script>
 
 <stripes:form id="msaccessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-    <stripes:hidden name="dbType" value="2" />
+    <stripes:hidden name="dbType" value="${dbTypeId}" />
     <table>
         <tbody>
             <tr>

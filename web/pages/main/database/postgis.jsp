@@ -5,8 +5,30 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<c:set var="dbTypeId" value="3"/>
+
+<script type="text/javascript">
+    $(function() {
+        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
+            $("#postgishost")[0].value = "${actionBean.selectedDatabase.host}";
+            $("#postgisdatabaseName")[0].value = "${actionBean.selectedDatabase.databaseName}";
+            $("#postgisusername")[0].value = "${actionBean.selectedDatabase.username}";
+            $("#postgispassword")[0].value = "${actionBean.selectedDatabase.password}";
+            $("#postgisport")[0].value = "${actionBean.selectedDatabase.port}";
+            $("#postgisschema")[0].value = "${actionBean.selectedDatabase.schema}";
+        } else {
+            $("#postgishost")[0].value = "";
+            $("#postgisdatabaseName")[0].value = "";
+            $("#postgisusername")[0].value = "";
+            $("#postgispassword")[0].value = "";
+            $("#postgisport")[0].value = "5432";
+            $("#postgisschema")[0].value = "public";
+        }
+    });
+</script>
+
 <stripes:form id="postgisForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-    <stripes:hidden name="dbType" value="3" />
+    <stripes:hidden name="dbType" value="${dbTypeId}" />
     <table>
         <tbody>
             <tr>
@@ -27,11 +49,11 @@
             </tr>
             <tr>
                 <td><stripes:label name="port" for="postgisport"/></td>
-                <td><stripes:text id="postgisport" name="port" value="5432"/></td>
+                <td><stripes:text id="postgisport" name="port"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="schema" for="postgisschema"/></td>
-                <td><stripes:text id="postgisschema" name="schema" value="public"/></td>
+                <td><stripes:text id="postgisschema" name="schema"/></td>
             </tr>
         </tbody>
     </table>

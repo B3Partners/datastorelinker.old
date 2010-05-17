@@ -5,8 +5,34 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<c:set var="dbTypeId" value="1"/>
+
+<script type="text/javascript">
+    $(function() {
+        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
+            $("#oraclehost")[0].value = "${actionBean.selectedDatabase.host}";
+            $("#oracledatabaseName")[0].value = "${actionBean.selectedDatabase.databaseName}";
+            $("#oracleusername")[0].value = "${actionBean.selectedDatabase.username}";
+            $("#oraclepassword")[0].value = "${actionBean.selectedDatabase.password}";
+            $("#oracleport")[0].value = "${actionBean.selectedDatabase.port}";
+            $("#oracleschema")[0].value = "${actionBean.selectedDatabase.schema}";
+            $("#oracleinstance")[0].value = "${actionBean.selectedDatabase.instance}";
+            $("#oraclealias")[0].value = "${actionBean.selectedDatabase.alias}";
+        } else {
+            $("#oraclehost")[0].value = "";
+            $("#oracledatabaseName")[0].value = "";
+            $("#oracleusername")[0].value = "";
+            $("#oraclepassword")[0].value = "";
+            $("#oracleport")[0].value = "1521";
+            $("#oracleschema")[0].value = "ORCL";
+            $("#oracleinstance")[0].value = "ORCL";
+            $("#oraclealias")[0].value = "";
+        }
+    });
+</script>
+
 <stripes:form id="oracleForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-    <stripes:hidden name="dbType" value="1" />
+    <stripes:hidden name="dbType" value="${dbTypeId}" />
     <table>
         <tbody>
             <tr>
@@ -27,15 +53,15 @@
             </tr>
             <tr>
                 <td><stripes:label name="port" for="oracleport"/></td>
-                <td><stripes:text id="oracleport" name="port" value="1521"/></td>
+                <td><stripes:text id="oracleport" name="port"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="schema" for="oracleschema"/></td>
-                <td><stripes:text id="oracleschema" name="schema" value="ORCL"/></td>
+                <td><stripes:text id="oracleschema" name="schema"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="instance" for="oracleinstance"/></td>
-                <td><stripes:text id="oracleinstance" name="instance" value="ORCL"/></td>
+                <td><stripes:text id="oracleinstance" name="instance"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="alias" for="oraclealias"/></td>
