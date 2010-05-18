@@ -17,3 +17,9 @@ formWizardConfig = {
     inAnimation : "slideDown",
     outAnimation : "slideUp"
 }
+
+defaultDialogClose = function() {
+    $(this).dialog("destroy");
+    // volgende regel heel belangrijk!!
+    $(this).remove();
+}

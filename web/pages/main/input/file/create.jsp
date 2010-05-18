@@ -11,8 +11,6 @@
         $("#updateFile").button();
         $("#deleteFile").button();
 
-        $("#filesList").buttonset();
-
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
@@ -23,11 +21,9 @@
                 // form plugin settings
                 beforeSend: function() {
                     // beetje een lelijke hack, maar werkt wel mooi:
-                    ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputList", function() {
-                        log("success!");
+                    ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputListContainer", function() {
                         if ($("#createInputFileContainer"))
                             $("#createInputFileContainer").dialog("close");
-                        $("#inputList").buttonset();
                     });
                     return false;
                 }
@@ -44,25 +40,19 @@
                 modal: true,
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
-                        // is deze button wel disabled totdat dialog alles ready is
-                        $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>", "createComplete", function(data) {
-                            $("#createFileContainer").dialog("close");
-                            $("#filesList").html(data);
-                            $("#filesList").buttonset();
-                        });
+                        ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>",
+                            "createComplete", "#filesListContainer",
+                            function() {
+                                $("#createFileContainer").dialog("close");
+                            }
+                        );
                     }
                 },
-                close: function() {
-                    log("createFileContainer closing");
-                    $("#createFileContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#createFileContainer").remove();
-                }
+                close: defaultDialogClose
             });
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>", "create", function(data) {
-                $("#createFileContainer").html(data);
-            });
+            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>",
+                "create", "#createFileContainer");
         })
 
     });
@@ -73,7 +63,7 @@
     <stripes:wizard-fields/>
     <div id="SelecteerBestand" class="step">
         <h1>Selecteer bestand:</h1>
-        <div id="filesList" class="radioList">
+        <div id="filesListContainer">
             <%@include file="/pages/main/file/list.jsp" %>
         </div>
         <div>

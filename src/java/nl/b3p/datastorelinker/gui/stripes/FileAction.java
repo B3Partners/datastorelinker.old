@@ -39,18 +39,32 @@ public class FileAction extends DefaultAction {
 
     private FileBean filedata;
 
+    public Resolution list() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        files = session.createQuery("from File").list();
+
+        return new ForwardResolution(LIST_JSP);
+    }
+
+    @Transactional
+    public Resolution delete() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        session.delete(session.get(nl.b3p.datastorelinker.entity.File.class, selectedFileId));
+
+        return list();
+    }
+
     @DontValidate
     public Resolution create() {
         return new ForwardResolution(CREATE_JSP);
     }
 
     public Resolution createComplete() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session) em.getDelegate();
-
-        files = session.createQuery("from File").list();
-        
-        return new ForwardResolution(LIST_JSP);
+        return list();
     }
 
     @SuppressWarnings("unused")

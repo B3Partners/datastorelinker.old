@@ -42,11 +42,7 @@ public class ProcessAction extends DefaultAction {
     
     private Long actionsId;
 
-
-    @DefaultHandler
-    public Resolution overview() {
-        //ValidationErrors errors = new ValidationErrors();
-
+    public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -54,11 +50,12 @@ public class ProcessAction extends DefaultAction {
         // (te maken met de dot-notation voor joins die niet werkt zoals ik denk dat ie werkt.).
         processes = session.createQuery("from Process order by name").list();
 
-        /*if (!errors.isEmpty()) {
-        getContext().setValidationErrors(errors);
-        return getContext().getSourcePageResolution();
-        }*/
+        return new ForwardResolution(LIST_JSP);
+    }
 
+    @DefaultHandler
+    public Resolution overview() {
+        list();
         return new ForwardResolution(JSP);
     }
 
@@ -102,9 +99,7 @@ public class ProcessAction extends DefaultAction {
         //else // automatic saveOrUpdate
             //session.saveOrUpdate(process);
         
-        processes = session.createQuery("from Process order by name").list();
-
-        return new ForwardResolution(LIST_JSP);
+        return list();
     }
 
     public Resolution update() {
@@ -121,8 +116,17 @@ public class ProcessAction extends DefaultAction {
         return create();
     }
 
+    @Transactional
     public Resolution delete() {
-        return new ForwardResolution(JSP);
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+        session.delete(process);
+        
+        return list();
     }
 
     public Resolution execute() {

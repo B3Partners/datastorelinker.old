@@ -7,9 +7,6 @@
 
 <script type="text/javascript">
     $(function() {
-        $("#inputList").buttonset();
-        $("#outputList").buttonset();
-
         $("#createProcessBackButton").button();
         $("#createProcessNextButton").button();
 
@@ -29,10 +26,9 @@
                 // form plugin settings
                 beforeSend: function() {
                     // beetje een lelijke hack, maar werkt wel mooi:
-                    ajaxFormEventInto("#createUpdateProcessForm", "createComplete", "#processesList", function() {
+                    ajaxFormEventInto("#createUpdateProcessForm", "createComplete", "#processesListContainer", function() {
                         log("success!");
                         $("#processContainer").dialog("close");
-                        $("#processesList").buttonset();
                     });
                     return false;
                 }
@@ -132,18 +128,12 @@
             modal: true,
             buttons: { // TODO: localize button name:
                 "Voltooien" : function() {
-                    ajaxFormEventInto("#postgisForm", "createComplete", "#outputList", function() {
+                    ajaxFormEventInto("#postgisForm", "createComplete", "#outputListContainer", function() {
                         $("#outputContainer").dialog("close");
-                        $("#outputList").buttonset();
                     }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
                 }
             },
-            close: function() {
-                log("outputContainer closing");
-                $("#outputContainer").dialog("destroy");
-                // volgende regel heel belangrijk!!
-                $("#outputContainer").remove();
-            },
+            close: defaultDialogClose,
             beforeclose: function(event, ui) {
                 // TODO: check connection. if bad return false
                 return true;
@@ -158,7 +148,7 @@
     <stripes:wizard-fields/>
     <div id="SelecteerInvoer" class="step">
         <h1>Selecteer bestand- of database-invoer:</h1>
-        <div id="inputList" class="radioList">
+        <div id="inputListContainer">
             <%@include file="/pages/main/input/list.jsp" %>
         </div>
         <div>
@@ -170,7 +160,7 @@
     </div>
     <div id="SelecteerUitvoer" class="step">
         <h1>Selecteer database om naar uit te voeren:</h1>
-        <div id="outputList" class="radioList">
+        <div id="outputListContainer">
             <%@include file="/pages/main/output/list.jsp" %>
         </div>
         <div>

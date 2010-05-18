@@ -38,6 +38,27 @@ public class OutputAction extends DatabaseAction {
     }
 
     @Override
+    public Resolution list() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        outputs = session.createQuery("from Inout where typeId = 2").list();
+
+        return new ForwardResolution(getListJsp());
+    }
+
+    @Override
+    @Transactional
+    public Resolution delete() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        session.delete(session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedOutputId));
+
+        return list();
+    }
+
+    @Override
     public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -72,9 +93,7 @@ public class OutputAction extends DatabaseAction {
         if (selectedOutputId == null)
             selectedOutputId = (Long)session.save(output);
 
-        outputs = session.createQuery("from Inout where typeId = 2").list();
-
-        return new ForwardResolution(getListJsp());
+        return list();
     }
 
     public List<Inout> getOutputs() {

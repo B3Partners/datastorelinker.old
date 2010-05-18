@@ -5,18 +5,26 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<stripes:form partial="true" action="/">
-    <c:forEach var="output" items="${actionBean.outputs}" varStatus="status">
-        <c:choose>
-            <c:when test="${not empty actionBean.selectedOutputId and output.id == actionBean.selectedOutputId}">
-                <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" checked="checked"/>
-            </c:when>
-            <c:otherwise>
-                <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}"/>
-            </c:otherwise>
-        </c:choose>
-        <stripes:label for="output${status.index}">
-            <c:out value="${output.name}"/>
-        </stripes:label>
-    </c:forEach>
-</stripes:form>
+<script type="text/javascript">
+    $(function() {
+        $("#outputList").buttonset();
+    });
+</script>
+
+<div id="outputList" class="radioList">
+    <stripes:form partial="true" action="/">
+        <c:forEach var="output" items="${actionBean.outputs}" varStatus="status">
+            <c:choose>
+                <c:when test="${not empty actionBean.selectedOutputId and output.id == actionBean.selectedOutputId}">
+                    <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" checked="checked"/>
+                </c:when>
+                <c:otherwise>
+                    <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}"/>
+                </c:otherwise>
+            </c:choose>
+            <stripes:label for="output${status.index}">
+                <c:out value="${output.name}"/>
+            </stripes:label>
+        </c:forEach>
+    </stripes:form>
+</div>

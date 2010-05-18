@@ -57,7 +57,26 @@ public class DatabaseAction extends DefaultAction {
     public Resolution create() {
         return new ForwardResolution(getCreateJsp());
     }
-    
+
+    public Resolution list() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        databases = session.createQuery("from Database").list();
+
+        return new ForwardResolution(getListJsp());
+    }
+
+    @Transactional
+    public Resolution delete() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        session.delete(session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId));
+
+        return list();
+    }
+
     public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -71,11 +90,7 @@ public class DatabaseAction extends DefaultAction {
         Database db = saveDatabase();
         selectedDatabaseId = db.getId();
 
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-        databases = session.createQuery("from Database").list();
-
-        return new ForwardResolution(getListJsp());
+        return list();
     }
 
     @Transactional

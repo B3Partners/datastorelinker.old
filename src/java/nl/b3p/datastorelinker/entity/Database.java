@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,7 +64,7 @@ public class Database implements Serializable {
     private String colX;
     @Column(name = "col_y")
     private String colY;
-    @OneToMany(mappedBy = "databaseId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "databaseId")
     private List<Inout> inoutList;
     @JoinColumn(name = "type_id", referencedColumnName = "id")
     @ManyToOne(optional = false)

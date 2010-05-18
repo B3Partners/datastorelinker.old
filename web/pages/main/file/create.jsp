@@ -16,25 +16,26 @@ $(function() {
         buttonText     : "Zoek bestand...", // TODO: localize
         //hideButton     : true,
         onComplete     : function(event, queueID, fileObj, response, data){
-            if ($(response).first().attr("id") == "filesListWrapper") {
-                $("#filesList").html(response);
-                $("#filesList").buttonset();
+            $("#filesListContainer").html(response);
+            // Let ajaxError handle errors.
+            /*if ($(response).first().attr("id") == "filesList") {
+                $("#filesListContainer").html(response);
             } else {
                 showErrorDialog();
-            }
+            }*/
         },
         onCancel       : function(event, queueID, fileObj, data){
             // TODO: delete tempfile
         },
         onError        : function(event, queueID, fileObj, errorObj) {
-            showErrorDialog();
-        }/*,
+            //showErrorDialog();
+        } /*,
         fileExt        : "*.shp;*.ext2;*.ext3",
         fileDesc       : "*.shp;*.ext2;*.ext3"*/
     });
 });
 
-function showErrorDialog() {
+<%--function showErrorDialog() {
     $("#messageBox").dialog({
         buttons: {
             "Ok": function() {
@@ -42,7 +43,7 @@ function showErrorDialog() {
             }
         }
     });
-}
+}--%>
 </script>
 
 <span><input type="file" name="uploadify" id="uploadify" /></span>

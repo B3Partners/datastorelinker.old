@@ -8,6 +8,7 @@ package nl.b3p.datastorelinker.entity;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class File implements Serializable {
     @Column(name = "id")
     @GeneratedValue
     private Long id;
-    @OneToMany(mappedBy = "fileId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fileId")
     private List<Inout> inoutList;
 
     public File() {

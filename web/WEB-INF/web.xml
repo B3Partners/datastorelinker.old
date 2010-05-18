@@ -10,7 +10,7 @@
         </init-param>
         <init-param>
             <param-name>Extension.Packages</param-name>
-            <param-value>nl.b3p.datastorelinker.gui.stripes</param-value>
+            <param-value>nl.b3p.commons.stripes</param-value>
         </init-param>
         <init-param>
             <param-name>MultipartWrapper.Class</param-name>
@@ -59,7 +59,6 @@
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>
     </servlet-mapping>
-
     <session-config>
         <session-timeout>
             30
@@ -68,10 +67,8 @@
     <welcome-file-list>
         <welcome-file>/pages/index.jsp</welcome-file>
     </welcome-file-list>
-
     <context-param>
         <param-name>uploadDirectory</param-name>
         <param-value>c:\uploadedFiles</param-value>
     </context-param>
-
 </web-app>

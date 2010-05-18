@@ -14,7 +14,7 @@
                 $('#tabs').tabs( {
                     ajaxOptions: {
                         error: function(xhr, status, index, anchor) {
-                            $(anchor.hash).html("Couldn't load this tab.");
+                            $(anchor.hash).html("Fout. Kon deze tab niet laden.");
                         },
                         data: {},
                         success: function(data, textStatus) {
@@ -27,7 +27,7 @@
         <div id="tabs">
             <ul>
                 <li>
-                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction" >
+                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
                         <stripes:label for="menu.home"/> <%-- TODO: !!! moet eigenlijk met <fmt:message key="menu.home"/> etc. !!!--%>
                     </stripes:link>
                 </li>

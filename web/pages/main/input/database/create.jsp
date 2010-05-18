@@ -11,8 +11,6 @@
         $("#updateDB").button();
         $("#deleteDB").button();
 
-        $("#databasesList").buttonset();
-
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
@@ -22,14 +20,11 @@
         formWizardConfigInputForm.afterNext = function(wizardData) {
             log(wizardData.currentStep);
             if (wizardData.currentStep === "SelecteerTabel") {
-                log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value);
-                $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                    "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev()[0].value,
-                    function(data) {
-                        log("table success!");
-                        $("#tablesList").html(data);
-                        $("#tablesList").buttonset();
-                });
+                //log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val());
+                ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                    "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val(),
+                    "#tablesListContainer"
+                );
             }
         };
 
@@ -40,11 +35,9 @@
                 // form plugin settings
                 beforeSend: function() {
                     // beetje een lelijke hack, maar werkt wel mooi:
-                    ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputList", function() {
-                        log("success!");
+                    ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputListContainer", function() {
                         if ($("#createInputDBContainer"))
                             $("#createInputDBContainer").dialog("close");
-                        $("#inputList").buttonset();
                     });
                     return false;
                 }
@@ -62,18 +55,12 @@
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
                         // is deze button wel disabled totdat dialog alles ready is
-                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
+                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesListContainer", function() {
                             $("#dbContainer").dialog("close");
-                            $("#databasesList").buttonset();
                         });
                     }
                 },
-                close: function() {
-                    log("dbContainer closing");
-                    $("#dbContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#dbContainer").remove();
-                },
+                close: defaultDialogClose,
                 beforeclose: function(event, ui) {
                     // TODO: check connection. if bad return false
                     return true;
@@ -96,18 +83,12 @@
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
                         // is deze button wel disabled totdat dialog alles ready is
-                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesList", function() {
+                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesListContainer", function() {
                             $("#dbContainer").dialog("close");
-                            $("#databasesList").buttonset();
                         });
                     }
                 },
-                close: function() {
-                    log("dbContainer closing");
-                    $("#dbContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#dbContainer").remove();
-                },
+                close: defaultDialogClose,
                 beforeclose: function(event, ui) {
                     // TODO: check connection. if bad return false
                     return true;
@@ -126,7 +107,7 @@
     <stripes:wizard-fields/>
     <div id="SelecteerDatabaseconnectie" class="step">
         <h1>Selecteer databaseconnectie:</h1>
-        <div id="databasesList" class="radioList">
+        <div id="databasesListContainer">
             <%@include file="/pages/main/database/list.jsp" %>
         </div>
         <div>
@@ -137,7 +118,7 @@
     </div>
     <div id="SelecteerTabel" class="step submitstep">
         <h1>Selecteer tabel:</h1>
-        <div id="tablesList" class="radioList">
+        <div id="tablesListContainer">
             Bezig met laden...
         </div>
     </div>

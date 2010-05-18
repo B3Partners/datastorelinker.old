@@ -45,6 +45,25 @@ public class InputAction extends DefaultAction {
     private List<String> failedTables;
     private String selectedTable;
 
+    public Resolution list() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        inputs = session.createQuery("from Inout where typeId = 1").list();
+
+        return new ForwardResolution(LIST_JSP);
+    }
+
+    @Transactional
+    public Resolution delete() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        session.delete(session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedInputId));
+
+        return list();
+    }
+
     public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -102,9 +121,7 @@ public class InputAction extends DefaultAction {
 
         selectedInputId = (Long)session.save(dbInput);
 
-        inputs = session.createQuery("from Inout where typeId = 1").list();
-
-        return new ForwardResolution(LIST_JSP);
+        return list();
     }
 
     @Transactional
@@ -126,9 +143,7 @@ public class InputAction extends DefaultAction {
 
         selectedInputId = (Long)session.save(fileInput);
 
-        inputs = session.createQuery("from Inout where typeId = 1").list();
-
-        return new ForwardResolution(LIST_JSP);
+        return list();
     }
 
     public Resolution createTablesList() {

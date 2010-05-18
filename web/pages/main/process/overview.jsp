@@ -7,8 +7,6 @@
 
 <script type="text/javascript">
     $(function() {
-        $("#processesList").buttonset();
-
         $("#createProcess").button();
         $("#updateProcess").button();
         $("#deleteProcess").button();
@@ -33,9 +31,8 @@
                 }
             });
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>", "create", function(data) {
-                $("#processContainer").html(data);
-            });
+            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
+                "create", "#processContainer");
 
             return false;
         });
@@ -77,16 +74,34 @@
                         $(this).dialog("close");
                     }
                 },
-                close: function() {
-                    $("#processContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#processContainer").remove();
-                }
+                close: defaultDialogClose
             });
             
             ajaxFormEventInto("#processForm", "execute", "#processContainer");
 
             return false;
+        });
+
+        $("#deleteProcess").click(function() {//TODO: localize
+            $("<div id='processContainer' class='confirmationDialog'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo($(document.body));
+
+            $("#processContainer").dialog({
+                title: "Proces verwijderen...", // TODO: localization
+                modal: true,
+                buttons: {
+                    "Nee": function() { // TODO: localize
+                        log("nee");
+                        $(this).dialog("close");
+                    },
+                    "Ja": function() {
+                        log("ja");
+                        ajaxFormEventInto("#processForm", "delete", "#processesListContainer", function() {
+                            $("#processContainer").dialog("close");
+                        });
+                    }
+                },
+                close: defaultDialogClose
+            });
         });
     });
 
@@ -95,10 +110,10 @@
 <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <stripes:label for="main.process.overview.text.overview"/>:
 
-    <div id="processesList" class="radioList">
+    <div id="processesListContainer">
         <%@include file="/pages/main/process/list.jsp" %>
     </div>
-
+    
     <div id="buttonPanel">
         <stripes:button id="createProcess" name="create"/>
         <stripes:button id="updateProcess" name="update"/>
