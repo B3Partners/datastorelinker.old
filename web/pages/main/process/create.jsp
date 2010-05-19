@@ -20,16 +20,23 @@
         $("#deleteOutput").button();
 
         $("#createUpdateProcessForm").formwizard(
-            formWizardConfig, {
-                //validation settings
-            }, {
+            // form wizard settings
+            $.extend({}, formWizardConfig, {
+                afterNext: function(wizardData) {
+                    formWizardConfig.afterNext(wizardData);
+                    $("#createUpdateProcessForm :reset").button("enable");
+                }
+            }),
+            {
+                // validation settings
+            },
+            {
                 // form plugin settings
                 beforeSend: function() {
-                    // beetje een lelijke hack, maar werkt wel mooi:
                     ajaxFormEventInto("#createUpdateProcessForm", "createComplete", "#processesListContainer", function() {
-                        log("success!");
                         $("#processContainer").dialog("close");
                     });
+                    // prevent regular ajax submit:
                     return false;
                 }
             }
@@ -42,9 +49,8 @@
             inputDialog.dialog("option", "title", "Nieuwe Database Invoer...");// TODO: localization
             inputDialog.dialog("open");
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>", "createDatabaseInput", function(data) {
-                $("#inputContainer").html(data);
-            });
+            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                "createDatabaseInput", "#inputContainer");
 
             return false;
         });
@@ -56,9 +62,8 @@
             inputDialog.dialog("option", "title", "Nieuwe Bestand Invoer...");// TODO: localization
             inputDialog.dialog("open");
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>", "createFileInput", function(data) {
-                $("#inputContainer").html(data);
-            });
+            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                "createFileInput", "#inputContainer");
 
             return false;
         });
@@ -67,7 +72,7 @@
             $("<div id='inputContainer'/>").appendTo(document.body);
 
             var inputDialog = getInputDialog();
-            inputDialog.dialog("option", "title", "Bewerk X...");// TODO: localization
+            inputDialog.dialog("option", "title", "Bewerk Invoer...");// TODO: localization // TODO: get Invoer type (db or file)
             inputDialog.dialog("open");
 
             ajaxFormEventInto("#createUpdateProcessForm", "update", "#inputContainer", null,
@@ -76,6 +81,30 @@
             return false;
         });
 
+        $("#deleteInput").click(function() {//TODO: localize
+            $("<div id='inputContainer' class='confirmationDialog'>Weet u zeker dat u deze invoer wilt verwijderen? Alle processen die deze invoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
+
+            $("#inputContainer").dialog({
+                title: "Invoer verwijderen...", // TODO: localization
+                modal: true,
+                buttons: {
+                    "Nee": function() { // TODO: localize
+                        $(this).dialog("close");
+                    },
+                    "Ja": function() {
+                        ajaxFormEventInto("#createUpdateProcessForm", "delete", "#inputListContainer", function() {
+                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
+                                "list", "#processesListContainer",
+                                function() {
+                                    $("#inputContainer").dialog("close");
+                                }
+                            );
+                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>");
+                    }
+                },
+                close: defaultDialogClose
+            });
+        });
 
         $("#createOutput").click(function() {
             $("<div id='outputContainer'/>").appendTo(document.body);
@@ -100,6 +129,30 @@
                 "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
         })
 
+        $("#deleteOutput").click(function() {//TODO: localize
+            $("<div id='outputContainer' class='confirmationDialog'>Weet u zeker dat u deze uitvoer wilt verwijderen? Alle processen die deze uitvoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
+
+            $("#outputContainer").dialog({
+                title: "Uitvoer verwijderen...", // TODO: localization
+                modal: true,
+                buttons: {
+                    "Nee": function() { // TODO: localize
+                        $(this).dialog("close");
+                    },
+                    "Ja": function() {
+                        ajaxFormEventInto("#createUpdateProcessForm", "delete", "#outputListContainer", function() {
+                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
+                                "list", "#processesListContainer",
+                                function() {
+                                    $("#outputContainer").dialog("close");
+                                }
+                            );
+                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+                    }
+                },
+                close: defaultDialogClose
+            });
+        });
     });
 
     function getInputDialog() {
@@ -158,7 +211,7 @@
             <stripes:button id="deleteInput" name="delete"/>
         </div>
     </div>
-    <div id="SelecteerUitvoer" class="step">
+    <div id="SelecteerUitvoer" class="step submit_step">
         <h1>Selecteer database om naar uit te voeren:</h1>
         <div id="outputListContainer">
             <%@include file="/pages/main/output/list.jsp" %>

@@ -10,12 +10,17 @@ formWizardConfig = {
     historyEnabled : false,
     formPluginEnabled : true,
     validationEnabled : false,
-    focusFirstInput : true,
+    //focusFirstInput : true,
     textNext : "Volgende",
     textBack : "Vorige",
     textSubmit : "Voltooien",
     inAnimation : "slideDown",
-    outAnimation : "slideUp"
+    outAnimation : "slideUp",
+    afterNext: function(wizardData) {
+        //$("#" + wizardData.currentStep + " .ui-widget").enable();
+        $("#" + wizardData.currentStep + " .ui-widget").button("enable");
+        $("#" + wizardData.currentStep + " .radioList").buttonset("enable");
+    }
 }
 
 defaultDialogClose = function() {

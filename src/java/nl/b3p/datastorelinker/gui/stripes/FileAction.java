@@ -49,13 +49,23 @@ public class FileAction extends DefaultAction {
     }
 
     @Transactional
-    public Resolution delete() {
+    public Resolution delete() throws Exception {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(nl.b3p.datastorelinker.entity.File.class, selectedFileId));
+        File file = (File)session.get(File.class, selectedFileId);
 
-        return list();
+        // TODO: eigenlijk moet file verwijderen van de server en file uit de db verwijderen een atomaire operatie zijn. Lijkt er zo een beetje op.
+        java.io.File fsFile = new java.io.File(file.getName());
+        boolean deleteSuccess = fsFile.delete();
+
+        if (deleteSuccess) {
+            session.delete(file);
+            return list();
+        } else {
+            log.error("File could not be deleted from the filesystem: " + fsFile.getAbsolutePath());
+            throw new Exception();
+        }
     }
 
     @DontValidate

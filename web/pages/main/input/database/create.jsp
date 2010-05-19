@@ -14,24 +14,24 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
-        // originele config wordt hier gecloned zodat we extra config kunnen toevoegen (bv afterNext)
-        // die we niet in andere form wizards willen hebben
-        formWizardConfigInputForm = eval(formWizardConfig.toSource());
-        formWizardConfigInputForm.afterNext = function(wizardData) {
-            log(wizardData.currentStep);
-            if (wizardData.currentStep === "SelecteerTabel") {
-                //log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val());
-                ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                    "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val(),
-                    "#tablesListContainer"
-                );
-            }
-        };
-
         $("#createInputForm").formwizard(
-            formWizardConfigInputForm, {
-                //validation settings
-            }, {
+            // form wizard settings
+            $.extend({}, formWizardConfig, {
+                afterNext: function(wizardData) {
+                    formWizardConfig.afterNext(wizardData);
+                    if (wizardData.currentStep === "SelecteerTabel") {
+                        //log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val());
+                        ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                            "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val(),
+                            "#tablesListContainer"
+                        );
+                    }
+                }
+            }),
+            {
+                // validation settings
+            },
+            {
                 // form plugin settings
                 beforeSend: function() {
                     // beetje een lelijke hack, maar werkt wel mooi:
@@ -98,6 +98,35 @@
             ajaxFormEventInto("#createInputForm", "update", "#dbContainer", null,
                 "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>");
         })
+
+        $("#deleteDB").click(function() {//TODO: localize
+            $("<div id='dbContainer' class='confirmationDialog'><p>Weet u zeker dat u deze databaseconnectie wilt verwijderen?</p><p> Alle database-invoer die deze databaseconnectie gebruikt en alle processen die die database-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo($(document.body));
+
+            $("#dbContainer").dialog({
+                title: "Databaseconnectie verwijderen...", // TODO: localization
+                modal: true,
+                width: 350,
+                buttons: {
+                    "Nee": function() { // TODO: localize
+                        $(this).dialog("close");
+                    },
+                    "Ja": function() {
+                        ajaxFormEventInto("#createInputForm", "delete", "#databasesListContainer", function() {
+                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                                "list", "#inputListContainer", function() {
+                                ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
+                                    "list", "#processesListContainer",
+                                    function() {
+                                        $("#dbContainer").dialog("close");
+                                    }
+                                );
+                            });
+                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>");
+                    }
+                },
+                close: defaultDialogClose
+            });
+        });
 
     });
 

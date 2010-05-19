@@ -53,7 +53,37 @@
 
             ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>",
                 "create", "#createFileContainer");
-        })
+        });
+
+        $("#deleteFile").click(function() {//TODO: localize
+            $("<div id='createFileContainer' class='confirmationDialog'><p>Weet u zeker dat u dit bestand van de server wilt verwijderen?</p><p> Alle bestands-invoer die dit bestand gebruikt en alle processen die deze bestands-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo($(document.body));
+
+            $("#createFileContainer").dialog({
+                title: "Bestand van de server verwijderen...", // TODO: localization
+                modal: true,
+                width: 350,
+                buttons: {
+                    "Nee": function() { // TODO: localize
+                        $(this).dialog("close");
+                    },
+                    "Ja": function() {
+                        ajaxFormEventInto("#createInputForm", "delete", "#filesListContainer", function() {
+                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                                "list", "#inputListContainer", function() {
+                                ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
+                                    "list", "#processesListContainer",
+                                    function() {
+                                        $("#createFileContainer").dialog("close");
+                                    }
+                                );
+                            });
+                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>");
+                    }
+                },
+                close: defaultDialogClose
+            });
+        });
+
 
     });
 

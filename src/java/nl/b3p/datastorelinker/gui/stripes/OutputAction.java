@@ -53,9 +53,11 @@ public class OutputAction extends DatabaseAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedOutputId));
+        Inout selectedOutput = (Inout)session.get(Inout.class, selectedOutputId);
 
-        return list();
+        selectedDatabaseId = selectedOutput.getDatabaseId().getId();
+
+        return super.delete();
     }
 
     @Override
@@ -82,7 +84,7 @@ public class OutputAction extends DatabaseAction {
         if (selectedOutputId == null)
             output = new Inout();
         else
-            output = (Inout)session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedOutputId);
+            output = (Inout)session.get(Inout.class, selectedOutputId);
 
         output.setTypeId(2); // output
         output.setDatatypeId(new InoutDatatype(1)); // database

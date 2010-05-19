@@ -72,7 +72,7 @@ public class DatabaseAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId));
+        session.delete(session.get(Database.class, selectedDatabaseId));
 
         return list();
     }
@@ -102,7 +102,7 @@ public class DatabaseAction extends DefaultAction {
         if (selectedDatabaseId == null)
             database = new Database();
         else
-            database = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
+            database = (Database)session.get(Database.class, selectedDatabaseId);
 
         // TODO: serverside en clientside validation
 

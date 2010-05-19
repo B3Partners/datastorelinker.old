@@ -90,11 +90,9 @@
                 modal: true,
                 buttons: {
                     "Nee": function() { // TODO: localize
-                        log("nee");
                         $(this).dialog("close");
                     },
                     "Ja": function() {
-                        log("ja");
                         ajaxFormEventInto("#processForm", "delete", "#processesListContainer", function() {
                             $("#processContainer").dialog("close");
                         });

@@ -59,7 +59,7 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedInputId));
+        session.delete(session.get(Inout.class, selectedInputId));
 
         return list();
     }
@@ -68,7 +68,7 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Inout input = (Inout)session.get(nl.b3p.datastorelinker.entity.Inout.class, selectedInputId);
+        Inout input = (Inout)session.get(Inout.class, selectedInputId);
         selectedTable = input.getTableName();
 
         switch(input.getDatatypeId().getId()) {

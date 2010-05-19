@@ -4,8 +4,8 @@
  */
 
 // Global ajax settings:
-$(document).ajaxStart($.blockUI);
-$(document).ajaxStop($.unblockUI);
+//$(document).ajaxStart($.blockUI);
+//$(document).ajaxStop($.unblockUI);
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     var errorMessage;
     if (xhr.status == 0) {
@@ -31,10 +31,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
                 $("#errorDialog").dialog("close");
             }
         },
-        close: function() {
-            $(this).dialog("destroy");
-            $(this).remove();
-        }
+        close: defaultDialogClose
     });
     
     // close any open confirmation dialogs:
@@ -61,11 +58,13 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
 
 function ajaxActionEventInto(action, event, containerSelector, callback) {
     var url = action + "?" + event;
-    $.get(url, function (xml) {
-                   $(containerSelector).first().html(xml);
-                   if (callback)
-                       callback();
-            });
+    $.get(url,
+        function (xml) {
+            $(containerSelector).first().html(xml);
+            if (callback)
+                callback();
+        }
+    );
     return false;
 }
 
@@ -73,30 +72,3 @@ function log(text) {
     if (window.console && window.console.log)
         console.log(text);
 }
-
-// clone geeft "Too much recursion"-error
-/*Object.prototype.clone = function() {
-    var newObj = (this instanceof Array) ? [] : {};
-    for (i in this) {
-        if (i == "clone")
-            continue;
-
-        if (this[i] && typeof this[i] == "object") {
-            newObj[i] = this[i].clone();
-        } else {
-            newObj[i] = this[i];
-        }
-    }
-    return newObj;
-};*/
-
-/*Object.prototype.shallowClone = function() {
-    var newObj = (this instanceof Array) ? [] : {};
-    for (i in this) {
-        if (i == "clone")
-            continue;
-
-        newObj[i] = this[i];
-    }
-    return newObj;
-};*/

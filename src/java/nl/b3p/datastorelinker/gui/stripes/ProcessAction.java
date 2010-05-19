@@ -121,10 +121,7 @@ public class ProcessAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
-                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
-
-        session.delete(process);
+        session.delete(session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId));
         
         return list();
     }
