@@ -22,8 +22,8 @@
                 beforeSend: function() {
                     // beetje een lelijke hack, maar werkt wel mooi:
                     ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputListContainer", function() {
-                        if ($("#createInputFileContainer"))
-                            $("#createInputFileContainer").dialog("close");
+                        if ($("#inputContainer"))
+                            $("#inputContainer").dialog("close");
                     });
                     return false;
                 }

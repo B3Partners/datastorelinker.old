@@ -39,19 +39,32 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
 });
 
 
-function ajaxFormEventInto(formSelector, event, containerSelector, callback, action) {
+function ajaxFormEventInto(formSelector, event, containerSelector, callback, action, extraParams) {
     var form = $(formSelector).first();
     var params = {};
     if (!!event)
         params = event + "&" + form.serialize();
+    if (!!extraParams) {
+        for (var key in extraParams) {
+            var value = extraParams[key];
+            if (params.length > 0)
+                params += "&";
+            params += key;
+            if (value)
+                params += "=" + value;
+        }
+    }
+    //log(extraParams);
+    //log(params);
     if (!action)
         action = form[0].action
     $.post(action,
             params,
-            function (xml) {
-                $(containerSelector).first().html(xml);
+            function (response) {
+                if (containerSelector)
+                    $(containerSelector).first().html(response);
                 if (callback)
-                    callback();
+                    callback(response);
             });
     return false;
 }
@@ -59,10 +72,11 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
 function ajaxActionEventInto(action, event, containerSelector, callback) {
     var url = action + "?" + event;
     $.get(url,
-        function (xml) {
-            $(containerSelector).first().html(xml);
+        function (response) {
+            if (containerSelector)
+                $(containerSelector).first().html(response);
             if (callback)
-                callback();
+                callback(response);
         }
     );
     return false;

@@ -34,7 +34,6 @@ public class FileAction extends DefaultAction {
     private final static String LIST_JSP = "/pages/main/file/list.jsp";
     private List<File> files;
 
-    //@org.stripesstuff.....Session
     private Long selectedFileId;
 
     private FileBean filedata;

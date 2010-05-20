@@ -29,7 +29,13 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "database")
 @NamedQueries({
-    @NamedQuery(name = "Database.findAll", query = "SELECT d FROM Database d")})
+    @NamedQuery(name = "Database.findAll", query = 
+        "SELECT d FROM Database d"),
+    @NamedQuery(name = "Database.findInput", query =
+        "select distinct d from Database d left join d.inoutList l where l.typeId = null or l.typeId = 1")/*,
+    @NamedQuery(name = "Database.findOutput", query =
+        "select distinct d from Database d left join d.inoutList l where l.typeId = 2")*/
+})
 public class Database implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -80,23 +86,28 @@ public class Database implements Serializable {
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<String, Object>();
 
-        map.put("dbtype", typeId.getName());
-        map.put("host", host);
-        map.put("port", port);
-        map.put("database", databaseName);
-        map.put("user", username);
-        map.put("password", password);
+        addToMapIfNotNull(map, "dbtype", typeId.getName());
+        addToMapIfNotNull(map, "host", host);
+        addToMapIfNotNull(map, "port", port);
+        addToMapIfNotNull(map, "database", databaseName);
+        addToMapIfNotNull(map, "user", username);
+        addToMapIfNotNull(map, "passwd", password);
         // Oracle specific:
-        map.put("schema", schema);
-        map.put("instance", instance);
+        addToMapIfNotNull(map, "schema", schema);
+        addToMapIfNotNull(map, "instance", instance);
         // MS Access specific:
-        map.put("url", url);
-        map.put("srs", srs);
+        addToMapIfNotNull(map, "url", url);
+        addToMapIfNotNull(map, "srs", srs);
         // TODO: check of deze ok zijn!
-        map.put("column_x", colX);
-        map.put("column_y", colY);
+        addToMapIfNotNull(map, "column_x", colX);
+        addToMapIfNotNull(map, "column_y", colY);
 
         return map;
+    }
+
+    private void addToMapIfNotNull(Map<String, Object> map, String key, Object value) {
+        if (key != null && value != null)
+            map.put(key, value);
     }
 
     public Long getId() {

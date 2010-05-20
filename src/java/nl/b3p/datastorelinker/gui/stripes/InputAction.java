@@ -18,6 +18,8 @@ import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.InoutDatatype;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
+import org.geotools.util.logging.Log4JLoggerFactory;
+import org.geotools.util.logging.Logging;
 import org.hibernate.Session;
 
 /**
@@ -31,6 +33,10 @@ public class InputAction extends DefaultAction {
     private final static String TABLE_LIST_JSP = "/pages/main/input/table/list.jsp";
     private final static String CREATE_DATABASE_JSP = "/pages/main/input/database/create.jsp";
     private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
+
+    static {
+        Logging.ALL.setLoggerFactory(Log4JLoggerFactory.getInstance());
+    }
 
     private List<Inout> inputs;
     private Long selectedInputId;
@@ -88,7 +94,7 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        databases = session.createQuery("from Database").list();
+        databases = session.getNamedQuery("Database.findInput").list();
         
         return new ForwardResolution(CREATE_DATABASE_JSP);
     }
@@ -150,7 +156,7 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Database selectedDatabase = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
+        Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
 
         try {
             DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toMap());

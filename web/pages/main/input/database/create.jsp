@@ -36,8 +36,8 @@
                 beforeSend: function() {
                     // beetje een lelijke hack, maar werkt wel mooi:
                     ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputListContainer", function() {
-                        if ($("#createInputDBContainer"))
-                            $("#createInputDBContainer").dialog("close");
+                        if ($("#inputContainer"))
+                            $("#inputContainer").dialog("close");
                     });
                     return false;
                 }
@@ -53,12 +53,7 @@
                 height: 600,
                 modal: true,
                 buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        // is deze button wel disabled totdat dialog alles ready is
-                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesListContainer", function() {
-                            $("#dbContainer").dialog("close");
-                        });
-                    }
+                    "Voltooien" : testConnectionAndClose
                 },
                 close: defaultDialogClose,
                 beforeclose: function(event, ui) {
@@ -81,12 +76,7 @@
                 height: 600,
                 modal: true,
                 buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        // is deze button wel disabled totdat dialog alles ready is
-                        ajaxFormEventInto(".form-container .ui-accordion-content-active form", "createComplete", "#databasesListContainer", function() {
-                            $("#dbContainer").dialog("close");
-                        });
-                    }
+                    "Voltooien" : testConnectionAndClose
                 },
                 close: defaultDialogClose,
                 beforeclose: function(event, ui) {
@@ -128,6 +118,32 @@
             });
         });
 
+        function testConnectionAndClose() {//validCallback) {
+            var formSelector = ".form-container .ui-accordion-content-active form";
+            ajaxFormEventInto(formSelector, "testConnection", null, function(response) {
+                // Eval is evil
+                var connection = eval(response);
+                log(connection);
+                if (connection.valid) {
+                    ajaxFormEventInto(formSelector, "createComplete", "#databasesListContainer", function() {
+                        $("#dbContainer").dialog("close");
+                    });
+                } else {
+                    $("<div id='errorDialog'>" + connection.message + "</div>").appendTo(document.body);
+                    $("#errorDialog").dialog({
+                        title: connection.title,
+                        modal: true,
+                        buttons: {
+                            "Ok": function() {
+                                $("#errorDialog").dialog("close");
+                            }
+                        },
+                        close: defaultDialogClose
+                    });
+                }
+            });
+        }
+
     });
 
 </script>
@@ -147,6 +163,7 @@
     </div>
     <div id="SelecteerTabel" class="step submitstep">
         <h1>Selecteer tabel:</h1>
+        De onderstaande tabellen zijn geschikt om in te voeren.
         <div id="tablesListContainer">
             Bezig met laden...
         </div>

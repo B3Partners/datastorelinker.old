@@ -5,16 +5,21 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.ajax.JavaScriptResolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.DatabaseType;
+import nl.b3p.datastorelinker.js.Connection;
+import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.hibernate.Session;
 
 /**
@@ -58,11 +63,12 @@ public class DatabaseAction extends DefaultAction {
         return new ForwardResolution(getCreateJsp());
     }
 
+    // Always returns input databases! Should be overridden if necessary
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        databases = session.createQuery("from Database").list();
+        databases = session.getNamedQuery("Database.findInput").list();
 
         return new ForwardResolution(getListJsp());
     }
@@ -95,6 +101,19 @@ public class DatabaseAction extends DefaultAction {
 
     @Transactional
     protected Database saveDatabase() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        Database database = getDatabase();
+
+        // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
+        if (selectedDatabaseId == null)
+            session.save(database);
+        
+        return database;
+    }
+
+    protected Database getDatabase() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -142,13 +161,31 @@ public class DatabaseAction extends DefaultAction {
                 log.error("Unsupported database type");
                 return null;
         }
-
-        // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
-        if (selectedDatabaseId == null)
-            session.save(database);
-        
         return database;
-     }
+    }
+
+    public Resolution testConnection() {
+        Database database = getDatabase();
+
+        Connection connection = new Connection();
+        Map map = new HashMap();
+        try {
+            DataStoreLinker.openDataStore(database.toMap());
+
+            connection.setValid(true);
+            //map.put("valid", true);
+        } catch(Exception e) {
+            connection.setValid(false);
+            //map.put("valid", false);
+            connection.setTitle("Databaseconnectie fout");
+            //map.put("title", "Databaseconnectie fout");
+            connection.setMessage(e.getMessage());
+            //map.put("message", e.getMessage());
+        }
+
+        //return new JavaScriptResolution(map);
+        return new JavaScriptResolution(connection);
+    }
 
     public List<Database> getDatabases() {
         return databases;
