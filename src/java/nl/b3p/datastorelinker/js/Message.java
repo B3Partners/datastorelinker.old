@@ -10,9 +10,14 @@ package nl.b3p.datastorelinker.js;
  * @author Erik van de Pol
  */
 public class Message {
-    private String message;
-    private String title;
-    private String type;
+    protected String message;
+    protected String title;
+    protected String type;
+
+    public Message(String message, String title) {
+        this.message = message;
+        this.title = title;
+    }
 
     public String getMessage() {
         return message;

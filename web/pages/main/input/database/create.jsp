@@ -120,18 +120,16 @@
 
         function testConnectionAndClose() {//validCallback) {
             var formSelector = ".form-container .ui-accordion-content-active form";
-            ajaxFormEventInto(formSelector, "testConnection", null, function(response) {
-                // Eval is evil
-                var connection = eval(response);
-                log(connection);
-                if (connection.valid) {
+            ajaxFormEventInto(formSelector, "testConnection", null, function(data, textStatus, xhr) {
+                log(data);
+                if (data.success) {
                     ajaxFormEventInto(formSelector, "createComplete", "#databasesListContainer", function() {
                         $("#dbContainer").dialog("close");
                     });
                 } else {
-                    $("<div id='errorDialog'>" + connection.message + "</div>").appendTo(document.body);
+                    $("<div id='errorDialog'>" + data.message + "</div>").appendTo(document.body);
                     $("#errorDialog").dialog({
-                        title: connection.title,
+                        title: data.title,
                         modal: true,
                         buttons: {
                             "Ok": function() {
@@ -141,7 +139,7 @@
                         close: defaultDialogClose
                     });
                 }
-            });
+            }, null, null, "json");
         }
 
     });

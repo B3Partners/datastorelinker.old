@@ -5,20 +5,19 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.ajax.JavaScriptResolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.DatabaseType;
-import nl.b3p.datastorelinker.js.Connection;
+import nl.b3p.datastorelinker.js.SuccessMessage;
+import nl.b3p.datastorelinker.json.JSONErrorResolution;
+import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.hibernate.Session;
 
@@ -167,24 +166,27 @@ public class DatabaseAction extends DefaultAction {
     public Resolution testConnection() {
         Database database = getDatabase();
 
-        Connection connection = new Connection();
-        Map map = new HashMap();
+        //Connection connection = new Connection();
+        //Map map = new HashMap();
         try {
             DataStoreLinker.openDataStore(database.toMap());
 
-            connection.setValid(true);
+            //connection.setValid(true);
             //map.put("valid", true);
         } catch(Exception e) {
-            connection.setValid(false);
+            //connection.setValid(false);
             //map.put("valid", false);
-            connection.setTitle("Databaseconnectie fout");
+            //connection.setTitle("Databaseconnectie fout");
             //map.put("title", "Databaseconnectie fout");
-            connection.setMessage(e.getMessage());
+            //connection.setMessage(e.getMessage());
             //map.put("message", e.getMessage());
+            return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
         }
 
         //return new JavaScriptResolution(map);
-        return new JavaScriptResolution(connection);
+        //return new JavaScriptResolution(connection);
+        //return new StreamingResolution("text", JSONObject.fromObject(connection).toString());
+        return new JSONResolution(new SuccessMessage());
     }
 
     public List<Database> getDatabases() {

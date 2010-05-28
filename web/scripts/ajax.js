@@ -1,14 +1,23 @@
-/* 
+/*
  * Needs jquery.
- * 
+ *
  */
 
 // Global ajax settings:
+$.ajaxSetup({
+    cache: false
+});
 //$(document).ajaxStart($.blockUI);
 //$(document).ajaxStop($.unblockUI);
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
+    log(event);
+    log(xhr);
+    log(ajaxOptions);
+    log(thrownError);
     var errorMessage;
-    if (xhr.status == 0) {
+    if (xhr.status == 1000) {
+        errorMessage = thrownError + event;
+    } else if (xhr.status == 0) {
         errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
     } else if (xhr.status == 404) {
         errorMessage = "Opgevraagde pagina niet gevonden: " + ajaxOptions.url;
@@ -33,17 +42,18 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
         },
         close: defaultDialogClose
     });
-    
+
     // close any open confirmation dialogs:
     //$(".confirmationDialog").dialog("close");
 });
 
 
-function ajaxFormEventInto(formSelector, event, containerSelector, callback, action, extraParams) {
+function ajaxFormEventInto(formSelector, event, containerSelector, callback, action, extraParams, dataType) {
     var form = $(formSelector).first();
-    var params = {};
+    var params = "";
     if (!!event)
-        params = event + "&" + form.serialize();
+        params = event + "&";
+    params += form.serialize();
     if (!!extraParams) {
         for (var key in extraParams) {
             var value = extraParams[key];
@@ -58,25 +68,34 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
     //log(params);
     if (!action)
         action = form[0].action
+    //var oldHtml = $(containerSelector).first().html();
+    //if (containerSelector)
+    //    $(containerSelector).first().html("Bezig met laden...");
     $.post(action,
             params,
-            function (response) {
+            function (data, textStatus, xhr) {
+                log(textStatus);
+                log(xhr);
                 if (containerSelector)
-                    $(containerSelector).first().html(response);
+                    $(containerSelector).first().html(data);
                 if (callback)
-                    callback(response);
-            });
+                    callback(data, textStatus, xhr);
+            },
+            dataType
+    );
     return false;
 }
 
 function ajaxActionEventInto(action, event, containerSelector, callback) {
+    if (containerSelector)
+        $(containerSelector).first().html("Bezig met laden...");
     var url = action + "?" + event;
     $.get(url,
-        function (response) {
+        function (data, textStatus, xhr) {
             if (containerSelector)
-                $(containerSelector).first().html(response);
+                $(containerSelector).first().html(data);
             if (callback)
-                callback(response);
+                callback(data, textStatus, xhr);
         }
     );
     return false;
