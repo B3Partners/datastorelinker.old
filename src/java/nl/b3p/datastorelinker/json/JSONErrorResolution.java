@@ -5,8 +5,6 @@
 
 package nl.b3p.datastorelinker.json;
 
-import nl.b3p.datastorelinker.js.ErrorMessage;
-
 /**
  *
  * @author Erik van de Pol

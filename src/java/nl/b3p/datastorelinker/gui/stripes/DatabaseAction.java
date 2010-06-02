@@ -15,7 +15,7 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.DatabaseType;
-import nl.b3p.datastorelinker.js.SuccessMessage;
+import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.json.JSONErrorResolution;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.geotools.data.linker.DataStoreLinker;

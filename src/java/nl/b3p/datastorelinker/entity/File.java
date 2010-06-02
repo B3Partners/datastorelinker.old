@@ -6,7 +6,9 @@
 package nl.b3p.datastorelinker.entity;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,6 +19,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import net.sourceforge.stripes.util.Log;
+import nl.b3p.datastorelinker.util.Mappable;
+import nl.b3p.datastorelinker.util.Util;
 
 /**
  *
@@ -26,8 +31,12 @@ import javax.persistence.Table;
 @Table(name = "file")
 @NamedQueries({
     @NamedQuery(name = "File.findAll", query = "SELECT f FROM File f")})
-public class File implements Serializable {
+public class File implements Serializable, Mappable {
     private static final long serialVersionUID = 1L;
+
+    private final static Log log = Log.getInstance(File.class);
+
+
     @Basic(optional = false)
     @Column(name = "name")
     private String name;
@@ -49,6 +58,34 @@ public class File implements Serializable {
     public File(Long id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Map<String, Object> toMap() {
+        return toMap("");
+    }
+
+    public Map<String, Object> toMap(String keyPrefix) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        Object qname;
+        java.io.File file = new java.io.File(name);
+        if (file.exists()) {
+            //qname = file.toURI().getPath();
+            try {
+                // heel belangrijk voor de DatastoreLinker / Geotools!!
+                qname = file.toURI().toURL();
+            } catch(Exception e) {
+                log.error("Malformed file url: " + e.getMessage());
+                qname = name;
+            }
+        } else {
+            qname = name;
+        }
+
+        Util.addToMapIfNotNull(map, "url", qname, keyPrefix);
+        Util.addToMapIfNotNull(map, "srs", "EPSG:28992", keyPrefix);
+
+        return map;
     }
 
     public String getName() {

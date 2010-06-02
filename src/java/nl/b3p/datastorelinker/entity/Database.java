@@ -21,6 +21,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import nl.b3p.datastorelinker.util.Mappable;
+import nl.b3p.datastorelinker.util.Util;
 
 /**
  *
@@ -36,7 +38,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "Database.findOutput", query =
         "select distinct d from Database d left join d.inoutList l where l.typeId = 2")*/
 })
-public class Database implements Serializable {
+public class Database implements Serializable, Mappable {
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -84,30 +86,29 @@ public class Database implements Serializable {
     }
 
     public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        addToMapIfNotNull(map, "dbtype", typeId.getName());
-        addToMapIfNotNull(map, "host", host);
-        addToMapIfNotNull(map, "port", port);
-        addToMapIfNotNull(map, "database", databaseName);
-        addToMapIfNotNull(map, "user", username);
-        addToMapIfNotNull(map, "passwd", password);
-        // Oracle specific:
-        addToMapIfNotNull(map, "schema", schema);
-        addToMapIfNotNull(map, "instance", instance);
-        // MS Access specific:
-        addToMapIfNotNull(map, "url", url);
-        addToMapIfNotNull(map, "srs", srs);
-        // TODO: check of deze ok zijn!
-        addToMapIfNotNull(map, "column_x", colX);
-        addToMapIfNotNull(map, "column_y", colY);
-
-        return map;
+        return toMap("");
     }
 
-    private void addToMapIfNotNull(Map<String, Object> map, String key, Object value) {
-        if (key != null && value != null)
-            map.put(key, value);
+    public Map<String, Object> toMap(String keyPrefix) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        Util.addToMapIfNotNull(map, "dbtype", typeId.getName(), keyPrefix);
+        Util.addToMapIfNotNull(map, "host", host, keyPrefix);
+        Util.addToMapIfNotNull(map, "port", port, keyPrefix);
+        Util.addToMapIfNotNull(map, "database", databaseName, keyPrefix);
+        Util.addToMapIfNotNull(map, "user", username, keyPrefix);
+        Util.addToMapIfNotNull(map, "passwd", password, keyPrefix);
+        // Oracle specific:
+        Util.addToMapIfNotNull(map, "schema", schema, keyPrefix);
+        Util.addToMapIfNotNull(map, "instance", instance, keyPrefix);
+        // MS Access specific:
+        Util.addToMapIfNotNull(map, "url", url, keyPrefix);
+        Util.addToMapIfNotNull(map, "srs", srs, keyPrefix);
+        // TODO: check of deze ok zijn!
+        Util.addToMapIfNotNull(map, "column_x", colX, keyPrefix);
+        Util.addToMapIfNotNull(map, "column_y", colY, keyPrefix);
+
+        return map;
     }
 
     public Long getId() {

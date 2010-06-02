@@ -4,7 +4,10 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -12,7 +15,10 @@ import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
+import nl.b3p.datastorelinker.entity.Actions;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.util.Mappable;
+import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.hibernate.Session;
 
 /**
@@ -126,13 +132,79 @@ public class ProcessAction extends DefaultAction {
         return list();
     }
 
-    public Resolution execute() {
+    public Resolution execute() throws Exception {
         log.debug("Executing process with id: " + selectedProcessId);
 
-        // ...
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+        Map<String, Object> inputMap = createInputMap(process.getInputId());
+        Map<String, Object> actionsOutputMap = createActionsOutputMap(process.getOutputId(), null);
+        Properties properties = createProperties(process.getInputId());
+
+        log.debug("input:\n" + inputMap);
+        log.debug("actionlistMap:\n" + actionsOutputMap);
+        log.debug("properties:\n" + properties);
+        
+        try {
+            String result = DataStoreLinker.process(inputMap, actionsOutputMap, properties);
+            log.debug(result);
+        } catch(Exception e) {
+            log.error(e.getMessage());
+        }
         
         return new ForwardResolution(EXECUTE_JSP);
     }
+
+    private Map<String, Object> createInputMap(Inout input) {
+        Mappable inputMappable = null;
+
+        if (input.getDatabaseId() != null)
+            inputMappable = input.getDatabaseId();
+        else if (input.getFileId() != null)
+            inputMappable = input.getFileId();
+
+        return inputMappable.toMap();
+    }
+
+    private Map<String, Object> createActionsOutputMap(Inout output, List<Actions> actionsList) {
+        Integer actionNr = 1;
+        /*
+        for (Actions action : actionsList) {
+            //...
+            actionNr++;
+        }
+        */
+
+        Map<String, Object> outputMap = output.getDatabaseId().toMap();
+
+        Map<String, Object> defaultActionSettingsMap = new HashMap<String, Object>();
+        defaultActionSettingsMap.put("params", outputMap);
+        // TODO: variabel maken:
+        defaultActionSettingsMap.put("drop", true);
+
+        Map<String, Object> defaultActionMap = new HashMap<String, Object>();
+        defaultActionMap.put("settings", defaultActionSettingsMap);
+        defaultActionMap.put("type", "ActionCombo_GeometrySplitter_Writer");
+
+        Map<String, Object> actionlistMap = new HashMap<String, Object>();
+        actionlistMap.put(actionNr.toString(), defaultActionMap);
+
+        return actionlistMap;
+    }
+
+    private Properties createProperties(Inout input) {
+        Properties properties = new Properties();
+        
+        properties.setProperty("read.typename", input.getTableName() == null ? "edam-volendam" : input.getTableName());
+
+        return properties;
+    }
+
+    //TODO: test: is output DB PostGIS (itt alleen Postgres)?
 
     public List<Process> getProcesses() {
         return processes;

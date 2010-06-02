@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package nl.b3p.datastorelinker.js;
+package nl.b3p.datastorelinker.json;
 
 /**
  *

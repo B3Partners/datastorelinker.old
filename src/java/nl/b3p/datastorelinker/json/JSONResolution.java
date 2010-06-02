@@ -20,12 +20,14 @@ public class JSONResolution extends StreamingResolution {
     private Object object;
 
     public JSONResolution(Object object) {
-        // hoort dit te zijn:
-        //super("application/json");
-        super("text");
+        this(object, "application/json");
+    }
+
+    public JSONResolution(Object object, String mimeType) {
+        super(mimeType);
         this.object = object;
     }
-    
+
     @Override
     public void stream(HttpServletResponse response) throws Exception {
         response.getOutputStream().print(JSONObject.fromObject(object).toString());
