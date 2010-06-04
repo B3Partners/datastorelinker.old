@@ -129,9 +129,6 @@ function ajaxOpen(sendOptions) {
         url: "",
         data: [],
         success: function(data, textStatus, xhr) {
-            //log("success callback");
-            //log(options.url);
-            //log(container);
             if (options.containerFill && container != null)
                 container.html(data);
             options.successAfterContainerFill(data, textStatus, xhr);
@@ -149,10 +146,10 @@ function ajaxOpen(sendOptions) {
         
         ajaxOptions.type = "POST";
         ajaxOptions.url = form[0].action;
-        ajaxOptions.data = ajaxOptions.data.concat(form.serializeArray());
+        $.merge(ajaxOptions.data, form.serializeArray());
     }
-    ajaxOptions.data = ajaxOptions.data.concat([{name: options.event, value: ""}]);
-    ajaxOptions.data = ajaxOptions.data.concat(options.extraParams);
+    $.merge(ajaxOptions.data, [{name: options.event, value: ""}]);
+    $.merge(ajaxOptions.data, options.extraParams);
 
     var container = null;
     if (options.containerSelector) {

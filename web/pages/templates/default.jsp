@@ -42,6 +42,10 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.uploadify/swfobject.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.uploadify/jquery.uploadify.latest.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.blockUI/jquery.blockUI.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/jquery-flash.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/jquery-ui-upload.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/functions.js"></script>
+            
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/database.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard.config.js.jsp"></script>

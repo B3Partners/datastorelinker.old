@@ -5,6 +5,7 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.Before;
@@ -20,7 +21,6 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.hibernate.Session;
 
 /**
@@ -79,11 +79,15 @@ public class FileAction extends DefaultAction {
     @SuppressWarnings("unused")
     @Before(stages = LifecycleStage.BindingAndValidation)
     private void rehydrate() {
-        StripesRequestWrapper req = (StripesRequestWrapper) getContext().getRequest();
+        StripesRequestWrapper req = StripesRequestWrapper.findStripesWrapper(getContext().getRequest());
 
         try {
-            if (ServletFileUpload.isMultipartContent(req)) {
+            if (req.isMultipart()) {
                 filedata = req.getFileParameterValue("Filedata");
+                /*for (Enumeration<String> e = req.getFileParameterNames(); e.hasMoreElements(); ) {
+                    String name = e.nextElement();
+                    log.debug("fn: " + name);
+                }*/
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

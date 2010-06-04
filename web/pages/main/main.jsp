@@ -11,13 +11,16 @@
 
         <script type="text/javascript">
             $(function() {
+                $.blockUI;
                 $('#tabs').tabs( {
                     ajaxOptions: {
                         error: function(xhr, status, index, anchor) {
+                            $.unblockUI;
                             $(anchor.hash).html("Fout. Kon deze tab niet laden.");
                         },
                         data: {},
                         success: function(data, textStatus) {
+                            $.unblockUI;
                         }
                     }
                 });
