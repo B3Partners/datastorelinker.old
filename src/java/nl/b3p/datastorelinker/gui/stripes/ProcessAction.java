@@ -17,6 +17,8 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Actions;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.json.JSONResolution;
+import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.util.Mappable;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.hibernate.Session;
@@ -65,7 +67,7 @@ public class ProcessAction extends DefaultAction {
         return new ForwardResolution(JSP);
     }
 
-    public Resolution create() {
+    public Resolution create() {//throws Exception {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -74,8 +76,9 @@ public class ProcessAction extends DefaultAction {
         //inputsDB = session.createQuery("from Inout where typeId = 1 and datatypeId = 1").list();
         outputs = session.createQuery("from Inout where typeId = 2").list();
 
+        //throw new Exception("qweqwe"); // error test
+
         return new ForwardResolution(CREATE_JSP);
-        //return new ForwardResolution(InputAction.class, "createProcess");
     }
 
     @Transactional
@@ -108,7 +111,7 @@ public class ProcessAction extends DefaultAction {
         return list();
     }
 
-    public Resolution update() {
+    public Resolution update() throws Exception {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -152,11 +155,11 @@ public class ProcessAction extends DefaultAction {
         try {
             String result = DataStoreLinker.process(inputMap, actionsOutputMap, properties);
             log.debug(result);
+            return new JSONResolution(new SuccessMessage(true, result, null));
         } catch(Exception e) {
             log.error(e.getMessage());
+            return new JSONResolution(new SuccessMessage(false, e.getMessage(), null));
         }
-        
-        return new ForwardResolution(EXECUTE_JSP);
     }
 
     private Map<String, Object> createInputMap(Inout input) {

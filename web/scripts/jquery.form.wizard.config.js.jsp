@@ -9,7 +9,7 @@
 formWizardConfig = {
     historyEnabled : false,
     formPluginEnabled : true,
-    validationEnabled : false,
+    validationEnabled : true,
     //focusFirstInput : true,
     textNext : "Volgende",
     textBack : "Vorige",
@@ -17,14 +17,21 @@ formWizardConfig = {
     inAnimation : "slideDown",
     outAnimation : "slideUp",
     afterNext: function(wizardData) {
+        // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met jQuery UI.
+        // Dit doet het niet automatisch.
         //$("#" + wizardData.currentStep + " .ui-widget").enable();
         $("#" + wizardData.currentStep + " .ui-widget").button("enable");
         $("#" + wizardData.currentStep + " .radioList").buttonset("enable");
     }
 }
 
-defaultDialogClose = function() {
-    $(this).dialog("destroy");
+defaultDialogClose = function(event, ui) {
+    var dialog = $(event.target);
+    dialog.dialog("destroy");
     // volgende regel heel belangrijk!!
-    $(this).remove();
+    dialog.remove();
+}
+
+defaultValidateOptions = {
+    errorClass: "ui-state-error"
 }

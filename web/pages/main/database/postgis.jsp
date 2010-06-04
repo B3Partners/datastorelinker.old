@@ -24,6 +24,8 @@
             $("#postgisport").val("5432");
             $("#postgisschema").val("public");
         }
+
+        $("#postgisForm").validate(defaultValidateOptions);
     });
 </script>
 
@@ -37,27 +39,27 @@
         <tbody>
             <tr>
                 <td><stripes:label name="host" for="postgishost"/></td>
-                <td><stripes:text id="postgishost" name="host"/></td>
+                <td><stripes:text id="postgishost" name="host" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="databaseName" for="postgisdatabaseName"/></td>
-                <td><stripes:text id="postgisdatabaseName" name="databaseName"/></td>
+                <td><stripes:text id="postgisdatabaseName" name="databaseName" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="username" for="postgisusername"/></td>
-                <td><stripes:text id="postgisusername" name="username"/></td>
+                <td><stripes:text id="postgisusername" name="username" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="password" for="postgispassword"/></td>
-                <td><stripes:password id="postgispassword" name="password"/></td>
+                <td><stripes:password id="postgispassword" name="password" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="port" for="postgisport"/></td>
-                <td><stripes:text id="postgisport" name="port"/></td>
+                <td><stripes:text id="postgisport" name="port" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="schema" for="postgisschema"/></td>
-                <td><stripes:text id="postgisschema" name="schema"/></td>
+                <td><stripes:text id="postgisschema" name="schema" class="required"/></td>
             </tr>
         </tbody>
     </table>

@@ -16,10 +16,10 @@
         <c:forEach var="database" items="${actionBean.databases}" varStatus="status">
             <c:choose>
                 <c:when test="${not empty actionBean.selectedDatabaseId and database.id == actionBean.selectedDatabaseId}">
-                    <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" checked="checked" />
+                    <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" class="required" checked="checked" />
                 </c:when>
                 <c:otherwise>
-                    <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" />
+                    <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" class="required"/>
                 </c:otherwise>
             </c:choose>
             <stripes:label for="database${status.index}">

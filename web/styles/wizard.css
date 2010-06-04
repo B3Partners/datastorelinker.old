@@ -15,6 +15,14 @@
     margin-bottom: 10px
 }
 
+.dailogContent {
+    /*width: 50%;*/
+    height: 225px;
+    max-height: 250px;
+    overflow: auto;
+    margin: 10px 0 10px 0;
+}
+
 .radioList {
     /*width: 50%;*/
     height: 225px;
@@ -41,6 +49,6 @@
 
 .wizardButtonsArea {
     text-align: right;
-    border-top: 1px solid blue;
+    border-top: 1px solid yellow;
     padding-top: 10px;
 }

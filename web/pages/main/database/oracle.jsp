@@ -28,6 +28,8 @@
             $("#oracleinstance").val("ORCL");
             $("#oraclealias").val("");
         }
+
+        $("#oracleForm").validate(defaultValidateOptions);
     });
 </script>
 
@@ -38,27 +40,27 @@
         <tbody>
             <tr>
                 <td><stripes:label name="host" for="oraclehost"/></td>
-                <td><stripes:text id="oraclehost" name="host"/></td>
+                <td><stripes:text id="oraclehost" name="host" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="databaseName" for="oracledatabaseName"/></td>
-                <td><stripes:text id="oracledatabaseName" name="databaseName"/></td>
+                <td><stripes:text id="oracledatabaseName" name="databaseName" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="username" for="oracleusername"/></td>
-                <td><stripes:text id="oracleusername" name="username"/></td>
+                <td><stripes:text id="oracleusername" name="username" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="password" for="oraclepassword"/></td>
-                <td><stripes:password id="oraclepassword" name="password"/></td>
+                <td><stripes:password id="oraclepassword" name="password" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="port" for="oracleport"/></td>
-                <td><stripes:text id="oracleport" name="port"/></td>
+                <td><stripes:text id="oracleport" name="port" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="schema" for="oracleschema"/></td>
-                <td><stripes:text id="oracleschema" name="schema"/></td>
+                <td><stripes:text id="oracleschema" name="schema" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="instance" for="oracleinstance"/></td>

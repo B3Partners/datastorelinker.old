@@ -5,6 +5,10 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<stripes:url var="inputUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>
+<stripes:url var="outputUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>
+<stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
+
 <script type="text/javascript">
     $(function() {
         $("#createProcessBackButton").button();
@@ -25,16 +29,25 @@
                 afterNext: function(wizardData) {
                     formWizardConfig.afterNext(wizardData);
                     $("#createUpdateProcessForm :reset").button("enable");
+                    if (wizardData.currentStep === "Overzicht") {
+                        var inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
+                        $("#inputOverviewContainer").html(inputText);
+                        var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
+                        $("#outputOverviewContainer").html(outputText);
+                    }
                 }
             }),
-            {
-                // validation settings
-            },
+            defaultValidateOptions,
             {
                 // form plugin settings
                 beforeSend: function() {
-                    ajaxFormEventInto("#createUpdateProcessForm", "createComplete", "#processesListContainer", function() {
-                        $("#processContainer").dialog("close");
+                    ajaxOpen({
+                        formSelector: "#createUpdateProcessForm",
+                        event: "createComplete",
+                        containerSelector: "#processesListContainer",
+                        successAfterContainerFill: function() {
+                            $("#processContainer").dialog("close");
+                        }
                     });
                     // prevent regular ajax submit:
                     return false;
@@ -49,8 +62,7 @@
             inputDialog.dialog("option", "title", "Nieuwe Database Invoer...");// TODO: localization
             inputDialog.dialog("open");
 
-            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                "createDatabaseInput", "#inputContainer");
+            ajaxActionEventInto("${inputUrl}", "createDatabaseInput", "#inputContainer");
 
             return false;
         });
@@ -62,8 +74,7 @@
             inputDialog.dialog("option", "title", "Nieuwe Bestand Invoer...");// TODO: localization
             inputDialog.dialog("open");
 
-            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                "createFileInput", "#inputContainer");
+            ajaxActionEventInto("${inputUrl}", "createFileInput", "#inputContainer");
 
             return false;
         });
@@ -75,14 +86,13 @@
             inputDialog.dialog("option", "title", "Bewerk Invoer...");// TODO: localization // TODO: get Invoer type (db or file)
             inputDialog.dialog("open");
 
-            ajaxFormEventInto("#createUpdateProcessForm", "update", "#inputContainer", null,
-                "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>");
+            ajaxFormEventInto("#createUpdateProcessForm", "update", "#inputContainer", null, "${inputUrl}");
 
             return false;
         });
 
         $("#deleteInput").click(function() {//TODO: localize
-            $("<div id='inputContainer' class='confirmationDialog'>Weet u zeker dat u deze invoer wilt verwijderen? Alle processen die deze invoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
+            $("<div id='inputContainer' class='confirmationDialog'>Weet u zeker dat u deze invoer wilt verwijderen? Alle processen die deze invoer gebruiken zullen ook worden verwijderd.</div>").appendTo(document.body);
 
             $("#inputContainer").dialog({
                 title: "Invoer verwijderen...", // TODO: localization
@@ -93,13 +103,12 @@
                     },
                     "Ja": function() {
                         ajaxFormEventInto("#createUpdateProcessForm", "delete", "#inputListContainer", function() {
-                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
-                                "list", "#processesListContainer",
+                            ajaxActionEventInto("${processUrl}", "list", "#processesListContainer",
                                 function() {
                                     $("#inputContainer").dialog("close");
                                 }
                             );
-                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>");
+                        }, "${inputUrl}");
                     }
                 },
                 close: defaultDialogClose
@@ -113,7 +122,7 @@
             outputDialog.dialog("option", "title", "Nieuwe Uitvoer Database...");// TODO: localization
             outputDialog.dialog("open");
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>", "create", function(data) {
+            $.get("${outputUrl}", "create", function(data) {
                 $("#outputContainer").html(data);
             });
         })
@@ -125,8 +134,7 @@
             outputDialog.dialog("option", "title", "Bewerk Uitvoer Database...");// TODO: localization
             outputDialog.dialog("open");
 
-            ajaxFormEventInto("#createUpdateProcessForm", "update", "#outputContainer", null,
-                "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+            ajaxFormEventInto("#createUpdateProcessForm", "update", "#outputContainer", null, "${outputUrl}");
         })
 
         $("#deleteOutput").click(function() {//TODO: localize
@@ -141,13 +149,12 @@
                     },
                     "Ja": function() {
                         ajaxFormEventInto("#createUpdateProcessForm", "delete", "#outputListContainer", function() {
-                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
-                                "list", "#processesListContainer",
+                            ajaxActionEventInto("${processUrl}", "list", "#processesListContainer",
                                 function() {
                                     $("#outputContainer").dialog("close");
                                 }
                             );
-                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+                        }, "${outputUrl}");
                     }
                 },
                 close: defaultDialogClose
@@ -161,14 +168,11 @@
             width: 800,
             height: 500,
             modal: true,
-            close: function() {
-                log("inputContainer closing");
+            close: function(event, ui) {
                 if ($("#createInputForm")) {
                     $("#createInputForm").formwizard("destroy");
                 }
-                $("#inputContainer").dialog("destroy");
-                // volgende regel heel belangrijk!!
-                $("#inputContainer").remove();
+                defaultDialogClose(event, ui);
             }
         });
     }
@@ -181,16 +185,18 @@
             modal: true,
             buttons: { // TODO: localize button name:
                 "Voltooien" : function() {
-                    ajaxFormEventInto("#postgisForm", "createComplete", "#outputListContainer", function() {
-                        $("#outputContainer").dialog("close");
-                    }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction"/>");
+                    testConnection({
+                        url: "${outputUrl}",
+                        formSelector: "#postgisForm",
+                        event: "createComplete",
+                        containerSelector: "#outputListContainer",
+                        successAfterContainerFill: function() {
+                            $("#outputContainer").dialog("close");
+                        }
+                    });
                 }
             },
-            close: defaultDialogClose,
-            beforeclose: function(event, ui) {
-                // TODO: check connection. if bad return false
-                return true;
-            }
+            close: defaultDialogClose
         });
     }
 
@@ -211,7 +217,7 @@
             <stripes:button id="deleteInput" name="delete"/>
         </div>
     </div>
-    <div id="SelecteerUitvoer" class="step submit_step">
+    <div id="SelecteerUitvoer" class="step">
         <h1>Selecteer database om naar uit te voeren:</h1>
         <div id="outputListContainer">
             <%@include file="/pages/main/output/list.jsp" %>
@@ -220,6 +226,12 @@
             <stripes:button id="createOutput" name="create"/>
             <stripes:button id="updateOutput" name="update"/>
             <stripes:button id="deleteOutput" name="delete"/>
+        </div>
+    </div>
+    <div id="Overzicht" class="step submit_step">
+        <h1>Overzicht:</h1>
+        <div>
+            <%@include file="/pages/main/overview/view.jsp" %>
         </div>
     </div>
     <!--div id="secondStep" class="step">

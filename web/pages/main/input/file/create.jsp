@@ -5,6 +5,10 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
+<stripes:url var="inputUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>
+<stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
+
 <script type="text/javascript">
     $(function() {
         $("#createFile").button();
@@ -15,12 +19,10 @@
         $("#createInputNextButton").button();
 
         $("#createInputForm").formwizard(
-            formWizardConfig, {
-                //validation settings
-            }, {
+            formWizardConfig,
+            defaultValidateOptions, {
                 // form plugin settings
                 beforeSend: function() {
-                    // beetje een lelijke hack, maar werkt wel mooi:
                     ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputListContainer", function() {
                         if ($("#inputContainer"))
                             $("#inputContainer").dialog("close");
@@ -40,23 +42,19 @@
                 modal: true,
                 buttons: { // TODO: localize button name:
                     "Voltooien" : function() {
-                        ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>",
-                            "createComplete", "#filesListContainer",
-                            function() {
-                                $("#createFileContainer").dialog("close");
-                            }
-                        );
+                        ajaxActionEventInto("${fileUrl}", "createComplete", "#filesListContainer", function() {
+                            $("#createFileContainer").dialog("close");
+                        });
                     }
                 },
                 close: defaultDialogClose
             });
 
-            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>",
-                "create", "#createFileContainer");
+            ajaxActionEventInto("${fileUrl}", "create", "#createFileContainer");
         });
 
         $("#deleteFile").click(function() {//TODO: localize
-            $("<div id='createFileContainer' class='confirmationDialog'><p>Weet u zeker dat u dit bestand van de server wilt verwijderen?</p><p> Alle bestands-invoer die dit bestand gebruikt en alle processen die deze bestands-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo($(document.body));
+            $("<div id='createFileContainer' class='confirmationDialog'><p>Weet u zeker dat u dit bestand van de server wilt verwijderen?</p><p> Alle bestands-invoer die dit bestand gebruikt en alle processen die deze bestands-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo(document.body);
 
             $("#createFileContainer").dialog({
                 title: "Bestand van de server verwijderen...", // TODO: localization
@@ -68,16 +66,12 @@
                     },
                     "Ja": function() {
                         ajaxFormEventInto("#createInputForm", "delete", "#filesListContainer", function() {
-                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                                "list", "#inputListContainer", function() {
-                                ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
-                                    "list", "#processesListContainer",
-                                    function() {
-                                        $("#createFileContainer").dialog("close");
-                                    }
-                                );
+                            ajaxActionEventInto("${inputUrl}", "list", "#inputListContainer", function() {
+                                ajaxActionEventInto("${processUrl}", "list", "#processesListContainer", function() {
+                                    $("#createFileContainer").dialog("close");
+                                });
                             });
-                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>");
+                        }, "${fileUrl}");
                     }
                 },
                 close: defaultDialogClose

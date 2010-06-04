@@ -20,6 +20,8 @@
             $("#msaccesscolX").val("POINT_X");
             $("#msaccesscolY").val("POINT_Y");
         }
+
+        $("#msaccessForm").validate(defaultValidateOptions);
     });
 </script>
 
@@ -30,19 +32,19 @@
         <tbody>
             <tr>
                 <td><stripes:label name="url" for="msaccessurl"/></td>
-                <td><stripes:text id="msaccessurl" name="url"/></td>
+                <td><stripes:text id="msaccessurl" name="url" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="srs" for="msaccesssrs"/></td>
-                <td><stripes:text id="msaccesssrs" name="srs"/></td>
+                <td><stripes:text id="msaccesssrs" name="srs" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="colX" for="msaccesscolX"/></td>
-                <td><stripes:text id="msaccesscolX" name="colX"/></td>
+                <td><stripes:text id="msaccesscolX" name="colX" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="colY" for="msaccesscolY"/></td>
-                <td><stripes:text id="msaccesscolY" name="colY"/></td>
+                <td><stripes:text id="msaccesscolY" name="colY" class="required"/></td>
             </tr>
         </tbody>
     </table>

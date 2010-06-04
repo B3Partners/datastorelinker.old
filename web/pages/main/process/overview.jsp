@@ -5,85 +5,96 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
+
 <script type="text/javascript">
     $(function() {
+        $("#processForm").validate(defaultValidateOptions);
+
         $("#createProcess").button();
         $("#updateProcess").button();
         $("#deleteProcess").button();
         $("#executeProcess").button();
 
         $("#createProcess").click(function() {
-            $("<div id='processContainer'/>").appendTo(document.body);
-
-            $("#processContainer").dialog({
-                title: "Nieuw Proces...", // TODO: localization
-                width: 900,
-                height: 600,
-                modal: true,
-                close: function() {
-                    log("processDialog closing");
-                    if ($("#createUpdateProcessForm")) {
+            ajaxOpen({
+                url: "${processUrl}",
+                event: "create",
+                containerId: "processContainer",
+                openInDialog: true,
+                dialogOptions: {
+                    title: "Nieuw Proces...", // TODO: localization
+                    width: 900,
+                    height: 600,
+                    modal: true,
+                    close: function(event, ui) {
                         $("#createUpdateProcessForm").formwizard("destroy");
+                        defaultDialogClose(event, ui);
                     }
-                    $("#processContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#processContainer").remove();
                 }
             });
-
-            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
-                "create", "#processContainer");
-
-            return false;
         });
 
         $("#updateProcess").click(function() {
-            $("<div id='processContainer'/>").appendTo(document.body);
-
-            $("#processContainer").dialog({
-                title: "Bewerk Proces...", // TODO: localization
-                width: 900,
-                height: 600,
-                modal: true,
-                close: function() {
-                    log("processDialog closing");
-                    if ($("#createUpdateProcessForm")) {
+            ajaxOpen({
+                formSelector: "#processForm",
+                event: "update",
+                containerId: "processContainer",
+                openInDialog: true,
+                dialogOptions: {
+                    title: "Bewerk Proces...", // TODO: localization
+                    width: 900,
+                    height: 600,
+                    modal: true,
+                    close: function(event, ui) {
                         $("#createUpdateProcessForm").formwizard("destroy");
+                        defaultDialogClose(event, ui);
                     }
-                    $("#processContainer").dialog("destroy");
-                    // volgende regel heel belangrijk!!
-                    $("#processContainer").remove();
                 }
             });
-
-            ajaxFormEventInto("#processForm", "update", "#processContainer");
-
-            return false;
         });
 
         $("#executeProcess").click(function() {
-            $("<div id='processContainer'/>").appendTo($(document.body));
+            $("<div id='processContainer'><div id='processOutput'>Proces aan het uitvoeren...</div></div>").appendTo(document.body);
 
-            $("#processContainer").dialog({
-                title: "Proces uitvoeren...", // TODO: localization
-                width: 900,
-                height: 600,
-                modal: true,
-                buttons: {
-                    "Annuleren": function() { // TODO: localize
-                        $(this).dialog("close");
+            $("#processContainer").prepend("<div id='progressbar'/>");
+            $("#progressbar").progressbar();
+
+            ajaxOpen({
+                formSelector: "#processForm",
+                event: "execute",
+                containerSelector: "#processContainer",
+                containerFill: false,
+                successAfterContainerFill: function(data, textStatus, xhr) {
+                    if (data.success) {
+                        $("#progressbar").progressbar("value", 100);
+                        $("#processOutput").html("Proces succesvol uitgevoerd:");
+                    } else {
+                        $("#processOutput").html("Proces niet succesvol uitgevoerd:");
                     }
+                    $("#processOutput").append("<p>" + data.message + "</p>");
                 },
-                close: defaultDialogClose
+                openInDialog: true,
+                dialogOptions: {
+                    title: "Proces uitvoeren...", // TODO: localization
+                    width: 900,
+                    height: 600,
+                    modal: true,
+                    buttons: {
+                        "Annuleren": function() { // TODO: localize
+                            $(this).dialog("close");
+                        }
+                    },
+                    close: function(event, ui) {
+                        $("#progressbar").progressbar("destroy");
+                        defaultDialogClose(event, ui);
+                    }
+                }
             });
-            
-            ajaxFormEventInto("#processForm", "execute", "#processContainer");
-
-            return false;
         });
 
         $("#deleteProcess").click(function() {//TODO: localize
-            $("<div id='processContainer' class='confirmationDialog'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo($(document.body));
+            $("<div id='processContainer' class='confirmationDialog'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo(document.body);
 
             $("#processContainer").dialog({
                 title: "Proces verwijderen...", // TODO: localization
@@ -93,8 +104,13 @@
                         $(this).dialog("close");
                     },
                     "Ja": function() {
-                        ajaxFormEventInto("#processForm", "delete", "#processesListContainer", function() {
-                            $("#processContainer").dialog("close");
+                        ajaxOpen({
+                            formSelector: "#processForm",
+                            event: "delete",
+                            containerSelector: "#processesListContainer",
+                            successAfterContainerFill: function() {
+                                $("#processContainer").dialog("close");
+                            }
                         });
                     }
                 },

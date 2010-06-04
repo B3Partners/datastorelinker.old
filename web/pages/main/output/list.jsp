@@ -16,10 +16,10 @@
         <c:forEach var="output" items="${actionBean.outputs}" varStatus="status">
             <c:choose>
                 <c:when test="${not empty actionBean.selectedOutputId and output.id == actionBean.selectedOutputId}">
-                    <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" checked="checked"/>
+                    <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" class="required" checked="checked"/>
                 </c:when>
                 <c:otherwise>
-                    <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}"/>
+                    <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" class="required"/>
                 </c:otherwise>
             </c:choose>
             <stripes:label for="output${status.index}">

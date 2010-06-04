@@ -5,7 +5,21 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<stripes:url var="databaseUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>
+<stripes:url var="inputUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>
+<stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
+
 <script type="text/javascript">
+
+    connectionSuccessInputDBAjaxOpenOptions = {
+        formSelector: ".form-container .ui-accordion-content-active form",
+        event: "createComplete",
+        containerSelector: "#databasesListContainer",
+        successAfterContainerFill: function() {
+            $("#dbContainer").dialog("close");
+        }
+    }
+
     $(function() {
         $("#createDB").button();
         $("#updateDB").button();
@@ -21,16 +35,15 @@
                     formWizardConfig.afterNext(wizardData);
                     if (wizardData.currentStep === "SelecteerTabel") {
                         //log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val());
-                        ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
+                        ajaxActionEventInto(
+                            "${inputUrl}",
                             "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val(),
                             "#tablesListContainer"
                         );
                     }
                 }
             }),
-            {
-                // validation settings
-            },
+            defaultValidateOptions,
             {
                 // form plugin settings
                 beforeSend: function() {
@@ -53,16 +66,14 @@
                 height: 600,
                 modal: true,
                 buttons: { // TODO: localize button name:
-                    "Voltooien" : testConnectionAndClose
+                    "Voltooien" : function() {
+                        testConnection(connectionSuccessInputDBAjaxOpenOptions);
+                    }
                 },
-                close: defaultDialogClose,
-                beforeclose: function(event, ui) {
-                    // TODO: check connection. if bad return false
-                    return true;
-                }
+                close: defaultDialogClose
             });
 
-            $.get("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>", "create", function(data) {
+            $.get("${databaseUrl}", "create", function(data) {
                 $("#dbContainer").html(data);
             });
         })
@@ -76,17 +87,14 @@
                 height: 600,
                 modal: true,
                 buttons: { // TODO: localize button name:
-                    "Voltooien" : testConnectionAndClose
+                    "Voltooien" : function() {
+                        testConnection(connectionSuccessInputDBAjaxOpenOptions);
+                    }
                 },
-                close: defaultDialogClose,
-                beforeclose: function(event, ui) {
-                    // TODO: check connection. if bad return false
-                    return true;
-                }
+                close: defaultDialogClose
             });
 
-            ajaxFormEventInto("#createInputForm", "update", "#dbContainer", null,
-                "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>");
+            ajaxFormEventInto("#createInputForm", "update", "#dbContainer", null, "${databaseUrl}");
         })
 
         $("#deleteDB").click(function() {//TODO: localize
@@ -102,45 +110,17 @@
                     },
                     "Ja": function() {
                         ajaxFormEventInto("#createInputForm", "delete", "#databasesListContainer", function() {
-                            ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>",
-                                "list", "#inputListContainer", function() {
-                                ajaxActionEventInto("<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>",
-                                    "list", "#processesListContainer",
-                                    function() {
-                                        $("#dbContainer").dialog("close");
-                                    }
-                                );
+                            ajaxActionEventInto("${inputUrl}", "list", "#inputListContainer", function() {
+                                ajaxActionEventInto("${processUrl}", "list", "#processesListContainer", function() {
+                                    $("#dbContainer").dialog("close");
+                                });
                             });
-                        }, "<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction"/>");
+                        }, "${databaseUrl}");
                     }
                 },
                 close: defaultDialogClose
             });
         });
-
-        function testConnectionAndClose() {//validCallback) {
-            var formSelector = ".form-container .ui-accordion-content-active form";
-            ajaxFormEventInto(formSelector, "testConnection", null, function(data, textStatus, xhr) {
-                log(data);
-                if (data.success) {
-                    ajaxFormEventInto(formSelector, "createComplete", "#databasesListContainer", function() {
-                        $("#dbContainer").dialog("close");
-                    });
-                } else {
-                    $("<div id='errorDialog'>" + data.message + "</div>").appendTo(document.body);
-                    $("#errorDialog").dialog({
-                        title: data.title,
-                        modal: true,
-                        buttons: {
-                            "Ok": function() {
-                                $("#errorDialog").dialog("close");
-                            }
-                        },
-                        close: defaultDialogClose
-                    });
-                }
-            }, null, null, "json");
-        }
 
     });
 

@@ -16,10 +16,10 @@
         <c:forEach var="table" items="${actionBean.tables}" varStatus="status">
             <c:choose>
                 <c:when test="${not empty actionBean.selectedTable and table == actionBean.selectedTable}">
-                    <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" checked="checked" />
+                    <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" class="required" checked="checked" />
                 </c:when>
                 <c:otherwise>
-                    <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" />
+                    <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" class="required"/>
                 </c:otherwise>
             </c:choose>
             <stripes:label for="table${status.index}">

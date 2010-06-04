@@ -10,10 +10,11 @@ $.ajaxSetup({
 //$(document).ajaxStart($.blockUI);
 //$(document).ajaxStop($.unblockUI);
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
-    log(event);
+    /*log(event);
     log(xhr);
     log(ajaxOptions);
-    log(thrownError);
+    log(thrownError);*/
+
     var errorMessage;
     if (xhr.status == 1000) {
         errorMessage = thrownError + event;
@@ -31,23 +32,27 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
         errorMessage = "Onbekende fout";
     }
 
-    $("<div id='errorDialog'>" + errorMessage + "</div>").appendTo(document.body);
-    $("#errorDialog").dialog({
-        title: "Fout!",
-        modal: true,
-        buttons: {
-            "Ok": function() {
-                $("#errorDialog").dialog("close");
-            }
-        },
-        close: defaultDialogClose
-    });
+    if (event.target != document) {
+        $(event.target).html(errorMessage);
+    } else {
+        $("<div id='errorDialog'>" + errorMessage + "</div>").appendTo(document.body);
+        $("#errorDialog").dialog({
+            title: "Fout!",
+            modal: true,
+            buttons: {
+                "Ok": function() {
+                    $("#errorDialog").dialog("close");
+                }
+            },
+            close: defaultDialogClose
+        });
+    }
 
     // close any open confirmation dialogs:
     //$(".confirmationDialog").dialog("close");
 });
 
-
+// Deprecated:
 function ajaxFormEventInto(formSelector, event, containerSelector, callback, action, extraParams, dataType) {
     var form = $(formSelector).first();
     var params = "";
@@ -67,7 +72,7 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
     //log(extraParams);
     //log(params);
     if (!action)
-        action = form[0].action
+        action = form[0].action;
     //var oldHtml = $(containerSelector).first().html();
     //if (containerSelector)
     //    $(containerSelector).first().html("Bezig met laden...");
@@ -86,6 +91,7 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
     return false;
 }
 
+// Deprecated:
 function ajaxActionEventInto(action, event, containerSelector, callback) {
     if (containerSelector)
         $(containerSelector).first().html("Bezig met laden...");
@@ -99,6 +105,83 @@ function ajaxActionEventInto(action, event, containerSelector, callback) {
         }
     );
     return false;
+}
+
+// Use this function for all your ajax calls
+function ajaxOpen(sendOptions) {
+    var options = $.extend({
+        url: "",
+        formSelector: "",
+        event: "",
+        containerSelector: "",
+        containerId: "",
+        containerWaitText: "Bezig met laden...",
+        containerFill: true,
+        successAfterContainerFill: $.noop,
+        extraParams: [],
+        ajaxOptions: {},
+        dialogOptions: {},
+        openInDialog: false
+    }, sendOptions);
+
+    var ajaxOptions = {
+        type: "GET",
+        url: "",
+        data: [],
+        success: function(data, textStatus, xhr) {
+            //log("success callback");
+            //log(options.url);
+            //log(container);
+            if (options.containerFill && container != null)
+                container.html(data);
+            options.successAfterContainerFill(data, textStatus, xhr);
+        }
+    };
+
+    //log(options);
+    //log(ajaxOptions);
+
+    if (options.formSelector) {
+        var form = $(options.formSelector);
+
+        if (!form.valid())
+            return false;
+        
+        ajaxOptions.type = "POST";
+        ajaxOptions.url = form[0].action;
+        ajaxOptions.data = ajaxOptions.data.concat(form.serializeArray());
+    }
+    ajaxOptions.data = ajaxOptions.data.concat([{name: options.event, value: ""}]);
+    ajaxOptions.data = ajaxOptions.data.concat(options.extraParams);
+
+    var container = null;
+    if (options.containerSelector) {
+        container = $(options.containerSelector);
+    } else if (options.containerId) {
+        // we maken een nieuwe container aan:
+        container = $("<div></div").attr("id", options.containerId);
+        container.appendTo(document.body);
+        container.html(options.containerWaitText);
+    }
+    
+    if (options.openInDialog && container != null) {
+        // open dialog:
+        container.dialog(options.dialogOptions);
+    }
+
+    if (container != null)
+        ajaxOptions.context = container[0];
+
+    if (sendOptions.url)
+        ajaxOptions.url = sendOptions.url;
+
+    // Override options with supplied extra ajaxOptions
+    $.extend(ajaxOptions, options.ajaxOptions);
+
+    // The actual ajax request:
+    $.ajax(ajaxOptions);
+    
+    return true;
 }
 
 function log(text) {

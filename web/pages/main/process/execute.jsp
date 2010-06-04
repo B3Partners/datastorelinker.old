@@ -5,7 +5,4 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-
-Proces aan het uitvoeren...
-
-Dit doet nog niets.
+Proces succesvol uitgevoerd.
