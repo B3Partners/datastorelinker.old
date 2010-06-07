@@ -15,6 +15,11 @@ $(function() {
         script: "${fileUrl}",
         fpath: "${actionBean.uploadDirectory}",
         fdata: "Filedata",
+        maxfiles: 1,
+        maxfilesize: 524288000, // == 500 MB
+        btnIcon: false,
+        btnStart: false,
+        btnStop: false,
         ftypes: {
             "Alles": ["*"],
             "Iets anders": ["txt", "jpg", "blaat"]
@@ -29,9 +34,34 @@ $(function() {
         onError: function() {
             alert("error!");
         }*/
-    });
+    }, jquery_ui_upload_messages_nl);
 
     $("#uploaderPanel").append($("#deleteFile"));
+
+    var uploadDiv = $("<div></div>")
+        .attr("id", "uploadDialog")
+        .attr("style", "display: none")
+        .appendTo(document.body);
+    uploadDiv.append($("#uploaderQueue"));
+
+    $("#uploaderBrowse").removeAttr("onclick");
+    $("#uploaderBrowse").click(function() {
+        uploadDiv.dialog({
+            title: "Bezig met uploaden ...", // TODO: localization
+            width: 400,
+            height: 200,
+            modal: true,
+            buttons: {
+                "Ok" : function() {
+                    uploadDiv.close();
+                },
+                "Annuleren" : function() {
+                    uploadDiv.close();
+                }
+            },
+            close: defaultDialogClose
+        });
+    });
 
     <%--$("#uploader").uploadify({
         uploader       : "${contextPath}/scripts/jquery.uploadify/uploadify.swf",

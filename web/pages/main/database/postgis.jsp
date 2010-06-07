@@ -55,7 +55,7 @@
             </tr>
             <tr>
                 <td><stripes:label name="port" for="postgisport"/></td>
-                <td><stripes:text id="postgisport" name="port" class="required"/></td>
+                <td><stripes:text id="postgisport" name="port" class="required number"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="schema" for="postgisschema"/></td>
