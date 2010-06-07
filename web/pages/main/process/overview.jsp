@@ -55,6 +55,9 @@
         });
 
         $("#executeProcess").click(function() {
+            if (!$("#processForm").valid())
+                return;
+
             $("<div id='processContainer'><div id='processOutput'>Proces aan het uitvoeren...</div></div>").appendTo(document.body);
 
             $("#processContainer").prepend("<div id='progressbar'/>");
@@ -94,7 +97,10 @@
         });
 
         $("#deleteProcess").click(function() {//TODO: localize
-            $("<div id='processContainer' class='confirmationDialog'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo(document.body);
+            if (!$("#processForm").valid())
+                return;
+
+            $("<div id='processContainer'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo(document.body);
 
             $("#processContainer").dialog({
                 title: "Proces verwijderen...", // TODO: localization

@@ -35,9 +35,14 @@
                     formWizardConfig.afterNext(wizardData);
                     if (wizardData.currentStep === "SelecteerTabel") {
                         //log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val());
+                        var inputNode = $("#createInputForm .ui-state-active").prev();
+                        // We could be looking at an errormessage from jquery.validate(): if so, we use the previous again:
+                        if (inputNode.nodeName.toLowerCase() != "input")
+                            inputNode = inputNode.prev();
+
                         ajaxActionEventInto(
                             "${inputUrl}",
-                            "createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val(),
+                            "createTablesList&selectedDatabaseId=" + $(inputNode).val(),
                             "#tablesListContainer"
                         );
                     }
@@ -79,6 +84,9 @@
         })
 
         $("#updateDB").click(function() {
+            if (!$("#createInputForm").valid())
+                return;
+
             $("<div id='dbContainer'/>").appendTo(document.body);
 
             $("#dbContainer").dialog({
@@ -98,6 +106,9 @@
         })
 
         $("#deleteDB").click(function() {//TODO: localize
+            if (!$("#createInputForm").valid())
+                return;
+
             $("<div id='dbContainer' class='confirmationDialog'><p>Weet u zeker dat u deze databaseconnectie wilt verwijderen?</p><p> Alle database-invoer die deze databaseconnectie gebruikt en alle processen die die database-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo($(document.body));
 
             $("#dbContainer").dialog({

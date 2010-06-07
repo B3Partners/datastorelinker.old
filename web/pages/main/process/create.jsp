@@ -80,6 +80,9 @@
         });
 
         $("#updateInput").click(function() {
+            if (!$("#createUpdateProcessForm").valid())
+                return;
+
             $("<div id='inputContainer'/>").appendTo(document.body);
 
             var inputDialog = getInputDialog();
@@ -87,11 +90,12 @@
             inputDialog.dialog("open");
 
             ajaxFormEventInto("#createUpdateProcessForm", "update", "#inputContainer", null, "${inputUrl}");
-
-            return false;
         });
 
         $("#deleteInput").click(function() {//TODO: localize
+            if (!$("#createUpdateProcessForm").valid())
+                return;
+
             $("<div id='inputContainer' class='confirmationDialog'>Weet u zeker dat u deze invoer wilt verwijderen? Alle processen die deze invoer gebruiken zullen ook worden verwijderd.</div>").appendTo(document.body);
 
             $("#inputContainer").dialog({
@@ -128,6 +132,9 @@
         })
 
         $("#updateOutput").click(function() {
+            if (!$("#createUpdateProcessForm").valid())
+                return;
+
             $("<div id='outputContainer'/>").appendTo(document.body);
 
             var outputDialog = getOutputDialog();
@@ -138,7 +145,10 @@
         })
 
         $("#deleteOutput").click(function() {//TODO: localize
-            $("<div id='outputContainer' class='confirmationDialog'>Weet u zeker dat u deze uitvoer wilt verwijderen? Alle processen die deze uitvoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
+            if (!$("#createUpdateProcessForm").valid())
+                return;
+
+            $("<div id='outputContainer'>Weet u zeker dat u deze uitvoer wilt verwijderen? Alle processen die deze uitvoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
 
             $("#outputContainer").dialog({
                 title: "Uitvoer verwijderen...", // TODO: localization
@@ -169,12 +179,23 @@
             height: 500,
             modal: true,
             close: function(event, ui) {
-                if ($("#createInputForm")) {
-                    $("#createInputForm").formwizard("destroy");
-                }
+                $("#uploader").uiloadDestroy();
+                $("#createInputForm").formwizard("destroy");
                 defaultDialogClose(event, ui);
             }
         });
+    }
+
+    function getInputDialogOptions() {
+        return {
+            width: 800,
+            height: 500,
+            modal: true,
+            close: function(event, ui) {
+                $("#createInputForm").formwizard("destroy");
+                defaultDialogClose(event, ui);
+            }
+        };
     }
 
     function getOutputDialog() {
@@ -198,6 +219,28 @@
             },
             close: defaultDialogClose
         });
+    }
+
+    function getOutputDialogOptions() {
+        return {
+            width: 700,
+            height: 600,
+            modal: true,
+            buttons: { // TODO: localize button name:
+                "Voltooien" : function() {
+                    testConnection({
+                        url: "${outputUrl}",
+                        formSelector: "#postgisForm",
+                        event: "createComplete",
+                        containerSelector: "#outputListContainer",
+                        successAfterContainerFill: function() {
+                            $("#outputContainer").dialog("close");
+                        }
+                    });
+                }
+            },
+            close: defaultDialogClose
+        };
     }
 
 </script>

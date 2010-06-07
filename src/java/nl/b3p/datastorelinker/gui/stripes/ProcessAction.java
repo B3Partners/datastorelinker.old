@@ -201,8 +201,17 @@ public class ProcessAction extends DefaultAction {
 
     private Properties createProperties(Inout input) {
         Properties properties = new Properties();
+
+        String typename;
+        if (input.getTableName() == null) {
+            // is file
+            java.io.File file = new java.io.File(input.getFileId().getName());
+            typename = file.getName().substring(0, file.getName().lastIndexOf("."));
+        } else {
+            typename = input.getTableName();
+        }
         
-        properties.setProperty("read.typename", input.getTableName() == null ? "edam-volendam" : input.getTableName());
+        properties.setProperty("read.typename", typename);
 
         return properties;
     }

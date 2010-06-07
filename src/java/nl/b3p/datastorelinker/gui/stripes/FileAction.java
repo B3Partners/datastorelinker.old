@@ -48,7 +48,7 @@ public class FileAction extends DefaultAction {
     }
 
     @Transactional
-    public Resolution delete() throws Exception {
+    public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -58,13 +58,18 @@ public class FileAction extends DefaultAction {
         java.io.File fsFile = new java.io.File(file.getName());
         boolean deleteSuccess = fsFile.delete();
 
-        if (deleteSuccess) {
+        session.delete(file);
+        return list();
+
+        /*if (deleteSuccess) {
             session.delete(file);
             return list();
         } else {
             log.error("File could not be deleted from the filesystem: " + fsFile.getAbsolutePath());
-            throw new Exception();
-        }
+            // silent fail?
+            //throw new Exception();
+            return list();
+        }*/
     }
 
     @DontValidate
@@ -107,7 +112,8 @@ public class FileAction extends DefaultAction {
                 java.io.File dirFile = new java.io.File(getUploadDirectory());
                 if (!dirFile.exists())
                     dirFile.mkdir();
-                java.io.File tempFile = java.io.File.createTempFile(filedata.getFileName() + ".", null, dirFile);
+                //java.io.File tempFile = java.io.File.createTempFile(filedata.getFileName() + ".", null, dirFile);
+                java.io.File tempFile = new java.io.File(dirFile, filedata.getFileName());
 
                 filedata.save(tempFile);
                 String absolutePath = tempFile.getAbsolutePath();

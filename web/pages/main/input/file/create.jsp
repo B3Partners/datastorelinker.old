@@ -54,6 +54,9 @@
         });
 
         $("#deleteFile").click(function() {//TODO: localize
+            if (!$("#createInputForm").valid())
+                return;
+
             $("<div id='createFileContainer' class='confirmationDialog'><p>Weet u zeker dat u dit bestand van de server wilt verwijderen?</p><p> Alle bestands-invoer die dit bestand gebruikt en alle processen die deze bestands-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo(document.body);
 
             $("#createFileContainer").dialog({
@@ -85,7 +88,7 @@
 
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <stripes:wizard-fields/>
-    <div id="SelecteerBestand" class="step">
+    <div id="SelecteerBestand" class="step submitstep">
         <h1>Selecteer bestand:</h1>
         <div id="filesListContainer">
             <%@include file="/pages/main/file/list.jsp" %>
@@ -97,9 +100,9 @@
             <stripes:button id="deleteFile" name="delete"/>
         </div>
     </div>
-    <div id="SelecteerTabel" class="step submitstep">
+    <!--div id="SelecteerTabel" class="step submitstep">
         <h1>Selecteer tabel:</h1>
-    </div>
+    </div-->
 
     <div class="wizardButtonsArea">
         <stripes:reset id="createInputBackButton" name="resetDummyName"/>
