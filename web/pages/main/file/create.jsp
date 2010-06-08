@@ -22,6 +22,9 @@ $(function() {
     $("#uploader").uiload({
         swfuploader: "${contextPath}/scripts/jquery.ui-uploader/flash/jquery-ui-upload.swf",
         script: "${fileUrl}",
+        scriptData: {"upload": ""},
+        checkScript: "${fileUrl}",
+        checkScriptData: {"check": ""},
         fpath: "${actionBean.uploadDirectory}",
         fdata: "Filedata",
         maxfiles: 1,
@@ -34,9 +37,11 @@ $(function() {
             "Alles": ["*"],
             "Iets anders": ["txt", "jpg", "blaat"]
         },
+        onCheck: function(event, checkScript, fileObj, fileDir, single) {
+            
+        },
         onComplete: function(event, fileID, fileObj, response, data) {
             $("#filesListContainer").html(response);
-            log("fileupload-complete success!");
         }/*,
         onFinished: function() {
             alert("finished success!");

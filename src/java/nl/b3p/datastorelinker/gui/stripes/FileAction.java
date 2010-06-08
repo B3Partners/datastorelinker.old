@@ -5,9 +5,12 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
+import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.Before;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
@@ -21,6 +24,8 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
+import nl.b3p.datastorelinker.json.JSONResolution;
+import nl.b3p.datastorelinker.json.UploaderStatus;
 import org.hibernate.Session;
 
 /**
@@ -37,6 +42,8 @@ public class FileAction extends DefaultAction {
     private Long selectedFileId;
 
     private FileBean filedata;
+    //private Map<Integer, UploaderStatus> uploaderStatuses;
+    private UploaderStatus uploaderStatus;
 
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -93,6 +100,17 @@ public class FileAction extends DefaultAction {
                     String name = e.nextElement();
                     log.debug("fn: " + name);
                 }*/
+            } else if (req.getParameter("status") != null) {
+                log.debug("qwe: " + req.getParameter("status"));
+                JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
+                //JsonConfig jsonConfig = new JsonConfig();
+                //jsonConfig.setRootClass(Map.class);
+                //jsonConfig.setRootClass(UploaderStatus.class);
+                //jsonConfig.setEnclosedType(UploaderStatus.class);
+                //uploaderStatuses = (Map<Integer,UploaderStatus>)JSONObject.toBean(jsonObject, Map.class);
+                //uploaderStatuses = (Map<Integer,UploaderStatus>)JSONSerializer.toJava(jsonObject, jsonConfig);
+                //uploaderStatus = (UploaderStatus)JSONSerializer.toJava(jsonObject, jsonConfig);
+                uploaderStatus = (UploaderStatus)JSONObject.toBean(jsonObject, UploaderStatus.class);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -138,16 +156,44 @@ public class FileAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-        File file = new File();
-        file.setName(absolutePath);
+        File file = (File)session.createQuery("from File where name = :name")
+                .setParameter("name", absolutePath)
+                .uniqueResult();
 
-        // TODO: file already exists? we now add an uuid to the filename.
-        //session.saveOrUpdate(file);
-        session.save(file);
+        if (file == null) {
+            // file does not exist in DB; we are not overwriting a file
+            file = new File();
+            file.setName(absolutePath);
+
+            session.save(file);
+        } // else: file exists in DB and thus on disk; we have chosen to overwrite the file on disk
         
-        // TODO: dit moet gewoon anders met (doorzichtig) flash achter jquery-button.
-        //selectedFileId = file.getId();
         return file;
+    }
+
+    public Resolution check() {
+        if (uploaderStatus != null) {
+            java.io.File dirFile = new java.io.File(getUploadDirectory());
+            if (!dirFile.exists())
+                dirFile.mkdir();
+
+            java.io.File tempFile = new java.io.File(dirFile, uploaderStatus.getFname());
+            log.debug(tempFile.getAbsolutePath());
+            log.debug(tempFile.getPath());
+
+            // TODO: check ook op andere dingen, size enzo. Dit blijft natuurlijk alleen maar een convenience check. Heeft niets met safety te maken.
+            Map resultMap = new HashMap();
+
+            // TODO: exists check is niet goed
+            if (tempFile.exists()) {
+                uploaderStatus.setErrtype("exists");
+            } else {
+                uploaderStatus.setErrtype("none");
+            }
+            resultMap.put("0", uploaderStatus);
+            return new JSONResolution(resultMap);
+        }
+        return new JSONResolution(false);
     }
 
     public List<File> getFiles() {

@@ -45,6 +45,7 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/jquery-ui-upload-messages_nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/functions.js"></script>
             
+            <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/database.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard.config.js.jsp"></script>
