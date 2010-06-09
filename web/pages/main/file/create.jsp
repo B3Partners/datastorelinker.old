@@ -25,7 +25,7 @@ $(function() {
         scriptData: {"upload": ""},
         checkScript: "${fileUrl}",
         checkScriptData: {"check": ""},
-        fpath: "${actionBean.uploadDirectory}",
+        //fpath: "${actionBean.uploadDirectory}", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
         fdata: "Filedata",
         maxfiles: 1,
         maxfilesize: 524288000, // == 500 MB
@@ -80,5 +80,9 @@ $(function() {
 });
 </script>
 
-<input type="file" name="uploader" id="uploader" />
+<stripes:form partial="true" action="#">
+    <stripes:file name="uploader" id="uploader" />
+</stripes:form>
+
+<!--div>IE is raar: ${actionBean.uploadDirectory}</div-->
 
