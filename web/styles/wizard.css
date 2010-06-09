@@ -18,17 +18,19 @@
 .dailogContent {
     /*width: 50%;*/
     height: 225px;
-    max-height: 250px;
+    max-height: 225px;
     overflow: auto;
     margin: 10px 0 10px 0;
+    position: relative; /* to prevent IE <= 7 bug */
 }
 
 .radioList {
     /*width: 50%;*/
     height: 225px;
-    max-height: 250px;
+    max-height: 225px;
     overflow: auto;
     margin: 10px 0 10px 0;
+    position: relative; /* to prevent IE <= 7 bug */
 }
 
 .radioList .ui-button {
