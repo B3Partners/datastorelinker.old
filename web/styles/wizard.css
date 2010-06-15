@@ -15,7 +15,7 @@
     margin-bottom: 10px
 }
 
-.dailogContent {
+.dialogContent {
     /*width: 50%;*/
     height: 225px;
     max-height: 225px;
@@ -38,19 +38,23 @@
     display: block;
     text-align: left;
     background: #eeeeee;
-    color: black
+    color: black;
+    
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
 }
 
 .radioList .ui-state-hover {
-    background: #FECA40;
+    background: white;
 }
 
 .radioList .ui-state-active {
-    background: #f2d81c;
+    background: #fed204;
 }
 
 .wizardButtonsArea {
     text-align: right;
-    border-top: 1px solid yellow;
+    border-top: 1px solid #fed204;
     padding-top: 10px;
 }

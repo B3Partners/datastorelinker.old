@@ -17,6 +17,12 @@
         $("#executeProcess").button();
 
         $("#createProcess").click(function() {
+            // TODO: wacht op een volgende versie van jquery UI waar http://dev.jqueryui.com/ticket/5295
+            // in is geïntegreerd.
+            // Of bouw eigen jquery UI met de patch uit de link.
+            // Of integreer onderstaande korte patch bij elke knop.
+            //
+            //$(this).removeClass("ui-state-active ui-state-hover ui-state-focus");
             ajaxOpen({
                 url: "${processUrl}",
                 event: "create",
