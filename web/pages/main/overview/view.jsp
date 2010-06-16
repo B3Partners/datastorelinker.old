@@ -30,32 +30,37 @@
         });
 
         $("#actionsOverview").click(function() {
-            $("<div id='actionsContainer'>Bezig met laden...</div>").appendTo(document.body);
-
-            $("#actionsContainer").dialog({
-                title: "Acties...", // TODO: localization
-                width: 800,
-                height: 700,
-                modal: true,
-                close: defaultDialogClose,
-                buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        
+            ajaxOpen({
+                url: "${actionsUrl}",
+                formSelector: "#createUpdateProcessForm",
+                event: "create",
+                containerId: "actionsContainer",
+                openInDialog: true,
+                dialogOptions: {
+                    title: "Acties...", // TODO: localization
+                    width: 800,
+                    height: 700,
+                    modal: true,
+                    close: defaultDialogClose,
+                    buttons: { // TODO: localize button name:
+                        "Voltooien" : function() {
+                            currentActionsList = getActionList();
+                            $("#actionsOverviewContainer .action").remove();
+                            fillActionsList(currentActionsList, "#actionsOverviewContainer", "${contextPath}");
+                            $("#actionsContainer").dialog("close");
+                        }
                     }
                 }
             });
-
-            $.get("${actionsUrl}", "create", function(data) {
-                $("#actionsContainer").html(data);
-            });
         });
+
     });
 </script>
 
 <div class="radioList">
-    <div id="inputOverview" class="ui-widget-content" style="width: 200px; left: 50px; position: absolute">
-        <h3 class="ui-widget-header" style="width: 198px; margin-top: 0px">Invoer</h3>
-        <div id="inputOverviewContainer">
+    <div id="inputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 50px; position: absolute">
+        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Invoer</div>
+        <div id="inputOverviewContainer" class="action-list" style="height: 300px">
             Bezig met laden...
         </div>
     </div>
@@ -64,11 +69,12 @@
     ->
     </div>
 
-    <div id="actionsOverview" class="ui-widget-content" style="width: 200px; left: 300px; position: absolute">
-        <h3 class="ui-widget-header" style="width: 198px; margin-top: 0px">Acties</h3>
-        <div id="actionsOverviewContainer">
-            Bezig met laden...
-            Geen acties gedefinieerd...
+    <div id="actionsOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 300px; position: absolute">
+        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Acties</div>
+        <div id="actionsOverviewContainer" class="action-list" style="height: 300px">
+            <div class="placeholder" style="top: 150px; left: 10px; position: absolute; text-align: center">
+                <em>Klik hier om acties te defini&euml;ren...</em>
+            </div>
         </div>
     </div>
 
@@ -76,9 +82,9 @@
     ->
     </div>
 
-    <div id="outputOverview" class="ui-widget-content" style="width: 200px; left: 550px; position: absolute">
-        <h3 class="ui-widget-header" style="width: 198px; margin-top: 0px">Uitvoer</h3>
-        <div id="outputOverviewContainer">
+    <div id="outputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 550px; position: absolute">
+        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Uitvoer</div>
+        <div id="outputOverviewContainer" class="action-list" style="height: 300px">
             Bezig met laden...
         </div>
     </div>

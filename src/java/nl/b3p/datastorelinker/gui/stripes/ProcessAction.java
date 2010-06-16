@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.persistence.EntityManager;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
-import nl.b3p.datastorelinker.entity.Actions;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.SuccessMessage;
@@ -47,9 +48,9 @@ public class ProcessAction extends DefaultAction {
     
     private List<Inout> outputs;
     private Long selectedOutputId;
-    
-    private Long actionsId;
 
+    private String actionsList;
+    
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -76,6 +77,9 @@ public class ProcessAction extends DefaultAction {
         //inputsDB = session.createQuery("from Inout where typeId = 1 and datatypeId = 1").list();
         outputs = session.createQuery("from Inout where typeId = 2").list();
 
+        if (actionsList == null)
+            actionsList = new JSONArray().toString();
+        
         //throw new Exception("qweqwe"); // error test
 
         return new ForwardResolution(CREATE_JSP);
@@ -100,8 +104,12 @@ public class ProcessAction extends DefaultAction {
         process.setName(input.getName() + " -> " + output.getName());
         process.setInputId(input);
         process.setOutputId(output);
+        if (actionsList == null || actionsList.trim().equals(""))
+            actionsList = new JSONArray().toString();
 
-        // TODO: actionsId erbij
+        JSONArray sanitizedJSON = JSONArray.fromObject(actionsList);
+        process.setActions(sanitizedJSON.toString());
+        //log.debug("actionsList: " + actionsList);
 
         if (selectedProcessId == null)
             selectedProcessId = (Long)session.save(process);
@@ -120,7 +128,8 @@ public class ProcessAction extends DefaultAction {
 
         selectedInputId = process.getInputId().getId();
         selectedOutputId = process.getOutputId().getId();
-        // TODO: add actions id(s)
+        actionsList = process.getActions();
+        log.debug(actionsList);
 
         return create();
     }
@@ -173,7 +182,7 @@ public class ProcessAction extends DefaultAction {
         return inputMappable.toMap();
     }
 
-    private Map<String, Object> createActionsOutputMap(Inout output, List<Actions> actionsList) {
+    private Map<String, Object> createActionsOutputMap(Inout output, String actions) {
         Integer actionNr = 1;
         /*
         for (Actions action : actionsList) {
@@ -258,14 +267,6 @@ public class ProcessAction extends DefaultAction {
         this.inputsDB = inputsDB;
     }
 
-    public Long getActionsId() {
-        return actionsId;
-    }
-
-    public void setActionsId(Long actionsId) {
-        this.actionsId = actionsId;
-    }
-
     public Long getSelectedInputId() {
         return selectedInputId;
     }
@@ -289,4 +290,13 @@ public class ProcessAction extends DefaultAction {
     public void setSelectedProcessId(Long selectedProcessId) {
         this.selectedProcessId = selectedProcessId;
     }
+
+    public String getActionsList() {
+        return actionsList;
+    }
+
+    public void setActionsList(String actionsList) {
+        this.actionsList = actionsList;
+    }
+
 }

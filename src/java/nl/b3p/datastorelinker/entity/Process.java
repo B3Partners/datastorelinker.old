@@ -35,9 +35,7 @@ public class Process implements Serializable {
     @Basic(optional = false)
     @Column(name = "name")
     private String name;
-    @JoinColumn(name = "actions_id", referencedColumnName = "id")
-    @ManyToOne
-    private Actions actionsId;
+    private String actions;
     @JoinColumn(name = "input_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Inout inputId;
@@ -73,12 +71,12 @@ public class Process implements Serializable {
         this.name = name;
     }
 
-    public Actions getActionsId() {
-        return actionsId;
+    public String getActions() {
+        return actions;
     }
 
-    public void setActionsId(Actions actionsId) {
-        this.actionsId = actionsId;
+    public void setActions(String actions) {
+        this.actions = actions;
     }
 
     public Inout getInputId() {

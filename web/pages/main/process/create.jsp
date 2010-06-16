@@ -23,6 +23,12 @@
         $("#updateOutput").button();
         $("#deleteOutput").button();
 
+        currentActionsList = null;
+        
+        var actionsList = ${actionBean.actionsList};
+        log(actionsList);
+        fillActionsList(actionsList, "#actionsOverviewContainer", "${contextPath}");
+
         $("#createUpdateProcessForm").formwizard(
             // form wizard settings
             $.extend({}, formWizardConfig, {
@@ -41,10 +47,19 @@
             {
                 // form plugin settings
                 beforeSend: function() {
+                    //log(typeof currentActionsList);
+                    if (typeof currentActionsList == "undefined" || !currentActionsList)
+                        currentActionsList = [];
+                    var actionsListJson = JSON.stringify(currentActionsList);
+                    
                     ajaxOpen({
                         formSelector: "#createUpdateProcessForm",
                         event: "createComplete",
                         containerSelector: "#processesListContainer",
+                        extraParams: [{
+                            name: "actionsList",
+                            value: actionsListJson
+                        }],
                         successAfterContainerFill: function() {
                             $("#processContainer").dialog("close");
                         }

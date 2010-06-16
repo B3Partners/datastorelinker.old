@@ -10,14 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javax.persistence.EntityManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
+import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.json.ActionModel;
 import nl.b3p.geotools.data.linker.ActionFactory;
+import org.hibernate.Session;
 
 /**
  *
@@ -29,18 +32,38 @@ public class ActionsAction extends DefaultAction {
     private final static List<String> RESERVED_JS_KEYWORDS = Arrays.asList("length");
     private final static String SAFE_PREFIX = "SAFE_JS_";
 
-    private final static String VIEW_JSP = "/pages/main/actions/view.jsp";
+    private final static String CREATE_JSP = "/pages/main/actions/create.jsp";
+    private final static String LIST_JSP = "/pages/main/actions/list.jsp";
 
-    private JSONArray actionsWorkbenchList;
+    private String actionsWorkbenchList;
+    private String actionsList;
+    private Long selectedProcessId;
 
     @DefaultHandler
-    public Resolution view() {
-        actionsWorkbenchList = createActionsWorkbenchList();
-        
-        return new ForwardResolution(VIEW_JSP);
+    public Resolution list() {
+        return new ForwardResolution(LIST_JSP);
     }
 
-    private JSONArray createActionsWorkbenchList() {
+    public Resolution create() {
+        actionsWorkbenchList = createActionsWorkbenchList();
+        log.debug(actionsWorkbenchList);
+
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        if (selectedProcessId == null)
+            actionsList = new JSONArray().toString();
+        else {
+            nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                    session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+            actionsList = process.getActions();
+        }
+
+        return new ForwardResolution(CREATE_JSP);
+    }
+
+    private String createActionsWorkbenchList() {
         JSONArray workbenchList = new JSONArray();
 
         Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks();
@@ -51,7 +74,7 @@ public class ActionsAction extends DefaultAction {
             workbenchList.add(action);
         }
         
-        return workbenchList;
+        return workbenchList.toString();
     }
 
     private ActionModel createAction(Map.Entry<String, List<List<String>>> actionBlock) {
@@ -67,7 +90,7 @@ public class ActionsAction extends DefaultAction {
                     if (RESERVED_JS_KEYWORDS.contains(paramName))
                         parameters.put(SAFE_PREFIX + paramName, paramInterior);
                     else
-                        parameters.put(SAFE_PREFIX + paramName, paramInterior);
+                        parameters.put(paramName, paramInterior);
                 }
             }
         }
@@ -87,12 +110,36 @@ public class ActionsAction extends DefaultAction {
         return model;
     }
 
-    public JSONArray getActionsWorkbenchList() {
+    public String getActionsWorkbenchList() {
         return actionsWorkbenchList;
     }
 
-    public void setActionsWorkbenchList(JSONArray actionsWorkbenchList) {
+    public void setActionsWorkbenchList(String actionsWorkbenchList) {
         this.actionsWorkbenchList = actionsWorkbenchList;
+    }
+
+    public String getActionLists() {
+        return actionsList;
+    }
+
+    public void setActionLists(String actionsList) {
+        this.actionsList = actionsList;
+    }
+    
+    public Long getSelectedProcessId() {
+        return selectedProcessId;
+    }
+
+    public void setSelectedProcessId(Long selectedProcessId) {
+        this.selectedProcessId = selectedProcessId;
+    }
+
+    public String getActionsList() {
+        return actionsList;
+    }
+
+    public void setActionsList(String actionsList) {
+        this.actionsList = actionsList;
     }
 
 }

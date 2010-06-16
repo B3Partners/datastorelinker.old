@@ -48,12 +48,5 @@
             </id>
         </attributes>
     </entity>
-    <entity class="Actions">
-        <attributes>
-            <id name="id">
-                <generated-value strategy="IDENTITY"/>
-            </id>
-        </attributes>
-    </entity>
 
 </entity-mappings>

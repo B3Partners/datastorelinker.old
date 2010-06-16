@@ -22,6 +22,7 @@
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.ui-uploader/styles/jquery-ui-upload.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/actions.css" />
 
             <!--link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css">
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/b3p.css">
@@ -49,6 +50,7 @@
             
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/actions.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/database.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard.config.js.jsp"></script>
 
