@@ -18,7 +18,7 @@
 
             <title>${pageTitle}</title>
 
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.1.custom.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.2.custom.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.ui-uploader/styles/jquery-ui-upload.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
@@ -47,6 +47,7 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/jquery-ui-upload-messages_nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/functions.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.metadata/jquery.metadata.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.layout/jquery.layout.min.js"></script>
             
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
