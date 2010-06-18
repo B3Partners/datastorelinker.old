@@ -12,7 +12,7 @@
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
     <html>
         <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <meta http-equiv="Expires" content="-1" />
             <meta http-equiv="Cache-Control" content="max-age=0, no-store" />
 
@@ -47,7 +47,7 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/jquery-ui-upload-messages_nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/functions.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.metadata/jquery.metadata.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.layout/jquery.layout.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.layout/jquery.layout-latest.js"></script>
             
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
@@ -56,9 +56,19 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard.config.js.jsp"></script>
 
             <stripes:layout-component name="head"/>
+
+            <script type="text/javascript">
+                $(function() {
+                    $("body").layout({
+                    });
+                    $("#contenttext").layout({
+                    });
+                });
+            </script>
+
         </head>
         <body>
-            <div id="contenttext">
+            <div id="contenttext" class="ui-layout-center">
                 <stripes:layout-component name="content"/>
             </div>
         </body>

@@ -48,10 +48,9 @@
             drop: function(event, ui) {
                 //log("drop");
                 // is called twice for some reason. prevent it with an ugly hack:
-                if (!alcDropAlreadyCalled) {
-                    $(this).find(".placeholder").remove();
-                    appendParametersButton(ui.draggable);
-                }
+                if (!alcDropAlreadyCalled)
+                    appendButtons(ui.draggable);
+                
                 alcDropAlreadyCalled = !alcDropAlreadyCalled;
             }
         });

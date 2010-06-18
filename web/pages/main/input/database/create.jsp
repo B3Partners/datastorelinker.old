@@ -28,18 +28,25 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
+        // hackhack
+        //$("#databasesList").buttonset();
+
+        // breekt validation van buttonset()
+        /*$("#inputContainer").layout({
+            resizeWithWindow: false
+        });*/
+
         $("#createInputForm").formwizard(
             // form wizard settings
             $.extend({}, formWizardConfig, {
                 afterNext: function(wizardData) {
                     formWizardConfig.afterNext(wizardData);
                     if (wizardData.currentStep === "SelecteerTabel") {
-                        //log("createTablesList&selectedDatabaseId=" + $("#createInputForm .ui-state-active").prev().val());
                         var inputNode = $("#createInputForm .ui-state-active").prev();
                         // We could be looking at an errormessage from jquery.validate(): if so, we use the previous again:
-                        if (inputNode.nodeName.toLowerCase() != "input")
+                        if (!inputNode.is("input")) {
                             inputNode = inputNode.prev();
-
+                        }
                         ajaxActionEventInto(
                             "${inputUrl}",
                             "createTablesList&selectedDatabaseId=" + $(inputNode).val(),
@@ -133,32 +140,36 @@
             });
         });
 
+        //$("#inputContainer").layout().resizeAll();
+        
     });
 
 </script>
 
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
-    <stripes:wizard-fields/>
-    <div id="SelecteerDatabaseconnectie" class="step">
-        <h1>Selecteer databaseconnectie:</h1>
-        <div id="databasesListContainer">
-            <%@include file="/pages/main/database/list.jsp" %>
+    <div class="ui-layout-center">
+        <stripes:wizard-fields/>
+        <div id="SelecteerDatabaseconnectie" class="step">
+            <h1>Selecteer databaseconnectie:</h1>
+            <div id="databasesListContainer">
+                <%@include file="/pages/main/database/list.jsp" %>
+            </div>
+            <div>
+                <stripes:button id="createDB" name="create"/>
+                <stripes:button id="updateDB" name="update"/>
+                <stripes:button id="deleteDB" name="delete"/>
+            </div>
         </div>
-        <div>
-            <stripes:button id="createDB" name="create"/>
-            <stripes:button id="updateDB" name="update"/>
-            <stripes:button id="deleteDB" name="delete"/>
-        </div>
-    </div>
-    <div id="SelecteerTabel" class="step submitstep">
-        <h1>Selecteer tabel:</h1>
-        De onderstaande tabellen zijn geschikt om in te voeren.
-        <div id="tablesListContainer">
-            Bezig met laden...
+        <div id="SelecteerTabel" class="step submitstep">
+            <h1>Selecteer tabel:</h1>
+            De onderstaande tabellen zijn geschikt om in te voeren.
+            <div id="tablesListContainer">
+                Bezig met laden...
+            </div>
         </div>
     </div>
 
-    <div class="wizardButtonsArea">
+    <div class="wizardButtonsArea ui-layout-south">
         <stripes:reset id="createInputBackButton" name="resetDummyName"/>
         <stripes:submit id="createInputNextButton" name="createDatabaseInputComplete"/>
     </div>

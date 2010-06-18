@@ -15,6 +15,7 @@
 </style>
 
 <script type="text/javascript">
+
     $(function() {
         $("#inputOverview, #outputOverview, #actionsOverview").hover(
             function() { $(this).addClass("overview-hover"); },
@@ -45,7 +46,6 @@
                     buttons: { // TODO: localize button name:
                         "Voltooien" : function() {
                             currentActionsList = getActionList();
-                            $("#actionsOverviewContainer .action").remove();
                             fillActionsList(currentActionsList, "#actionsOverviewContainer", "${contextPath}");
                             $("#actionsContainer").dialog("close");
                         }
@@ -72,9 +72,6 @@
     <div id="actionsOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 300px; position: absolute">
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Acties</div>
         <div id="actionsOverviewContainer" class="action-list" style="height: 300px">
-            <div class="placeholder" style="top: 150px; left: 10px; position: absolute; text-align: center">
-                <em>Klik hier om acties te defini&euml;ren...</em>
-            </div>
         </div>
     </div>
 

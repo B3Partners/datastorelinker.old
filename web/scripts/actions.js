@@ -3,9 +3,16 @@
  * and open the template in the editor.
  */
 
-function fillActionsList(actionsListJSON, actionsListSelector, contextPath, addParametersButton) {
-    if (actionsListJSON.length > 0)
-        $(actionsListSelector).find(".placeholder").remove();
+var actionsPlaceholder = $('<div class="placeholder" style="top: 150px; left: 10px; position: absolute; text-align: center"></div>');
+actionsPlaceholder.html('<em>Klik hier om acties te defini&euml;ren...</em>');
+
+
+function fillActionsList(actionsListJSON, actionsListSelector, contextPath, addButtons) {
+    if (actionsListJSON.length == 0)
+        $(actionsListSelector).html(actionsPlaceholder);
+    else {
+        $(actionsListSelector).empty();
+    }
 
     $.each(actionsListJSON, function(index, action) {
         var div = $("<div class='action ui-corner-all'></div>");
@@ -22,22 +29,42 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, addP
         div.attr("title", action.description);
         div.attr("data", JSON.stringify(action));
 
-        if (addParametersButton)
-            appendParametersButton(div);
+        if (addButtons) {
+            appendButtons(div);
+        }
 
         $(actionsListSelector).append(div);
     });
 }
 
-function appendParametersButton(div) {
+function appendButtons(div) {
+    appendRemoveButton(div);
+    appendParametersButton(div);
+}
+
+function appendRemoveButton(div) {
     div.addClass("action-dropped");
 
+    var removeButton = $('<a style="width: 20px"></a>');
+    removeButton.button({
+        text: false,
+        icons: {
+            primary: "ui-icon-closethick"
+        }
+    });
+    removeButton.click(function() {
+        div.remove();
+    });
+    div.find(".type").append(removeButton);
+}
+
+function appendParametersButton(div) {
     var action = div.metadata();
     //log(action);
     var hasParameters = false;
     if (action.parameters) {
         log(action.parameters);
-        $.each(action.parameters, function() { hasParameters = true; });
+        $.each(action.parameters, function() {hasParameters = true;});
     }
 
     //log(hasParameters);
@@ -58,7 +85,6 @@ function openParametersDialog(action) {
     parametersDialog.append($("<div></div>").append(action.description));
     parametersDialog.append($("<br />"));
     var parameterForm = $("<form id='parameterForm' action='#'></form>");
-    parameterForm.validate(defaultValidateOptions);
     parameterForm.append($("<table><tbody></tbody></table>"));
     parametersDialog.append(parameterForm);
 
@@ -69,58 +95,49 @@ function openParametersDialog(action) {
         label.append(parameter.name);
         key.append(label);
         var value = $("<td></td>");
+        var input = $("<input />");
+        input.attr("name", index); // required for validation
         if (parameter.type && parameter.type === "boolean") {
-            var checkbox = $("<input type='checkbox' />");
-            if (parameter.value === "TRUE") // interne DSL representatie
-                checkbox.attr("checked", true);
-            value.append(checkbox);
+            input.attr("type", "checkbox");
+            if (parameter.value === true)
+                input.attr("checked", true);
         } else {
-            var textbox = $("<input />");
-            textbox.val(parameter.value);
-            textbox.addClass(parameter.type);
-            value.append(textbox);
+            input.val(parameter.value);
+            input.addClass(parameter.type);
         }
+        value.append(input);
         row.append(key);
         row.append(value);
         row.attr("data", "{key: '" + index + "'}");
         parametersDialog.find("tbody").append(row);
     });
 
+    parameterForm.validate(defaultValidateOptions);
+
     parametersDialog.dialog({
         title: "Bewerk parameters...",
-        width: 400,
+        width: 550,
         modal: true,
         buttons: {
             "Annuleren": function(event, ui) {
                 parametersDialog.dialog("close");
             },
             "OK": function(event, ui) {
-                log("parametersDialog OK");
-                var validating = true;
-                
+                if (!$("#parameterForm").valid())
+                    return;
+
                 parametersDialog.find("tr").each(function(index, parameterRow) {
                     var paramKey = $(parameterRow).metadata();
                     var input = $(parameterRow).find("input");
 
-                    if (!$("#parameterForm").valid()) {
-                        validating = false;
-                        return false;
-                    }
-
-                    if (input.attr("type").toLowerCase() === "checkbox") {
-                        if (input.is(":checked"))
-                            action.parameters[paramKey.key].value = "TRUE"; // interne DSL representatie
-                        else
-                            action.parameters[paramKey.key].value = "FALSE"; // interne DSL representatie
+                    if (input.is("checkbox")) {
+                        action.parameters[paramKey.key].value = input.is(":checked");
                     } else {
                         action.parameters[paramKey.key].value = input.val();
                     }
-                    return true;
                 });
                 
-                if (validating) {
-                    parametersDialog.dialog("close");
-                }
+                parametersDialog.dialog("close");
             }
         },
         close: function(event, ui) {

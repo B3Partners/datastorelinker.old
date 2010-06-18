@@ -27,7 +27,7 @@
             });
         </script>
 
-        <div id="tabs">
+        <div id="tabs" class="ui-layout-center">
             <ul>
                 <li>
                     <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">

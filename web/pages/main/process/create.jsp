@@ -10,6 +10,14 @@
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
 
 <script type="text/javascript">
+    function initActionsList() {
+        currentActionsList = null;
+
+        var actionsList = ${actionBean.actionsList};
+        log(actionsList);
+        fillActionsList(actionsList, "#actionsOverviewContainer", "${contextPath}");
+    }
+
     $(function() {
         $("#createProcessBackButton").button();
         $("#createProcessNextButton").button();
@@ -23,12 +31,8 @@
         $("#updateOutput").button();
         $("#deleteOutput").button();
 
-        currentActionsList = null;
+        initActionsList();
         
-        var actionsList = ${actionBean.actionsList};
-        log(actionsList);
-        fillActionsList(actionsList, "#actionsOverviewContainer", "${contextPath}");
-
         $("#createUpdateProcessForm").formwizard(
             // form wizard settings
             $.extend({}, formWizardConfig, {
@@ -197,6 +201,9 @@
                 $("#uploader").uiloadDestroy();
                 $("#createInputForm").formwizard("destroy");
                 defaultDialogClose(event, ui);
+            },
+            resize: function() {
+                //$("#inputContainer").layout().resizeAll();
             }
         });
     }

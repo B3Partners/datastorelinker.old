@@ -29,8 +29,8 @@ import org.hibernate.Session;
 public class ActionsAction extends DefaultAction {
     private Log log = Log.getInstance(ActionsAction.class);
     
-    private final static List<String> RESERVED_JS_KEYWORDS = Arrays.asList("length");
-    private final static String SAFE_PREFIX = "SAFE_JS_";
+    public final static List<String> RESERVED_JS_KEYWORDS = Arrays.asList("length");
+    public final static String SAFE_PREFIX = "SAFE_JS_";
 
     private final static String CREATE_JSP = "/pages/main/actions/create.jsp";
     private final static String LIST_JSP = "/pages/main/actions/list.jsp";

@@ -96,6 +96,7 @@ function ajaxActionEventInto(action, event, containerSelector, callback) {
     if (containerSelector)
         $(containerSelector).first().html("Bezig met laden...");
     var url = action + "?" + event;
+    //log(url);
     $.get(url,
         function (data, textStatus, xhr) {
             if (containerSelector)

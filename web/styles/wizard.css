@@ -12,17 +12,17 @@
 */
 
 .step {
-    margin-bottom: 10px
+    margin-bottom: 10px;
 }
 
-.dialogContent {
+/*.dialogContent {
     width: auto;
     height: 350px;
     max-height: 350px;
     overflow: auto;
     margin: 10px 0 10px 0;
     position: relative; /* to prevent IE <= 7 bug */
-}
+/*}*/
 
 .radioList {
     width: auto;
@@ -57,6 +57,7 @@
     text-align: right;
     border-top: 1px solid #fed204;
     padding-top: 10px;
+    height: 100px;
 }
 
 /* from jquery-ui css: .ui-dialog .ui-dialog-buttonpane button */

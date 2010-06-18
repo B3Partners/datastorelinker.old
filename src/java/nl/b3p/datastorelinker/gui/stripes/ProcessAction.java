@@ -11,6 +11,8 @@ import java.util.Properties;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+import net.sf.json.JsonConfig;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -18,6 +20,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.json.ActionModel;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.util.Mappable;
@@ -154,7 +157,7 @@ public class ProcessAction extends DefaultAction {
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
         Map<String, Object> inputMap = createInputMap(process.getInputId());
-        Map<String, Object> actionsOutputMap = createActionsOutputMap(process.getOutputId(), null);
+        Map<String, Object> actionsOutputMap = createActionsOutputMap(process.getOutputId(), process.getActions());
         Properties properties = createProperties(process.getInputId());
 
         log.debug("input:\n" + inputMap);
@@ -182,14 +185,17 @@ public class ProcessAction extends DefaultAction {
         return inputMappable.toMap();
     }
 
-    private Map<String, Object> createActionsOutputMap(Inout output, String actions) {
-        Integer actionNr = 1;
-        /*
-        for (Actions action : actionsList) {
-            //...
-            actionNr++;
-        }
-        */
+    private Map<String, Object> createActionsOutputMap(Inout output, String actionsString) {
+
+        //JsonConfig config = new JsonConfig();
+        //config.setCollectionType(ActionModel.class);
+        JSONArray actions = JSONArray.fromObject(actionsString/*, config*/);
+        List actionModelList = (List)JSONSerializer.toJava(actions/*, config*/);
+        
+        Map<String, Object> actionlistMap = new HashMap<String, Object>();
+        Integer actionNr = fillActionListMap(actionModelList, actionlistMap);
+
+        log.debug(actionlistMap);
 
         Map<String, Object> outputMap = output.getDatabaseId().toMap();
 
@@ -202,10 +208,57 @@ public class ProcessAction extends DefaultAction {
         defaultActionMap.put("settings", defaultActionSettingsMap);
         defaultActionMap.put("type", "ActionCombo_GeometrySplitter_Writer");
 
-        Map<String, Object> actionlistMap = new HashMap<String, Object>();
         actionlistMap.put(actionNr.toString(), defaultActionMap);
 
+        log.debug(actionlistMap);
+
         return actionlistMap;
+    }
+
+    private Integer fillActionListMap(List actionModelList, Map<String, Object> actionlistMap) throws NumberFormatException {
+        Integer actionNr = 1;
+
+        for (Object action : actionModelList) {
+            JSONObject modelObject = JSONObject.fromObject(action);
+            ActionModel model = (ActionModel) JSONObject.toBean(modelObject, ActionModel.class);
+
+            Map innerActionSettingsMap = new HashMap();
+            JSONObject paramsObject = model.getParameters();
+            Map params = (Map) JSONObject.toBean(paramsObject, Map.class);
+
+            for (Object paramEntryObject : params.entrySet()) {
+                Map.Entry paramEntry = (Map.Entry) paramEntryObject;
+                JSONObject valueObject = JSONObject.fromObject(paramEntry.getValue());
+                Map paramMap = (Map) JSONObject.toBean(valueObject, Map.class);
+
+                String key = paramEntry.getKey().toString();
+                String value = paramMap.get("value").toString();
+                String type = paramMap.get("type").toString();
+
+                if (key.startsWith(ActionsAction.SAFE_PREFIX)) {
+                    key = key.substring(ActionsAction.SAFE_PREFIX.length());
+                }
+
+                Object objectValue = null;
+                if (type.equalsIgnoreCase("boolean")) {
+                    objectValue = Boolean.parseBoolean(value);
+                } else if (type.equalsIgnoreCase("number")) {
+                    objectValue = Integer.parseInt(value);
+                }
+
+                innerActionSettingsMap.put(key, objectValue);
+            }
+
+            Map innerActionMap = new HashMap();
+            innerActionMap.put("type", model.getType());
+            innerActionMap.put("settings", innerActionSettingsMap);
+            
+            actionlistMap.put(actionNr.toString(), innerActionMap);
+
+            actionNr++;
+        }
+
+        return actionNr;
     }
 
     private Properties createProperties(Inout input) {

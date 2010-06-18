@@ -133,18 +133,19 @@
 
 </script>
 
-<stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
-    <stripes:label for="main.process.overview.text.overview"/>:
 
-    <div id="processesListContainer">
-        <%@include file="/pages/main/process/list.jsp" %>
-    </div>
-    
-    <div id="buttonPanel">
-        <stripes:button id="createProcess" name="create"/>
-        <stripes:button id="updateProcess" name="update"/>
-        <stripes:button id="deleteProcess" name="delete"/>
-        <stripes:button id="executeProcess" name="execute"/>
-    </div>
-        
-</stripes:form>
+        <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+            <stripes:label for="main.process.overview.text.overview"/>:
+
+            <div id="processesListContainer">
+                <%@include file="/pages/main/process/list.jsp" %>
+            </div>
+
+            <div id="buttonPanel">
+                <stripes:button id="createProcess" name="create"/>
+                <stripes:button id="updateProcess" name="update"/>
+                <stripes:button id="deleteProcess" name="delete"/>
+                <stripes:button id="executeProcess" name="execute"/>
+            </div>
+
+        </stripes:form>
