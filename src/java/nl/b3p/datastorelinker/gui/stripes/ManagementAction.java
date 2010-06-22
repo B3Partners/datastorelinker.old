@@ -16,6 +16,7 @@ import nl.b3p.commons.stripes.Transactional;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class ManagementAction extends DefaultAction {
     private final static Log log = Log.getInstance(ManagementAction.class);
     private final static String JSP = "/pages/management/management.jsp";

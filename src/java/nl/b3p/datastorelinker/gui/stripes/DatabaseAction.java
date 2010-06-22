@@ -25,6 +25,7 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class DatabaseAction extends DefaultAction {
     private Log log = Log.getInstance(DatabaseAction.class);
 
@@ -72,7 +73,6 @@ public class DatabaseAction extends DefaultAction {
         return new ForwardResolution(getListJsp());
     }
 
-    @Transactional
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -98,7 +98,6 @@ public class DatabaseAction extends DefaultAction {
         return list();
     }
 
-    @Transactional
     protected Database saveDatabase() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();

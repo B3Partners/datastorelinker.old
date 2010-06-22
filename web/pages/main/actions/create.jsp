@@ -7,20 +7,14 @@
 
 <script type="text/javascript">
     $(function() {
-        $.metadata.setType("attr", "data");
-
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
-        var actionsList = null;
-        if (typeof currentActionsList == "undefined" || !currentActionsList)
-            actionsList = ${actionBean.actionsList};
-        else
-            actionsList = currentActionsList;
-        
         log(actionsWorkbenchList);
+        log("GET ACTIONS LIST!");
+        var actionsList = getActionsList();
         log(actionsList);
 
         fillActionsList(actionsWorkbenchList, "#actionsWorkbenchContainer", "${contextPath}");
-        fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", true);
+        fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", dragActionsPlaceholder, true);
 
         $("#actionsMainContainer .action").live("mouseenter",
             function() { $(this).addClass("action-hover"); }
@@ -44,35 +38,41 @@
         $("#actionsListContainer").droppable({
             activeClass: "ui-state-highlight",
             hoverClass: "ui-state-hover",
-            accept: ":not(.ui-sortable-helper)",
+            accept: ".action:not(.ui-sortable-helper)",
+            /*accept: ".blaat",*/
+            /*greedy: true,*/
             drop: function(event, ui) {
-                //log("drop");
-                // is called twice for some reason. prevent it with an ugly hack:
-                if (!alcDropAlreadyCalled)
+                log("drop");
+                // is called twice when draggable is connected to sortable.
+                // prevent it with an ugly hack:
+                if (!alcDropAlreadyCalled) {
+                    $("#actionsListContainer .placeholder").remove();
                     appendButtons(ui.draggable);
+                }
                 
                 alcDropAlreadyCalled = !alcDropAlreadyCalled;
             }
         });
 
         $("#actionsListContainer").sortable({
-            items: ".action:not(.placeholder)",
+            items: "> .action:not(.placeholder)",
             axis: "y",
             appendTo: "#actionsContainer",
             sort: function() {
                 // gets added unintentionally by droppable interacting with sortable
                 // using connectWithSortable fixes this, but doesn't allow you to customize active/hoverClass options
-                //$(this).removeClass("ui-state-highlight");
+                $(this).removeClass("ui-state-highlight");
             }
         });
 
     });
 
-    function getActionList() {
+    function getCreatedActionList() {
         //log("getActionList");
         var actionList = [];
         $("#actionsListContainer").children(":not(.placeholder)").each(function(index, actionDiv) {
             actionList.push($(actionDiv).metadata());
+            //actionList.push($(actionDiv).data("action"));
         })
         //log(actionList);
         return actionList;
@@ -82,11 +82,7 @@
 <div id="actionsMainContainer">
     <div id="actionsList" class="ui-widget-content ui-corner-all" style="width: 300px; left: 50px; position: absolute">
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 284px">Actielijst</div>
-        <div id="actionsListContainer" class="action-list">
-            <div class="placeholder" style="top: 200px; left: 50px; position: absolute">
-                <em>Sleep uw acties hierheen...</em>
-            </div>
-        </div>
+        <div id="actionsListContainer" class="action-list"></div>
     </div>
 
     <div id="actionsText" style="width: 100px; left: 350px; position: absolute">

@@ -18,6 +18,7 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
+import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.json.ActionModel;
 import nl.b3p.geotools.data.linker.ActionFactory;
 import org.hibernate.Session;
@@ -26,6 +27,7 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class ActionsAction extends DefaultAction {
     private Log log = Log.getInstance(ActionsAction.class);
     

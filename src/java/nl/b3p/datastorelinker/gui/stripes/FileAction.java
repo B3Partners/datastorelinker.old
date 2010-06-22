@@ -32,6 +32,7 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class FileAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(FileAction.class);
@@ -54,7 +55,6 @@ public class FileAction extends DefaultAction {
         return new ForwardResolution(LIST_JSP);
     }
 
-    @Transactional
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -151,7 +151,6 @@ public class FileAction extends DefaultAction {
         return new StreamingResolution("text/xml", "An unknown error has occurred!");
     }
 
-    @Transactional
     private File saveFile(String absolutePath) {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();

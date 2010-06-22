@@ -26,6 +26,7 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class InputAction extends DefaultAction {
     private final static Log log = Log.getInstance(InputAction.class);
 
@@ -60,7 +61,6 @@ public class InputAction extends DefaultAction {
         return new ForwardResolution(LIST_JSP);
     }
 
-    @Transactional
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -108,7 +108,6 @@ public class InputAction extends DefaultAction {
         return new ForwardResolution(CREATE_FILE_JSP);
     }
 
-    @Transactional
     public Resolution createDatabaseInputComplete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -130,7 +129,6 @@ public class InputAction extends DefaultAction {
         return list();
     }
 
-    @Transactional
     public Resolution createFileInputComplete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();

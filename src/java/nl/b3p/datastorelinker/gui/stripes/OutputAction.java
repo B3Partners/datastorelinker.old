@@ -21,6 +21,7 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class OutputAction extends DatabaseAction {
     private Log log = Log.getInstance(OutputAction.class);
 
@@ -48,7 +49,6 @@ public class OutputAction extends DatabaseAction {
     }
 
     @Override
-    @Transactional
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -73,7 +73,6 @@ public class OutputAction extends DatabaseAction {
     }
 
     @Override
-    @Transactional
     public Resolution createComplete() {
         Database database = saveDatabase();
 

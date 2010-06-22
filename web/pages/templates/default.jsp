@@ -34,12 +34,15 @@
             <!--script type="text/javascript" src="${contextPath}/scripts/utils.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/simple_treeview.js"></script-->
 
-            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery.history/jquery.history.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.messages_nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.blockUI/jquery.blockUI.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/jquery-flash.js"></script>
@@ -59,6 +62,9 @@
 
             <script type="text/javascript">
                 $(function() {
+                    // general metadata setting:
+                    $.metadata.setType("attr", "jqmetadata");
+
                     $("body").layout({
                     });
                     $("#contenttext").layout({

@@ -31,6 +31,7 @@ import org.hibernate.Session;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class ProcessAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(ProcessAction.class);
@@ -82,13 +83,15 @@ public class ProcessAction extends DefaultAction {
 
         if (actionsList == null)
             actionsList = new JSONArray().toString();
+
+        log.debug("actionsList:");
+        log.debug(actionsList);
         
         //throw new Exception("qweqwe"); // error test
 
         return new ForwardResolution(CREATE_JSP);
     }
 
-    @Transactional
     public Resolution createComplete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -122,7 +125,7 @@ public class ProcessAction extends DefaultAction {
         return list();
     }
 
-    public Resolution update() throws Exception {
+    public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -132,12 +135,11 @@ public class ProcessAction extends DefaultAction {
         selectedInputId = process.getInputId().getId();
         selectedOutputId = process.getOutputId().getId();
         actionsList = process.getActions();
-        log.debug(actionsList);
+        //log.debug(actionsList);
 
         return create();
     }
 
-    @Transactional
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();

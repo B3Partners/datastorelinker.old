@@ -11,11 +11,29 @@
 
 <script type="text/javascript">
     function initActionsList() {
-        currentActionsList = null;
+        //currentActionsList = null;
 
         var actionsList = ${actionBean.actionsList};
         log(actionsList);
-        fillActionsList(actionsList, "#actionsOverviewContainer", "${contextPath}");
+        setActionsList(actionsList);
+        fillActionsList(actionsList, "#actionsOverviewContainer", "${contextPath}", actionsPlaceholder);
+    }
+
+    function setActionsList(actionsList) {
+        //log("setting actionsList in dom metadata:");
+        var actionsListObject = {actionsList: actionsList};
+        //log(actionsListObject);
+        $("#actionsListMetadata").data("actionsList", actionsListObject);
+    }
+
+    function getActionsList() {
+        //log("getting actionsList from dom metadata:");
+        var metadata = $("#actionsListMetadata").data("actionsList");
+        //log(metadata);
+        if (!metadata || !metadata.actionsList)
+            return [];
+        else
+            return metadata.actionsList;
     }
 
     $(function() {
@@ -51,10 +69,7 @@
             {
                 // form plugin settings
                 beforeSend: function() {
-                    //log(typeof currentActionsList);
-                    if (typeof currentActionsList == "undefined" || !currentActionsList)
-                        currentActionsList = [];
-                    var actionsListJson = JSON.stringify(currentActionsList);
+                    var actionsListJson = JSON.stringify(getActionsList());
                     
                     ajaxOpen({
                         formSelector: "#createUpdateProcessForm",
@@ -266,6 +281,8 @@
     }
 
 </script>
+
+<div id="actionsListMetadata"></div>
 
 <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->

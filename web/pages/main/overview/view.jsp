@@ -31,6 +31,8 @@
         });
 
         $("#actionsOverview").click(function() {
+            //log("currentActionsList:");
+            //log(currentActionsList);
             ajaxOpen({
                 url: "${actionsUrl}",
                 formSelector: "#createUpdateProcessForm",
@@ -45,8 +47,9 @@
                     close: defaultDialogClose,
                     buttons: { // TODO: localize button name:
                         "Voltooien" : function() {
-                            currentActionsList = getActionList();
-                            fillActionsList(currentActionsList, "#actionsOverviewContainer", "${contextPath}");
+                            var actionsListJSON = getCreatedActionList();
+                            setActionsList(actionsListJSON);
+                            fillActionsList(actionsListJSON, "#actionsOverviewContainer", "${contextPath}", actionsPlaceholder);
                             $("#actionsContainer").dialog("close");
                         }
                     }
