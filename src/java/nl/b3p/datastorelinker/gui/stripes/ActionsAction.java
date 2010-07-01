@@ -6,7 +6,6 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -48,7 +47,7 @@ public class ActionsAction extends DefaultAction {
 
     public Resolution create() {
         actionsWorkbenchList = createActionsWorkbenchList();
-        log.debug(actionsWorkbenchList);
+        //log.debug(actionsWorkbenchList);
 
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -59,7 +58,7 @@ public class ActionsAction extends DefaultAction {
             nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
                     session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
-            actionsList = process.getActions();
+            actionsList = process.getActionsString();
         }
 
         return new ForwardResolution(CREATE_JSP);
@@ -82,17 +81,15 @@ public class ActionsAction extends DefaultAction {
     private ActionModel createAction(Map.Entry<String, List<List<String>>> actionBlock) {
         ResourceBundle res = ResourceBundle.getBundle("StripesResources");
 
-        Map parameters = new HashMap();
+        JSONArray parameters = new JSONArray();
         if (actionBlock.getValue() != null) {
             for (List<String> paramList : actionBlock.getValue()) {
                 for (String paramName : paramList) {
-                    Map paramInterior = new HashMap();
-                    paramInterior.put("name", res.getString("keys." + paramName.toUpperCase()));
-                    paramInterior.put("type", res.getString("keys." + paramName.toUpperCase() + ".type"));
-                    if (RESERVED_JS_KEYWORDS.contains(paramName))
-                        parameters.put(SAFE_PREFIX + paramName, paramInterior);
-                    else
-                        parameters.put(paramName, paramInterior);
+                    JSONObject paramInterior = new JSONObject();
+                    paramInterior.element("paramId", paramName);
+                    paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
+                    paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));
+                    parameters.add(paramInterior);
                 }
             }
         }
@@ -106,8 +103,11 @@ public class ActionsAction extends DefaultAction {
         model.setName(res.getString(type + ".desc"));
         model.setDescription(res.getString(type + ".longdesc"));
 
-        model.setParameters(JSONObject.fromObject(parameters));
-        log.debug(parameters.toString());
+        // Strange subObject introduced in order to "flatten" the array later for JSON to XML use.
+        JSONObject parametersObject = new JSONObject();
+        parametersObject.element("parameter", parameters);
+        model.setParameters(parametersObject);
+        //log.debug(parameters.toString());
 
         return model;
     }

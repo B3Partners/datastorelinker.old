@@ -5,6 +5,7 @@
 
 package nl.b3p.datastorelinker.json;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -52,7 +53,7 @@ public class ActionModel {
     public void setParameters(JSONObject parameters) {
         this.parameters = parameters;
     }
-    
+
     public String getType() {
         return type;
     }

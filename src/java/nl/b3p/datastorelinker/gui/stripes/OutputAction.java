@@ -15,6 +15,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.InoutDatatype;
+import nl.b3p.datastorelinker.entity.InoutType;
 import org.hibernate.Session;
 
 /**
@@ -43,7 +44,7 @@ public class OutputAction extends DatabaseAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        outputs = session.createQuery("from Inout where typeId = 2").list();
+        outputs = session.createQuery("from Inout where type.id = 2").list();
 
         return new ForwardResolution(getListJsp());
     }
@@ -55,7 +56,7 @@ public class OutputAction extends DatabaseAction {
 
         Inout selectedOutput = (Inout)session.get(Inout.class, selectedOutputId);
 
-        selectedDatabaseId = selectedOutput.getDatabaseId().getId();
+        selectedDatabaseId = selectedOutput.getDatabase().getId();
 
         return super.delete();
     }
@@ -67,7 +68,7 @@ public class OutputAction extends DatabaseAction {
         
         Inout output = (Inout)session.get(Inout.class, selectedOutputId);
 
-        selectedDatabaseId = output.getDatabaseId().getId();
+        selectedDatabaseId = output.getDatabase().getId();
 
         return super.update();
     }
@@ -85,9 +86,9 @@ public class OutputAction extends DatabaseAction {
         else
             output = (Inout)session.get(Inout.class, selectedOutputId);
 
-        output.setTypeId(2); // output
-        output.setDatatypeId(new InoutDatatype(1)); // database
-        output.setDatabaseId(database);
+        output.setType(new InoutType(2)); // output
+        output.setDatatype(new InoutDatatype(1)); // database
+        output.setDatabase(database);
         output.setName(database.getName());
         // no tablename needed.
 

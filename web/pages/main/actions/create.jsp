@@ -9,9 +9,8 @@
     $(function() {
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
         log(actionsWorkbenchList);
-        log("GET ACTIONS LIST!");
         var actionsList = getActionsList();
-        log(actionsList);
+        //log(actionsList);
 
         fillActionsList(actionsWorkbenchList, "#actionsWorkbenchContainer", "${contextPath}");
         fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", dragActionsPlaceholder, true);
@@ -42,7 +41,7 @@
             /*accept: ".blaat",*/
             /*greedy: true,*/
             drop: function(event, ui) {
-                log("drop");
+                //log("drop");
                 // is called twice when draggable is connected to sortable.
                 // prevent it with an ugly hack:
                 if (!alcDropAlreadyCalled) {

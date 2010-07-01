@@ -128,7 +128,7 @@ public class DatabaseAction extends DefaultAction {
                 .uniqueResult();
 
         database.setName(host + "/" + databaseName);
-        database.setTypeId(dbt);
+        database.setType(dbt);
 
         switch(dbt.getId()) {
             case 1: // Oracle
@@ -163,28 +163,11 @@ public class DatabaseAction extends DefaultAction {
     }
 
     public Resolution testConnection() {
-        Database database = getDatabase();
-
-        //Connection connection = new Connection();
-        //Map map = new HashMap();
         try {
-            DataStoreLinker.openDataStore(database.toMap());
-
-            //connection.setValid(true);
-            //map.put("valid", true);
+            DataStoreLinker.openDataStore(getDatabase());
         } catch(Exception e) {
-            //connection.setValid(false);
-            //map.put("valid", false);
-            //connection.setTitle("Databaseconnectie fout");
-            //map.put("title", "Databaseconnectie fout");
-            //connection.setMessage(e.getMessage());
-            //map.put("message", e.getMessage());
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
         }
-
-        //return new JavaScriptResolution(map);
-        //return new JavaScriptResolution(connection);
-        //return new StreamingResolution("text", JSONObject.fromObject(connection).toString());
         return new JSONResolution(new SuccessMessage());
     }
 

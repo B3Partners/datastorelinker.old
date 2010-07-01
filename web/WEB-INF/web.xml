@@ -71,4 +71,28 @@
         <param-name>uploadDirectory</param-name>
         <param-value>c:\uploadedFiles</param-value>
     </context-param>
+
+<!-- Quartz Scheduler init: -->
+<!--
+We use the defaults:
+    <context-param>
+        <param-name>quartz:config-file</param-name>
+        <param-value>/WEB-INF/quartz.properties</param-value>
+    </context-param>
+    <context-param>
+        <param-name>quartz:shutdown-on-unload</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>quartz:start-on-load</param-name>
+        <param-value>true</param-value>
+    </context-param>
+-->
+    <listener>
+        <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>nl.b3p.commons.geotools.GeoToolsLoggingInitializer</listener-class>
+    </listener>
+
 </web-app>

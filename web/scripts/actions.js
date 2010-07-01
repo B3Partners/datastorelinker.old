@@ -23,6 +23,15 @@ var dragActionsPlaceholder = $("<div></div>")
     })
     .html("<em>Sleep uw acties hierheen...</em>");
 
+// Always use this function to get to the parameters of an Action. 
+// SubObject created to accomodate for proper JSON to XML conversion later
+function getParameters(action) {
+    return action.parameters.parameter;
+}
+// Always use this function to set the parameters of an Action.
+function setParameters(action, parameters) {
+    action.parameters.parameter = parameters;
+}
 
 function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, addButtons) {
     //log("actionsListJSON.length: " + actionsListJSON.length);
@@ -91,9 +100,10 @@ function appendParametersButton(div) {
     //var action = div.data("action");
     //log(action);
     var hasParameters = false;
-    if (action.parameters) {
-        log(action.parameters);
-        $.each(action.parameters, function() {hasParameters = true;});
+    if (getParameters(action)) {
+        log("hasparams");
+        log(getParameters(action));
+        $.each(getParameters(action), function() {hasParameters = true;});
     }
 
     //log(hasParameters);
@@ -111,7 +121,7 @@ function appendParametersButton(div) {
 }
 
 function openParametersDialog(action) {
-    //log(action.parameters);
+    //log(getParameters(action));
 
     var parametersDialog = $("<div></div>");
     parametersDialog.append($("<div></div>").append(action.description));
@@ -123,13 +133,13 @@ function openParametersDialog(action) {
     parameterForm.append($("<table><tbody></tbody></table>"));
     parametersDialog.append(parameterForm);
 
-    $.each(action.parameters, function(index, parameter) {
-        var parameterObject = {parameterKey: index};
+    $.each(getParameters(action), function(index, parameter) {
+        log("parameter");
+        log(parameter);
 
         var row = $("<tr></tr>").attr({
-            jqmetadata: JSON.stringify(parameterObject)
+            jqmetadata: JSON.stringify(parameter)
         });
-        //var row = $("<tr></tr>").data("parameterObject", parameterObject);
 
         var key = $("<td></td>");
         var label = $("<label></label>");
@@ -137,11 +147,11 @@ function openParametersDialog(action) {
         key.append(label);
         var value = $("<td></td>");
         var input = $("<input />").attr({
-            name: index // required for validation
+            name: parameter.paramId // required for validation
         });
         if (parameter.type && parameter.type === "boolean") {
             input.attr("type", "checkbox");
-            if (parameter.value === true)
+            if (parameter.value === true || parameter.value == "true")
                 input.attr("checked", true);
         } else {
             input.val(parameter.value);
@@ -167,17 +177,25 @@ function openParametersDialog(action) {
                 if (!$("#parameterForm").valid())
                     return;
 
+                setParameters(action, []);
+                //log(getParameters(action));
+
                 parametersDialog.find("tr").each(function(index, parameterRow) {
-                    var paramKey = $(parameterRow).metadata();
-                    //var paramKey = $(parameterRow).data("parameterObject");
+                    var paramMetadata = $(parameterRow).metadata();
+                    //log("paramMetadata");
+                    //log(paramMetadata);
+
                     var input = $(parameterRow).find("input");
 
                     if (input.is(":checkbox")) {
-                        action.parameters[paramKey.parameterKey].value = input.is(":checked");
+                        paramMetadata.value = input.is(":checked");
                     } else {
-                        action.parameters[paramKey.parameterKey].value = input.val();
+                        paramMetadata.value = input.val();
                     }
+                    
+                    getParameters(action).push(paramMetadata);
                 });
+                //log(getParameters(action));
                 
                 parametersDialog.dialog("close");
             }

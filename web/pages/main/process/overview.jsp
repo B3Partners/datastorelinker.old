@@ -7,6 +7,11 @@
 
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
 
+<style type="text/css">
+    .ui-progressbar { position:relative; }
+    .progressbarLabel { position: absolute; width: 100%; text-align: center; line-height: 1.9em; color: silver; font-weight: bold; }
+</style>
+
 <script type="text/javascript">
     $(function() {
         $("#processForm").validate(defaultValidateOptions);
@@ -66,9 +71,22 @@
 
             $("<div id='processContainer'><div id='processOutput'>Proces aan het uitvoeren...</div></div>").appendTo(document.body);
 
-            $("#processContainer").prepend("<div id='progressbar'/>");
-            $("#progressbar").progressbar();
+            var progressbar = $("<div></div>")
+                .attr("id", "progressbar")
+                .append($("<span></span>").addClass("progressbarLabel"));
+                
+            $("#processContainer").prepend(progressbar);
+            $("#progressbar").progressbar({
+                value: 0,
+                change: function(event, ui) {
+                    var newValue = $(this).progressbar('option', 'value');
+                    $('.progressbarLabel', this).text(newValue + '%');
+                }
+            });
 
+            $("#processContainer").data("jobUUID", null);
+            $("#processContainer").data("intervalId", 0);
+            
             ajaxOpen({
                 formSelector: "#processForm",
                 event: "execute",
@@ -76,12 +94,15 @@
                 containerFill: false,
                 successAfterContainerFill: function(data, textStatus, xhr) {
                     if (data.success) {
-                        $("#progressbar").progressbar("value", 100);
-                        $("#processOutput").html("Proces succesvol uitgevoerd:");
+                        var jobUUID = data.message;
+                        $("#processContainer").data("jobUUID", jobUUID);
+                        var intervalId = setInterval("updateProgressbar()", 1000);
+                        $("#processContainer").data("intervalId", intervalId);
                     } else {
-                        $("#processOutput").html("Proces niet succesvol uitgevoerd:");
+                        $("#processOutput").html("Proces kon niet gestart worden:");
+                        $("#processOutput").append("<p>" + data.message + "</p>");
                     }
-                    $("#processOutput").append("<p>" + data.message + "</p>");
+                    $("#processContainer").dialog("option", "disabled", false);
                 },
                 openInDialog: true,
                 dialogOptions: {
@@ -95,9 +116,19 @@
                         }
                     },
                     close: function(event, ui) {
+                        var intervalId = $("#processContainer").data("intervalId");
+                        clearInterval(intervalId);
+
+                        cancelProcess();
+
                         $("#progressbar").progressbar("destroy");
+                        
+                        $("#processContainer").removeData("jobUUID");
+                        $("#processContainer").removeData("intervalId");
+                        
                         defaultDialogClose(event, ui);
-                    }
+                    },
+                    disabled: true
                 }
             });
         });
@@ -131,21 +162,60 @@
         });
     });
 
+    function updateProgressbar() {
+        var jobUUID = $("#processContainer").data("jobUUID");
+        var intervalId = $("#processContainer").data("intervalId");
+
+        $.getJSON(
+            "${processUrl}", [
+                {name: "executionProgress", value: ""},
+                {name: "jobUUID", value: jobUUID}
+            ],
+            function(data, textStatus) {
+                $("#progressbar").progressbar("value", data.progress);
+                if (data.progress >= 100) {
+                    log("Process finished");
+                    $("#processOutput").html(data.message);
+                    clearInterval(intervalId);
+                    changeButtonName("#processContainer", "Annuleren", "Voltooien");
+                }
+            }
+        );
+    }
+
+    function changeButtonName(dialogSelector, fromName, toName) {
+        $(dialogSelector).parent().find(".ui-dialog-buttonpane .ui-button:first .ui-button-text").html(toName);
+    }
+
+    function cancelProcess() {
+        var jobUUID = $("#processContainer").data("jobUUID");
+
+        $.getJSON(
+            "${processUrl}", [
+                {name: "cancel", value: ""},
+                {name: "jobUUID", value: jobUUID}
+            ],
+            function(data, textStatus) {
+
+            }
+        );
+    }
+
 </script>
 
 
-        <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
-            <stripes:label for="main.process.overview.text.overview"/>:
+<stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+    <stripes:label for="main.process.overview.text.overview"/>:
 
-            <div id="processesListContainer">
-                <%@include file="/pages/main/process/list.jsp" %>
-            </div>
+    <div id="processesListContainer">
+        <%@include file="/pages/main/process/list.jsp" %>
+    </div>
 
-            <div id="buttonPanel">
-                <stripes:button id="createProcess" name="create"/>
-                <stripes:button id="updateProcess" name="update"/>
-                <stripes:button id="deleteProcess" name="delete"/>
-                <stripes:button id="executeProcess" name="execute"/>
-            </div>
+    <div id="buttonPanel">
+        <stripes:button id="createProcess" name="create"/>
+        <stripes:button id="updateProcess" name="update"/>
+        <stripes:button id="deleteProcess" name="delete"/>
+        <stripes:button id="executeProcess" name="execute"/>
+    </div>
 
-        </stripes:form>
+</stripes:form>

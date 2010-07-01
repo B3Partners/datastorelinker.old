@@ -9,10 +9,21 @@ package nl.b3p.datastorelinker.json;
  *
  * @author Erik van de Pol
  */
-public class ProgressMessage {
+public class ProgressMessage extends Message {
     private int progress;
 
     public ProgressMessage(int progress) {
+        super("", "");
+        this.progress = progress;
+    }
+
+    public ProgressMessage(int progress, String message) {
+        super(message, "");
+        this.progress = progress;
+    }
+
+    public ProgressMessage(int progress, String message, String title) {
+        super(message, title);
         this.progress = progress;
     }
 

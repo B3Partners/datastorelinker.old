@@ -16,6 +16,7 @@ import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.InoutDatatype;
+import nl.b3p.datastorelinker.entity.InoutType;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.geotools.util.logging.Log4JLoggerFactory;
@@ -56,7 +57,7 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        inputs = session.createQuery("from Inout where typeId = 1").list();
+        inputs = session.createQuery("from Inout where type.id = 1").list();
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -77,12 +78,12 @@ public class InputAction extends DefaultAction {
         Inout input = (Inout)session.get(Inout.class, selectedInputId);
         selectedTable = input.getTableName();
 
-        switch(input.getDatatypeId().getId()) {
+        switch(input.getDatatype().getId()) {
             case 1:
-                selectedDatabaseId = input.getDatabaseId().getId();
+                selectedDatabaseId = input.getDatabase().getId();
                 return createDatabaseInput();
             case 2:
-                selectedFileId = input.getFileId().getId();
+                selectedFileId = input.getFile().getId();
                 return createFileInput();
             default:
                 log.error("Unknown input type.");
@@ -115,9 +116,9 @@ public class InputAction extends DefaultAction {
         Database selectedDatabase = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
 
         Inout dbInput = new Inout();
-        dbInput.setTypeId(1); // input
-        dbInput.setDatatypeId(new InoutDatatype(1)); // database
-        dbInput.setDatabaseId(selectedDatabase);
+        dbInput.setType(new InoutType(1)); // input
+        dbInput.setDatatype(new InoutDatatype(1)); // database
+        dbInput.setDatabase(selectedDatabase);
         dbInput.setTableName(selectedTable);
         String name = selectedDatabase.getName();
         if (selectedTable != null && !selectedTable.equals(""))
@@ -136,9 +137,9 @@ public class InputAction extends DefaultAction {
         File selectedFile = (File)session.get(nl.b3p.datastorelinker.entity.File.class, selectedFileId);
 
         Inout fileInput = new Inout();
-        fileInput.setTypeId(1); // input
-        fileInput.setDatatypeId(new InoutDatatype(2)); // file
-        fileInput.setFileId(selectedFile);
+        fileInput.setType(new InoutType(1)); // input
+        fileInput.setDatatype(new InoutDatatype(2)); // file
+        fileInput.setFile(selectedFile);
         fileInput.setTableName(selectedTable);
         String name = selectedFile.getName();
         if (selectedTable != null && !selectedTable.equals(""))
