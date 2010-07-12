@@ -11,6 +11,8 @@
     <class>nl.b3p.datastorelinker.entity.DatabaseType</class>
     <class>nl.b3p.datastorelinker.entity.File</class>
     <class>nl.b3p.datastorelinker.entity.Mail</class>
+    <class>nl.b3p.datastorelinker.entity.Schedule</class>
+    <class>nl.b3p.datastorelinker.entity.ScheduleType</class>
     
     <properties>
       <property name="hibernate.connection.username" value="postgres"/>

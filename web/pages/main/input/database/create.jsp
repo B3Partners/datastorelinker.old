@@ -15,8 +15,9 @@
         formSelector: ".form-container .ui-accordion-content-active form",
         event: "createComplete",
         containerSelector: "#databasesListContainer",
-        successAfterContainerFill: function() {
-            $("#dbContainer").dialog("close");
+        successAfterContainerFill: function(data, textStatus, xhr, container) {
+            //$("#dbContainer").dialog("close");
+            container.dialog("close");
         }
     }
 

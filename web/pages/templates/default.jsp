@@ -37,6 +37,7 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery.ui.datepicker-nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script-->
@@ -51,20 +52,19 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.ui-uploader/functions.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.metadata/jquery.metadata.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.layout/jquery.layout-latest.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.maskedinput/jquery.maskedinput-latest.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery.maskedinput/jquery.maskedinput-latest.min.js"></script-->
             
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/actions.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/database.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard.config.js.jsp"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.config.js.jsp"></script>
 
             <stripes:layout-component name="head"/>
 
             <script type="text/javascript">
                 $(function() {
-                    // general metadata setting:
-                    $.metadata.setType("attr", "jqmetadata");
-
                     $("body").layout({
                     });
                     $("#contenttext").layout({

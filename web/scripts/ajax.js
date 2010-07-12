@@ -41,7 +41,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
             modal: true,
             buttons: {
                 "Ok": function() {
-                    $("#errorDialog").dialog("close");
+                    $(this).dialog("close");
                 }
             },
             close: defaultDialogClose
@@ -132,7 +132,7 @@ function ajaxOpen(sendOptions) {
         success: function(data, textStatus, xhr) {
             if (options.containerFill && container != null)
                 container.html(data);
-            options.successAfterContainerFill(data, textStatus, xhr);
+            options.successAfterContainerFill(data, textStatus, xhr, container);
         }
     };
 

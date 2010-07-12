@@ -11,16 +11,19 @@
 
         <script type="text/javascript">
             $(function() {
-                $.blockUI;
+                $.blockUI({
+                    message: "<h2>Bezig met laden...</h2>",
+                    theme: true
+                });
                 $('#tabs').tabs( {
                     ajaxOptions: {
                         error: function(xhr, status, index, anchor) {
-                            $.unblockUI;
-                            $(anchor.hash).html("Fout. Kon deze tab niet laden.");
+                            $.unblockUI();
+                            $(anchor.hash).html("Fout. Kon deze tab niet laden. Javascript moet geactiveerd zijn om deze website te tonen.");
                         },
                         data: {},
                         success: function(data, textStatus) {
-                            $.unblockUI;
+                            $.unblockUI();
                         }
                     }
                 });

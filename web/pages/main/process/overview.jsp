@@ -6,9 +6,10 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
+<stripes:url var="periodicalProcessUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction"/>
 
 <style type="text/css">
-    .ui-progressbar { position:relative; }
+    .ui-progressbar { position: relative; }
     .progressbarLabel { position: absolute; width: 100%; text-align: center; line-height: 1.9em; color: silver; font-weight: bold; }
 </style>
 
@@ -20,6 +21,7 @@
         $("#updateProcess").button();
         $("#deleteProcess").button();
         $("#executeProcess").button();
+        $("#executeProcessPeriodically").button();
 
         $("#createProcess").click(function() {
             // TODO: wacht op een volgende versie van jquery UI waar http://dev.jqueryui.com/ticket/5295
@@ -133,6 +135,31 @@
             });
         });
 
+        $("#executeProcessPeriodically").click(function() {
+            ajaxOpen({
+                formSelector: "#processForm",
+                url: "${periodicalProcessUrl}",
+                event: "executePeriodically",
+                containerId: "processContainer",
+                openInDialog: true,
+                dialogOptions: {
+                    title: "Voer proces periodiek uit...", // TODO: localization
+                    width: 900,
+                    height: 600,
+                    modal: true,
+                    close: defaultDialogClose,
+                    buttons: {
+                        "Annuleren": function() {
+                            $(this).dialog("close");
+                        },
+                        "Voltooien": function() {
+                            submitExecutePeriodicallyForm();
+                        }
+                    }
+                }
+            });
+        });
+
         $("#deleteProcess").click(function() {//TODO: localize
             if (!$("#processForm").valid())
                 return;
@@ -216,6 +243,7 @@
         <stripes:button id="updateProcess" name="update"/>
         <stripes:button id="deleteProcess" name="delete"/>
         <stripes:button id="executeProcess" name="execute"/>
+        <stripes:button id="executeProcessPeriodically" name="executePeriodically"/>
     </div>
 
 </stripes:form>

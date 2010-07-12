@@ -16,13 +16,21 @@
         <c:forEach var="process" items="${actionBean.processes}" varStatus="status">
             <c:choose>
                 <c:when test="${not empty actionBean.selectedProcessId and process.id == actionBean.selectedProcessId}">
-                    <input type="radio" id="process${status.index}" name="selectedProcessId" value="${process.id}" class="required" checked="checked"/>
+                    <input type="radio" id="process${process.id}" name="selectedProcessId" value="${process.id}" class="required" checked="checked"/>
                 </c:when>
                 <c:otherwise>
-                    <input type="radio" id="process${status.index}" name="selectedProcessId" value="${process.id}" class="required"/>
+                    <input type="radio" id="process${process.id}" name="selectedProcessId" value="${process.id}" class="required"/>
                 </c:otherwise>
             </c:choose>
-            <stripes:label for="process${status.index}"><c:out value="${process.name}"/></stripes:label>
+            <stripes:label for="process${process.id}"><c:out value="${process.name}"/></stripes:label>
+            <%-- Add schedule icon if this process is scheduled --%>
+            <c:if test="${not empty process.schedule}">
+                <script type="text/javascript">
+                    $(function() {
+                        $("#process${process.id}").button("option", "icons", {primary: "ui-icon-clock"});
+                    });
+                </script>
+            </c:if>
         </c:forEach>
     </stripes:form>
 </div>
