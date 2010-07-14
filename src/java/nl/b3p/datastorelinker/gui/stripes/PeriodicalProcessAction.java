@@ -6,7 +6,6 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -24,6 +23,7 @@ import org.hibernate.Session;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 
 /**
@@ -135,10 +135,11 @@ public class PeriodicalProcessAction extends DefaultAction {
             Trigger trigger = new CronTrigger(triggerName, null, jobName, null, fromDate, null, cronExpressionString);
 
             Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
-            //scheduler.scheduleJob(jobDetail, trigger);
+            scheduler.scheduleJob(jobDetail, trigger);
 
             // Eigen schedule bijhouden:
             schedule.setCronExpression(cronExpressionString);
+            schedule.setJobName(jobName);
             if (process.getSchedule() == null)
                 session.save(schedule);
             process.setSchedule(schedule);
@@ -148,6 +149,32 @@ public class PeriodicalProcessAction extends DefaultAction {
             log.error(e, e.getMessage());
             return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
         }
+    }
+
+    @Transactional
+    public Resolution cancelExecutePeriodically() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+        Schedule schedule = process.getSchedule();
+        if (schedule != null) {
+            try {
+                // try to unschedule from Quartz
+                Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
+                scheduler.deleteJob(schedule.getJobName(), null);
+
+                // if success, we remove the schedule from our own tables
+                session.delete(process.getSchedule());
+                process.setSchedule(null);
+            } catch (SchedulerException ex) {
+                log.error(ex);
+            }
+        }
+        
+        return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
     }
 
     // only use this method for non-advanced cron expressions created by createCronExpression() !

@@ -74,10 +74,10 @@
 
 <!-- Quartz Scheduler init: -->
 <!--
-We use the defaults:
+We use the defaults:-->
     <context-param>
         <param-name>quartz:config-file</param-name>
-        <param-value>/WEB-INF/quartz.properties</param-value>
+        <param-value>/quartz.properties</param-value>
     </context-param>
     <context-param>
         <param-name>quartz:shutdown-on-unload</param-name>
@@ -87,7 +87,7 @@ We use the defaults:
         <param-name>quartz:start-on-load</param-name>
         <param-value>true</param-value>
     </context-param>
--->
+
     <listener>
         <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
     </listener>

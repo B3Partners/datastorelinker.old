@@ -10,7 +10,17 @@
         $("#cronEachAccordion").accordion();
         $("#cronAccordion").accordion();
         $("#cronAccordion form").each(function(index, value) {
-            $(value).validate(defaultValidateOptions);
+            $(value).validate($.extend({}, defaultValidateOptions, {
+                rules: {
+                    onDayOfTheMonth: {
+                        min: 0,
+                        max: 31
+                    },
+                    onTime: {
+                        time: true // custom method gemaakt in jquery.config.js.jsp
+                    }
+                }
+            }));
         });
 
         // cron defaults:
@@ -60,7 +70,7 @@
             }
         });
 
-        $("#dayOnTime, #weekOnTime, #monthOnTime, #yearOnTime").mask("29:59").val(timeDefault); // TODO: could pass invalid time here: e.g. 27:01
+        $("#dayOnTime, #weekOnTime, #monthOnTime, #yearOnTime").mask("29:59").val(timeDefault);
 
         $("#hourOnMinute").mask("59").val(minuteDefault); // values: 0-59
 
@@ -77,14 +87,10 @@
         $("#monthRadioDayOfTheMonth, #yearRadioDayOfTheMonth").click(function() {
             $(this).siblings(":text").addClass("required").focus();
         });
-        // Gaat wellicht niet helemaal zoals de gebuiker verwacht in een niet-schrikkeljaar op 29 februari (bestaat niet).
-        // 0-28 kan niet met maskinput plugin aangezien er een min en max per digit opgegeven moet worden.
-        // $("x").mask("28"); zorgt ervoor dat 19 niet in te vullen is.
-        //
-        // Enige wat daadwerkelijk "fout" kan gaan is dat de job niet wordt uitgevoerd.
+        // Enige wat daadwerkelijk "fout" kan gaan is dat de job niet wordt uitgevoerd (bij niet bestaande 29, 30, 31e van de maand).
         // -> Verantwoordelijkheid van de gebruiker! -> Gebruik anders "last day of the month""
-        // values: 0-29; // 30 of 31 niet mogelijk. -> Gebruik "last day of the month""
-        $("#monthOnDayOfTheMonth, #yearOnDayOfTheMonth").mask("29").val(dayOfTheMonthDefault).click(function() {
+        // values: 0-31; 32-39 wordt afgevangen door de validation plugin bij submit poging.
+        $("#monthOnDayOfTheMonth, #yearOnDayOfTheMonth").mask("39").val(dayOfTheMonthDefault).click(function() {
             $(this).prevAll(":radio").first().attr("checked", "checked");
             $(this).addClass("required");
         });
@@ -129,7 +135,7 @@
                 </c:when>
                 <c:otherwise>
                     //$("#cronAccordion").accordion("activate", "#simpleCron"); // == default
-                    log($("#cronEachAccordion :hidden[name='cronType'][value='${actionBean.cronType}']"));
+                    //log($("#cronEachAccordion :hidden[name='cronType'][value='${actionBean.cronType}']"));
                     $("#cronEachAccordion").accordion("activate",
                         $("#cronEachAccordion :hidden[name='cronType'][value='${actionBean.cronType}']").parent().parent().prev());
                 </c:otherwise>

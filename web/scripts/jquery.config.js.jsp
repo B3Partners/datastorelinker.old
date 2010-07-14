@@ -18,6 +18,21 @@ $(function() {
     $.mask.definitions['6']='[0-6]';
     $.mask.definitions['7']='[0-7]';
     $.mask.definitions['8']='[0-8]';
+
+    $.validator.addMethod("time", function (value) {
+        try {
+            var time = value.split(":");
+
+            var hours = parseInt(time[0], 10);
+            var minutes = parseInt(time[1], 10);
+
+            return hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60;
+        }
+        catch(error) {
+            return false;
+        }
+    }, "Voer een correcte tijd in.");
+
 });
 
 // TODO: localization

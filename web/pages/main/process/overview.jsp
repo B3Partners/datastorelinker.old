@@ -17,11 +17,8 @@
     $(function() {
         $("#processForm").validate(defaultValidateOptions);
 
-        $("#createProcess").button();
-        $("#updateProcess").button();
-        $("#deleteProcess").button();
-        $("#executeProcess").button();
-        $("#executeProcessPeriodically").button();
+        $("#createProcess, #updateProcess, #deleteProcess").button();
+        $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
 
         $("#createProcess").click(function() {
             // TODO: wacht op een volgende versie van jquery UI waar http://dev.jqueryui.com/ticket/5295
@@ -160,6 +157,35 @@
             });
         });
 
+        $("#cancelExecuteProcessPeriodically").click(function() {
+            if (!$("#processForm").valid())
+                return;
+
+            $("<div id='processContainer'>Weet u zeker dat u dit proces niet meer periodiek wilt uitvoeren?</div>").appendTo(document.body);
+
+            $("#processContainer").dialog({
+                title: "Proces periodiek uitvoeren annuleren...", // TODO: localization
+                modal: true,
+                buttons: {
+                    "Nee": function() { // TODO: localize
+                        $(this).dialog("close");
+                    },
+                    "Ja": function() {
+                        ajaxOpen({
+                            formSelector: "#processForm",
+                            url: "${periodicalProcessUrl}",
+                            event: "cancelExecutePeriodically",
+                            containerSelector: "#processesListContainer",
+                            successAfterContainerFill: function() {
+                                $("#processContainer").dialog("close");
+                            }
+                        });
+                     }
+                },
+                close: defaultDialogClose
+            });
+        });
+
         $("#deleteProcess").click(function() {//TODO: localize
             if (!$("#processForm").valid())
                 return;
@@ -244,6 +270,7 @@
         <stripes:button id="deleteProcess" name="delete"/>
         <stripes:button id="executeProcess" name="execute"/>
         <stripes:button id="executeProcessPeriodically" name="executePeriodically"/>
+        <stripes:button id="cancelExecuteProcessPeriodically" name="cancelExecutePeriodically"/>
     </div>
 
 </stripes:form>
