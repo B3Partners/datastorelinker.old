@@ -8,8 +8,8 @@
 <c:set var="dbTypeId" value="2"/>
 
 <script type="text/javascript">
-    $(function() {
-        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
+    $(document).ready(function() {
+        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}) {
             $("#msaccessurl").val("${actionBean.selectedDatabase.url}");
             $("#msaccesssrs").val("${actionBean.selectedDatabase.srs}");
             $("#msaccesscolX").val("${actionBean.selectedDatabase.colX}");

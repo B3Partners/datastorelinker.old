@@ -6,7 +6,7 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         $("#databaseAccordion").accordion();
         if (${not empty actionBean.selectedDatabase}) {
             $("#databaseAccordion").accordion("activate", 

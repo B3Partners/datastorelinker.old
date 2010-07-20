@@ -6,12 +6,12 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         $("#outputList").buttonset();
     });
 </script>
 
-<div id="outputList" class="radioList">
+<div id="outputList">
     <stripes:form partial="true" action="/">
         <c:forEach var="output" items="${actionBean.outputs}" varStatus="status">
             <c:choose>

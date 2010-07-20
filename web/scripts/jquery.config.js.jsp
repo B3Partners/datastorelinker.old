@@ -5,7 +5,7 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-$(function() {
+$(document).ready(function() {
     // general metadata setting:
     $.metadata.setType("attr", "jqmetadata");
 
@@ -35,33 +35,49 @@ $(function() {
 
 });
 
-// TODO: localization
-formWizardConfig = {
-    historyEnabled : false,
-    formPluginEnabled : true,
-    validationEnabled : true,
-    //focusFirstInput : true,
-    textNext : "Volgende",
-    textBack : "Vorige",
-    textSubmit : "Voltooien",
-    inAnimation : "slideDown",
-    outAnimation : "slideUp",
-    afterNext: function(wizardData) {
-        // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met jQuery UI.
-        // Dit doet het niet automatisch.
-        //$("#" + wizardData.currentStep + " .ui-widget").enable();
-        $("#" + wizardData.currentStep + " .ui-widget").button("enable");
-        $("#" + wizardData.currentStep + " .radioList").buttonset("enable");
-    }
-}
-
 defaultDialogClose = function(event, ui) {
     var dialog = $(event.target);
+    // destroy dialog data and all jquery ui widgets inside it (form wizard for example):
     dialog.dialog("destroy");
-    // volgende regel heel belangrijk!! (alle andere regels natuurlijk ook)
+    // destroy dialog element itself
     dialog.remove();
 }
 
 defaultValidateOptions = {
     errorClass: "ui-state-error"
 }
+
+defaultLayoutOptions = {
+    resizable: false,
+    closable: false
+};
+
+defaultDialogLayoutOptions = $.extend({}, defaultLayoutOptions, {
+    resizeWithWindow: false
+});
+
+defaultDialogOptions = {
+    modal: true,
+    close: defaultDialogClose
+};
+
+
+// TODO: localization
+formWizardConfig = {
+    historyEnabled : false,
+    formPluginEnabled : true,
+    validationEnabled : true,
+    validationOptions: defaultValidateOptions,
+    //focusFirstInput : true,
+    textNext : "Volgende",
+    textBack : "Vorige",
+    textSubmit : "Voltooien"
+}
+
+// formwiz 3.0
+function formWizardStep(data) {
+    // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met buttonset van jQuery UI.
+    // Dit doet het niet automatisch.
+    $("#" + data.currentStep + " .radioList > :first").buttonset("enable");
+}
+

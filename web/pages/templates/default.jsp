@@ -9,7 +9,7 @@
 
 <stripes:layout-definition>
 
-    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
     <html>
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -24,19 +24,10 @@
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/actions.css" />
 
-            <!--link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css">
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/b3p.css">
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/gui.css"-->
-            <!--[if lte IE 6]>
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main-ie.css">
-            <![endif]-->
-
-            <!--script type="text/javascript" src="${contextPath}/scripts/utils.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/simple_treeview.js"></script-->
-
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
-            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery.ui.datepicker-nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest.js"></script>
@@ -64,17 +55,15 @@
             <stripes:layout-component name="head"/>
 
             <script type="text/javascript">
-                $(function() {
-                    $("body").layout({
-                    });
-                    $("#contenttext").layout({
-                    });
+                $(document).ready(function() {
+                    $("body").layout(defaultLayoutOptions);
+                    $("#contenttext").layout(defaultLayoutOptions);
                 });
             </script>
 
         </head>
         <body>
-            <div id="contenttext" class="ui-layout-center">
+            <div id="contenttext" class="ui-layout-center" style="height: 100%">
                 <stripes:layout-component name="content"/>
             </div>
         </body>

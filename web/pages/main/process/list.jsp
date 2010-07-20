@@ -6,12 +6,12 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         $("#processesList").buttonset();
     });
 </script>
 
-<div id="processesList" class="radioList">
+<div id="processesList">
     <stripes:form partial="true" action="/">
         <c:forEach var="process" items="${actionBean.processes}" varStatus="status">
             <c:choose>
@@ -26,7 +26,7 @@
             <%-- Add schedule icon if this process is scheduled --%>
             <c:if test="${not empty process.schedule}">
                 <script type="text/javascript">
-                    $(function() {
+                    $(document).ready(function() {
                         $("#process${process.id}").button("option", "icons", {primary: "ui-icon-clock"});
                     });
                 </script>

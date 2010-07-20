@@ -8,8 +8,8 @@
 <c:set var="dbTypeId" value="3"/>
 
 <script type="text/javascript">
-    $(function() {
-        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.typeId.id == dbTypeId}) {
+    $(document).ready(function() {
+        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}) {
             $("#postgishost").val("${actionBean.selectedDatabase.host}");
             $("#postgisdatabaseName").val("${actionBean.selectedDatabase.databaseName}");
             $("#postgisusername").val("${actionBean.selectedDatabase.username}");

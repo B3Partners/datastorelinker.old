@@ -16,18 +16,18 @@
 
 <script type="text/javascript">
 
-    $(function() {
+    $(document).ready(function() {
         $("#inputOverview, #outputOverview, #actionsOverview").hover(
             function() { $(this).addClass("overview-hover"); },
             function() { $(this).removeClass("overview-hover"); }
         );
 
         $("#inputOverview").click(function() {
-            $("#createUpdateProcessForm").formwizard("show", "#SelecteerInvoer");
+            $("#createUpdateProcessForm").data("formwizard").show("SelecteerInvoer");
         });
         
         $("#outputOverview").click(function() {
-            $("#createUpdateProcessForm").formwizard("show", "#SelecteerUitvoer");
+            $("#createUpdateProcessForm").data("formwizard").show("SelecteerUitvoer");
         });
 
         $("#actionsOverview").click(function() {
@@ -60,7 +60,7 @@
     });
 </script>
 
-<div class="radioList">
+<div>
     <div id="inputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 50px; position: absolute">
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Invoer</div>
         <div id="inputOverviewContainer" class="action-list" style="height: 300px">

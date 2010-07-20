@@ -11,8 +11,6 @@
 
 <script type="text/javascript">
     function initActionsList() {
-        //currentActionsList = null;
-
         var actionsList = ${actionBean.actionsList};
         log(actionsList);
         setActionsList(actionsList);
@@ -36,249 +34,247 @@
             return metadata.actionsList;
     }
 
-    $(function() {
-        $("#createProcessBackButton").button();
-        $("#createProcessNextButton").button();
+    $(document).ready(function() {
+        $("#createProcessBackButton, #createProcessNextButton").button();
 
-        $("#createInputDB").button();
-        $("#createInputFile").button();
-        $("#updateInput").button();
-        $("#deleteInput").button();
-
-        $("#createOutput").button();
-        $("#updateOutput").button();
-        $("#deleteOutput").button();
+        $("#createInputDB, #createInputFile, #updateInput, #deleteInput").button();
+        $("#createOutput, #updateOutput, #deleteOutput").button();
 
         initActionsList();
         
+        $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
+            formWizardStep(data);
+
+            $("#processContainer").layout(defaultDialogLayoutOptions);
+            $("#processSteps").layout(defaultDialogLayoutOptions).destroy();
+            
+            if (data.previousStep)
+                $("#" + data.previousStep).removeClass("ui-layout-center");
+            $("#" + data.currentStep).addClass("ui-layout-center");
+
+            $("#processSteps").layout(defaultDialogLayoutOptions).initContent("center");
+
+            // ui layout plugin zet z-index op 1
+            var modalDialogZIndexWorkaroundCss = {
+                "z-index": 2000
+            };
+
+            $("#processContainer, #processSteps, .wizardButtonsArea").css(modalDialogZIndexWorkaroundCss);
+            $("#" + data.currentStep).css(modalDialogZIndexWorkaroundCss);
+
+            if (data.currentStep === "Overzicht") {
+                var inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
+                $("#inputOverviewContainer").html(inputText);
+                var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
+                $("#outputOverviewContainer").html(outputText);
+            }
+        });
+
         $("#createUpdateProcessForm").formwizard(
             // form wizard settings
             $.extend({}, formWizardConfig, {
-                afterNext: function(wizardData) {
-                    formWizardConfig.afterNext(wizardData);
-                    $("#createUpdateProcessForm :reset").button("enable");
-                    if (wizardData.currentStep === "Overzicht") {
-                        var inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
-                        $("#inputOverviewContainer").html(inputText);
-                        var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
-                        $("#outputOverviewContainer").html(outputText);
+                formOptions: {
+                    beforeSend: function() {
+                        var actionsListJson = JSON.stringify(getActionsList());
+
+                        ajaxOpen({
+                            formSelector: "#createUpdateProcessForm",
+                            event: "createComplete",
+                            containerSelector: "#processesListContainer",
+                            extraParams: [{
+                                name: "actionsList",
+                                value: actionsListJson
+                            }],
+                            successAfterContainerFill: function() {
+                                $("#processContainer").dialog("close");
+                            }
+                        });
+                        // prevent regular ajax submit:
+                        return false;
                     }
                 }
-            }),
-            defaultValidateOptions,
-            {
-                // form plugin settings
-                beforeSend: function() {
-                    var actionsListJson = JSON.stringify(getActionsList());
-                    
-                    ajaxOpen({
-                        formSelector: "#createUpdateProcessForm",
-                        event: "createComplete",
-                        containerSelector: "#processesListContainer",
-                        extraParams: [{
-                            name: "actionsList",
-                            value: actionsListJson
-                        }],
-                        successAfterContainerFill: function() {
-                            $("#processContainer").dialog("close");
-                        }
-                    });
-                    // prevent regular ajax submit:
-                    return false;
-                }
-            }
+            })
         );
 
+        var newUpdateInputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
+            width: Math.floor($('body').width() * .65),
+            height: Math.floor($('body').height() * .60),
+            resize: function(event, ui) {
+                $("#inputContainer").layout().resizeAll();
+                $("#inputSteps").layout().resizeAll();
+            },
+            close: function(event, ui) {
+                $("#uploader").uiloadDestroy();
+                defaultDialogClose(event, ui);
+            }
+        });
+
+        var newUpdateOutputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
+            width: 550,
+            height: 400,
+            buttons: { // TODO: localize button name:
+                "Voltooien" : function() {
+                    testConnection({
+                        url: "${outputUrl}",
+                        formSelector: "#postgisForm",
+                        event: "createComplete",
+                        containerSelector: "#outputListContainer",
+                        successAfterContainerFill: function() {
+                            $("#outputContainer").dialog("close");
+                        }
+                    });
+                }
+            }
+        });
+
         $("#createInputDB").click(function() {
-            $("<div id='inputContainer'/>").appendTo(document.body);
-
-            var inputDialog = getInputDialog();
-            inputDialog.dialog("option", "title", "Nieuwe Database Invoer...");// TODO: localization
-            inputDialog.dialog("open");
-
-            ajaxActionEventInto("${inputUrl}", "createDatabaseInput", "#inputContainer");
+            ajaxOpen({
+                url: "${inputUrl}",
+                event: "createDatabaseInput",
+                containerId: "inputContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
+                    title: "Nieuwe Database Invoer..." // TODO: localization
+                })
+            });
 
             return false;
         });
 
         $("#createInputFile").click(function() {
-            $("<div id='inputContainer'/>").appendTo(document.body);
-
-            var inputDialog = getInputDialog();
-            inputDialog.dialog("option", "title", "Nieuwe Bestand Invoer...");// TODO: localization
-            inputDialog.dialog("open");
-
-            ajaxActionEventInto("${inputUrl}", "createFileInput", "#inputContainer");
+            ajaxOpen({
+                url: "${inputUrl}",
+                event: "createFileInput",
+                containerId: "inputContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
+                    title: "Nieuwe Bestand Invoer..." // TODO: localization
+                })
+            });
 
             return false;
         });
 
         $("#updateInput").click(function() {
-            if (!$("#createUpdateProcessForm").valid())
-                return;
+            ajaxOpen({
+                url: "${inputUrl}",
+                formSelector: "#createUpdateProcessForm",
+                event: "update",
+                containerId: "inputContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
+                    title: "Bewerk Invoer..." // TODO: localization
+                })
+            });
 
-            $("<div id='inputContainer'/>").appendTo(document.body);
-
-            var inputDialog = getInputDialog();
-            inputDialog.dialog("option", "title", "Bewerk Invoer...");// TODO: localization // TODO: get Invoer type (db or file)
-            inputDialog.dialog("open");
-
-            ajaxFormEventInto("#createUpdateProcessForm", "update", "#inputContainer", null, "${inputUrl}");
+            return false;
         });
 
         $("#deleteInput").click(function() {//TODO: localize
             if (!$("#createUpdateProcessForm").valid())
-                return;
+                return false;
 
             $("<div id='inputContainer' class='confirmationDialog'>Weet u zeker dat u deze invoer wilt verwijderen? Alle processen die deze invoer gebruiken zullen ook worden verwijderd.</div>").appendTo(document.body);
 
-            $("#inputContainer").dialog({
+            $("#inputContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "Invoer verwijderen...", // TODO: localization
-                modal: true,
                 buttons: {
                     "Nee": function() { // TODO: localize
                         $(this).dialog("close");
                     },
                     "Ja": function() {
-                        ajaxFormEventInto("#createUpdateProcessForm", "delete", "#inputListContainer", function() {
-                            ajaxActionEventInto("${processUrl}", "list", "#processesListContainer",
-                                function() {
-                                    $("#inputContainer").dialog("close");
-                                }
-                            );
-                        }, "${inputUrl}");
+                        $.blockUI(blockUIOptions);
+                        ajaxOpen({
+                            url: "${inputUrl}",
+                            formSelector: "#createUpdateProcessForm",
+                            event: "delete",
+                            containerSelector: "#inputListContainer",
+                            ajaxOptions: {globals: false}, // prevent blockUI being called 2 times. Called manually.
+                            successAfterContainerFill: function() {
+                                ajaxOpen({
+                                    url: "${processUrl}",
+                                    event: "list",
+                                    containerSelector: "#processesListContainer",
+                                    ajaxOptions: {globals: false},
+                                    successAfterContainerFill: function() {
+                                        $("#inputContainer").dialog("close");
+                                        $.unblockUI(unblockUIOptions);
+                                    }
+                                });
+                            }
+                        });
                     }
-                },
-                close: defaultDialogClose
-            });
+                }
+            }));
+
+            return false;
         });
 
         $("#createOutput").click(function() {
-            $("<div id='outputContainer'/>").appendTo(document.body);
-
-            var outputDialog = getOutputDialog();
-            outputDialog.dialog("option", "title", "Nieuwe Uitvoer Database...");// TODO: localization
-            outputDialog.dialog("open");
-
-            $.get("${outputUrl}", "create", function(data) {
-                $("#outputContainer").html(data);
+            ajaxOpen({
+                url: "${outputUrl}",
+                event: "create",
+                containerId: "outputContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateOutputCommonDialogOptions, {
+                    title: "Nieuwe Uitvoer Database..." // TODO: localization
+                })
             });
+
+            return false;
         })
 
         $("#updateOutput").click(function() {
-            if (!$("#createUpdateProcessForm").valid())
-                return;
+            ajaxOpen({
+                url: "${outputUrl}",
+                formSelector: "#createUpdateProcessForm",
+                event: "update",
+                containerId: "outputContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateOutputCommonDialogOptions, {
+                    title: "Bewerk Uitvoer Database..." // TODO: localization
+                })
+            });
 
-            $("<div id='outputContainer'/>").appendTo(document.body);
-
-            var outputDialog = getOutputDialog();
-            outputDialog.dialog("option", "title", "Bewerk Uitvoer Database...");// TODO: localization
-            outputDialog.dialog("open");
-
-            ajaxFormEventInto("#createUpdateProcessForm", "update", "#outputContainer", null, "${outputUrl}");
+            return false;
         })
 
         $("#deleteOutput").click(function() {//TODO: localize
             if (!$("#createUpdateProcessForm").valid())
-                return;
+                return false;
 
             $("<div id='outputContainer'>Weet u zeker dat u deze uitvoer wilt verwijderen? Alle processen die deze uitvoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
 
-            $("#outputContainer").dialog({
+            $("#outputContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "Uitvoer verwijderen...", // TODO: localization
-                modal: true,
                 buttons: {
                     "Nee": function() { // TODO: localize
                         $(this).dialog("close");
                     },
                     "Ja": function() {
-                        ajaxFormEventInto("#createUpdateProcessForm", "delete", "#outputListContainer", function() {
-                            ajaxActionEventInto("${processUrl}", "list", "#processesListContainer",
-                                function() {
-                                    $("#outputContainer").dialog("close");
-                                }
-                            );
-                        }, "${outputUrl}");
+                        ajaxOpen({
+                            url: "${outputUrl}",
+                            formSelector: "#createUpdateProcessForm",
+                            event: "delete",
+                            containerSelector: "#outputListContainer",
+                            successAfterContainerFill: function() {
+                                ajaxOpen({
+                                    url: "${processUrl}",
+                                    event: "list",
+                                    containerSelector: "#processesListContainer",
+                                    successAfterContainerFill: function() {
+                                        $("#outputContainer").dialog("close");
+                                    }
+                                });
+                            }
+                        });
                     }
-                },
-                close: defaultDialogClose
-            });
+                }
+            }));
+
+            return false;
         });
     });
-
-    function getInputDialog() {
-        return $("#inputContainer").dialog({
-            autoOpen: false,
-            width: 800,
-            height: 500,
-            modal: true,
-            close: function(event, ui) {
-                $("#uploader").uiloadDestroy();
-                $("#createInputForm").formwizard("destroy");
-                defaultDialogClose(event, ui);
-            },
-            resize: function() {
-                //$("#inputContainer").layout().resizeAll();
-            }
-        });
-    }
-
-    function getInputDialogOptions() {
-        return {
-            width: 800,
-            height: 500,
-            modal: true,
-            close: function(event, ui) {
-                $("#createInputForm").formwizard("destroy");
-                defaultDialogClose(event, ui);
-            }
-        };
-    }
-
-    function getOutputDialog() {
-        return $("#outputContainer").dialog({
-            autoOpen: false,
-            width: 700,
-            height: 600,
-            modal: true,
-            buttons: { // TODO: localize button name:
-                "Voltooien" : function() {
-                    testConnection({
-                        url: "${outputUrl}",
-                        formSelector: "#postgisForm",
-                        event: "createComplete",
-                        containerSelector: "#outputListContainer",
-                        successAfterContainerFill: function() {
-                            $("#outputContainer").dialog("close");
-                        }
-                    });
-                }
-            },
-            close: defaultDialogClose
-        });
-    }
-
-    function getOutputDialogOptions() {
-        return {
-            width: 700,
-            height: 600,
-            modal: true,
-            buttons: { // TODO: localize button name:
-                "Voltooien" : function() {
-                    testConnection({
-                        url: "${outputUrl}",
-                        formSelector: "#postgisForm",
-                        event: "createComplete",
-                        containerSelector: "#outputListContainer",
-                        successAfterContainerFill: function() {
-                            $("#outputContainer").dialog("close");
-                        }
-                    });
-                }
-            },
-            close: defaultDialogClose
-        };
-    }
 
 </script>
 
@@ -287,62 +283,38 @@
 <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->
     <stripes:wizard-fields/>
-    <div id="SelecteerInvoer" class="step">
-        <h1>Selecteer bestand- of database-invoer:</h1>
-        <div id="inputListContainer">
-            <%@include file="/pages/main/input/list.jsp" %>
+    <div id="processSteps" class="ui-layout-center">
+        <div id="SelecteerInvoer" class="step ui-layout-center">
+            <h1>Selecteer bestand- of database-invoer:</h1>
+            <div id="inputListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+                <%@include file="/pages/main/input/list.jsp" %>
+            </div>
+            <div class="crudButtonsArea">
+                <stripes:button id="createInputDB" name="createInputDB"/>
+                <stripes:button id="createInputFile" name="createInputFile"/>
+                <stripes:button id="updateInput" name="update"/>
+                <stripes:button id="deleteInput" name="delete"/>
+            </div>
         </div>
-        <div>
-            <stripes:button id="createInputDB" name="createInputDB"/>
-            <stripes:button id="createInputFile" name="createInputFile"/>
-            <stripes:button id="updateInput" name="update"/>
-            <stripes:button id="deleteInput" name="delete"/>
+        <div id="SelecteerUitvoer" class="step">
+            <h1>Selecteer database om naar uit te voeren:</h1>
+            <div id="outputListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+                <%@include file="/pages/main/output/list.jsp" %>
+            </div>
+            <div class="crudButtonsArea">
+                <stripes:button id="createOutput" name="create"/>
+                <stripes:button id="updateOutput" name="update"/>
+                <stripes:button id="deleteOutput" name="delete"/>
+            </div>
+        </div>
+        <div id="Overzicht" class="step submit_step">
+            <h1>Overzicht:</h1>
+            <div class="ui-layout-content">
+                <%@include file="/pages/main/overview/view.jsp" %>
+            </div>
         </div>
     </div>
-    <div id="SelecteerUitvoer" class="step">
-        <h1>Selecteer database om naar uit te voeren:</h1>
-        <div id="outputListContainer">
-            <%@include file="/pages/main/output/list.jsp" %>
-        </div>
-        <div>
-            <stripes:button id="createOutput" name="create"/>
-            <stripes:button id="updateOutput" name="update"/>
-            <stripes:button id="deleteOutput" name="delete"/>
-        </div>
-    </div>
-    <div id="Overzicht" class="step submit_step">
-        <h1>Overzicht:</h1>
-        <div>
-            <%@include file="/pages/main/overview/view.jsp" %>
-        </div>
-    </div>
-    <!--div id="secondStep" class="step">
-        <h1>step 2 - branch step</h1>
-        <input  type="text" value="" /><br />
-        <input  type="text" value="" /><br />
-        <input  type="text" value="" /><br />
-        <select  class="link" >
-            <option value="" >Choose the step to go to...</option>
-            <option value="thirdStep" >Go to Step3</option>
-            <option value="fourthStep" >Go to Step4</option>
-        </select><br />
-    </div>
-    <div id="thirdStep" class="step submit_step">
-        <h1>step 3 - submit step</h1>
-        <input  type="text" value="" /><br />
-        <input  type="text" value="" class="required"/><br />
-    </div>
-    <div id="fourthStep" class="step">
-        <h1>step 4</h1>
-        <input  type="text" value="" /><br />
-        <input  type="text" name="email" class="required email" /><br />
-    </div>
-    <div id="lastStep" class="step">
-        <h1>step 5 - last step</h1>
-        <input  type="text" value="" /><br />
-        <input  type="text" value="" /><br />
-    </div-->
-    <div class="wizardButtonsArea">
+    <div class="ui-layout-south wizardButtonsArea">
         <stripes:reset id="createProcessBackButton" name="resetDummyName"/>
         <stripes:submit id="createProcessNextButton" name="createComplete"/>
     </div>

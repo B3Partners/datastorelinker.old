@@ -6,7 +6,7 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         $("#cronEachAccordion").accordion();
         $("#cronAccordion").accordion();
         $("#cronAccordion form").each(function(index, value) {

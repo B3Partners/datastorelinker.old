@@ -7,9 +7,28 @@
 $.ajaxSetup({
     cache: false
 });
-//$(document).ajaxStart($.blockUI);
-//$(document).ajaxStop($.unblockUI);
+
+var blockUIOptions = {
+    message: "<h2 style='text-align: center'>Bezig met laden...</h2>",
+    theme: true,
+    baseZ: 10000
+    //showOverlay: false
+}
+var unblockUIOptions = {
+    fadeOut: 0 // minder mooi, maar voorkomt z-index issues met jquery ui modal dialog
+}
+
+$(document).ajaxStart(function() {
+    $.blockUI(blockUIOptions);
+});
+
+$(document).ajaxStop(function() {
+    $.unblockUI(unblockUIOptions);
+});
+
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
+    $.unblockUI(unblockUIOptions);
+    
     /*log(event);
     log(xhr);
     log(ajaxOptions);
@@ -93,8 +112,8 @@ function ajaxFormEventInto(formSelector, event, containerSelector, callback, act
 
 // Deprecated:
 function ajaxActionEventInto(action, event, containerSelector, callback) {
-    if (containerSelector)
-        $(containerSelector).first().html("Bezig met laden...");
+    //if (containerSelector)
+        //$(containerSelector).first().html("Bezig met laden...");
     var url = action + "?" + event;
     //log(url);
     $.get(url,
@@ -116,7 +135,7 @@ function ajaxOpen(sendOptions) {
         event: "",
         containerSelector: "",
         containerId: "",
-        containerWaitText: "Bezig met laden...",
+        containerWaitText: "",//Bezig met laden...", // nu met block UI gedaan
         containerFill: true,
         successAfterContainerFill: $.noop,
         extraParams: [],
@@ -130,6 +149,7 @@ function ajaxOpen(sendOptions) {
         url: "",
         data: [],
         success: function(data, textStatus, xhr) {
+            // possible TODO: maybe create dialog here to prevent rare blockUI/dialogUI-overlay bug? Must be after ajaxStop.
             if (options.containerFill && container != null)
                 container.html(data);
             options.successAfterContainerFill(data, textStatus, xhr, container);

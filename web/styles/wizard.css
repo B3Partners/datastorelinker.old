@@ -13,21 +13,11 @@
 
 .step {
     margin-bottom: 10px;
+    height: 100%;
 }
 
-/*.dialogContent {
-    width: auto;
-    height: 350px;
-    max-height: 350px;
-    overflow: auto;
-    margin: 10px 0 10px 0;
-    position: relative; /* to prevent IE <= 7 bug */
-/*}*/
-
 .radioList {
-    width: auto;
-    height: 350px;
-    max-height: 350px;
+    height: 100%;
     overflow: auto;
     margin: 10px 0 10px 0;
     position: relative; /* to prevent IE <= 7 bug */
@@ -51,6 +41,11 @@
 
 .radioList .ui-state-active {
     background: #fed204;
+}
+
+.crudButtonsArea {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .wizardButtonsArea {

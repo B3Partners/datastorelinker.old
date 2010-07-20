@@ -21,7 +21,7 @@
         }
     }
 
-    $(function() {
+    $(document).ready(function() {
         $("#createDB").button();
         $("#updateDB").button();
         $("#deleteDB").button();
@@ -29,88 +29,87 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
-        // hackhack
-        //$("#databasesList").buttonset();
+        $("#createInputForm").bind("step_shown", function(event, data) {
+            formWizardStep(data);
 
-        // breekt validation van buttonset()
-        /*$("#inputContainer").layout({
-            resizeWithWindow: false
-        });*/
+            $("#inputContainer").layout(defaultDialogLayoutOptions);
+            $("#inputSteps").layout(defaultDialogLayoutOptions).destroy();
+
+            if (data.previousStep)
+                $("#" + data.previousStep).removeClass("ui-layout-center");
+            $("#" + data.currentStep).addClass("ui-layout-center");
+
+            $("#inputSteps").layout(defaultDialogLayoutOptions).initContent("center");
+
+            // ui layout plugin zet z-index op 1
+            var modalDialogZIndexWorkaroundCss = {
+                "z-index": 2000
+            };
+
+            $("#inputContainer, #inputSteps, .wizardButtonsArea").css(modalDialogZIndexWorkaroundCss);
+            $("#" + data.currentStep).css(modalDialogZIndexWorkaroundCss);
+
+            if (data.currentStep === "SelecteerTabel") {
+                var inputNode = $("#createInputForm .ui-state-active").prevAll("input").first();
+                ajaxActionEventInto(
+                    "${inputUrl}",
+                    "createTablesList&selectedDatabaseId=" + $(inputNode).val(),
+                    "#tablesListContainer"
+                );
+            }
+        });
 
         $("#createInputForm").formwizard(
-            // form wizard settings
             $.extend({}, formWizardConfig, {
-                afterNext: function(wizardData) {
-                    formWizardConfig.afterNext(wizardData);
-                    if (wizardData.currentStep === "SelecteerTabel") {
-                        var inputNode = $("#createInputForm .ui-state-active").prev();
-                        // We could be looking at an errormessage from jquery.validate(): if so, we use the previous again:
-                        if (!inputNode.is("input")) {
-                            inputNode = inputNode.prev();
-                        }
-                        ajaxActionEventInto(
-                            "${inputUrl}",
-                            "createTablesList&selectedDatabaseId=" + $(inputNode).val(),
-                            "#tablesListContainer"
-                        );
+                formOptions: {
+                    beforeSend: function() {
+                        // beetje een lelijke hack, maar werkt wel mooi:
+                        ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputListContainer", function() {
+                            $("#inputContainer").dialog("close");
+                        });
+                        return false;
                     }
                 }
-            }),
-            defaultValidateOptions,
-            {
-                // form plugin settings
-                beforeSend: function() {
-                    // beetje een lelijke hack, maar werkt wel mooi:
-                    ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputListContainer", function() {
-                        if ($("#inputContainer"))
-                            $("#inputContainer").dialog("close");
-                    });
-                    return false;
-                }
-            }
+            })
         );
 
+        var newUpdateDBCommonDialogOptions = $.extend({}, defaultDialogOptions, {
+            width: 700,
+            height: 600,
+            buttons: { // TODO: localize button name:
+                "Voltooien" : function() {
+                    testConnection(connectionSuccessInputDBAjaxOpenOptions);
+                }
+            }
+        });
+
         $("#createDB").click(function() {
-            $("<div id='dbContainer'/>").appendTo(document.body);
-
-            $("#dbContainer").dialog({
-                title: "Nieuwe Database...", // TODO: localization
-                width: 700,
-                height: 600,
-                modal: true,
-                buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        testConnection(connectionSuccessInputDBAjaxOpenOptions);
-                    }
-                },
-                close: defaultDialogClose
+            ajaxOpen({
+                url: "${databaseUrl}",
+                event: "create",
+                containerId: "dbContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateDBCommonDialogOptions, {
+                    title: "Nieuwe Database..." // TODO: localization
+                })
             });
 
-            $.get("${databaseUrl}", "create", function(data) {
-                $("#dbContainer").html(data);
-            });
+            return false;
         })
 
         $("#updateDB").click(function() {
-            if (!$("#createInputForm").valid())
-                return;
-
-            $("<div id='dbContainer'/>").appendTo(document.body);
-
-            $("#dbContainer").dialog({
-                title: "Bewerk Database...", // TODO: localization
-                width: 700,
-                height: 600,
-                modal: true,
-                buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        testConnection(connectionSuccessInputDBAjaxOpenOptions);
-                    }
-                },
-                close: defaultDialogClose
+            ajaxOpen({
+                url: "${databaseUrl}",
+                formSelector: "#createInputForm",
+                event: "update",
+                containerId: "dbContainer",
+                openInDialog: true,
+                dialogOptions: $.extend({}, newUpdateDBCommonDialogOptions, {
+                    title: "Bewerk Database..." // TODO: localization
+                })
             });
 
-            ajaxFormEventInto("#createInputForm", "update", "#dbContainer", null, "${databaseUrl}");
+            return false;
         })
 
         $("#deleteDB").click(function() {//TODO: localize
@@ -119,43 +118,61 @@
 
             $("<div id='dbContainer' class='confirmationDialog'><p>Weet u zeker dat u deze databaseconnectie wilt verwijderen?</p><p> Alle database-invoer die deze databaseconnectie gebruikt en alle processen die die database-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo($(document.body));
 
-            $("#dbContainer").dialog({
+            $("#dbContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "Databaseconnectie verwijderen...", // TODO: localization
-                modal: true,
                 width: 350,
                 buttons: {
                     "Nee": function() { // TODO: localize
                         $(this).dialog("close");
                     },
                     "Ja": function() {
-                        ajaxFormEventInto("#createInputForm", "delete", "#databasesListContainer", function() {
-                            ajaxActionEventInto("${inputUrl}", "list", "#inputListContainer", function() {
-                                ajaxActionEventInto("${processUrl}", "list", "#processesListContainer", function() {
-                                    $("#dbContainer").dialog("close");
+                        $.blockUI(blockUIOptions);
+                        ajaxOpen({
+                            url: "${databaseUrl}",
+                            formSelector: "#createInputForm",
+                            event: "delete",
+                            containerSelector: "#databasesListContainer",
+                            ajaxOptions: {globals: false}, // prevent blockUI being called 3 times. Called manually.
+                            successAfterContainerFill: function() {
+                                ajaxOpen({
+                                    url: "${inputUrl}",
+                                    event: "list",
+                                    containerSelector: "#inputListContainer",
+                                    ajaxOptions: {globals: false},
+                                    successAfterContainerFill: function() {
+                                        ajaxOpen({
+                                            url: "${processUrl}",
+                                            event: "list",
+                                            containerSelector: "#processesListContainer",
+                                            ajaxOptions: {globals: false},
+                                            successAfterContainerFill: function() {
+                                                $("#dbContainer").dialog("close");
+                                                $.unblockUI(unblockUIOptions);
+                                            }
+                                        });
+                                    }
                                 });
-                            });
-                        }, "${databaseUrl}");
+                            }
+                        });
                     }
-                },
-                close: defaultDialogClose
-            });
+                }
+            }));
         });
 
-        //$("#inputContainer").layout().resizeAll();
-        
     });
 
 </script>
 
+
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
-    <div class="ui-layout-center">
-        <stripes:wizard-fields/>
-        <div id="SelecteerDatabaseconnectie" class="step">
+    <stripes:wizard-fields/>
+    <div id="inputSteps" class="ui-layout-center">
+        <div id="SelecteerDatabaseconnectie" class="step ui-layout-center">
             <h1>Selecteer databaseconnectie:</h1>
-            <div id="databasesListContainer">
+            <div id="databasesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
                 <%@include file="/pages/main/database/list.jsp" %>
             </div>
-            <div>
+            <div class="crudButtonsArea">
                 <stripes:button id="createDB" name="create"/>
                 <stripes:button id="updateDB" name="update"/>
                 <stripes:button id="deleteDB" name="delete"/>
@@ -164,8 +181,7 @@
         <div id="SelecteerTabel" class="step submitstep">
             <h1>Selecteer tabel:</h1>
             De onderstaande tabellen zijn geschikt om in te voeren.
-            <div id="tablesListContainer">
-                Bezig met laden...
+            <div id="tablesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
             </div>
         </div>
     </div>

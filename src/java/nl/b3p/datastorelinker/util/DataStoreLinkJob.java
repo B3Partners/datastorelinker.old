@@ -72,10 +72,12 @@ public class DataStoreLinkJob implements Job {
 
             // We keep this thread alive for 10 seconds
             // to let the execution progress polling system know we are done.
+            // Possible problem: server is shut down before this method finishes; Leaving a job not marked finished.
             try {
                 synchronized(this) {
                     wait(10000);
-                    log.debug("woken up from wait");
+                    if (log != null) // server could be shutting down; leaving us without a logger.
+                        log.debug("woken up from wait");
                 }
             } catch (InterruptedException intEx) {}
         }

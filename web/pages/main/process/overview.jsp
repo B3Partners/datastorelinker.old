@@ -14,11 +14,27 @@
 </style>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         $("#processForm").validate(defaultValidateOptions);
 
         $("#createProcess, #updateProcess, #deleteProcess").button();
         $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
+
+        $("#processOverviewContainer").layout($.extend({}, defaultLayoutOptions, {
+            north__size: 50,
+            north__minSize: 50,
+            south__size: 100,
+            south__minSize: 100
+        }));
+
+        var newUpdateProcessCommonDialogOptions = $.extend({}, defaultDialogOptions, {
+            width: Math.floor($('body').width() * .70),
+            height: Math.floor($('body').height() * .65),
+            resize: function(event, ui) {
+                $("#processContainer").layout().resizeAll();
+                $("#processSteps").layout().resizeAll();
+            }
+        });
 
         $("#createProcess").click(function() {
             // TODO: wacht op een volgende versie van jquery UI waar http://dev.jqueryui.com/ticket/5295
@@ -32,17 +48,12 @@
                 event: "create",
                 containerId: "processContainer",
                 openInDialog: true,
-                dialogOptions: {
-                    title: "Nieuw Proces...", // TODO: localization
-                    width: 900,
-                    height: 600,
-                    modal: true,
-                    close: function(event, ui) {
-                        $("#createUpdateProcessForm").formwizard("destroy");
-                        defaultDialogClose(event, ui);
-                    }
-                }
+                dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
+                    title: "Nieuw Proces..." // TODO: localization
+                })
             });
+
+            return false;
         });
 
         $("#updateProcess").click(function() {
@@ -51,22 +62,17 @@
                 event: "update",
                 containerId: "processContainer",
                 openInDialog: true,
-                dialogOptions: {
-                    title: "Bewerk Proces...", // TODO: localization
-                    width: 900,
-                    height: 600,
-                    modal: true,
-                    close: function(event, ui) {
-                        $("#createUpdateProcessForm").formwizard("destroy");
-                        defaultDialogClose(event, ui);
-                    }
-                }
+                dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
+                    title: "Bewerk Proces..." // TODO: localization
+                })
             });
+
+            return false;
         });
 
         $("#executeProcess").click(function() {
             if (!$("#processForm").valid())
-                return;
+                return false;
 
             $("<div id='processContainer'><div id='processOutput'>Proces aan het uitvoeren...</div></div>").appendTo(document.body);
 
@@ -104,11 +110,10 @@
                     $("#processContainer").dialog("option", "disabled", false);
                 },
                 openInDialog: true,
-                dialogOptions: {
+                dialogOptions: $.extend({}, defaultDialogOptions, {
                     title: "Proces uitvoeren...", // TODO: localization
-                    width: 900,
-                    height: 600,
-                    modal: true,
+                    width: 600,
+                    height: 300,
                     buttons: {
                         "Annuleren": function() { // TODO: localize
                             $(this).dialog("close");
@@ -120,7 +125,7 @@
 
                         cancelProcess();
 
-                        $("#progressbar").progressbar("destroy");
+                        //$("#progressbar").progressbar("destroy"); is widget; jq ui regelt dit bij enclosing dialog.close
                         
                         $("#processContainer").removeData("jobUUID");
                         $("#processContainer").removeData("intervalId");
@@ -128,8 +133,10 @@
                         defaultDialogClose(event, ui);
                     },
                     disabled: true
-                }
+                })
             });
+
+            return false;
         });
 
         $("#executeProcessPeriodically").click(function() {
@@ -139,12 +146,10 @@
                 event: "executePeriodically",
                 containerId: "processContainer",
                 openInDialog: true,
-                dialogOptions: {
+                dialogOptions: $.extend({}, defaultDialogOptions, {
                     title: "Voer proces periodiek uit...", // TODO: localization
                     width: 900,
                     height: 600,
-                    modal: true,
-                    close: defaultDialogClose,
                     buttons: {
                         "Annuleren": function() {
                             $(this).dialog("close");
@@ -153,19 +158,20 @@
                             submitExecutePeriodicallyForm();
                         }
                     }
-                }
+                })
             });
+
+            return false;
         });
 
         $("#cancelExecuteProcessPeriodically").click(function() {
             if (!$("#processForm").valid())
-                return;
+                return false;
 
             $("<div id='processContainer'>Weet u zeker dat u dit proces niet meer periodiek wilt uitvoeren?</div>").appendTo(document.body);
 
-            $("#processContainer").dialog({
+            $("#processContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "Proces periodiek uitvoeren annuleren...", // TODO: localization
-                modal: true,
                 buttons: {
                     "Nee": function() { // TODO: localize
                         $(this).dialog("close");
@@ -180,21 +186,21 @@
                                 $("#processContainer").dialog("close");
                             }
                         });
-                     }
-                },
-                close: defaultDialogClose
-            });
+                    }
+                }
+            }));
+
+            return false;
         });
 
         $("#deleteProcess").click(function() {//TODO: localize
             if (!$("#processForm").valid())
-                return;
+                return false;
 
             $("<div id='processContainer'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo(document.body);
 
-            $("#processContainer").dialog({
+            $("#processContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "Proces verwijderen...", // TODO: localization
-                modal: true,
                 buttons: {
                     "Nee": function() { // TODO: localize
                         $(this).dialog("close");
@@ -209,9 +215,10 @@
                             }
                         });
                     }
-                },
-                close: defaultDialogClose
-            });
+                }
+            }));
+
+            return false;
         });
     });
 
@@ -219,12 +226,14 @@
         var jobUUID = $("#processContainer").data("jobUUID");
         var intervalId = $("#processContainer").data("intervalId");
 
-        $.getJSON(
-            "${processUrl}", [
+        $.ajax({
+            url: "${processUrl}",
+            dataType: "json",
+            data: [
                 {name: "executionProgress", value: ""},
                 {name: "jobUUID", value: jobUUID}
             ],
-            function(data, textStatus) {
+            success: function(data, textStatus) {
                 $("#progressbar").progressbar("value", data.progress);
                 if (data.progress >= 100) {
                     log("Process finished");
@@ -232,8 +241,9 @@
                     clearInterval(intervalId);
                     changeButtonName("#processContainer", "Annuleren", "Voltooien");
                 }
-            }
-        );
+            },
+            global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
+        });
     }
 
     function changeButtonName(dialogSelector, fromName, toName) {
@@ -256,21 +266,28 @@
 
 </script>
 
+<div id="processOverviewContainer" style="height: 100%">
+    <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+        <div class="ui-layout-north">
+            <h1><stripes:label for="main.process.overview.text.overview" class="layoutTitle"/></h1>
+        </div>
 
-<stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
-    <stripes:label for="main.process.overview.text.overview"/>:
+        <div id="processesListContainer" class="ui-layout-center radioList ui-widget-content ui-corner-all">
+            <%@include file="/pages/main/process/list.jsp" %>
+        </div>
 
-    <div id="processesListContainer">
-        <%@include file="/pages/main/process/list.jsp" %>
-    </div>
+        <div id="buttonPanel" class="ui-layout-south">
+            <div>
+                <stripes:button id="createProcess" name="create"/>
+                <stripes:button id="updateProcess" name="update"/>
+                <stripes:button id="deleteProcess" name="delete"/>
+            </div>
+            <div style="margin-top: 5px">
+                <stripes:button id="executeProcess" name="execute"/>
+                <stripes:button id="executeProcessPeriodically" name="executePeriodically"/>
+                <stripes:button id="cancelExecuteProcessPeriodically" name="cancelExecutePeriodically"/>
+            </div>
+        </div>
 
-    <div id="buttonPanel">
-        <stripes:button id="createProcess" name="create"/>
-        <stripes:button id="updateProcess" name="update"/>
-        <stripes:button id="deleteProcess" name="delete"/>
-        <stripes:button id="executeProcess" name="execute"/>
-        <stripes:button id="executeProcessPeriodically" name="executePeriodically"/>
-        <stripes:button id="cancelExecuteProcessPeriodically" name="cancelExecutePeriodically"/>
-    </div>
-
-</stripes:form>
+    </stripes:form>
+</div>

@@ -10,7 +10,7 @@
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         $("#createFile").button();
         $("#updateFile").button();
         $("#deleteFile").button();

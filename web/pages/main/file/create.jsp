@@ -18,7 +18,7 @@
 </style>
 
 <script type="text/javascript">
-$(function() {
+$(document).ready(function() {
     $("#uploader").uiload({
         swfuploader: "${contextPath}/scripts/jquery.ui-uploader/flash/jquery-ui-upload.swf",
         script: "${fileUrl}",

@@ -6,7 +6,7 @@
 <%@include file="/pages/commons/taglibs.jsp" %>
 
 <script type="text/javascript">
-    $(function() {
+    $(document).ready(function() {
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
         log(actionsWorkbenchList);
         var actionsList = getActionsList();
