@@ -11,8 +11,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#createFile").button();
-        $("#updateFile").button();
         $("#deleteFile").button();
 
         $("#createInputBackButton").button();
@@ -32,26 +30,10 @@
             }
         );
 
-        $("#createFile").click(function() {
-            $("<div id='createFileContainer'/>").appendTo(document.body);
+        $("#inputContainer").layout(defaultDialogLayoutOptions);
 
-            $("#createFileContainer").dialog({
-                title: "Nieuw Bestand...", // TODO: localization
-                width: 700,
-                height: 600,
-                modal: true,
-                buttons: { // TODO: localize button name:
-                    "Voltooien" : function() {
-                        ajaxActionEventInto("${fileUrl}", "createComplete", "#filesListContainer", function() {
-                            $("#createFileContainer").dialog("close");
-                        });
-                    }
-                },
-                close: defaultDialogClose
-            });
-
-            ajaxActionEventInto("${fileUrl}", "create", "#createFileContainer");
-        });
+        // layout plugin messes up z-indices; sets them to 1
+        $("#inputContainer, #SelecteerBestand, #inputContainer .wizardButtonsArea").css({ "z-index": "auto" });
 
         $("#deleteFile").click(function() {//TODO: localize
             if (!$("#createInputForm").valid())
@@ -59,26 +41,45 @@
 
             $("<div id='createFileContainer' class='confirmationDialog'><p>Weet u zeker dat u dit bestand van de server wilt verwijderen?</p><p> Alle bestands-invoer die dit bestand gebruikt en alle processen die deze bestands-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo(document.body);
 
-            $("#createFileContainer").dialog({
+            $("#createFileContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "Bestand van de server verwijderen...", // TODO: localization
-                modal: true,
                 width: 350,
                 buttons: {
                     "Nee": function() { // TODO: localize
                         $(this).dialog("close");
                     },
                     "Ja": function() {
-                        ajaxFormEventInto("#createInputForm", "delete", "#filesListContainer", function() {
-                            ajaxActionEventInto("${inputUrl}", "list", "#inputListContainer", function() {
-                                ajaxActionEventInto("${processUrl}", "list", "#processesListContainer", function() {
-                                    $("#createFileContainer").dialog("close");
+                        $.blockUI(blockUIOptions);
+                        ajaxOpen({
+                            url: "${fileUrl}",
+                            formSelector: "#createInputForm",
+                            event: "delete",
+                            containerSelector: "#filesListContainer",
+                            ajaxOptions: {globals: false}, // prevent blockUI being called 3 times. Called manually.
+                            successAfterContainerFill: function() {
+                                ajaxOpen({
+                                    url: "${inputUrl}",
+                                    event: "list",
+                                    containerSelector: "#inputListContainer",
+                                    ajaxOptions: {globals: false},
+                                    successAfterContainerFill: function() {
+                                        ajaxOpen({
+                                            url: "${processUrl}",
+                                            event: "list",
+                                            containerSelector: "#processesListContainer",
+                                            ajaxOptions: {globals: false},
+                                            successAfterContainerFill: function() {
+                                                $("#createFileContainer").dialog("close");
+                                                $.unblockUI(unblockUIOptions);
+                                            }
+                                        });
+                                    }
                                 });
-                            });
-                        }, "${fileUrl}");
+                            }
+                        });
                     }
-                },
-                close: defaultDialogClose
-            });
+                }
+            }));
         });
 
 
@@ -88,23 +89,20 @@
 
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <stripes:wizard-fields/>
-    <div id="SelecteerBestand" class="step submitstep">
+    <div id="SelecteerBestand" class="step submitstep ui-layout-center">
         <h1>Selecteer bestand:</h1>
-        <div id="filesListContainer">
+        <div id="filesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
             <%@include file="/pages/main/file/list.jsp" %>
         </div>
         <div>
-            <%--stripes:button id="createFile" name="create"/>
-            <stripes:button id="updateFile" name="update"/--%>
             <%@include file="/pages/main/file/create.jsp" %>
-            <stripes:button id="deleteFile" name="delete"/>
+            <stripes:link href="#" id="deleteFile" onclick="return false;">
+                <stripes:label for="delete" class="layoutTitle"/>
+            </stripes:link>
         </div>
     </div>
-    <!--div id="SelecteerTabel" class="step submitstep">
-        <h1>Selecteer tabel:</h1>
-    </div-->
 
-    <div class="wizardButtonsArea">
+    <div class="wizardButtonsArea ui-layout-south">
         <stripes:reset id="createInputBackButton" name="resetDummyName"/>
         <stripes:submit id="createInputNextButton" name="createFileInputComplete"/>
     </div>

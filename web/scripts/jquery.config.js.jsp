@@ -78,6 +78,15 @@ formWizardConfig = {
 function formWizardStep(data) {
     // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met buttonset van jQuery UI.
     // Dit doet het niet automatisch.
-    $("#" + data.currentStep + " .radioList > :first").buttonset("enable");
+    $("#" + data.currentStep + " .ui-buttonset").buttonset("enable");
 }
 
+/**
+ * Returns a z-index above all other z-indices, excluding certain application specific classes
+ */
+function getTopZIndexCss() {
+    var currentZIndex = $.maxZIndex({
+        exclude: [".ui-resizable-handle", ".blockUI"]
+    });
+    return { "z-index": (currentZIndex) };
+}

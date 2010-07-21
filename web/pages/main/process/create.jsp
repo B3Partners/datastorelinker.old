@@ -54,13 +54,10 @@
 
             $("#processSteps").layout(defaultDialogLayoutOptions).initContent("center");
 
-            // ui layout plugin zet z-index op 1
-            var modalDialogZIndexWorkaroundCss = {
-                "z-index": 2000
-            };
-
-            $("#processContainer, #processSteps, .wizardButtonsArea").css(modalDialogZIndexWorkaroundCss);
-            $("#" + data.currentStep).css(modalDialogZIndexWorkaroundCss);
+            // layout plugin messes up z-indices; sets them to 1
+            var topZIndexCss = { "z-index": "auto" };
+            $("#processContainer, #processSteps, #inputContainer .wizardButtonsArea").css(topZIndexCss);
+            $("#" + data.currentStep).css(topZIndexCss);
 
             if (data.currentStep === "Overzicht") {
                 var inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
@@ -101,7 +98,8 @@
             height: Math.floor($('body').height() * .60),
             resize: function(event, ui) {
                 $("#inputContainer").layout().resizeAll();
-                $("#inputSteps").layout().resizeAll();
+                if ($("#inputSteps").length != 0) // it exists
+                    $("#inputSteps").layout().resizeAll();
             },
             close: function(event, ui) {
                 $("#uploader").uiloadDestroy();

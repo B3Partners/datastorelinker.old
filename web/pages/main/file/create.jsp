@@ -8,12 +8,17 @@
 <stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
 
 <style type="text/css">
+#uploaderBody, #uploaderQueue * {
+    width: auto;
+}
+
 #uploaderQueue {
+    width: auto;
     height: 75px;
 }
 
-#filesList {
-    height: 125px;
+#uploaderPanel .ui-button {
+    height: auto;
 }
 </style>
 
@@ -25,6 +30,7 @@ $(document).ready(function() {
         scriptData: {"upload": ""},
         checkScript: "${fileUrl}",
         checkScriptData: {"check": ""},
+        checkScriptAjaxOptions: {globals: false},
         //fpath: "${actionBean.uploadDirectory}", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
         fdata: "Filedata",
         maxfiles: 1,
@@ -52,31 +58,12 @@ $(document).ready(function() {
     }, jquery_ui_upload_messages_nl);
 
     $("#uploaderPanel").append($("#deleteFile"));
-
-    /*var uploadDiv = $("<div></div>")
-        .attr("id", "uploadDialog")
-        .attr("style", "display: none")
-        .appendTo(document.body);
-    uploadDiv.append($("#uploaderQueue"));
-
-    $("#uploaderBrowse").removeAttr("onclick");
-    $("#uploaderBrowse").click(function() {
-        uploadDiv.dialog({
-            title: "Bezig met uploaden...", // TODO: localization
-            width: 400,
-            height: 200,
-            modal: true,
-            buttons: {
-                "Ok" : function() {
-                    uploadDiv.close();
-                },
-                "Annuleren" : function() {
-                    uploadDiv.close();
-                }
-            },
-            close: defaultDialogClose
-        });
-    });*/
+    $("#uploaderPanel *").addClass("ui-helper-reset");
+    //$("#uploaderBody").removeClass("ui-helper-reset");
+    
+    // do layout again because we just added the uploader.
+    // We could skip the first but it is more complete this way.
+    $("#inputContainer").layout(defaultDialogLayoutOptions).initContent("center");
 });
 </script>
 

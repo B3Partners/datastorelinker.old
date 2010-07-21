@@ -11,9 +11,8 @@
     });
 </script>
 
-<div id="filesList" class="radioList">
+<div id="filesList">
     <stripes:form partial="true" action="/">
-        <div id="filesListWrapper">
         <c:forEach var="file" items="${actionBean.files}" varStatus="status">
             <c:choose>
                 <c:when test="${not empty actionBean.selectedFileId and file.id == actionBean.selectedFileId}">
@@ -27,6 +26,5 @@
                 <c:out value="${file.name}"/>
             </stripes:label>
         </c:forEach>
-        </div>
     </stripes:form>
 </div>

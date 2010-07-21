@@ -29,7 +29,10 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
+        log("blaat");
+
         $("#createInputForm").bind("step_shown", function(event, data) {
+            log("blaat2");
             formWizardStep(data);
 
             $("#inputContainer").layout(defaultDialogLayoutOptions);
@@ -41,13 +44,10 @@
 
             $("#inputSteps").layout(defaultDialogLayoutOptions).initContent("center");
 
-            // ui layout plugin zet z-index op 1
-            var modalDialogZIndexWorkaroundCss = {
-                "z-index": 2000
-            };
-
-            $("#inputContainer, #inputSteps, .wizardButtonsArea").css(modalDialogZIndexWorkaroundCss);
-            $("#" + data.currentStep).css(modalDialogZIndexWorkaroundCss);
+            // layout plugin messes up z-indices; sets them to 1
+            var topZIndexCss = { "z-index": "auto" };
+            $("#inputContainer, #inputSteps, #inputContainer .wizardButtonsArea").css(topZIndexCss);
+            $("#" + data.currentStep).css(topZIndexCss);
 
             if (data.currentStep === "SelecteerTabel") {
                 var inputNode = $("#createInputForm .ui-state-active").prevAll("input").first();

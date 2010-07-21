@@ -9,11 +9,15 @@ $.maxZIndex = $.fn.maxZIndex = function(opt) {
     /// group: selector for zIndex elements to find max for
     /// </param>
     /// <returns type="jQuery" />
-    var def = { inc: 10, group: "*" };
+    var def = { inc: 10, group: "*", exclude: [] };
     $.extend(def, opt);    
     var zmax = 0;
-    $(def.group).each(function() {
+    $(def.group).not(def.exclude.join(",")).each(function() {
         var cur = parseInt($(this).css('z-index'));
+        if (cur > zmax) {
+            log($(this));
+            log($(this).css('z-index'));
+        }
         zmax = cur > zmax ? cur : zmax;
     });
     if (!this.jquery)
