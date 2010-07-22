@@ -14,57 +14,86 @@
 
 #uploaderQueue {
     width: auto;
-    height: 75px;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    margin-bottom: 1em;
 }
 
-#uploaderPanel .ui-button {
-    height: auto;
+#uploaderStop {
+    float: right;
 }
+
 </style>
 
 <script type="text/javascript">
-$(document).ready(function() {
-    $("#uploader").uiload({
-        swfuploader: "${contextPath}/scripts/jquery.ui-uploader/flash/jquery-ui-upload.swf",
-        script: "${fileUrl}",
-        scriptData: {"upload": ""},
-        checkScript: "${fileUrl}",
-        checkScriptData: {"check": ""},
-        checkScriptAjaxOptions: {globals: false},
-        //fpath: "${actionBean.uploadDirectory}", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
-        fdata: "Filedata",
-        maxfiles: 1,
-        maxfilesize: 524288000, // == 500 MB
-        btnIcon: false,
-        btnStart: false,
-        btnStop: true,
-        overwrite: true,
-        ftypes: {
-            "Alles": ["*"],
-            "Iets anders": ["txt", "jpg", "blaat"]
-        },
-        onCheck: function(event, checkScript, fileObj, fileDir, single) {
-            
-        },
-        onComplete: function(event, fileID, fileObj, response, data) {
-            $("#filesListContainer").html(response);
-        }/*,
-        onFinished: function() {
-            alert("finished success!");
-        },
-        onError: function() {
-            alert("error!");
-        }*/
-    }, jquery_ui_upload_messages_nl);
+    $(document).ready(function() {
+        $("#uploader").uiload({
+            swfuploader: "${contextPath}/scripts/jquery.ui-uploader/flash/jquery-ui-upload.swf",
+            script: "${fileUrl}",
+            scriptData: {"upload": ""},
+            checkScript: "${fileUrl}",
+            checkScriptData: {"check": ""},
+            checkScriptAjaxOptions: {globals: false},
+            //fpath: "${actionBean.uploadDirectory}", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
+            fdata: "Filedata",
+            maxfiles: 1,
+            maxfilesize: 524288000, // == 500 MB
+            btnIcon: false,
+            btnStart: false,
+            btnStop: true,
+            overwrite: true,
+            fadeOut: false,
+            progressValueColor: "silver",
+            ftypes: {
+                "Alles": ["*"],
+                "Iets anders": ["txt", "jpg", "blaat"]
+            },
+            onCheck: function(event, checkScript, fileObj, fileDir, single) {
 
-    $("#uploaderPanel").append($("#deleteFile"));
-    $("#uploaderPanel *").addClass("ui-helper-reset");
-    //$("#uploaderBody").removeClass("ui-helper-reset");
-    
-    // do layout again because we just added the uploader.
-    // We could skip the first but it is more complete this way.
-    $("#inputContainer").layout(defaultDialogLayoutOptions).initContent("center");
-});
+            },
+            onComplete: function(event, fileID, fileObj, response, data) {
+                $("#uploaderStop").button("disable");
+                $("#fileUploadProgressContainer").dialog("widget").find(".ui-dialog-titlebar-close").css("display", "inline");
+                $("#filesListContainer").html(response);
+            },
+            onSelect: function() {
+                var upload = $("<div></div>").attr("id", "fileUploadProgressContainer").appendTo($("body"));
+
+                upload.append($("#uploaderQueue"));
+                upload.append($("#uploaderStop"));
+
+                upload.dialog($.extend({}, defaultDialogOptions, {
+                    title: "Bestand aan het uploaden...", // TODO: localization
+                    width: 400,
+                    close: function(event, ui) {
+                        $("#uploaderStop, #uploaderQueue").css("display", "none");
+                        $("#uploaderBody").append($("#uploaderStop"));
+                        $("#uploaderBody").append($("#uploaderQueue"));
+                        defaultDialogClose(event, ui);
+                    }
+                }));
+
+                upload.dialog("widget").find(".ui-dialog-titlebar-close").css("display", "none");
+                $("#uploaderQueue").empty().css("display", "block");
+                $("#uploaderStop").css("display", "block");
+                $("#uploaderStop").button("enable");
+            },
+            onCancel: function() {
+                $("#fileUploadProgressContainer").dialog("close");
+            }
+        }, jquery_ui_upload_messages_nl);
+
+        $("#uploaderPanel").append($("#deleteFile"));
+        $("#uploaderStop, #uploaderQueue").css("display", "none");
+
+        // get rid of some default jquery ui uploader css:
+        $("#uploaderQueue").removeClass("ui-widget-content ui-corner-all");
+
+        // do layout again because we just added the uploader.
+        // We could skip the first but it is more complete this way.
+        $("#inputContainer").layout(defaultDialogLayoutOptions).initContent("center");
+    });
 </script>
 
 <stripes:form partial="true" action="#">

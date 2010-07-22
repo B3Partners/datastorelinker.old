@@ -58,9 +58,15 @@ defaultDialogLayoutOptions = $.extend({}, defaultLayoutOptions, {
 
 defaultDialogOptions = {
     modal: true,
-    close: defaultDialogClose
+    close: defaultDialogClose/*,
+    show: "slide",
+    hide: "slide"*/
 };
 
+defaultScrollToDuration = 1000
+defaultScrollToOptions = {
+    //easing: "elasout"
+};
 
 // TODO: localization
 formWizardConfig = {

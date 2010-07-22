@@ -17,6 +17,15 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedProcessId and process.id == actionBean.selectedProcessId}">
                     <input type="radio" id="process${process.id}" name="selectedProcessId" value="${process.id}" class="required" checked="checked"/>
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            $("#processesList").parent().scrollTo(
+                                $("#process${process.id}"),
+                                defaultScrollToDuration,
+                                defaultScrollToOptions
+                            );
+                        });
+                    </script>
                 </c:when>
                 <c:otherwise>
                     <input type="radio" id="process${process.id}" name="selectedProcessId" value="${process.id}" class="required"/>

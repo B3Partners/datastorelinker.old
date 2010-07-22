@@ -46,6 +46,8 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.maskedinput/jquery.maskedinput-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.maskedinput/jquery.maskedinput-latest.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery.maxzindex.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo-min.js"></script-->
             
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>

@@ -17,6 +17,15 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedDatabaseId and database.id == actionBean.selectedDatabaseId}">
                     <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" class="required" checked="checked" />
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            $("#databasesList").parent().scrollTo(
+                                $("#database${status.index}"),
+                                defaultScrollToDuration,
+                                defaultScrollToOptions
+                            );
+                        });
+                    </script>
                 </c:when>
                 <c:otherwise>
                     <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" class="required"/>

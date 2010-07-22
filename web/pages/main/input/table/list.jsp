@@ -17,6 +17,15 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedTable and table == actionBean.selectedTable}">
                     <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" class="required" checked="checked" />
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            $("#tablesList").parent().scrollTo(
+                                $("#table${status.index}"),
+                                defaultScrollToDuration,
+                                defaultScrollToOptions
+                            );
+                        });
+                    </script>
                 </c:when>
                 <c:otherwise>
                     <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" class="required"/>

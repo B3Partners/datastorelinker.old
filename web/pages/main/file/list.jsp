@@ -17,6 +17,15 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedFileId and file.id == actionBean.selectedFileId}">
                     <input type="radio" id="file${status.index}" name="selectedFileId" value="${file.id}" class="required" checked="checked" />
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            $("#filesList").parent().scrollTo(
+                                $("#file${status.index}"),
+                                defaultScrollToDuration,
+                                defaultScrollToOptions
+                            );
+                        });
+                    </script>
                 </c:when>
                 <c:otherwise>
                     <input type="radio" id="file${status.index}" name="selectedFileId" value="${file.id}" class="required"/>

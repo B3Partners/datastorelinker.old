@@ -17,6 +17,15 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedOutputId and output.id == actionBean.selectedOutputId}">
                     <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" class="required" checked="checked"/>
+                    <script type="text/javascript">
+                        $(document).ready(function() {
+                            $("#outputList").parent().scrollTo(
+                                $("#output${status.index}"),
+                                defaultScrollToDuration,
+                                defaultScrollToOptions
+                            );
+                        });
+                    </script>
                 </c:when>
                 <c:otherwise>
                     <input type="radio" id="output${status.index}" name="selectedOutputId" value="${output.id}" class="required"/>
