@@ -46,8 +46,11 @@
             fadeOut: false,
             progressValueColor: "silver",
             ftypes: {
-                "Alles": ["*"],
-                "Iets anders": ["txt", "jpg", "blaat"]
+                "Alle ondersteunde formaten": ["shp", "dxf", "sdl", "sfn", "csv"],
+                "Shape formaat": ["shp"],
+                "Autodesk formaat": ["dxf", "sdl"],
+                "SUF formaat (ook NEN 1878)": ["sfn"],
+                "CSV formaat": ["csv"]
             },
             onCheck: function(event, checkScript, fileObj, fileDir, single) {
 

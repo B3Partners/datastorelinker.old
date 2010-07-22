@@ -159,6 +159,11 @@ public class ProcessAction extends DefaultAction {
         String xmlActions = process.getActionsString();
         JSON jsonActions = new XMLSerializer().read(xmlActions);
         JSONArray jsonArrayActions = JSONArray.fromObject(jsonActions);
+        // als inhoud leeg is wordt dit verkeerd geserialized. Dit fixen we hier:
+        if (jsonArrayActions.size() == 1 && jsonArrayActions.get(0).toString().equals("null")) {
+            jsonArrayActions.clear();
+        }
+
         actionsList = jsonArrayActions.toString();
         //log.debug(actionsList);
 

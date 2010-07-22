@@ -15,14 +15,14 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#processForm").validate(defaultValidateOptions);
+        $("#processForm").validate(defaultRadioValidateOptions);
 
         $("#createProcess, #updateProcess, #deleteProcess").button();
         $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
 
         $("#processOverviewContainer").layout($.extend({}, defaultLayoutOptions, {
-            north__size: 50,
-            north__minSize: 50,
+            /*north__size: 50,
+            north__minSize: 50,*/
             south__size: 100,
             south__minSize: 100
         }));
@@ -268,7 +268,7 @@
 
 <div id="processOverviewContainer" style="height: 100%">
     <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
-        <div class="ui-layout-north">
+        <div id="processHeader" class="ui-layout-north">
             <h1><stripes:label for="main.process.overview.text.overview" class="layoutTitle"/></h1>
         </div>
 

@@ -47,6 +47,31 @@ defaultValidateOptions = {
     errorClass: "ui-state-error"
 }
 
+defaultRadioValidateOptions = $.extend({}, defaultValidateOptions, {
+    errorPlacement: function(error, element) {
+        var container = element.parents("form:first").parent("div");
+        error.appendTo(container.find(".ui-layout-north:first"));
+        container.layout().resizeAll();
+    },
+    success: function(label) {
+        var container = label.parents("form:first").parent("div");
+        label.remove();
+        container.layout().resizeAll();
+    }
+});
+
+defaultRadioDialogValidateOptions = $.extend({}, defaultValidateOptions, {
+    errorPlacement: function(error, element) {
+        element.parents(".ui-layout-content:first").before(error);
+        element.parents(".ui-layout-center").eq(1).layout().resizeAll();
+    },
+    success: function(label) {
+        var container = label.parents(".ui-layout-center").eq(1);
+        label.remove();
+        container.layout().resizeAll();
+    }
+});
+
 defaultLayoutOptions = {
     resizable: false,
     closable: false
@@ -65,7 +90,7 @@ defaultDialogOptions = {
 
 defaultScrollToDuration = 1000
 defaultScrollToOptions = {
-    //easing: "elasout"
+    //easing: "iets uit easing plugin"
 };
 
 // TODO: localization
@@ -73,14 +98,13 @@ formWizardConfig = {
     historyEnabled : false,
     formPluginEnabled : true,
     validationEnabled : true,
-    validationOptions: defaultValidateOptions,
+    validationOptions: defaultRadioDialogValidateOptions,
     //focusFirstInput : true,
     textNext : "Volgende",
     textBack : "Vorige",
     textSubmit : "Voltooien"
 }
 
-// formwiz 3.0
 function formWizardStep(data) {
     // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met buttonset van jQuery UI.
     // Dit doet het niet automatisch.
@@ -88,7 +112,7 @@ function formWizardStep(data) {
 }
 
 /**
- * Returns a z-index above all other z-indices, excluding certain application specific classes
+ * Returns a css-object for the top z-index, excluding certain application specific classes
  */
 function getTopZIndexCss() {
     var currentZIndex = $.maxZIndex({
