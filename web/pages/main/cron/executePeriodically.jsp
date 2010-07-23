@@ -5,6 +5,8 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<stripes:url var="cronInfoUrl" value="/pages/main/cron/cron.htm"/>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $("#cronEachAccordion").accordion();
@@ -21,6 +23,10 @@
                     }
                 }
             }));
+        });
+        $("#cronInfo").button({
+            icons: { primary: "ui-icon-help" },
+            text: false
         });
 
         // cron defaults:
@@ -160,7 +166,8 @@
             event: "executePeriodicallyComplete",
             containerSelector: "#processesListContainer",
             successAfterContainerFill: function(data, textStatus, xhr) {
-                $("#processContainer").dialog("close");
+                if (!isErrorResponse(xhr))
+                    $("#processContainer").dialog("close");
             }
         });
     }
@@ -264,8 +271,7 @@
             <stripes:wizard-fields/>
             <input type="hidden" name="cronType" value="6"/>
             Cron expressie: <stripes:text name="cronExpression"/>
-            <br/>Hier moet nog een link naar een uitleg over cron expressies komen.
-            <br/>Foute cron expressies worden nog niet netjes afgevangen door de server.
+            <a id="cronInfo" href="${cronInfoUrl}" target="_blank"><span>help</span></a>
         </stripes:form>
     </div>
 </div>

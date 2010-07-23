@@ -10,7 +10,7 @@
         $("#databaseAccordion").accordion();
         if (${not empty actionBean.selectedDatabase}) {
             $("#databaseAccordion").accordion("activate", 
-                $("#databaseAccordion input:hidden[name='dbType'][value='${actionBean.selectedDatabase.typeId.id}']").parent().parent().prev());
+                $("#databaseAccordion input:hidden[name='dbType'][value='${actionBean.selectedDatabase.type.id}']").parent().parent().prev());
         }
     });
 </script>

@@ -5,6 +5,7 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.EntityManager;
@@ -16,6 +17,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Schedule;
 import nl.b3p.datastorelinker.entity.ScheduleType;
 import nl.b3p.datastorelinker.util.DataStoreLinkJob;
+import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
 import org.apache.commons.lang.StringUtils;
@@ -145,9 +147,14 @@ public class PeriodicalProcessAction extends DefaultAction {
             process.setSchedule(schedule);
 
             return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
+        } catch(ParseException pe) {
+            return new DefaultErrorResolution(
+                    "Verkeerde of niet ondersteunde Cron expressie: " +
+                    pe.getLocalizedMessage() +
+                    "\n\nBekijk de Cron expressie handleiding voor uitleg over Cron expressies.");
         } catch(Exception e) {
-            log.error(e, e.getMessage());
-            return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
+            log.error(e);
+            return new DefaultErrorResolution(e.getLocalizedMessage());
         }
     }
 

@@ -8,6 +8,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#tablesList").buttonset();
+        log("${actionBean.selectedTable}");
     });
 </script>
 

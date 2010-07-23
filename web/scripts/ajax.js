@@ -15,7 +15,11 @@ var blockUIOptions = {
     //showOverlay: false
 }
 var unblockUIOptions = {
-    fadeOut: 0 // minder mooi, maar voorkomt z-index issues met jquery ui modal dialog
+    // minder mooi, maar voorkomt z-index issues met jquery ui modal dialog;
+    // die zijn er nog steeds soms overigens.
+    // veroorzaken pop-unders, waardoor bepaalde ui niet gedisabled is.
+    // (meestal vrij kort niet gedisabled; namelijk gedurende een request)
+    fadeOut: 0
 }
 
 $(document).ajaxStart(function() {
@@ -26,6 +30,9 @@ $(document).ajaxStop(function() {
     $.unblockUI(unblockUIOptions);
 });
 
+// deze code wordt serverside en clientside gebruikt voor user errors.
+defaultCustomErrorCode = 1000;
+
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     $.unblockUI(unblockUIOptions);
     
@@ -35,8 +42,8 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     log(thrownError);*/
 
     var errorMessage;
-    if (xhr.status == 1000) {
-        errorMessage = thrownError + event;
+    if (xhr.status == defaultCustomErrorCode) {
+        errorMessage = xhr.responseText;//thrownError + event;
     } else if (xhr.status == 0) {
         errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
     } else if (xhr.status == 404) {
@@ -51,25 +58,20 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
         errorMessage = "Onbekende fout";
     }
 
-    if (event.target != document) {
-        $(event.target).html(errorMessage);
-    } else {
-        $("<div id='errorDialog'>" + errorMessage + "</div>").appendTo(document.body);
-        $("#errorDialog").dialog({
-            title: "Fout!",
-            modal: true,
-            buttons: {
-                "Ok": function() {
-                    $(this).dialog("close");
-                }
-            },
-            close: defaultDialogClose
-        });
-    }
-
-    // close any open confirmation dialogs:
-    //$(".confirmationDialog").dialog("close");
+    $("<div></div>").attr("id", "errorDialog").text(errorMessage).appendTo(document.body);
+    $("#errorDialog").dialog($.extend({}, defaultDialogOptions, {
+        title: "Fout!",
+        buttons: {
+            "Ok": function() {
+                $(this).dialog("close");
+            }
+        }
+    }));
 });
+
+function isErrorResponse(xhr) {
+    return xhr.status == defaultCustomErrorCode;
+}
 
 // Use this function for all your ajax calls
 function ajaxOpen(sendOptions) {

@@ -113,9 +113,14 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Database selectedDatabase = (Database)session.get(nl.b3p.datastorelinker.entity.Database.class, selectedDatabaseId);
+        Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
 
-        Inout dbInput = new Inout();
+        Inout dbInput = null;
+        if (selectedInputId == null)
+            dbInput = new Inout();
+        else
+            dbInput = (Inout)session.get(Inout.class, selectedInputId);
+
         dbInput.setType(new InoutType(1)); // input
         dbInput.setDatatype(new InoutDatatype(1)); // database
         dbInput.setDatabase(selectedDatabase);
@@ -125,7 +130,8 @@ public class InputAction extends DefaultAction {
             name += " (" + selectedTable + ")";
         dbInput.setName(name);
 
-        selectedInputId = (Long)session.save(dbInput);
+        if (selectedInputId == null)
+            selectedInputId = (Long)session.save(dbInput);
 
         return list();
     }
@@ -136,7 +142,12 @@ public class InputAction extends DefaultAction {
 
         File selectedFile = (File)session.get(nl.b3p.datastorelinker.entity.File.class, selectedFileId);
 
-        Inout fileInput = new Inout();
+        Inout fileInput = null;
+        if (selectedInputId == null)
+            fileInput = new Inout();
+        else
+            fileInput = (Inout)session.get(Inout.class, selectedInputId);
+
         fileInput.setType(new InoutType(1)); // input
         fileInput.setDatatype(new InoutDatatype(2)); // file
         fileInput.setFile(selectedFile);
@@ -146,7 +157,8 @@ public class InputAction extends DefaultAction {
             name += " (" + selectedTable + ")";
         fileInput.setName(name);
 
-        selectedInputId = (Long)session.save(fileInput);
+        if (selectedInputId == null)
+            selectedInputId = (Long)session.save(fileInput);
 
         return list();
     }
@@ -154,6 +166,9 @@ public class InputAction extends DefaultAction {
     public Resolution createTablesList() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
+
+        Inout input = (Inout)session.get(Inout.class, selectedInputId);
+        selectedTable = input.getTableName();
 
         Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
 

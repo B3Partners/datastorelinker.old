@@ -15,9 +15,8 @@
         formSelector: ".form-container .ui-accordion-content-active form",
         event: "createComplete",
         containerSelector: "#databasesListContainer",
-        successAfterContainerFill: function(data, textStatus, xhr, container) {
-            //$("#dbContainer").dialog("close");
-            container.dialog("close");
+        successAfterContainerFill: function(data, textStatus, xhr) {
+            $("#dbContainer").dialog("close");
         }
     }
 
@@ -29,10 +28,7 @@
         $("#createInputBackButton").button();
         $("#createInputNextButton").button();
 
-        log("blaat");
-
         $("#createInputForm").bind("step_shown", function(event, data) {
-            log("blaat2");
             formWizardStep(data);
 
             $("#inputContainer").layout(defaultDialogLayoutOptions);
@@ -50,13 +46,13 @@
             $("#" + data.currentStep).css(topZIndexCss);
 
             if (data.currentStep === "SelecteerTabel") {
-                var inputNode = $("#createInputForm .ui-state-active").prevAll("input").first();
+                var database = $("#createInputForm .ui-state-active").prevAll("input").first();
                 ajaxOpen({
-                    url: "${inputUrl}",
+                    formSelector: "#createInputForm",
                     event: "createTablesList",
                     extraParams: [{
                         name: "selectedDatabaseId",
-                        value: $(inputNode).val()
+                        value: database.val()
                     }],
                     containerSelector: "#tablesListContainer"
                 });
