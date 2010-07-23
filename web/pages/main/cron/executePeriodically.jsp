@@ -158,8 +158,8 @@
             form = cronDiv.next("div").find("form")[0];
         }
 
-        log("submitting form:");
-        log(form);
+        //log("submitting form:");
+        //log(form);
         
         ajaxOpen({
             formSelector: form,

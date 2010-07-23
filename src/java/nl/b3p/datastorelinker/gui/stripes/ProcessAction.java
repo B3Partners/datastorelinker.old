@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.persistence.EntityManager;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -55,6 +56,8 @@ public class ProcessAction extends DefaultAction {
     
     private List<Inout> outputs;
     private Long selectedOutputId;
+
+    private Boolean drop;
 
     private String actionsList;
     private String jobUUID;
@@ -121,7 +124,7 @@ public class ProcessAction extends DefaultAction {
             actionsList = new JSONArray().toString();
 
         JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        log.debug("actionsListJSONArray: " + actionsListJSONArray);
+        //log.debug("actionsListJSONArray: " + actionsListJSONArray);
 
         JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
         XMLSerializer xmlSerializer = new XMLSerializer();
@@ -132,15 +135,14 @@ public class ProcessAction extends DefaultAction {
         });
         xmlSerializer.setTypeHintsEnabled(false);
         String actionsListXml = xmlSerializer.write(actionsListJSON);
-        log.debug(actionsListXml);
+        //log.debug(actionsListXml);
 
         process.setActionsString(actionsListXml);
         //log.debug("actionsList: " + actionsList);
+        process.setDrop(drop);
 
         if (selectedProcessId == null)
             selectedProcessId = (Long)session.save(process);
-        //else // automatic saveOrUpdate
-            //session.saveOrUpdate(process);
         
         return list();
     }
@@ -157,15 +159,28 @@ public class ProcessAction extends DefaultAction {
         selectedOutputId = process.getOutput().getId();
 
         String xmlActions = process.getActionsString();
-        JSON jsonActions = new XMLSerializer().read(xmlActions);
+        XMLSerializer xmlSerializer = new XMLSerializer();
+        JSON jsonActions = xmlSerializer.read(xmlActions);
         JSONArray jsonArrayActions = JSONArray.fromObject(jsonActions);
-        // als inhoud leeg is wordt dit verkeerd geserialized. Dit fixen we hier:
-        if (jsonArrayActions.size() == 1 && jsonArrayActions.get(0).toString().equals("null")) {
-            jsonArrayActions.clear();
+        
+        if (jsonArrayActions.size() == 1) {
+            if (jsonArrayActions.get(0).toString().equals("null")) {
+                // als inhoud leeg is wordt dit verkeerd geserialized. Dit fixen we hier:
+                jsonArrayActions.clear();
+            } else {
+                // als inhoud 1 valide action bevat wordt dit verkeerd geserialized. 
+                // Er zit dan namelijk 1 "laag" teveel in met de key "action"
+                // Dit fixen we hier:
+                JSONObject singleActionJSON = jsonArrayActions.getJSONObject(0);
+                jsonArrayActions.clear();
+                jsonArrayActions.add(singleActionJSON.get("action"));
+            }
         }
 
         actionsList = jsonArrayActions.toString();
         //log.debug(actionsList);
+        
+        drop = process.getDrop();
 
         return create();
     }
@@ -331,6 +346,14 @@ public class ProcessAction extends DefaultAction {
 
     public void setJobUUID(String jobUUID) {
         this.jobUUID = jobUUID;
+    }
+
+    public Boolean getDrop() {
+        return drop;
+    }
+
+    public void setDrop(Boolean drop) {
+        this.drop = drop;
     }
 
 }

@@ -7,13 +7,6 @@
 
 <stripes:url var="actionsUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ActionsAction"/>
 
-<style type="text/css">
-.overview-hover {
-    /*cursor: hand;*/
-    cursor: pointer;
-}
-</style>
-
 <script type="text/javascript">
 
     $(document).ready(function() {

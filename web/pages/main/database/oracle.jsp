@@ -9,25 +9,28 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}) {
-            $("#oraclehost").val("${actionBean.selectedDatabase.host}");
-            $("#oracledatabaseName").val("${actionBean.selectedDatabase.databaseName}");
-            $("#oracleusername").val("${actionBean.selectedDatabase.username}");
-            $("#oraclepassword").val("${actionBean.selectedDatabase.password}");
-            $("#oracleport").val("${actionBean.selectedDatabase.port}");
-            $("#oracleschema").val("${actionBean.selectedDatabase.schema}");
-            $("#oracleinstance").val("${actionBean.selectedDatabase.instance}");
-            $("#oraclealias").val("${actionBean.selectedDatabase.alias}");
-        } else {
-            $("#oraclehost").val("");
-            $("#oracledatabaseName").val("");
-            $("#oracleusername").val("");
-            $("#oraclepassword").val("");
-            $("#oracleport").val("1521");
-            $("#oracleschema").val("ORCL");
-            $("#oracleinstance").val("ORCL");
-            $("#oraclealias").val("");
-        }
+        <c:choose>
+            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}">
+                $("#oraclehost").val("<c:out value="${actionBean.selectedDatabase.host}"/>");
+                $("#oracledatabaseName").val("<c:out value="${actionBean.selectedDatabase.databaseName}"/>");
+                $("#oracleusername").val("<c:out value="${actionBean.selectedDatabase.username}"/>");
+                $("#oraclepassword").val("<c:out value="${actionBean.selectedDatabase.password}"/>");
+                $("#oracleport").val("<c:out value="${actionBean.selectedDatabase.port}"/>");
+                $("#oracleschema").val("<c:out value="${actionBean.selectedDatabase.schema}"/>");
+                $("#oracleinstance").val("<c:out value="${actionBean.selectedDatabase.instance}"/>");
+                $("#oraclealias").val("<c:out value="${actionBean.selectedDatabase.alias}"/>");
+            </c:when>
+            <c:otherwise>
+                $("#oraclehost").val("");
+                $("#oracledatabaseName").val("");
+                $("#oracleusername").val("");
+                $("#oraclepassword").val("");
+                $("#oracleport").val("1521");
+                $("#oracleschema").val("ORCL");
+                $("#oracleinstance").val("ORCL");
+                $("#oraclealias").val("");
+            </c:otherwise>
+        </c:choose>
 
         $("#oracleForm").validate(defaultValidateOptions);
     });

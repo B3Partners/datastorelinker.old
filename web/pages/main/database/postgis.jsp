@@ -9,21 +9,24 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}) {
-            $("#postgishost").val("${actionBean.selectedDatabase.host}");
-            $("#postgisdatabaseName").val("${actionBean.selectedDatabase.databaseName}");
-            $("#postgisusername").val("${actionBean.selectedDatabase.username}");
-            $("#postgispassword").val("${actionBean.selectedDatabase.password}");
-            $("#postgisport").val("${actionBean.selectedDatabase.port}");
-            $("#postgisschema").val("${actionBean.selectedDatabase.schema}");
-        } else {
-            $("#postgishost").val("");
-            $("#postgisdatabaseName").val("");
-            $("#postgisusername").val("");
-            $("#postgispassword").val("");
-            $("#postgisport").val("5432");
-            $("#postgisschema").val("public");
-        }
+        <c:choose>
+            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}">
+                $("#postgishost").val("<c:out value="${actionBean.selectedDatabase.host}"/>");
+                $("#postgisdatabaseName").val("<c:out value="${actionBean.selectedDatabase.databaseName}"/>");
+                $("#postgisusername").val("<c:out value="${actionBean.selectedDatabase.username}"/>");
+                $("#postgispassword").val("<c:out value="${actionBean.selectedDatabase.password}"/>");
+                $("#postgisport").val("<c:out value="${actionBean.selectedDatabase.port}"/>");
+                $("#postgisschema").val("<c:out value="${actionBean.selectedDatabase.schema}"/>");
+            </c:when>
+            <c:otherwise>
+                $("#postgishost").val("");
+                $("#postgisdatabaseName").val("");
+                $("#postgisusername").val("");
+                $("#postgispassword").val("");
+                $("#postgisport").val("5432");
+                $("#postgisschema").val("public");
+            </c:otherwise>
+        </c:choose>
 
         $("#postgisForm").validate(defaultValidateOptions);
     });

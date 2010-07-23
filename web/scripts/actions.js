@@ -33,9 +33,34 @@ function setParameters(action, parameters) {
     action.parameters.parameter = parameters;
 }
 
+function initActionsList(actionsList, contextPath) {
+    //log(actionsList);
+    setActionsList(actionsList);
+    fillActionsList(actionsList, "#actionsOverviewContainer", contextPath, actionsPlaceholder);
+}
+
+function setActionsList(actionsList) {
+    //log("setting actionsList in dom metadata:");
+    var actionsListObject = {"actionsList": actionsList};
+    //log(actionsListObject);
+    $("#actionsListMetadata").data("actionsList", actionsListObject);
+}
+
+function getActionsList() {
+    //log("getting actionsList from dom metadata:");
+    var metadata = $("#actionsListMetadata").data("actionsList");
+    //log(metadata);
+    if (!metadata || !metadata.actionsList)
+        return [];
+    else
+        return metadata.actionsList;
+}
+
 function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, addButtons) {
     //log("actionsListJSON.length: " + actionsListJSON.length);
     //log("actionsListSelector: " + actionsListSelector);
+    //log("later");
+    //log(actionsListJSON);
     if (actionsListJSON.length == 0)
         $(actionsListSelector).html(placeholder.clone());
     else {

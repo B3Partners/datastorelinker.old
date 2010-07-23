@@ -62,13 +62,13 @@ defaultRadioValidateOptions = $.extend({}, defaultValidateOptions, {
 
 defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
     errorPlacement: function(error, element) {
-        if (error.text() != "") {
+        if (error.length > 0 && error.text() != "") {
             element.parents(".ui-layout-content:first").before(error);
             element.parents(".ui-layout-center").eq(1).layout().resizeAll();
         }
     },
     success: function(label) {
-        if (label.text() != "") {
+        if (label.length > 0 && label.parent().length > 0) {
             var container = label.parents(".ui-layout-center").eq(1);
             label.remove();
             container.layout().resizeAll();

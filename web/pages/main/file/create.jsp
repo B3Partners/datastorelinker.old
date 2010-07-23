@@ -7,25 +7,6 @@
 
 <stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
 
-<style type="text/css">
-#uploaderBody, #uploaderQueue * {
-    width: auto;
-}
-
-#uploaderQueue {
-    width: auto;
-    height: auto;
-    overflow: visible;
-    padding: 0;
-    margin-bottom: 1em;
-}
-
-#uploaderStop {
-    float: right;
-}
-
-</style>
-
 <script type="text/javascript">
     $(document).ready(function() {
         $("#uploader").uiload({
@@ -35,7 +16,7 @@
             checkScript: "${fileUrl}",
             checkScriptData: {"check": ""},
             checkScriptAjaxOptions: {globals: false},
-            //fpath: "${actionBean.uploadDirectory}", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
+            //fpath: "<c:out value="${actionBean.uploadDirectory}"/>", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
             fdata: "Filedata",
             maxfiles: 1,
             maxfilesize: 524288000, // == 500 MB
@@ -103,5 +84,5 @@
     <stripes:file name="uploader" id="uploader" />
 </stripes:form>
 
-<!--div>IE is raar: ${actionBean.uploadDirectory}</div-->
+<!--div>IE is raar: <c:out value="${actionBean.uploadDirectory}"/></div-->
 

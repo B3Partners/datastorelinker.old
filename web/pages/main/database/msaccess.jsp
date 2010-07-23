@@ -9,17 +9,20 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        if (${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}) {
-            $("#msaccessurl").val("${actionBean.selectedDatabase.url}");
-            $("#msaccesssrs").val("${actionBean.selectedDatabase.srs}");
-            $("#msaccesscolX").val("${actionBean.selectedDatabase.colX}");
-            $("#msaccesscolY").val("${actionBean.selectedDatabase.colY}");
-        } else {
-            $("#msaccessurl").val("*.mdb");
-            $("#msaccesssrs").val("EPSG:28992");
-            $("#msaccesscolX").val("POINT_X");
-            $("#msaccesscolY").val("POINT_Y");
-        }
+        <c:choose>
+            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}">
+                $("#msaccessurl").val("<c:out value="${actionBean.selectedDatabase.url}"/>");
+                $("#msaccesssrs").val("<c:out value="${actionBean.selectedDatabase.srs}"/>");
+                $("#msaccesscolX").val("<c:out value="${actionBean.selectedDatabase.colX}"/>");
+                $("#msaccesscolY").val("<c:out value="${actionBean.selectedDatabase.colY}"/>");
+            </c:when>
+            <c:otherwise>
+                $("#msaccessurl").val("*.mdb");
+                $("#msaccesssrs").val("EPSG:28992");
+                $("#msaccesscolX").val("POINT_X");
+                $("#msaccesscolY").val("POINT_Y");
+            </c:otherwise>
+        </c:choose>
 
         $("#msaccessForm").validate(defaultValidateOptions);
     });

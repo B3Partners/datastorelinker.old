@@ -10,37 +10,23 @@
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
 
 <script type="text/javascript">
-    function initActionsList() {
-        var actionsList = ${actionBean.actionsList};
-        log(actionsList);
-        setActionsList(actionsList);
-        fillActionsList(actionsList, "#actionsOverviewContainer", "${contextPath}", actionsPlaceholder);
-    }
-
-    function setActionsList(actionsList) {
-        //log("setting actionsList in dom metadata:");
-        var actionsListObject = {actionsList: actionsList};
-        //log(actionsListObject);
-        $("#actionsListMetadata").data("actionsList", actionsListObject);
-    }
-
-    function getActionsList() {
-        //log("getting actionsList from dom metadata:");
-        var metadata = $("#actionsListMetadata").data("actionsList");
-        //log(metadata);
-        if (!metadata || !metadata.actionsList)
-            return [];
-        else
-            return metadata.actionsList;
-    }
-
     $(document).ready(function() {
         $("#createProcessBackButton, #createProcessNextButton").button();
 
         $("#createInputDB, #createInputFile, #updateInput, #deleteInput").button();
         $("#createOutput, #updateOutput, #deleteOutput").button();
 
-        initActionsList();
+        $("#radioNoDrop").removeAttr("checked");
+        $("#radioDrop").attr("checked", "checked");
+        <c:if test="${not empty actionBean.drop and actionBean.drop == false}">
+            $("#radioDrop").removeAttr("checked");
+            $("#radioNoDrop").attr("checked", "checked");
+        </c:if>
+
+        initActionsList(
+            <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
+            "${contextPath}"
+        );
         
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
             formWizardStep(data);
@@ -300,9 +286,21 @@
                 <%@include file="/pages/main/output/list.jsp" %>
             </div>
             <div class="crudButtonsArea">
-                <stripes:button id="createOutput" name="create"/>
-                <stripes:button id="updateOutput" name="update"/>
-                <stripes:button id="deleteOutput" name="delete"/>
+                <div>
+                    <stripes:button id="createOutput" name="create"/>
+                    <stripes:button id="updateOutput" name="update"/>
+                    <stripes:button id="deleteOutput" name="delete"/>
+                </div>
+                <div style="margin-top: 1em">
+                    <div>
+                        <input type="radio" name="drop" id="radioDrop" value="true" checked="checked"/>
+                        <stripes:label name="outputDrop" for="radioDrop"/>
+                    </div>
+                    <div>
+                        <input type="radio" name="drop" id="radioNoDrop" value="false"/>
+                        <stripes:label name="outputNoDrop" for="radioNoDrop"/>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="Overzicht" class="step submit_step">

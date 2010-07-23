@@ -8,10 +8,10 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#databaseAccordion").accordion();
-        if (${not empty actionBean.selectedDatabase}) {
-            $("#databaseAccordion").accordion("activate", 
-                $("#databaseAccordion input:hidden[name='dbType'][value='${actionBean.selectedDatabase.type.id}']").parent().parent().prev());
-        }
+        <c:if test="${not empty actionBean.selectedDatabase}">
+            $("#databaseAccordion").accordion("activate",
+            $("#databaseAccordion input:hidden[name='dbType'][value='<c:out value="${actionBean.selectedDatabase.type.id}"/>']").parent().parent().prev());
+        </c:if>
     });
 </script>
 

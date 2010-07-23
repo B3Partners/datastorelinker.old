@@ -24,6 +24,37 @@ body {
     overflow: auto;
 }
 
-layoutTitle {
-    vertical-align: bottom;
+.ui-progressbar {
+    position: relative;
 }
+
+.progressbarLabel {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 1.9em;
+    color: silver;
+    font-weight: bold;
+}
+
+.overview-hover {
+    /*cursor: hand;*/
+    cursor: pointer;
+}
+
+#uploaderBody, #uploaderQueue * {
+    width: auto;
+}
+
+#uploaderQueue {
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    margin-bottom: 1em;
+}
+
+#uploaderStop {
+    float: right;
+}
+

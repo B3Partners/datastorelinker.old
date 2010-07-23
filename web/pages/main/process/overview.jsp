@@ -8,11 +8,6 @@
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
 <stripes:url var="periodicalProcessUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction"/>
 
-<style type="text/css">
-    .ui-progressbar { position: relative; }
-    .progressbarLabel { position: absolute; width: 100%; text-align: center; line-height: 1.9em; color: silver; font-weight: bold; }
-</style>
-
 <script type="text/javascript">
     $(document).ready(function() {
         $("#processForm").validate(defaultRadioValidateOptions);
