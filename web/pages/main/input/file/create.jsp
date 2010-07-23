@@ -17,17 +17,21 @@
         $("#createInputNextButton").button();
 
         $("#createInputForm").formwizard(
-            formWizardConfig,
-            defaultValidateOptions, {
-                // form plugin settings
-                beforeSend: function() {
-                    ajaxFormEventInto("#createInputForm", "createFileInputComplete", "#inputListContainer", function() {
-                        if ($("#inputContainer"))
-                            $("#inputContainer").dialog("close");
-                    });
-                    return false;
+            $.extend({}, formWizardConfig, {
+                formOptions: {
+                    beforeSend: function() {
+                        ajaxOpen({
+                            formSelector: "#createInputForm",
+                            event: "createFileInputComplete",
+                            containerSelector: "#inputListContainer",
+                            successAfterContainerFill: function() {
+                                $("#inputContainer").dialog("close");
+                            }
+                        });
+                        return false;
+                    }
                 }
-            }
+            })
         );
 
         $("#inputContainer").layout(defaultDialogLayoutOptions);

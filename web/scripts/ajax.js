@@ -71,62 +71,6 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     //$(".confirmationDialog").dialog("close");
 });
 
-// Deprecated:
-function ajaxFormEventInto(formSelector, event, containerSelector, callback, action, extraParams, dataType) {
-    var form = $(formSelector).first();
-    var params = "";
-    if (!!event)
-        params = event + "&";
-    params += form.serialize();
-    if (!!extraParams) {
-        for (var key in extraParams) {
-            var value = extraParams[key];
-            if (params.length > 0)
-                params += "&";
-            params += key;
-            if (value)
-                params += "=" + value;
-        }
-    }
-    //log(extraParams);
-    //log(params);
-    if (!action)
-        action = form[0].action;
-    //var oldHtml = $(containerSelector).first().html();
-    //if (containerSelector)
-    //    $(containerSelector).first().html("Bezig met laden...");
-    $.post(action,
-            params,
-            function (data, textStatus, xhr) {
-                log(textStatus);
-                log(xhr);
-                if (containerSelector)
-                    $(containerSelector).first().html(data);
-                if (callback)
-                    callback(data, textStatus, xhr);
-            },
-            dataType
-    );
-    return false;
-}
-
-// Deprecated:
-function ajaxActionEventInto(action, event, containerSelector, callback) {
-    //if (containerSelector)
-        //$(containerSelector).first().html("Bezig met laden...");
-    var url = action + "?" + event;
-    //log(url);
-    $.get(url,
-        function (data, textStatus, xhr) {
-            if (containerSelector)
-                $(containerSelector).first().html(data);
-            if (callback)
-                callback(data, textStatus, xhr);
-        }
-    );
-    return false;
-}
-
 // Use this function for all your ajax calls
 function ajaxOpen(sendOptions) {
     var options = $.extend({

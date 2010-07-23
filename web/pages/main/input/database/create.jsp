@@ -51,11 +51,15 @@
 
             if (data.currentStep === "SelecteerTabel") {
                 var inputNode = $("#createInputForm .ui-state-active").prevAll("input").first();
-                ajaxActionEventInto(
-                    "${inputUrl}",
-                    "createTablesList&selectedDatabaseId=" + $(inputNode).val(),
-                    "#tablesListContainer"
-                );
+                ajaxOpen({
+                    url: "${inputUrl}",
+                    event: "createTablesList",
+                    extraParams: [{
+                        name: "selectedDatabaseId",
+                        value: $(inputNode).val()
+                    }],
+                    containerSelector: "#tablesListContainer"
+                });
             }
         });
 
@@ -63,9 +67,13 @@
             $.extend({}, formWizardConfig, {
                 formOptions: {
                     beforeSend: function() {
-                        // beetje een lelijke hack, maar werkt wel mooi:
-                        ajaxFormEventInto("#createInputForm", "createDatabaseInputComplete", "#inputListContainer", function() {
-                            $("#inputContainer").dialog("close");
+                        ajaxOpen({
+                            formSelector: "#createInputForm",
+                            event: "createDatabaseInputComplete",
+                            containerSelector: "#inputListContainer",
+                            successAfterContainerFill: function() {
+                                $("#inputContainer").dialog("close");
+                            }
                         });
                         return false;
                     }

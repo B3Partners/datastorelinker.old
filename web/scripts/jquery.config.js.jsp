@@ -60,15 +60,19 @@ defaultRadioValidateOptions = $.extend({}, defaultValidateOptions, {
     }
 });
 
-defaultRadioDialogValidateOptions = $.extend({}, defaultValidateOptions, {
+defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
     errorPlacement: function(error, element) {
-        element.parents(".ui-layout-content:first").before(error);
-        element.parents(".ui-layout-center").eq(1).layout().resizeAll();
+        if (error.text() != "") {
+            element.parents(".ui-layout-content:first").before(error);
+            element.parents(".ui-layout-center").eq(1).layout().resizeAll();
+        }
     },
     success: function(label) {
-        var container = label.parents(".ui-layout-center").eq(1);
-        label.remove();
-        container.layout().resizeAll();
+        if (label.text() != "") {
+            var container = label.parents(".ui-layout-center").eq(1);
+            label.remove();
+            container.layout().resizeAll();
+        }
     }
 });
 
@@ -98,7 +102,7 @@ formWizardConfig = {
     historyEnabled : false,
     formPluginEnabled : true,
     validationEnabled : true,
-    validationOptions: defaultRadioDialogValidateOptions,
+    validationOptions: defaultFormWizardValidateOptions,
     //focusFirstInput : true,
     textNext : "Volgende",
     textBack : "Vorige",
