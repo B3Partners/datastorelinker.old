@@ -96,8 +96,8 @@
         var newUpdateOutputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
             width: 550,
             height: 400,
-            buttons: { // TODO: localize button name:
-                "Voltooien" : function() {
+            buttons: {
+                "<fmt:message key="finish"/>" : function() {
                     testConnection({
                         url: "${outputUrl}",
                         formSelector: "#postgisForm",
@@ -118,7 +118,7 @@
                 containerId: "inputContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
-                    title: "Nieuwe Database Invoer..." // TODO: localization
+                    title: "<fmt:message key="newDatabaseInput"/>"
                 })
             });
 
@@ -132,7 +132,7 @@
                 containerId: "inputContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
-                    title: "Nieuwe Bestand Invoer..." // TODO: localization
+                    title: "<fmt:message key="newFileInput"/>"
                 })
             });
 
@@ -147,7 +147,7 @@
                 containerId: "inputContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
-                    title: "Bewerk Invoer..." // TODO: localization
+                    title: "<fmt:message key="editInput"/>"
                 })
             });
 
@@ -158,15 +158,15 @@
             if (!$("#createUpdateProcessForm").valid())
                 return false;
 
-            $("<div id='inputContainer' class='confirmationDialog'>Weet u zeker dat u deze invoer wilt verwijderen? Alle processen die deze invoer gebruiken zullen ook worden verwijderd.</div>").appendTo(document.body);
+            $("<div><fmt:message key="deleteInputAreYouSure"/></div>").attr("id", "inputContainer").appendTo(document.body);
 
             $("#inputContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "Invoer verwijderen...", // TODO: localization
+                title: "<fmt:message key="deleteInput"/>",
                 buttons: {
-                    "Nee": function() { // TODO: localize
+                    "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
                     },
-                    "Ja": function() {
+                    "<fmt:message key="yes"/>": function() {
                         $.blockUI(blockUIOptions);
                         ajaxOpen({
                             url: "${inputUrl}",
@@ -201,7 +201,7 @@
                 containerId: "outputContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateOutputCommonDialogOptions, {
-                    title: "Nieuwe Uitvoer Database..." // TODO: localization
+                    title: "<fmt:message key="newDatabaseOutput"/>"
                 })
             });
 
@@ -216,26 +216,26 @@
                 containerId: "outputContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateOutputCommonDialogOptions, {
-                    title: "Bewerk Uitvoer Database..." // TODO: localization
+                    title: "<fmt:message key="editOutput"/>"
                 })
             });
 
             return false;
         })
 
-        $("#deleteOutput").click(function() {//TODO: localize
+        $("#deleteOutput").click(function() {
             if (!$("#createUpdateProcessForm").valid())
                 return false;
 
-            $("<div id='outputContainer'>Weet u zeker dat u deze uitvoer wilt verwijderen? Alle processen die deze uitvoer gebruiken zullen ook worden verwijderd.</div>").appendTo($(document.body));
+            $("<div><fmt:message key="deleteOutputAreYouSure"/></div>").attr("id", "outputContainer").appendTo($(document.body));
 
             $("#outputContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "Uitvoer verwijderen...", // TODO: localization
+                title: "<fmt:message key="deleteOutput"/>",
                 buttons: {
-                    "Nee": function() { // TODO: localize
+                    "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
                     },
-                    "Ja": function() {
+                    "<fmt:message key="yes"/>": function() {
                         ajaxOpen({
                             url: "${outputUrl}",
                             formSelector: "#createUpdateProcessForm",
@@ -268,8 +268,8 @@
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->
     <stripes:wizard-fields/>
     <div id="processSteps" class="ui-layout-center">
-        <div id="SelecteerInvoer" class="step ui-layout-center">
-            <h1>Selecteer bestand- of database-invoer:</h1>
+        <div id="<fmt:message key="process.selectInput.short"/>" class="step ui-layout-center">
+            <h1><fmt:message key="process.selectInput"/></h1>
             <div id="inputListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
                 <%@include file="/pages/main/input/list.jsp" %>
             </div>
@@ -280,8 +280,8 @@
                 <stripes:button id="deleteInput" name="delete"/>
             </div>
         </div>
-        <div id="SelecteerUitvoer" class="step">
-            <h1>Selecteer database om naar uit te voeren:</h1>
+        <div id="<fmt:message key="process.selectOutput.short"/>" class="step">
+            <h1><fmt:message key="process.selectOutput"/></h1>
             <div id="outputListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
                 <%@include file="/pages/main/output/list.jsp" %>
             </div>
@@ -303,8 +303,8 @@
                 </div>
             </div>
         </div>
-        <div id="Overzicht" class="step submit_step">
-            <h1>Overzicht:</h1>
+        <div id="<fmt:message key="process.overview.short"/>" class="step submit_step">
+            <h1><fmt:message key="process.overview"/></h1>
             <div class="ui-layout-content">
                 <%@include file="/pages/main/overview/view.jsp" %>
             </div>

@@ -7,7 +7,7 @@
 
 <stripes:layout-definition>
     <tr>
-        <td>Op dag van de maand</td><!-- TODO: localize! -->
+        <td><fmt:message key="onDayOfTheMonth"/></td>
         <td>
             <input type="radio" id="${cronType}RadioLastDayOfTheMonth" name="radioDayOfTheMonth" value="today" checked="checked" />
             <stripes:label name="last" for="${cronType}RadioLastDayOfTheMonth" />

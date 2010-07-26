@@ -44,7 +44,7 @@
                 containerId: "processContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
-                    title: "Nieuw Proces..." // TODO: localization
+                    title: "<fmt:message key="newProcess"/>"
                 })
             });
 
@@ -58,7 +58,7 @@
                 containerId: "processContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
-                    title: "Bewerk Proces..." // TODO: localization
+                    title: "<fmt:message key="editProcess"/>"
                 })
             });
 
@@ -69,7 +69,7 @@
             if (!$("#processForm").valid())
                 return false;
 
-            $("<div id='processContainer'><div id='processOutput'>Proces aan het uitvoeren...</div></div>").appendTo(document.body);
+            $("<div id='processContainer'><div id='processOutput'></div></div>").appendTo(document.body);
 
             var progressbar = $("<div></div>")
                 .attr("id", "progressbar")
@@ -106,11 +106,11 @@
                 },
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
-                    title: "Proces uitvoeren...", // TODO: localization
+                    title: "<fmt:message key="executeProcess"/>",
                     width: 600,
                     height: 300,
                     buttons: {
-                        "Annuleren": function() { // TODO: localize
+                        "<fmt:message key="cancel"/>": function() {
                             $(this).dialog("close");
                         }
                     },
@@ -142,14 +142,14 @@
                 containerId: "processContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
-                    title: "Voer proces periodiek uit...", // TODO: localization
+                    title: "<fmt:message key="periodicallyExecuteProcess"/>",
                     width: 900,
                     height: 600,
                     buttons: {
-                        "Annuleren": function() {
+                        "<fmt:message key="cancel"/>": function() {
                             $(this).dialog("close");
                         },
-                        "Voltooien": function() {
+                        "<fmt:message key="finish"/>": function() {
                             submitExecutePeriodicallyForm();
                         }
                     }
@@ -163,15 +163,15 @@
             if (!$("#processForm").valid())
                 return false;
 
-            $("<div id='processContainer'>Weet u zeker dat u dit proces niet meer periodiek wilt uitvoeren?</div>").appendTo(document.body);
+            $("<div><fmt:message key="cancelPeriodicallyExecuteProcessAreYouSure"/></div>").attr("id", "processContainer").appendTo(document.body);
 
             $("#processContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "Proces periodiek uitvoeren annuleren...", // TODO: localization
+                title: "<fmt:message key="cancelPeriodicallyExecuteProcess"/>",
                 buttons: {
-                    "Nee": function() { // TODO: localize
+                    "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
                     },
-                    "Ja": function() {
+                    "<fmt:message key="yes"/>": function() {
                         ajaxOpen({
                             formSelector: "#processForm",
                             url: "${periodicalProcessUrl}",
@@ -188,19 +188,19 @@
             return false;
         });
 
-        $("#deleteProcess").click(function() {//TODO: localize
+        $("#deleteProcess").click(function() {
             if (!$("#processForm").valid())
                 return false;
 
-            $("<div id='processContainer'>Weet u zeker dat u dit proces wilt verwijderen?</div>").appendTo(document.body);
+            $("<div><fmt:message key="deleteProcessAreYouSure"/></div>").attr("id", "processContainer").appendTo(document.body);
 
             $("#processContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "Proces verwijderen...", // TODO: localization
+                title: "<fmt:message key="deleteProcess"/>",
                 buttons: {
-                    "Nee": function() { // TODO: localize
+                    "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
                     },
-                    "Ja": function() {
+                    "<fmt:message key="yes"/>": function() {
                         ajaxOpen({
                             formSelector: "#processForm",
                             event: "delete",
@@ -231,7 +231,7 @@
             success: function(data, textStatus) {
                 $("#progressbar").progressbar("value", data.progress);
                 if (data.progress >= 100) {
-                    log("Process finished");
+                    //log("Process finished");
                     $("#processOutput").html(data.message);
                     clearInterval(intervalId);
                     changeButtonName("#processContainer", "Annuleren", "Voltooien");
@@ -264,7 +264,7 @@
 <div id="processOverviewContainer" style="height: 100%">
     <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
         <div id="processHeader" class="ui-layout-north">
-            <h1><stripes:label for="main.process.overview.text.overview" class="layoutTitle"/></h1>
+            <h1><fmt:message key="main.overview"/></h1>
         </div>
 
         <div id="processesListContainer" class="ui-layout-center radioList ui-widget-content ui-corner-all">

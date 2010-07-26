@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : main
     Created on : 23-apr-2010, 15:41:03
     Author     : Erik van de Pol
@@ -17,7 +17,7 @@
                     },*/
                     ajaxOptions: {
                         error: function(xhr, status, index, anchor) {
-                            $(anchor.hash).html("Fout. Kon deze tab niet laden. Javascript moet geactiveerd zijn om deze website te tonen.");
+                            $(anchor.hash).html("<fmt:message key="menu.error"/>");
                         },
                         data: {},
                         success: function(data, textStatus) {
@@ -36,17 +36,17 @@
             <ul>
                 <li>
                     <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction" title="tabHome">
-                        <stripes:label for="menu.home"/> <%-- TODO: !!! moet eigenlijk met <fmt:message key="menu.home"/> etc. !!!--%>
+                        <fmt:message key="menu.home"/>
                     </stripes:link>
                 </li>
                 <li>
                     <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ManagementAction" title="tabManagement">
-                        <stripes:label for="menu.management"/>
+                        <fmt:message key="menu.management"/>
                     </stripes:link>
                 </li>
                 <li>
                     <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OptionsAction" title="tabOptions">
-                        <stripes:label for="menu.options"/>
+                        <fmt:message key="menu.options"/>
                     </stripes:link>
                 </li>
             </ul>
@@ -56,6 +56,6 @@
                 <div id="tabOptions" title="tabOptions" style="height: 100%"></div>
             </div>
         </div>
-        
+
     </stripes:layout-component>
 </stripes:layout-render>

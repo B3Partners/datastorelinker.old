@@ -167,8 +167,12 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Inout input = (Inout)session.get(Inout.class, selectedInputId);
-        selectedTable = input.getTableName();
+        if (selectedInputId != null) {
+            Inout input = (Inout)session.get(Inout.class, selectedInputId);
+            // only prefill selected table if we have saved this db with the input we are editing
+            if (selectedDatabaseId.equals(input.getDatabase().getId()))
+                selectedTable = input.getTableName();
+        }
 
         Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
 

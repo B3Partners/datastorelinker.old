@@ -7,7 +7,7 @@
 
 <stripes:layout-definition>
     <tr>
-        <td>Vanaf</td><!-- TODO: localize! -->
+        <td><fmt:message key="from"/></td>
         <td>
             <input type="radio" id="${cronType}Today" name="radioFromDate" value="today" checked="checked" />
             <stripes:label name="fromNow" for="${cronType}Today" />

@@ -19,7 +19,7 @@
                         max: 31
                     },
                     onTime: {
-                        time: true // custom method gemaakt in jquery.config.js.jsp
+                        time: true // custom method gemaakt in jquery.config.js
                     }
                 }
             }));
@@ -35,32 +35,6 @@
         var dayOfTheWeekDefault = 1;
         var dayOfTheMonthDefault = "";//"01";
         var monthDefault = 1;
-
-        // cron day/month numbers mapped to dutch localization:
-        var daysOfTheWeek = {
-            1: "zondag",
-            2: "maandag",
-            3: "dinsdag",
-            4: "woensdag",
-            5: "donderdag",
-            6: "vrijdag",
-            7: "zaterdag"
-        };
-
-        var months = {
-            1: "januari",
-            2: "februari",
-            3: "maart",
-            4: "april",
-            5: "mei",
-            6: "juni",
-            7: "juli",
-            8: "augustus",
-            9: "september",
-            10: "oktober",
-            11: "november",
-            12: "december"
-        };
 
         $("#hourToday, #dayToday, #weekToday, #monthToday, #yearToday").click(function() {
             $(this).siblings(":text").removeClass("required " + defaultValidateOptions.errorClass).val("");
@@ -80,7 +54,7 @@
 
         $("#hourOnMinute").mask("59").val(minuteDefault); // values: 0-59
 
-        $.each(daysOfTheWeek, function(index, value) {
+        $.each(I18N.daysOfTheWeek, function(index, value) {
             var option = $("<option></option>").val(index).text(value);
             $("#weekOnDayOfTheWeek").append(option);
         });
@@ -101,7 +75,7 @@
             $(this).addClass("required");
         });
 
-        $.each(months, function(index, value) {
+        $.each(I18N.monthsOfTheYear, function(index, value) {
             var option = $("<option></option>").val(index).text(value);
             $("#yearOnMonth").append(option);
         });
@@ -174,10 +148,10 @@
 </script>
 
 <div id="cronAccordion">
-    <h3 id="simpleCron"><a href="#">Eenvoudig</a></h3><!-- TODO: localize! -->
+    <h3 id="simpleCron"><a href="#"><fmt:message key="simple"/></a></h3>
     <div>
         <div id="cronEachAccordion">
-            <h3><a href="#">Elk uur</a></h3><!-- TODO: localize! -->
+            <h3><a href="#"><fmt:message key="everyHour"/></a></h3>
             <div>
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
@@ -192,7 +166,7 @@
                     </table>
                 </stripes:form>
             </div>
-            <h3><a href="#">Elke dag</a></h3><!-- TODO: localize! -->
+            <h3><a href="#"><fmt:message key="everyDay"/></a></h3>
             <div>
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
@@ -207,7 +181,7 @@
                     </table>
                 </stripes:form>
             </div>
-            <h3><a href="#">Elke week</a></h3><!-- TODO: localize! -->
+            <h3><a href="#"><fmt:message key="everyWeek"/></a></h3>
             <div>
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
@@ -226,7 +200,7 @@
                     </table>
                 </stripes:form>
             </div>
-            <h3><a href="#">Elke maand</a></h3><!-- TODO: localize! -->
+            <h3><a href="#"><fmt:message key="everyMonth"/></a></h3>
             <div>
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
@@ -242,7 +216,7 @@
                     </table>
                 </stripes:form>
             </div>
-            <h3><a href="#">Elk jaar</a></h3><!-- TODO: localize! -->
+            <h3><a href="#"><fmt:message key="everyYear"/></a></h3>
             <div>
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
@@ -264,13 +238,13 @@
             </div>
         </div>
     </div>
-    <h3 id="advancedCron"><a href="#">Geavanceerd</a></h3><!-- TODO: localize! -->
+    <h3 id="advancedCron"><a href="#"><fmt:message key="advanced"/></a></h3>
     <div>
         <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
             <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
             <stripes:wizard-fields/>
             <input type="hidden" name="cronType" value="6"/>
-            Cron expressie: <stripes:text name="cronExpression"/>
+            <fmt:message key="cronExpression"/> <stripes:text name="cronExpression"/>
             <a id="cronInfo" href="${cronInfoUrl}" target="_blank"><span>help</span></a>
         </stripes:form>
     </div>

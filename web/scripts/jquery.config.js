@@ -1,9 +1,8 @@
-<%-- 
-    Document   : jquery.form.wizard.config.js
-    Created on : 12-mei-2010, 18:27:14
-    Author     : Erik van de Pol
---%>
-<%@include file="/pages/commons/taglibs.jsp" %>
+/* 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 
 $(document).ready(function() {
     // general metadata setting:
@@ -104,9 +103,9 @@ formWizardConfig = {
     validationEnabled : true,
     validationOptions: defaultFormWizardValidateOptions,
     //focusFirstInput : true,
-    textNext : "Volgende",
-    textBack : "Vorige",
-    textSubmit : "Voltooien"
+    textNext : I18N.next,
+    textBack : I18N.previous,
+    textSubmit : I18N.finish
 }
 
 function formWizardStep(data) {

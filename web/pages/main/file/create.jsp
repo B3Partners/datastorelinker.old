@@ -27,11 +27,11 @@
             fadeOut: false,
             progressValueColor: "silver",
             ftypes: {
-                "Alle ondersteunde formaten": ["shp", "dxf", "sdl", "sfn", "csv"],
-                "Shape formaat": ["shp"],
-                "Autodesk formaat": ["dxf", "sdl"],
-                "SUF formaat (ook NEN 1878)": ["sfn"],
-                "CSV formaat": ["csv"]
+                "<fmt:message key="inputFile.type.allSupported"/>": ["shp", "dxf", "sdl", "sfn", "csv"],
+                "<fmt:message key="inputFile.type.shape"/>": ["shp"],
+                "<fmt:message key="inputFile.type.autodesk"/>": ["dxf", "sdl"],
+                "<fmt:message key="inputFile.type.sufnen"/>": ["sfn"],
+                "<fmt:message key="inputFile.type.csv"/>": ["csv"]
             },
             onCheck: function(event, checkScript, fileObj, fileDir, single) {
 
@@ -48,7 +48,7 @@
                 upload.append($("#uploaderStop"));
 
                 upload.dialog($.extend({}, defaultDialogOptions, {
-                    title: "Bestand aan het uploaden...", // TODO: localization
+                    title: "<fmt:message key="inputFile.uploading"/>",
                     width: 400,
                     close: function(event, ui) {
                         $("#uploaderStop, #uploaderQueue").css("display", "none");

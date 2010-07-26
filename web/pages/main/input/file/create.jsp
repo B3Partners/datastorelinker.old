@@ -39,20 +39,20 @@
         // layout plugin messes up z-indices; sets them to 1
         $("#inputContainer, #SelecteerBestand, #inputContainer .wizardButtonsArea").css({ "z-index": "auto" });
 
-        $("#deleteFile").click(function() {//TODO: localize
+        $("#deleteFile").click(function() {
             if (!$("#createInputForm").valid())
                 return;
 
-            $("<div id='createFileContainer' class='confirmationDialog'><p>Weet u zeker dat u dit bestand van de server wilt verwijderen?</p><p> Alle bestands-invoer die dit bestand gebruikt en alle processen die deze bestands-invoer gebruiken zullen ook worden verwijderd.</p></div>").appendTo(document.body);
+            $("<div><fmt:message key="deleteFileAreYouSure"/></div>").attr("id", "createFileContainer").appendTo(document.body);
 
             $("#createFileContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "Bestand van de server verwijderen...", // TODO: localization
+                title: "<fmt:message key="deleteFile"/>",
                 width: 350,
                 buttons: {
-                    "Nee": function() { // TODO: localize
+                    "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
                     },
-                    "Ja": function() {
+                    "<fmt:message key="yes"/>": function() {
                         $.blockUI(blockUIOptions);
                         ajaxOpen({
                             url: "${fileUrl}",
@@ -93,8 +93,8 @@
 
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <stripes:wizard-fields/>
-    <div id="SelecteerBestand" class="step submitstep ui-layout-center">
-        <h1>Selecteer bestand:</h1>
+    <div id="<fmt:message key="inputFile.selectFile.short"/>" class="step submitstep ui-layout-center">
+        <h1><fmt:message key="inputFile.selectFile"/></h1>
         <div id="filesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
             <%@include file="/pages/main/file/list.jsp" %>
         </div>

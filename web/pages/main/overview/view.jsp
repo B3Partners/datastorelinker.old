@@ -33,13 +33,13 @@
                 containerId: "actionsContainer",
                 openInDialog: true,
                 dialogOptions: {
-                    title: "Acties...", // TODO: localization
+                    title: "<fmt:message key="createActions"/>",
                     width: 800,
                     height: 700,
                     modal: true,
                     close: defaultDialogClose,
-                    buttons: { // TODO: localize button name:
-                        "Voltooien" : function() {
+                    buttons: {
+                        "<fmt:message key="finish"/>" : function() {
                             var actionsListJSON = getCreatedActionList();
                             setActionsList(actionsListJSON);
                             fillActionsList(actionsListJSON, "#actionsOverviewContainer", "${contextPath}", actionsPlaceholder);
@@ -55,9 +55,10 @@
 
 <div>
     <div id="inputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 50px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Invoer</div>
+        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
+            <fmt:message key="input"/>
+        </div>
         <div id="inputOverviewContainer" class="action-list" style="height: 300px">
-            Bezig met laden...
         </div>
     </div>
 
@@ -66,7 +67,9 @@
     </div>
 
     <div id="actionsOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 300px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Acties</div>
+        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
+            <fmt:message key="actions"/>
+        </div>
         <div id="actionsOverviewContainer" class="action-list" style="height: 300px">
         </div>
     </div>
@@ -76,9 +79,10 @@
     </div>
 
     <div id="outputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 550px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">Uitvoer</div>
+        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
+            <fmt:message key="output"/>
+        </div>
         <div id="outputOverviewContainer" class="action-list" style="height: 300px">
-            Bezig met laden...
         </div>
     </div>
 </div>
