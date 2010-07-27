@@ -24,13 +24,12 @@ var dragActionsPlaceholder = $("<div></div>")
     .html("<em>Sleep uw acties hierheen...</em>");
 
 // Always use this function to get to the parameters of an Action. 
-// SubObject created to accomodate for proper JSON to XML conversion later
 function getParameters(action) {
-    return action.parameters.parameter;
+    return action.parameters;
 }
 // Always use this function to set the parameters of an Action.
 function setParameters(action, parameters) {
-    action.parameters.parameter = parameters;
+    action.parameters = parameters;
 }
 
 function initActionsList(actionsList, contextPath) {
@@ -39,6 +38,9 @@ function initActionsList(actionsList, contextPath) {
     fillActionsList(actionsList, "#actionsOverviewContainer", contextPath, actionsPlaceholder);
 }
 
+/**
+ * Slaat de actions op in de proces dialog.
+ */
 function setActionsList(actionsList) {
     //log("setting actionsList in dom metadata:");
     var actionsListObject = {"actionsList": actionsList};
@@ -46,6 +48,9 @@ function setActionsList(actionsList) {
     $("#actionsListMetadata").data("actionsList", actionsListObject);
 }
 
+/**
+ * Returned de actions opgeslagen in de proces dialog.
+ */
 function getActionsList() {
     //log("getting actionsList from dom metadata:");
     var metadata = $("#actionsListMetadata").data("actionsList");
@@ -54,6 +59,20 @@ function getActionsList() {
         return [];
     else
         return metadata.actionsList;
+}
+
+/**
+ * returned de acties die net gecreëerd zijn in de actions dialog.
+ */
+function getCreatedActionList() {
+    //log("getActionList");
+    var actionList = [];
+    $("#actionsListContainer").children(":not(.placeholder)").each(function(index, actionDiv) {
+        actionList.push($(actionDiv).metadata());
+        //actionList.push($(actionDiv).data("action"));
+    })
+    //log(actionList);
+    return actionList;
 }
 
 function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, addButtons) {

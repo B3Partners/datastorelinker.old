@@ -9,18 +9,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.persistence.EntityManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
-import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.json.ActionModel;
 import nl.b3p.geotools.data.linker.ActionFactory;
-import org.hibernate.Session;
 
 /**
  *
@@ -28,6 +25,7 @@ import org.hibernate.Session;
  */
 @Transactional
 public class ActionsAction extends DefaultAction {
+
     private Log log = Log.getInstance(ActionsAction.class);
     
     public final static List<String> RESERVED_JS_KEYWORDS = Arrays.asList("length");
@@ -35,6 +33,9 @@ public class ActionsAction extends DefaultAction {
 
     private final static String CREATE_JSP = "/pages/main/actions/create.jsp";
     private final static String LIST_JSP = "/pages/main/actions/list.jsp";
+
+    private final static ResourceBundle res = ResourceBundle.getBundle("StripesResources");
+
 
     private String actionsWorkbenchList;
     private String actionsList;
@@ -48,18 +49,6 @@ public class ActionsAction extends DefaultAction {
     public Resolution create() {
         actionsWorkbenchList = createActionsWorkbenchList();
         //log.debug(actionsWorkbenchList);
-
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        if (selectedProcessId == null)
-            actionsList = new JSONArray().toString();
-        else {
-            nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
-                    session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
-
-            actionsList = process.getActionsString();
-        }
 
         return new ForwardResolution(CREATE_JSP);
     }
@@ -79,8 +68,6 @@ public class ActionsAction extends DefaultAction {
     }
 
     private ActionModel createAction(Map.Entry<String, List<List<String>>> actionBlock) {
-        ResourceBundle res = ResourceBundle.getBundle("StripesResources");
-
         JSONArray parameters = new JSONArray();
         if (actionBlock.getValue() != null) {
             for (List<String> paramList : actionBlock.getValue()) {
@@ -103,13 +90,65 @@ public class ActionsAction extends DefaultAction {
         model.setName(res.getString(type + ".desc"));
         model.setDescription(res.getString(type + ".longdesc"));
 
-        // Strange subObject introduced in order to "flatten" the array later for JSON to XML use.
-        JSONObject parametersObject = new JSONObject();
-        parametersObject.element("parameter", parameters);
-        model.setParameters(parametersObject);
+        model.setParameters(parameters);
         //log.debug(parameters.toString());
 
         return model;
+    }
+
+    public static void removeViewData(JSONArray actionsListJSONArray) {
+        for (Object actionObject : actionsListJSONArray) {
+            JSONObject action = (JSONObject)actionObject;
+
+            action.remove("className");
+            action.remove("name");
+            action.remove("description");
+
+            JSONArray parameters = action.optJSONArray("parameters");
+            if (parameters != null) {
+                for (Object parameterObject : parameters) {
+                    JSONObject parameter = (JSONObject)parameterObject;
+                    parameter.remove("name");
+                    parameter.remove("type");
+                }
+            }
+        }
+    }
+
+    public static void addViewData(JSONArray actionsListJSONArray) {
+        for (Object actionObject : actionsListJSONArray) {
+            JSONObject action = (JSONObject)actionObject;
+            
+            String type = action.getString("type");
+
+            action.put("className", res.getString(type + ".type"));
+            action.put("name", res.getString(type + ".desc"));
+            action.put("description", res.getString(type + ".longdesc"));
+
+            JSONArray parameters = action.optJSONArray("parameters");
+            if (parameters != null) {
+                for (Object parameterObject : parameters) {
+                    JSONObject parameter = (JSONObject)parameterObject;
+
+                    String nameResourceKey = "keys." + parameter.getString("paramId").toUpperCase();
+                    parameter.put("name", res.getString(nameResourceKey));
+                    parameter.put("type", res.getString(nameResourceKey + ".type"));
+                }
+            }
+        }
+    }
+
+    public static void addExpandableProperty(JSONArray actionsListJSONArray) {
+        for (Object actionObject : actionsListJSONArray) {
+            JSONObject action = (JSONObject)actionObject;
+
+            JSONArray parameters = action.optJSONArray("parameters");
+            if (parameters != null) {
+                JSONObject parameter = new JSONObject();
+                parameter.put("parameter", parameters);
+                action.put("parameters", parameter);
+            }
+        }
     }
 
     public String getActionsWorkbenchList() {

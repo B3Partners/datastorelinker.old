@@ -14,6 +14,7 @@
 
         $("#createProcess, #updateProcess, #deleteProcess").button();
         $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
+        $("#exportToXml").button();
 
         $("#processOverviewContainer").layout($.extend({}, defaultLayoutOptions, {
             /*north__size: 50,
@@ -48,7 +49,7 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#updateProcess").click(function() {
@@ -62,12 +63,12 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#executeProcess").click(function() {
             if (!$("#processForm").valid())
-                return false;
+                return defaultButtonClick(this);
 
             $("<div id='processContainer'><div id='processOutput'></div></div>").appendTo(document.body);
 
@@ -131,7 +132,7 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#executeProcessPeriodically").click(function() {
@@ -156,12 +157,12 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#cancelExecuteProcessPeriodically").click(function() {
             if (!$("#processForm").valid())
-                return false;
+                return defaultButtonClick(this);
 
             $("<div><fmt:message key="cancelPeriodicallyExecuteProcessAreYouSure"/></div>").attr("id", "processContainer").appendTo(document.body);
 
@@ -185,12 +186,12 @@
                 }
             }));
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#deleteProcess").click(function() {
             if (!$("#processForm").valid())
-                return false;
+                return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteProcessAreYouSure"/></div>").attr("id", "processContainer").appendTo(document.body);
 
@@ -213,7 +214,13 @@
                 }
             }));
 
-            return false;
+            return defaultButtonClick(this);
+        });
+
+        $("#exportToXml").click(function() {
+            var selectedProcessId = $("#processesListContainer :radio:checked").val();
+            var newLocation = "${processUrl}" + "?exportToXml=&selectedProcessId=" + selectedProcessId;
+            window.location.replace(newLocation);
         });
     });
 
@@ -281,6 +288,7 @@
                 <stripes:button id="executeProcess" name="execute"/>
                 <stripes:button id="executeProcessPeriodically" name="executePeriodically"/>
                 <stripes:button id="cancelExecuteProcessPeriodically" name="cancelExecutePeriodically"/>
+                <stripes:button id="exportToXml" name="exportToXml" style="float: right;"/>
             </div>
         </div>
 

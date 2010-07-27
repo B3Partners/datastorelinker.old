@@ -122,7 +122,7 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#createInputFile").click(function() {
@@ -136,7 +136,7 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#updateInput").click(function() {
@@ -151,12 +151,12 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         });
 
-        $("#deleteInput").click(function() {//TODO: localize
+        $("#deleteInput").click(function() {
             if (!$("#createUpdateProcessForm").valid())
-                return false;
+                return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteInputAreYouSure"/></div>").attr("id", "inputContainer").appendTo(document.body);
 
@@ -191,7 +191,7 @@
                 }
             }));
 
-            return false;
+            return defaultButtonClick(this);
         });
 
         $("#createOutput").click(function() {
@@ -205,7 +205,7 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         })
 
         $("#updateOutput").click(function() {
@@ -220,12 +220,12 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         })
 
         $("#deleteOutput").click(function() {
             if (!$("#createUpdateProcessForm").valid())
-                return false;
+                return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteOutputAreYouSure"/></div>").attr("id", "outputContainer").appendTo($(document.body));
 
@@ -256,7 +256,7 @@
                 }
             }));
 
-            return false;
+            return defaultButtonClick(this);
         });
     });
 

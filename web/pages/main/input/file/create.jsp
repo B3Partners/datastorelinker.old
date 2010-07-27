@@ -41,7 +41,7 @@
 
         $("#deleteFile").click(function() {
             if (!$("#createInputForm").valid())
-                return;
+                return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteFileAreYouSure"/></div>").attr("id", "createFileContainer").appendTo(document.body);
 
@@ -84,6 +84,8 @@
                     }
                 }
             }));
+
+            return defaultButtonClick(this);
         });
 
 
@@ -101,7 +103,7 @@
         <div>
             <%@include file="/pages/main/file/create.jsp" %>
             <stripes:link href="#" id="deleteFile" onclick="return false;">
-                <stripes:label for="delete" class="layoutTitle"/>
+                <fmt:message key="delete"/>
             </stripes:link>
         </div>
     </div>

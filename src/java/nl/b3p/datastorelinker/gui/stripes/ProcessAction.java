@@ -15,6 +15,7 @@ import net.sf.json.xml.XMLSerializer;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
@@ -23,6 +24,7 @@ import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
 import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.util.DataStoreLinkJob;
+import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
 import nl.b3p.geotools.data.linker.Status;
@@ -122,7 +124,11 @@ public class ProcessAction extends DefaultAction {
             actionsList = new JSONArray().toString();
 
         JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        //log.debug("actionsListJSONArray: " + actionsListJSONArray);
+        log.debug("beforeRemove: " + actionsListJSONArray);
+        ActionsAction.removeViewData(actionsListJSONArray);
+        log.debug("afterRemove: " + actionsListJSONArray);
+        ActionsAction.addExpandableProperty(actionsListJSONArray);
+        log.debug("afterExpandableProp: " + actionsListJSONArray);
 
         JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
         XMLSerializer xmlSerializer = new XMLSerializer();
@@ -174,6 +180,9 @@ public class ProcessAction extends DefaultAction {
                 jsonArrayActions.add(singleActionJSON.get("action"));
             }
         }
+        log.debug("beforeInsert: " + jsonArrayActions);
+        ActionsAction.addViewData(jsonArrayActions);
+        log.debug("afterInsert: " + jsonArrayActions);
 
         actionsList = jsonArrayActions.toString();
         //log.debug(actionsList);
@@ -232,7 +241,7 @@ public class ProcessAction extends DefaultAction {
             //if (dslJob != null)
                 //log.debug("dslJob.getDataStoreLinker(): " + dslJob.getDataStoreLinker());
 
-            log.warn("dslJob or dslJob.getDataStoreLinker() null!");
+            log.error("dslJob or dslJob.getDataStoreLinker() null!");
             return new JSONResolution(new ProgressMessage(0));
         } else {
             Status dslStatus = dslJob.getDataStoreLinker().getStatus();
@@ -261,6 +270,22 @@ public class ProcessAction extends DefaultAction {
             dslJob.getDataStoreLinker().getStatus().setInterrupted(true);
             
             return new JSONResolution(new SuccessMessage(true));
+        }
+    }
+
+    public Resolution exportToXml() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+        try {
+            String xml = MarshalUtils.marshal(process);
+            return new StreamingResolution("text/xml", xml).setFilename("dsl_process.xml");
+        } catch(Exception ex) {
+            log.error(ex);
+            return new DefaultErrorResolution(ex.getLocalizedMessage());
         }
     }
 

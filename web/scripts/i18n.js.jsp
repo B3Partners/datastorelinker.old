@@ -8,6 +8,10 @@
 <%@page contentType="text/javascript" %>
 
 I18N = {};
+I18N.yes = "<fmt:message key="yes"/>";
+I18N.no = "<fmt:message key="no"/>";
+I18N.ok = "<fmt:message key="ok"/>";
+I18N.cancel = "<fmt:message key="cancel"/>";
 I18N.next = "<fmt:message key="next"/>";
 I18N.previous = "<fmt:message key="previous"/>";
 I18N.finish = "<fmt:message key="finish"/>";

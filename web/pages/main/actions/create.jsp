@@ -10,7 +10,7 @@
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
         log(actionsWorkbenchList);
         var actionsList = getActionsList();
-        //log(actionsList);
+        log(actionsList);
 
         fillActionsList(actionsWorkbenchList, "#actionsWorkbenchContainer", "${contextPath}");
         fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", dragActionsPlaceholder, true);
@@ -66,16 +66,6 @@
 
     });
 
-    function getCreatedActionList() {
-        //log("getActionList");
-        var actionList = [];
-        $("#actionsListContainer").children(":not(.placeholder)").each(function(index, actionDiv) {
-            actionList.push($(actionDiv).metadata());
-            //actionList.push($(actionDiv).data("action"));
-        })
-        //log(actionList);
-        return actionList;
-    }
 </script>
 
 <div id="actionsMainContainer">

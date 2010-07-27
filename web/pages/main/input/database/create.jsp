@@ -98,7 +98,7 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         })
 
         $("#updateDB").click(function() {
@@ -113,12 +113,12 @@
                 })
             });
 
-            return false;
+            return defaultButtonClick(this);
         })
 
-        $("#deleteDB").click(function() {//TODO: localize
+        $("#deleteDB").click(function() {
             if (!$("#createInputForm").valid())
-                return;
+                return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteDatabaseAreYouSure"/></div>").attr("id", "dbContainer").appendTo($(document.body));
 
@@ -161,6 +161,8 @@
                     }
                 }
             }));
+
+            return defaultButtonClick(this);
         });
 
     });

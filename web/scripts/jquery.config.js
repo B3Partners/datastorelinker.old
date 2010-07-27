@@ -34,6 +34,12 @@ $(document).ready(function() {
 
 });
 
+defaultButtonClick = function(button) {
+    // als focus blijft is het een beetje lelijk
+    $(button).removeClass("ui-state-hover ui-state-focus");
+    return false;
+}
+
 defaultDialogClose = function(event, ui) {
     var dialog = $(event.target);
     // destroy dialog data and all jquery ui widgets inside it (form wizard for example):
@@ -63,14 +69,17 @@ defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
     errorPlacement: function(error, element) {
         if (error.length > 0 && error.text() != "") {
             element.parents(".ui-layout-content:first").before(error);
-            element.parents(".ui-layout-center").eq(1).layout().resizeAll();
+            var layoutCenter = element.parents(".ui-layout-center").first();
+            var layoutElement = layoutCenter.parents(":not(form)").first();
+            layoutElement.layout().resizeAll();
         }
     },
     success: function(label) {
         if (label.length > 0 && label.parent().length > 0) {
-            var container = label.parents(".ui-layout-center").eq(1);
+            var layoutCenter = label.parents(".ui-layout-center").first();
+            var layoutElement = layoutCenter.parents(":not(form)").first();
             label.remove();
-            container.layout().resizeAll();
+            layoutElement.layout().resizeAll();
         }
     }
 });

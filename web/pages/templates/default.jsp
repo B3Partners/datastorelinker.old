@@ -32,7 +32,6 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script-->
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.history/jquery.history.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery.validate/jquery.validate.messages_nl.js"></script>
