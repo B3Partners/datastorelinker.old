@@ -85,10 +85,8 @@ public class ProcessAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        inputs = session.createQuery("from Inout where type.id = 1").list();
-        //inputsFile = session.createQuery("from Inout where typeId = 1 and datatypeId = 2").list();
-        //inputsDB = session.createQuery("from Inout where typeId = 1 and datatypeId = 1").list();
-        outputs = session.createQuery("from Inout where type.id = 2").list();
+        inputs = session.createQuery("from Inout where type.id = 1 order by name").list();
+        outputs = session.createQuery("from Inout where type.id = 2 order by name").list();
 
         if (actionsList == null)
             actionsList = new JSONArray().toString();

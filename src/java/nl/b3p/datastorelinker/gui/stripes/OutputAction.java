@@ -44,7 +44,7 @@ public class OutputAction extends DatabaseAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        outputs = session.createQuery("from Inout where type.id = 2").list();
+        outputs = session.createQuery("from Inout where type.id = 2 order by name").list();
 
         return new ForwardResolution(getListJsp());
     }

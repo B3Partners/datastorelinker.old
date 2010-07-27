@@ -50,7 +50,7 @@ public class FileAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        files = session.createQuery("from File").list();
+        files = session.createQuery("from File order by name").list();
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -96,20 +96,9 @@ public class FileAction extends DefaultAction {
         try {
             if (req.isMultipart()) {
                 filedata = req.getFileParameterValue("Filedata");
-                /*for (Enumeration<String> e = req.getFileParameterNames(); e.hasMoreElements(); ) {
-                    String name = e.nextElement();
-                    log.debug("fn: " + name);
-                }*/
             } else if (req.getParameter("status") != null) {
-                log.debug("qwe: " + req.getParameter("status"));
+                //log.debug("qwe: " + req.getParameter("status"));
                 JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
-                //JsonConfig jsonConfig = new JsonConfig();
-                //jsonConfig.setRootClass(Map.class);
-                //jsonConfig.setRootClass(UploaderStatus.class);
-                //jsonConfig.setEnclosedType(UploaderStatus.class);
-                //uploaderStatuses = (Map<Integer,UploaderStatus>)JSONObject.toBean(jsonObject, Map.class);
-                //uploaderStatuses = (Map<Integer,UploaderStatus>)JSONSerializer.toJava(jsonObject, jsonConfig);
-                //uploaderStatus = (UploaderStatus)JSONSerializer.toJava(jsonObject, jsonConfig);
                 uploaderStatus = (UploaderStatus)JSONObject.toBean(jsonObject, UploaderStatus.class);
             }
         } catch (Exception e) {

@@ -57,7 +57,7 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        inputs = session.createQuery("from Inout where type.id = 1").list();
+        inputs = session.createQuery("from Inout where type.id = 1 order by name").list();
 
         return new ForwardResolution(LIST_JSP);
     }
