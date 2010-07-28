@@ -218,9 +218,14 @@
         });
 
         $("#exportToXml").click(function() {
-            var selectedProcessId = $("#processesListContainer :radio:checked").val();
+            if (!$("#processForm").valid())
+                return defaultButtonClick(this);
+
+			var selectedProcessId = $("#processesListContainer :radio:checked").val();
             var newLocation = "${processUrl}" + "?exportToXml=&selectedProcessId=" + selectedProcessId;
             window.location.replace(newLocation);
+			
+			return defaultButtonClick(this);
         });
     });
 
