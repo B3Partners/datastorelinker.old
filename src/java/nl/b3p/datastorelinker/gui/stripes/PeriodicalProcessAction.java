@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
@@ -160,17 +161,23 @@ public class PeriodicalProcessAction extends DefaultAction {
 
     @Transactional
     public Resolution cancelExecutePeriodically() {
+        cancelExecutePeriodicallyImpl(selectedProcessId, getContext().getServletContext());
+        
+        return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
+    }
+
+    public void cancelExecutePeriodicallyImpl(Long processId, ServletContext servletContext) {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
         nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
-                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+                session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
 
         Schedule schedule = process.getSchedule();
         if (schedule != null) {
             try {
                 // try to unschedule from Quartz
-                Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
+                Scheduler scheduler = SchedulerUtils.getScheduler(servletContext);
                 scheduler.deleteJob(schedule.getJobName(), null);
 
                 // if success, we remove the schedule from our own tables
@@ -180,8 +187,6 @@ public class PeriodicalProcessAction extends DefaultAction {
                 log.error(ex);
             }
         }
-        
-        return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
     }
 
     // only use this method for non-advanced cron expressions created by createCronExpression() !

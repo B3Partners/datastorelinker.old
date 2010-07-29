@@ -222,6 +222,9 @@ public class ProcessAction extends DefaultAction {
 
     @Transactional
     public Resolution delete() {
+        PeriodicalProcessAction ppaction = new PeriodicalProcessAction();
+        ppaction.cancelExecutePeriodicallyImpl(selectedProcessId, getContext().getServletContext());
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
