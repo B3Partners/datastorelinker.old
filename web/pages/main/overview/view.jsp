@@ -85,4 +85,28 @@
         <div id="outputOverviewContainer" class="action-list" style="height: 300px">
         </div>
     </div>
+
+    <fmt:message var="emailTooltip" key="emailAddressProcessDoneDescription"/>
+    <fmt:message var="subjectTooltip" key="subjectProcessDoneDescription"/>
+    <div style="top: 340px; position: absolute">
+        <table>
+            <tr title="${emailTooltip}">
+                <td>
+                    <stripes:label for="emailAddress" name="emailAddressProcessDone"/>
+                </td>
+                <td>
+                    <stripes:text id="emailAddress" name="emailAddress" size="50" class="email required"/>
+                </td>
+            </tr>
+            <tr title="${subjectTooltip}">
+                <td title="">
+                    <stripes:label for="subject" name="subjectProcessDone"/>
+                </td>
+                <td>
+                    <stripes:text id="subject" name="subject" size="50" class="required"/>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
 </div>

@@ -67,19 +67,15 @@
     <welcome-file-list>
         <welcome-file>/pages/index.jsp</welcome-file>
     </welcome-file-list>
-    <!-- See http://www.stripesframework.org/display/stripes/Localization (bottom of the page) -->
-    <context-param>
-        <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-        <param-value>StripesResources</param-value>
-    </context-param>
-    <context-param>
-        <param-name>uploadDirectory</param-name>
-        <param-value>c:\uploadedFiles</param-value>
-    </context-param>
 
-<!-- Quartz Scheduler init: -->
-<!--
-We use the defaults:-->
+    <listener>
+        <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>nl.b3p.commons.geotools.GeoToolsLoggingInitializer</listener-class>
+    </listener>
+
+    <!-- Quartz Scheduler init: -->
     <context-param>
         <param-name>quartz:config-file</param-name>
         <param-value>/quartz.properties</param-value>
@@ -93,11 +89,34 @@ We use the defaults:-->
         <param-value>true</param-value>
     </context-param>
 
-    <listener>
-        <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>nl.b3p.commons.geotools.GeoToolsLoggingInitializer</listener-class>
-    </listener>
+    <!-- See http://www.stripesframework.org/display/stripes/Localization (bottom of the page) -->
+    <context-param>
+        <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+        <param-value>StripesResources</param-value><!-- huidige locale wordt hier automatisch slim achtergeplakt (_nl etc.) -->
+    </context-param>
+
+
+    <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
+    <context-param>
+        <param-name>uploadDirectory</param-name>
+        <param-value>c:\uploadedFiles</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultSmtpHost</param-name>
+        <param-value>kmail.b3partners.nl</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultFromEmailAddress</param-name>
+        <param-value>noreply@b3partners.nl</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultToEmailAddress</param-name>
+        <param-value>erikvandepol@b3partners.nl</param-value>
+    </context-param>
+    <context-param>
+        <param-name>defaultSubject</param-name>
+        <param-value>DataStoreLinker process is klaar.</param-value>
+    </context-param>
+
 
 </web-app>

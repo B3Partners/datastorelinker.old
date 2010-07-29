@@ -20,6 +20,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.entity.Mail;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
 import nl.b3p.datastorelinker.json.SuccessMessage;
@@ -64,6 +65,9 @@ public class ProcessAction extends DefaultAction {
     private String actionsList;
     private String jobUUID;
 
+    private String emailAddress;
+    private String subject;
+
     @Transactional
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -92,6 +96,12 @@ public class ProcessAction extends DefaultAction {
 
         if (actionsList == null)
             actionsList = new JSONArray().toString();
+
+        if (emailAddress == null)
+            emailAddress = getContext().getServletContext().getInitParameter("defaultToEmailAddress");
+
+        if (subject == null)
+            subject = getContext().getServletContext().getInitParameter("defaultSubject");
 
         //log.debug("actionsList:");
         //log.debug(actionsList);
@@ -124,11 +134,11 @@ public class ProcessAction extends DefaultAction {
             actionsList = new JSONArray().toString();
 
         JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        log.debug("beforeRemove: " + actionsListJSONArray);
+        //log.debug("beforeRemove: " + actionsListJSONArray);
         ActionsAction.removeViewData(actionsListJSONArray);
-        log.debug("afterRemove: " + actionsListJSONArray);
+        //log.debug("afterRemove: " + actionsListJSONArray);
         ActionsAction.addExpandableProperty(actionsListJSONArray);
-        log.debug("afterExpandableProp: " + actionsListJSONArray);
+        //log.debug("afterExpandableProp: " + actionsListJSONArray);
 
         JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
         XMLSerializer xmlSerializer = new XMLSerializer();
@@ -144,7 +154,23 @@ public class ProcessAction extends DefaultAction {
         process.setActionsString(actionsListXml);
         //log.debug("actionsList: " + actionsList);
         process.setDrop(drop);
+        
+        Mail mail = null;
+        if (process.getMail() == null)
+            mail = new Mail();
+        else
+            mail = process.getMail();
 
+        mail.setToEmailAddress(emailAddress);
+        mail.setSubject(subject);
+        mail.setFromEmailAddress(getContext().getServletContext().getInitParameter("defaultFromEmailAddress"));
+        mail.setSmtpHost(getContext().getServletContext().getInitParameter("defaultSmtpHost"));
+
+        if (process.getMail() == null) {
+            session.save(mail);
+            process.setMail(mail);
+        }
+        
         if (selectedProcessId == null)
             selectedProcessId = (Long)session.save(process);
         
@@ -188,6 +214,8 @@ public class ProcessAction extends DefaultAction {
         //log.debug(actionsList);
         
         drop = process.getDrop();
+        emailAddress = process.getMail().getToEmailAddress();
+        subject = process.getMail().getSubject();
 
         return create();
     }
@@ -377,6 +405,22 @@ public class ProcessAction extends DefaultAction {
 
     public void setDrop(Boolean drop) {
         this.drop = drop;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
     }
 
 }
