@@ -18,7 +18,7 @@ public class DefaultErrorResolution extends StreamingResolution {
     protected final static int DEFAULT_CUSTOM_ERROR_CODE = 1000;
 
     public DefaultErrorResolution(String errorMessage) {
-        super(DEFAULT_CONTENT_TYPE, errorMessage);
+        super(DEFAULT_CONTENT_TYPE, errorMessage == null ? "No error message." : errorMessage);
     }
 
     @Override

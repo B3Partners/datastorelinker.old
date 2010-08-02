@@ -28,6 +28,7 @@ import nl.b3p.datastorelinker.util.DataStoreLinkJob;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
+import nl.b3p.datastorelinker.util.Util;
 import nl.b3p.geotools.data.linker.Status;
 import org.hibernate.Session;
 import org.quartz.JobDetail;
@@ -312,7 +313,7 @@ public class ProcessAction extends DefaultAction {
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
         try {
-            String xml = MarshalUtils.marshal(process);
+            String xml = MarshalUtils.marshalProcess(process, MarshalUtils.getDslSchema());
             return new StreamingResolution("text/xml", xml).setFilename("dsl_process.xml");
         } catch(Exception ex) {
             log.error(ex);
