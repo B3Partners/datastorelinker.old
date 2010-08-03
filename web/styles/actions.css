@@ -19,7 +19,7 @@
 }
 
 .action-list {
-    height: 500px;
+    height: /*100%;*/500px;
     max-height: 500px;
     /*overflow-x:hidden;
     overflow-y:auto;*/

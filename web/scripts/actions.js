@@ -190,7 +190,7 @@ function openParametersDialog(action) {
         label.append(parameter.name);
         key.append(label);
         var value = $("<td></td>");
-        var input = $("<input />").attr({
+        var input = $("<input />").addClass("required").attr({
             name: parameter.paramId // required for validation
         });
         if (parameter.type && parameter.type === "boolean") {

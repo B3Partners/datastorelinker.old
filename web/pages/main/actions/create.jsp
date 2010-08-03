@@ -5,6 +5,8 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<stripes:url var="inputUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>
+
 <script type="text/javascript">
     $(document).ready(function() {
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
@@ -14,6 +16,19 @@
 
         fillActionsList(actionsWorkbenchList, "#actionsWorkbenchContainer", "${contextPath}");
         fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", dragActionsPlaceholder, true);
+
+        $("#actionsMainContainer").layout(defaultLayoutOptions);
+        $("#actionsListsContainer").layout($.extend({}, defaultLayoutOptions, {
+            resizable: true,
+            east__size: 300,
+            west__size: 300
+        }));
+
+        // layout plugin messes up z-indices; sets them to 1
+        var topZIndexCss = { "z-index": "auto" };
+        $("#actionsListsContainer, #showExampleContainer").css(topZIndexCss);
+        $("#actionsListsContainer > div").css(topZIndexCss);
+        $("#actionsMainContainer .ui-layout-resizer").css(topZIndexCss);
 
         $("#actionsMainContainer .action").live("mouseenter",
             function() { $(this).addClass("action-hover"); }
@@ -64,22 +79,59 @@
             }
         });
 
+        $("#exampleRecordCheckBox").click(function() {
+            if ($(this).is(":checked")) {
+                if ($("#exampleRecordContainer").html() == "") {
+                    // formwiz zet gehide wizardpages uit. dus zelf opzoeken:
+                    var inputId = $("#inputListContainer input:checked").val();
+                    ajaxOpen({
+                        url: "${inputUrl}",
+                        event: "getExampleRecord",
+                        extraParams: [{
+                            name: "selectedInputId",
+                            value: inputId
+                        }],
+                        containerSelector: "#exampleRecordContainer"
+                    });
+                } else {
+                    $("#exampleRecordContainer").show(500);
+                }
+            } else {
+                $("#exampleRecordContainer").hide(500);
+            }
+            // niet false returnen aangezien de checkbox wel op true gezet moet worden.
+        });
+
     });
 
 </script>
 
-<div id="actionsMainContainer">
-    <div id="actionsList" class="ui-widget-content ui-corner-all" style="width: 300px; left: 50px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 284px">Actielijst</div>
-        <div id="actionsListContainer" class="action-list"></div>
+<div id="actionsMainContainer" style="width: 100%; height: 100%;">
+    <div id="actionsListsContainer" class="ui-layout-center">
+        <div class="ui-layout-west">
+            <div id="actionsList" class="ui-widget-content ui-corner-all" style="margin-left: 10px">
+                <div class="ui-widget-header ui-corner-all action-list-header">Actielijst</div>
+                <div id="actionsListContainer" class="action-list ui-layout-content"></div>
+            </div>
+        </div>
+
+        <div id="actionsText" class="ui-layout-center">
+
+        </div>
+
+        <div class="ui-layout-east">
+            <div id="actionsWorkbench" class="ui-widget-content ui-corner-all" style="margin-right: 10px">
+                <div class="ui-widget-header ui-corner-all action-list-header">Werkbank</div>
+                <div id="actionsWorkbenchContainer" class="action-list ui-layout-content"></div>
+            </div>
+        </div>
     </div>
 
-    <div id="actionsText" style="width: 100px; left: 350px; position: absolute">
-
-    </div>
-
-    <div id="actionsWorkbench" class="ui-widget-content ui-corner-all" style="width: 300px; left: 450px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 284px">Werkbank</div>
-        <div id="actionsWorkbenchContainer" class="action-list"></div>
+    <div id="showExampleContainer" class="ui-layout-south">
+        <div>
+            <input type="checkbox" id="exampleRecordCheckBox" name="showExampleRecord"/>
+            <fmt:message key="showExampleRecord"/>
+        </div>
+        <div id="exampleRecordContainer" style="height: 50px"></div>
     </div>
 </div>

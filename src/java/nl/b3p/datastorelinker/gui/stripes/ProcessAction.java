@@ -28,7 +28,6 @@ import nl.b3p.datastorelinker.util.DataStoreLinkJob;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
-import nl.b3p.datastorelinker.util.Util;
 import nl.b3p.geotools.data.linker.Status;
 import org.hibernate.Session;
 import org.quartz.JobDetail;

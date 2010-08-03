@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.List;
@@ -27,12 +26,11 @@ import org.hibernate.Session;
  */
 @Transactional
 public class DatabaseAction extends DefaultAction {
-    private Log log = Log.getInstance(DatabaseAction.class);
 
+    private Log log = Log.getInstance(DatabaseAction.class);
     private List<Database> databases;
     private Database selectedDatabase;
     protected Long selectedDatabaseId;
-
     // PostGIS specific:
     private Integer dbType;
     private String host;
@@ -66,7 +64,7 @@ public class DatabaseAction extends DefaultAction {
     // Always returns input databases! Should be overridden if necessary
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
         databases = session.getNamedQuery("Database.findInput").list();
 
@@ -75,7 +73,7 @@ public class DatabaseAction extends DefaultAction {
 
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
         session.delete(session.get(Database.class, selectedDatabaseId));
 
@@ -84,9 +82,9 @@ public class DatabaseAction extends DefaultAction {
 
     public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
-        selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
+        selectedDatabase = (Database) session.get(Database.class, selectedDatabaseId);
 
         return create();
     }
@@ -100,37 +98,40 @@ public class DatabaseAction extends DefaultAction {
 
     protected Database saveDatabase() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
         Database database = getDatabase();
 
         // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
-        if (selectedDatabaseId == null)
+        if (selectedDatabaseId == null) {
             session.save(database);
-        
+
+            
+        }
         return database;
     }
 
     protected Database getDatabase() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
         Database database;
-        if (selectedDatabaseId == null)
+        if (selectedDatabaseId == null) {
             database = new Database();
-        else
-            database = (Database)session.get(Database.class, selectedDatabaseId);
+            
+        } else {
+            database = (Database) session.get(Database.class, selectedDatabaseId);
 
-        // TODO: serverside en clientside validation
+            // TODO: serverside en clientside validation
 
-        DatabaseType dbt = (DatabaseType)session.createQuery("from DatabaseType where id = :id")
-                .setParameter("id", dbType)
-                .uniqueResult();
+
+        }
+        DatabaseType dbt = (DatabaseType) session.createQuery("from DatabaseType where id = :id").setParameter("id", dbType).uniqueResult();
 
         database.setName(host + "/" + databaseName);
         database.setType(dbt);
 
-        switch(dbt.getId()) {
+        switch (dbt.getId()) {
             case 1: // Oracle
                 database.setHost(host);
                 database.setDatabaseName(databaseName);
@@ -165,7 +166,7 @@ public class DatabaseAction extends DefaultAction {
     public Resolution testConnection() {
         try {
             DataStoreLinker.openDataStore(getDatabase());
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
         }
         return new JSONResolution(new SuccessMessage());
@@ -298,5 +299,4 @@ public class DatabaseAction extends DefaultAction {
     public void setSelectedDatabase(Database selectedDatabase) {
         this.selectedDatabase = selectedDatabase;
     }
-
 }

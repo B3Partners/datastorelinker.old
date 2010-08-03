@@ -32,12 +32,10 @@
                 event: "create",
                 containerId: "actionsContainer",
                 openInDialog: true,
-                dialogOptions: {
+                dialogOptions: $.extend({}, defaultDialogOptions, {
                     title: "<fmt:message key="createActions"/>",
-                    width: 800,
-                    height: 700,
-                    modal: true,
-                    close: defaultDialogClose,
+                    width: 750,//Math.floor($('body').width() * .60),
+                    height: 700,//Math.floor($('body').height() * .80), // actielijst hoogte is absoluut dus we kunnen dit nog niet dynamisch maken
                     buttons: {
                         "<fmt:message key="finish"/>" : function() {
                             var actionsListJSON = getCreatedActionList();
@@ -45,8 +43,12 @@
                             fillActionsList(actionsListJSON, "#actionsOverviewContainer", "${contextPath}", actionsPlaceholder);
                             $("#actionsContainer").dialog("close");
                         }
+                    },
+                    resize: function(event, ui) {
+                        $("#actionsMainContainer").layout().resizeAll();
+                        $("#actionsListsContainer").layout().resizeAll();
                     }
-                }
+                })
             });
         });
 

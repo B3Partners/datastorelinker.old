@@ -5,6 +5,8 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -17,11 +19,19 @@ import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.InoutDatatype;
 import nl.b3p.datastorelinker.entity.InoutType;
+import nl.b3p.datastorelinker.util.DefaultErrorResolution;
+import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
+import org.geotools.data.DataStore;
+import org.geotools.feature.FeatureCollection;
 import org.geotools.util.logging.Log4JLoggerFactory;
 import org.geotools.util.logging.Logging;
 import org.hibernate.Session;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 
 /**
  *
@@ -35,6 +45,7 @@ public class InputAction extends DefaultAction {
     private final static String TABLE_LIST_JSP = "/pages/main/input/table/list.jsp";
     private final static String CREATE_DATABASE_JSP = "/pages/main/input/database/create.jsp";
     private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
+    private final static String EXAMPLE_RECORD_JSP = "/pages/main/actions/exampleRecord.jsp";
 
     static {
         Logging.ALL.setLoggerFactory(Log4JLoggerFactory.getInstance());
@@ -52,6 +63,9 @@ public class InputAction extends DefaultAction {
     private List<String> tables;
     private List<String> failedTables;
     private String selectedTable;
+
+    private List<String> columnNames;
+    private List<Object> recordValues;
 
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -189,10 +203,67 @@ public class InputAction extends DefaultAction {
                 throw new Exception("Error getting datatypes from DataStore.");
             }
         } catch(Exception e) {
-            log.error("Tables fetch error: " + e.getMessage());
-            // TODO: error to screen? Stripes / jQuery
-            return new ForwardResolution(TABLE_LIST_JSP);
+            String tablesError = "Fout bij ophalen tabellen. ";
+            log.error(tablesError + e.getMessage());
+            return new DefaultErrorResolution(tablesError);
         }
+    }
+
+    public Resolution getExampleRecord() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        Inout input = (Inout)session.get(Inout.class, selectedInputId);
+
+        try {
+            DataStore ds = null;
+            String tableName = null;
+            if (input.getDatabase() != null) {
+                ds = DataStoreLinker.openDataStore(input.getDatabase());
+                tableName = input.getTableName();
+            } else if (input.getFile() != null) {
+                ds = DataStoreLinker.openDataStore(input.getFile());
+            } else {
+                Exception ex = new Exception("unsupported input type.");
+                log.error(ex);
+                throw ex;
+            }
+            SimpleFeature feature = getExampleFeature(ds, tableName);
+
+            columnNames = new ArrayList<String>();
+            for (AttributeDescriptor desc : feature.getFeatureType().getAttributeDescriptors()) {
+                String col = desc.getLocalName();
+                String type = desc.getType().getBinding().getSimpleName();
+                columnNames.add(col + "(" + type + ")");
+            }
+            recordValues = feature.getAttributes();
+        } catch (Exception e) {
+            log.error(e);
+            return new DefaultErrorResolution(e.getMessage());
+        }
+        return new ForwardResolution(EXAMPLE_RECORD_JSP);
+    }
+
+    private SimpleFeature getExampleFeature(DataStore ds, String tableName) throws Exception {
+        //log.debug((Object[])ds.getTypeNames());
+        if (tableName == null) {
+            if (ds.getTypeNames().length == 0)
+                throw new IllegalArgumentException("no typeNames");
+            tableName = ds.getTypeNames()[0];
+        }
+
+        FeatureCollection<SimpleFeatureType, SimpleFeature> fc =
+                ds.getFeatureSource(tableName).getFeatures();
+
+        Iterator<SimpleFeature> iterator = fc.iterator();
+        try {
+            if (iterator.hasNext())
+                return iterator.next();
+        } finally {
+            fc.close(iterator);
+        }
+
+        throw new Exception("Geen features gevonden.");
     }
 
     public List<Inout> getInputs() {
@@ -269,6 +340,22 @@ public class InputAction extends DefaultAction {
 
     public String getUploadDirectory() {
         return getContext().getServletContext().getInitParameter("uploadDirectory");
+    }
+
+    public List<String> getColumnNames() {
+        return columnNames;
+    }
+
+    public void setColumnNames(List<String> columnNames) {
+        this.columnNames = columnNames;
+    }
+
+    public List<Object> getRecordValues() {
+        return recordValues;
+    }
+
+    public void setRecordValues(List<Object> recordValues) {
+        this.recordValues = recordValues;
     }
     
 }
