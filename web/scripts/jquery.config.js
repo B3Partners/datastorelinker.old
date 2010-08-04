@@ -68,7 +68,7 @@ defaultRadioValidateOptions = $.extend({}, defaultValidateOptions, {
 defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
     errorPlacement: function(error, element) {
         if (error.length > 0 && error.text() != "") {
-            element.parents(".ui-layout-content:first").before(error);
+            element.parents(".ui-formwizard-content").children().first().append(error);
             var layoutCenter = element.parents(".ui-layout-center").first();
             var layoutElement = layoutCenter.parents(":not(form)").first();
             layoutElement.layout().resizeAll();
@@ -83,6 +83,25 @@ defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
         }
     }
 });
+
+/*defaultFormWizardValidateOptionsOld = $.extend({}, defaultValidateOptions, {
+    errorPlacement: function(error, element) {
+        if (error.length > 0 && error.text() != "") {
+            element.parents(".ui-layout-content:first").before(error);
+            var layoutCenter = element.parents(".ui-layout-center").first();
+            var layoutElement = layoutCenter.parents(":not(form)").first();
+            layoutElement.layout().resizeAll();
+        }
+    },
+    success: function(label) {
+        if (label.length > 0 && label.parent().length > 0) {
+            var layoutCenter = label.parents(".ui-layout-center").first();
+            var layoutElement = layoutCenter.parents(":not(form)").first();
+            label.remove();
+            layoutElement.layout().resizeAll();
+        }
+    }
+});*/
 
 defaultLayoutOptions = {
     resizable: false,
@@ -105,7 +124,6 @@ defaultScrollToOptions = {
     //easing: "iets uit easing plugin"
 };
 
-// TODO: localization
 formWizardConfig = {
     historyEnabled : false,
     formPluginEnabled : true,
@@ -121,14 +139,4 @@ function formWizardStep(data) {
     // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met buttonset van jQuery UI.
     // Dit doet het niet automatisch.
     $("#" + data.currentStep + " .ui-buttonset").buttonset("enable");
-}
-
-/**
- * Returns a css-object for the top z-index, excluding certain application specific classes
- */
-function getTopZIndexCss() {
-    var currentZIndex = $.maxZIndex({
-        exclude: [".ui-resizable-handle", ".blockUI"]
-    });
-    return { "z-index": (currentZIndex) };
 }

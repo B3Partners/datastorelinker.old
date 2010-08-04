@@ -76,7 +76,8 @@
 
         // do layout again because we just added the uploader.
         // We could skip the first but it is more complete this way.
-        $("#inputContainer").layout(defaultDialogLayoutOptions).initContent("center");
+        if ($("#inputContainer").length > 0)
+            $("#inputContainer").layout(defaultDialogLayoutOptions).initContent("center");
     });
 </script>
 

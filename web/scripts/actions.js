@@ -11,7 +11,7 @@ var actionsPlaceholder = $("<div></div>")
         position: "absolute",
         "text-align": "center"
     })
-    .html("<em>Klik hier om acties te defini&euml;ren...</em>");
+    .append($("<em></em>").html(I18N.defineActions));
 
 var dragActionsPlaceholder = $("<div></div>")
     .addClass("placeholder")
@@ -21,7 +21,7 @@ var dragActionsPlaceholder = $("<div></div>")
         position: "absolute",
         "text-align": "center"
     })
-    .html("<em>Sleep uw acties hierheen...</em>");
+    .append($("<em></em>").html(I18N.dragActions));
 
 // Always use this function to get to the parameters of an Action. 
 function getParameters(action) {
@@ -154,7 +154,7 @@ function appendParametersButton(div) {
     if (hasParameters) {
         var parametersButton = $("<input />").attr({
             type: "button",
-            value: "Parameters..."
+            value: I18N.parameters
         });
         parametersButton.button();
         parametersButton.click(function() {
@@ -209,43 +209,40 @@ function openParametersDialog(action) {
 
     parameterForm.validate(defaultValidateOptions);
 
-    parametersDialog.dialog({
-        title: "Bewerk parameters...",
-        width: 550,
-        modal: true,
-        buttons: {
-            "Annuleren": function(event, ui) {
-                parametersDialog.dialog("close");
-            },
-            "OK": function(event, ui) {
-                if (!$("#parameterForm").valid())
-                    return;
+    parametersDialogButtons = {};
+    parametersDialogButtons[I18N.cancel] = function(event, ui) {
+        parametersDialog.dialog("close");
+    }
+    parametersDialogButtons[I18N.ok] = function(event, ui) {
+        if (!$("#parameterForm").valid())
+            return;
 
-                setParameters(action, []);
-                //log(getParameters(action));
+        setParameters(action, []);
+        //log(getParameters(action));
 
-                parametersDialog.find("tr").each(function(index, parameterRow) {
-                    var paramMetadata = $(parameterRow).metadata();
-                    //log("paramMetadata");
-                    //log(paramMetadata);
+        parametersDialog.find("tr").each(function(index, parameterRow) {
+            var paramMetadata = $(parameterRow).metadata();
+            //log("paramMetadata");
+            //log(paramMetadata);
 
-                    var input = $(parameterRow).find("input");
+            var input = $(parameterRow).find("input");
 
-                    if (input.is(":checkbox")) {
-                        paramMetadata.value = input.is(":checked");
-                    } else {
-                        paramMetadata.value = input.val();
-                    }
-                    
-                    getParameters(action).push(paramMetadata);
-                });
-                //log(getParameters(action));
-                
-                parametersDialog.dialog("close");
+            if (input.is(":checkbox")) {
+                paramMetadata.value = input.is(":checked");
+            } else {
+                paramMetadata.value = input.val();
             }
-        },
-        close: function(event, ui) {
-            defaultDialogClose(event, ui);
-        }
-    });
+
+            getParameters(action).push(paramMetadata);
+        });
+        //log(getParameters(action));
+
+        parametersDialog.dialog("close");
+    }
+
+    parametersDialog.dialog($.extend({}, defaultDialogOptions, {
+        title: I18N.editParameters,
+        width: 550,
+        buttons: parametersDialogButtons
+    }));
 }

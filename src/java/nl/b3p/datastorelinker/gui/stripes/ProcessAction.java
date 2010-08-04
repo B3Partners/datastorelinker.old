@@ -68,6 +68,9 @@ public class ProcessAction extends DefaultAction {
     private String emailAddress;
     private String subject;
 
+    // dummy variable
+    private Boolean admin;
+
     @Transactional
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -424,6 +427,14 @@ public class ProcessAction extends DefaultAction {
 
     public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 
 }

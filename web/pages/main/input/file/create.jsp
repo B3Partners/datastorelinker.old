@@ -11,10 +11,9 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#deleteFile").button();
+        initFile();
 
-        $("#createInputBackButton").button();
-        $("#createInputNextButton").button();
+        $("#createInputBackButton, #createInputNextButton").button();
 
         $("#createInputForm").formwizard(
             $.extend({}, formWizardConfig, {
@@ -38,57 +37,6 @@
 
         // layout plugin messes up z-indices; sets them to 1
         $("#inputContainer, #SelecteerBestand, #inputContainer .wizardButtonsArea").css({ "z-index": "auto" });
-
-        $("#deleteFile").click(function() {
-            if (!$("#createInputForm").valid())
-                return defaultButtonClick(this);
-
-            $("<div><fmt:message key="deleteFileAreYouSure"/></div>").attr("id", "createFileContainer").appendTo(document.body);
-
-            $("#createFileContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "<fmt:message key="deleteFile"/>",
-                width: 350,
-                buttons: {
-                    "<fmt:message key="no"/>": function() {
-                        $(this).dialog("close");
-                    },
-                    "<fmt:message key="yes"/>": function() {
-                        $.blockUI(blockUIOptions);
-                        ajaxOpen({
-                            url: "${fileUrl}",
-                            formSelector: "#createInputForm",
-                            event: "delete",
-                            containerSelector: "#filesListContainer",
-                            ajaxOptions: {globals: false}, // prevent blockUI being called 3 times. Called manually.
-                            successAfterContainerFill: function() {
-                                ajaxOpen({
-                                    url: "${inputUrl}",
-                                    event: "list",
-                                    containerSelector: "#inputListContainer",
-                                    ajaxOptions: {globals: false},
-                                    successAfterContainerFill: function() {
-                                        ajaxOpen({
-                                            url: "${processUrl}",
-                                            event: "list",
-                                            containerSelector: "#processesListContainer",
-                                            ajaxOptions: {globals: false},
-                                            successAfterContainerFill: function() {
-                                                $("#createFileContainer").dialog("close");
-                                                $.unblockUI(unblockUIOptions);
-                                            }
-                                        });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-            }));
-
-            return defaultButtonClick(this);
-        });
-
-
     });
 
 </script>
@@ -96,16 +44,7 @@
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <stripes:wizard-fields/>
     <div id="<fmt:message key="inputFile.selectFile.short"/>" class="step submitstep ui-layout-center">
-        <h1><fmt:message key="inputFile.selectFile"/></h1>
-        <div id="filesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
-            <%@include file="/pages/main/file/list.jsp" %>
-        </div>
-        <div>
-            <%@include file="/pages/main/file/create.jsp" %>
-            <stripes:link href="#" id="deleteFile" onclick="return false;">
-                <fmt:message key="delete"/>
-            </stripes:link>
-        </div>
+        <%@include file="/pages/main/file/main.jsp" %>
     </div>
 
     <div class="wizardButtonsArea ui-layout-south">

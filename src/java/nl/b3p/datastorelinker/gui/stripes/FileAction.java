@@ -38,6 +38,7 @@ public class FileAction extends DefaultAction {
     private final static Log log = Log.getInstance(FileAction.class);
     private final static String CREATE_JSP = "/pages/main/file/create.jsp";
     private final static String LIST_JSP = "/pages/main/file/list.jsp";
+    private final static String ADMIN_JSP = "/pages/management/fileAdmin.jsp";
     private List<File> files;
 
     private Long selectedFileId;
@@ -45,6 +46,11 @@ public class FileAction extends DefaultAction {
     private FileBean filedata;
     //private Map<Integer, UploaderStatus> uploaderStatuses;
     private UploaderStatus uploaderStatus;
+
+    public Resolution admin() {
+        list();
+        return new ForwardResolution(ADMIN_JSP);
+    }
 
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();

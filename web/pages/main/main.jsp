@@ -5,6 +5,7 @@
 --%>
 
 <%@include file="/pages/commons/taglibs.jsp" %>
+<%@include file="/pages/commons/urls.jsp" %>
 
 <stripes:layout-render name="/pages/templates/default.jsp" pageTitle="DataStoreLinker">
     <stripes:layout-component name="content">
@@ -12,6 +13,10 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#tabs").tabs({
+                    select: function(event, ui) {
+                        // voorkomt het dubbel voorkomen van id's en dus fouten.
+                        $("#tabsTarget").children().empty();
+                    },
                     /*fx: {
                         opacity: "toggle"
                     },*/
@@ -27,8 +32,6 @@
 
                 //$("#tabs").layout(defaultLayoutOptions);
                 //$("#tabHome").layout(defaultLayoutOptions);
-                //$("#tabManagement").layout(defaultLayoutOptions);
-                //$("#tabOptions").layout(defaultLayoutOptions);
             });
         </script>
 
@@ -40,20 +43,32 @@
                     </stripes:link>
                 </li>
                 <li>
-                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ManagementAction" title="tabManagement">
-                        <fmt:message key="menu.management"/>
+                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction" title="tabInput">
+                        <fmt:message key="menu.admin.input"/>
                     </stripes:link>
                 </li>
                 <li>
-                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OptionsAction" title="tabOptions">
-                        <fmt:message key="menu.options"/>
+                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction" title="tabOutput">
+                        <fmt:message key="menu.admin.output"/>
+                    </stripes:link>
+                </li>
+                <li>
+                    <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction" title="tabDatabase">
+                        <fmt:message key="menu.admin.database"/>
+                    </stripes:link>
+                </li>
+                <li>
+                    <stripes:link href="${fileUrl}?admin=" title="tabFile">
+                        <fmt:message key="menu.admin.file"/>
                     </stripes:link>
                 </li>
             </ul>
             <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
                 <div id="tabHome" title="tabHome" style="height: 100%"></div>
-                <div id="tabManagement" title="tabManagement" style="height: 100%"></div>
-                <div id="tabOptions" title="tabOptions" style="height: 100%"></div>
+                <div id="tabInput" title="tabInput" style="height: 100%"></div>
+                <div id="tabOutput" title="tabOutput" style="height: 100%"></div>
+                <div id="tabDatabase" title="tabDatabase" style="height: 100%"></div>
+                <div id="tabFile" title="tabFile" style="height: 100%"></div>
             </div>
         </div>
 

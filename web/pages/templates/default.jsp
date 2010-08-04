@@ -24,6 +24,8 @@
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/actions.css" />
 
+            <!-- 3rd party libs: -->
+            <!-- jQuery (UI) and plugins -->
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui.js"></script>
@@ -47,13 +49,20 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.maxzindex.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo-min.js"></script-->
-            
-            <script type="text/javascript" src="${contextPath}/scripts/i18n.js.jsp"></script>
+
+            <!-- other 3rd party libs -->
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
+
+            <!-- B3p libs: -->
+            <script type="text/javascript" src="${contextPath}/scripts/log.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/i18n.js.jsp"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
+
+            <!-- Dsl includes-->
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.config.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/actions.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/database.js"></script>
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.config.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/initFunctions.js"></script>
 
             <stripes:layout-component name="head"/>
 

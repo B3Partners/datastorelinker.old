@@ -6,6 +6,7 @@ package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -28,6 +29,9 @@ import org.hibernate.Session;
 public class DatabaseAction extends DefaultAction {
 
     private Log log = Log.getInstance(DatabaseAction.class);
+
+    private Boolean admin;
+
     private List<Database> databases;
     private Database selectedDatabase;
     protected Long selectedDatabaseId;
@@ -47,6 +51,18 @@ public class DatabaseAction extends DefaultAction {
     private String srs;
     private String colX;
     private String colY;
+
+
+    @DefaultHandler
+    public Resolution admin() {
+        setAdmin(true);
+        list();
+        return new ForwardResolution(getAdminJsp());
+    }
+
+    protected String getAdminJsp() {
+        return "/pages/management/databaseAdmin.jsp";
+    }
 
     protected String getCreateJsp() {
         return "/pages/main/database/create.jsp";
@@ -299,4 +315,13 @@ public class DatabaseAction extends DefaultAction {
     public void setSelectedDatabase(Database selectedDatabase) {
         this.selectedDatabase = selectedDatabase;
     }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
 }

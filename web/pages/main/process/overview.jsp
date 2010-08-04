@@ -4,9 +4,7 @@
     Author     : Erik van de Pol
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
-
-<stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
-<stripes:url var="periodicalProcessUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction"/>
+<%@include file="/pages/commons/urls.jsp" %>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -45,7 +43,7 @@
                 containerId: "processContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
-                    title: "<fmt:message key="newProcess"/>"
+                    title: I18N.newProcess
                 })
             });
 
@@ -59,7 +57,7 @@
                 containerId: "processContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
-                    title: "<fmt:message key="editProcess"/>"
+                    title: I18N.editProcess
                 })
             });
 
@@ -107,7 +105,7 @@
                 },
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
-                    title: "<fmt:message key="executeProcess"/>",
+                    title: I18N.executeProcess,
                     width: 600,
                     height: 300,
                     buttons: {
@@ -143,9 +141,9 @@
                 containerId: "processContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
-                    title: "<fmt:message key="periodicallyExecuteProcess"/>",
+                    title: I18N.periodicallyExecuteProcess,
                     width: 900,
-                    height: 600,
+                    //height: 600,
                     buttons: {
                         "<fmt:message key="cancel"/>": function() {
                             $(this).dialog("close");
@@ -164,10 +162,11 @@
             if (!$("#processForm").valid())
                 return defaultButtonClick(this);
 
-            $("<div><fmt:message key="cancelPeriodicallyExecuteProcessAreYouSure"/></div>").attr("id", "processContainer").appendTo(document.body);
+            $("<div></div>").html(I18N.cancelPeriodicallyExecuteProcessAreYouSure)
+                .attr("id", "processContainer").appendTo(document.body);
 
             $("#processContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "<fmt:message key="cancelPeriodicallyExecuteProcess"/>",
+                title: I18N.cancelPeriodicallyExecuteProcess,
                 buttons: {
                     "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
@@ -193,10 +192,11 @@
             if (!$("#processForm").valid())
                 return defaultButtonClick(this);
 
-            $("<div><fmt:message key="deleteProcessAreYouSure"/></div>").attr("id", "processContainer").appendTo(document.body);
+            $("<div></div>").html(I18N.deleteProcessAreYouSure)
+                .attr("id", "processContainer").appendTo(document.body);
 
             $("#processContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "<fmt:message key="deleteProcess"/>",
+                title: I18N.deleteProcess,
                 buttons: {
                     "<fmt:message key="no"/>": function() {
                         $(this).dialog("close");
@@ -221,11 +221,11 @@
             if (!$("#processForm").valid())
                 return defaultButtonClick(this);
 
-			var selectedProcessId = $("#processesListContainer :radio:checked").val();
+            var selectedProcessId = $("#processesListContainer :radio:checked").val();
             var newLocation = "${processUrl}" + "?exportToXml=&selectedProcessId=" + selectedProcessId;
             window.location.replace(newLocation);
 			
-			return defaultButtonClick(this);
+            return defaultButtonClick(this);
         });
     });
 

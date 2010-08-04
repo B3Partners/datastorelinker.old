@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
@@ -46,6 +47,7 @@ public class InputAction extends DefaultAction {
     private final static String CREATE_DATABASE_JSP = "/pages/main/input/database/create.jsp";
     private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
     private final static String EXAMPLE_RECORD_JSP = "/pages/main/actions/exampleRecord.jsp";
+    private final static String ADMIN_JSP = "/pages/management/inputAdmin.jsp";
 
     static {
         Logging.ALL.setLoggerFactory(Log4JLoggerFactory.getInstance());
@@ -66,6 +68,12 @@ public class InputAction extends DefaultAction {
 
     private List<String> columnNames;
     private List<Object> recordValues;
+
+    @DefaultHandler
+    public Resolution admin() {
+        list();
+        return new ForwardResolution(ADMIN_JSP);
+    }
 
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();

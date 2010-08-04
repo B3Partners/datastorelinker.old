@@ -3,18 +3,25 @@
     Created on : 26-jul-2010, 14:05:40
     Author     : Erik van de Pol
 --%>
-<%@include file="/pages/commons/taglibs.jsp" %>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
+<%@page import="java.util.ResourceBundle"%>
 
 <%@page contentType="text/javascript" %>
 
+<%@include file="/pages/commons/taglibs.jsp" %>
+
 I18N = {};
-I18N.yes = "<fmt:message key="yes"/>";
-I18N.no = "<fmt:message key="no"/>";
-I18N.ok = "<fmt:message key="ok"/>";
-I18N.cancel = "<fmt:message key="cancel"/>";
-I18N.next = "<fmt:message key="next"/>";
-I18N.previous = "<fmt:message key="previous"/>";
-I18N.finish = "<fmt:message key="finish"/>";
+<%
+ResourceBundle res = ResourceBundle.getBundle("StripesResources");
+for (String rawKey : res.keySet()) {
+    // will only print keys without a "." in it
+    if (!rawKey.contains(".")) {
+        String key = StringEscapeUtils.escapeJavaScript(rawKey);
+        String value = StringEscapeUtils.escapeJavaScript(res.getString(key));
+        out.println("I18N[\"" + key + "\"] = \"" + value + "\";");
+    }
+}
+%>
 I18N.daysOfTheWeek = {
     1: "<fmt:message key="sunday"/>",
     2: "<fmt:message key="monday"/>",
@@ -24,7 +31,6 @@ I18N.daysOfTheWeek = {
     6: "<fmt:message key="friday"/>",
     7: "<fmt:message key="saturday"/>"
 };
-
 I18N.monthsOfTheYear = {
     1: "<fmt:message key="january"/>",
     2: "<fmt:message key="february"/>",
@@ -39,4 +45,6 @@ I18N.monthsOfTheYear = {
     11: "<fmt:message key="november"/>",
     12: "<fmt:message key="december"/>"
 };
+
+log(I18N);
 

@@ -7,6 +7,7 @@ package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
@@ -28,6 +29,14 @@ public class OutputAction extends DatabaseAction {
 
     private List<Inout> outputs;
     private Long selectedOutputId;
+
+    // dummy variable (not used)
+    private Boolean drop;
+
+    @Override
+    protected String getAdminJsp() {
+        return "/pages/management/outputAdmin.jsp";
+    }
 
     @Override
     protected String getCreateJsp() {
@@ -112,6 +121,14 @@ public class OutputAction extends DatabaseAction {
 
     public void setSelectedOutputId(Long selectedOutputId) {
         this.selectedOutputId = selectedOutputId;
+    }
+
+    public Boolean getDrop() {
+        return drop;
+    }
+
+    public void setDrop(Boolean drop) {
+        this.drop = drop;
     }
 
 }

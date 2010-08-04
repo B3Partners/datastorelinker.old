@@ -147,8 +147,3 @@ function ajaxOpen(sendOptions) {
     
     return true;
 }
-
-function log(text) {
-    if (window.console && window.console.log)
-        console.log(text);
-}
