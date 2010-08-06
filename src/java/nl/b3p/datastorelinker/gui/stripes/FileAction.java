@@ -121,6 +121,14 @@ public class FileAction extends DefaultAction {
             boolean deleteSuccess = fsFile.delete();
 
             session.delete(file);
+            if (file.getIsDirectory() == true) {
+                List<File> filesInDir = session.createQuery("from File where directory = (:directory)")
+                        .setParameter("directory", fsFile.getAbsolutePath())
+                        .list();
+                for (File fileInDir : filesInDir) {
+                    session.delete(fileInDir);
+                }
+            }
         }
         return list();
 
