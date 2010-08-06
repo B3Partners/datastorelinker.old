@@ -35,6 +35,11 @@
             });
         </script>
 
+        <div class="ui-layout-north">Header</div>
+        <div class="ui-layout-west">westding</div>
+        <div class="ui-layout-east">oostding</div>
+        <div class="ui-layout-south">Footer</div>
+
         <div id="tabs" class="ui-layout-center" style="height: 100%">
             <ul>
                 <li>
