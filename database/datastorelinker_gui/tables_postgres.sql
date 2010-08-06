@@ -50,7 +50,9 @@ CREATE TABLE database_type (
 
 CREATE TABLE file (
     name character varying NOT NULL,
-    id bigint NOT NULL
+    id bigint NOT NULL,
+    directory character varying NOT NULL,
+    is_directory boolean DEFAULT false NOT NULL
 );
 
 
