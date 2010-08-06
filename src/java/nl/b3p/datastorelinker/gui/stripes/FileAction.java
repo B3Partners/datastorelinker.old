@@ -126,6 +126,9 @@ public class FileAction extends DefaultAction {
                         .setParameter("directory", fsFile.getAbsolutePath())
                         .list();
                 for (File fileInDir : filesInDir) {
+                    // TODO: recursive delete
+                    fsFile = new java.io.File(file.getDirectory(), file.getName());
+                    deleteSuccess = fsFile.delete();
                     session.delete(fileInDir);
                 }
             }

@@ -41,6 +41,12 @@
                         selectedFileFound = true;
                         selectedFile.attr("checked", "checked");
                         selectedFile.siblings("a").addClass(activeClass);
+                        $("#filetree").parent().scrollTo(
+                            selectedFile,
+                            defaultScrollToDuration,
+                            defaultScrollToOptions
+                        );
+
                     } else {
                         // TODO recurse with correct dir
                     }

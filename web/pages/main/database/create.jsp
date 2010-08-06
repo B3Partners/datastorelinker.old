@@ -10,7 +10,7 @@
         $("#databaseAccordion").accordion();
         <c:if test="${not empty actionBean.selectedDatabase}">
             $("#databaseAccordion").accordion("activate",
-            $("#databaseAccordion input:hidden[name='dbType'][value='<c:out value="${actionBean.selectedDatabase.type.id}"/>']").parent().parent().prev());
+                $("#databaseAccordion input:hidden[name='dbType'][value='<c:out value="${actionBean.selectedDatabase.type.id}"/>']").parent().parent().prev());
         </c:if>
     });
 </script>
