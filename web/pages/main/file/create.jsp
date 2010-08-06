@@ -15,7 +15,7 @@
             scriptData: {"upload": ""},
             checkScript: "${fileUrl}",
             checkScriptData: {"check": ""},
-            checkScriptAjaxOptions: {globals: false},
+            checkScriptAjaxOptions: {global: false},
             //fpath: "<c:out value="${actionBean.uploadDirectory}"/>", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
             fdata: "Filedata",
             maxfiles: 1,

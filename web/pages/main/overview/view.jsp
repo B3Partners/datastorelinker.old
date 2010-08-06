@@ -56,6 +56,7 @@
 </script>
 
 <div>
+    <%-- Relatief maken als in actions/create.jsp --%>
     <div id="inputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 50px; position: absolute">
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
             <fmt:message key="input"/>

@@ -4,14 +4,56 @@
     Author     : Erik van de Pol
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
+<%@include file="/pages/commons/urls.jsp" %>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#filesList").buttonset();
+        //$("#filesList").buttonset();
+
+        selectedFileId = null;
+        selectedFileFound = false;
+        <c:if test="${not empty actionBean.selectedFileId}">
+            selectedFileId = <c:out value="${actionBean.selectedFileId}"/>;
+        </c:if>
+
+        var activeClass = "ui-state-active";
+
+        $("#filetree").fileTree({
+            script: "${fileUrl}",
+            scriptEvent: "listDir",
+            root: "",
+            spinnerImage: "${contextPath}/scripts/jquery.filetree/images/spinner.png",
+            expandEasing: "easeOutBounce",
+            collapseEasing: "easeOutBounce",
+            dragAndDrop: false,
+            extraAjaxOptions: {
+                global: false
+            },
+            activeClass: activeClass,
+            fileCallback: function(fileName) {
+                
+            },
+            readyCallback: function(root) {
+                if (selectedFileId != null && !selectedFileFound) {
+                    log(root);
+                    var selectedFile = root.find("input:radio[value=" + selectedFileId + "]");
+                    if (selectedFile.length > 0) {
+                        selectedFileFound = true;
+                        selectedFile.attr("checked", "checked");
+                        selectedFile.siblings("a").addClass(activeClass);
+                    } else {
+                        // TODO recurse with correct dir
+                    }
+                }
+            }
+        });
+
     });
 </script>
 
-<div id="filesList">
+<div id="filetree"></div>
+
+<%--div id="filesList">
     <stripes:form partial="true" action="/">
         <c:forEach var="file" items="${actionBean.files}" varStatus="status">
             <c:choose>
@@ -36,4 +78,4 @@
             </stripes:label>
         </c:forEach>
     </stripes:form>
-</div>
+</div--%>

@@ -5,11 +5,11 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.Before;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -26,6 +26,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.UploaderStatus;
+import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import org.hibernate.Session;
 
 /**
@@ -39,13 +40,55 @@ public class FileAction extends DefaultAction {
     private final static String CREATE_JSP = "/pages/main/file/create.jsp";
     private final static String LIST_JSP = "/pages/main/file/list.jsp";
     private final static String ADMIN_JSP = "/pages/management/fileAdmin.jsp";
+    private final static String DIRCONTENTS_JSP = "/pages/main/file/filetreeConnector.jsp";
     private List<File> files;
+    private List<File> directories;
 
     private Long selectedFileId;
+    private String selectedFileIds;
 
     private FileBean filedata;
     //private Map<Integer, UploaderStatus> uploaderStatuses;
     private UploaderStatus uploaderStatus;
+    private String dir;
+
+    public Resolution listDir() {
+        log.debug(dir);
+        
+        if (dir != null && (
+                dir.startsWith("/") ||
+                dir.startsWith("\\") ||
+                dir.contains("..")) ) {
+            return new DefaultErrorResolution("Wrong dir type.");
+        }
+
+        // TODO: Eigenlijk ook voorkomen dat symlinks in Unix worden geupload.
+
+        String uploadDirectory = getContext().getServletContext().getInitParameter("uploadDirectory");
+        java.io.File combinedDir;
+        if (dir == null)
+            combinedDir = new java.io.File(uploadDirectory);
+        else
+            combinedDir = new java.io.File(uploadDirectory, dir);
+        String directory = combinedDir.getAbsolutePath();
+
+        log.debug(directory);
+        
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        directories = session.createQuery("from File where directory = (:directory) and isDirectory = true order by name")
+                .setParameter("directory", directory)
+                .list();
+        files = session.createQuery("from File where directory = (:directory) and isDirectory = false order by name")
+                .setParameter("directory", directory)
+                .list();
+
+        //log.debug("dirs: " + directories.size());
+        //log.debug("files: " + files.size());
+
+        return new ForwardResolution(DIRCONTENTS_JSP);
+    }
 
     public Resolution admin() {
         list();
@@ -53,10 +96,10 @@ public class FileAction extends DefaultAction {
     }
 
     public Resolution list() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        /*EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        files = session.createQuery("from File order by name").list();
+        files = session.createQuery("from File order by name").list();*/
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -65,13 +108,20 @@ public class FileAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        File file = (File)session.get(File.class, selectedFileId);
+        log.debug(selectedFileIds);
 
-        // TODO: eigenlijk moet file verwijderen van de server en file uit de db verwijderen een atomaire operatie zijn. Lijkt er zo een beetje op.
-        java.io.File fsFile = new java.io.File(file.getName());
-        boolean deleteSuccess = fsFile.delete();
+        JSONArray selectedFileIdsJSON = JSONArray.fromObject(selectedFileIds);
+        for (Object fileIdObj : selectedFileIdsJSON) {
+            Long fileId = Long.valueOf((String)fileIdObj);
+            
+            File file = (File)session.get(File.class, fileId);
 
-        session.delete(file);
+            // TODO: eigenlijk moet file/dir verwijderen van de server en file/dir uit de db verwijderen een atomaire operatie zijn.
+            java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
+            boolean deleteSuccess = fsFile.delete();
+
+            session.delete(file);
+        }
         return list();
 
         /*if (deleteSuccess) {
@@ -103,7 +153,7 @@ public class FileAction extends DefaultAction {
             if (req.isMultipart()) {
                 filedata = req.getFileParameterValue("Filedata");
             } else if (req.getParameter("status") != null) {
-                //log.debug("qwe: " + req.getParameter("status"));
+                log.debug("qwe: " + req.getParameter("status"));
                 JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
                 uploaderStatus = (UploaderStatus)JSONObject.toBean(jsonObject, UploaderStatus.class);
             }
@@ -132,7 +182,7 @@ public class FileAction extends DefaultAction {
                 String absolutePath = tempFile.getAbsolutePath();
                 log.info("Saved file " + absolutePath + ", Successfully!");
 
-                File file = saveFile(absolutePath);
+                File file = saveFile(tempFile);
                 selectedFileId = file.getId();
                 
             } catch (IOException e) {
@@ -146,18 +196,28 @@ public class FileAction extends DefaultAction {
         return new StreamingResolution("text/xml", "An unknown error has occurred!");
     }
 
-    private File saveFile(String absolutePath) {
+    private File saveFile(java.io.File tempFile) throws IOException {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-        File file = (File)session.createQuery("from File where name = :name")
-                .setParameter("name", absolutePath)
+        String fileName = tempFile.getName();
+        String dirName = tempFile.getParent();
+
+        log.debug(tempFile.getName());
+        log.debug(tempFile.getCanonicalPath());
+        log.debug(tempFile.getAbsolutePath());
+
+        File file = (File)session.createQuery("from File where name = :name and directory = :directory")
+                .setParameter("name", fileName)
+                .setParameter("directory", dirName)
                 .uniqueResult();
 
         if (file == null) {
             // file does not exist in DB; we are not overwriting a file
             file = new File();
-            file.setName(absolutePath);
+            file.setName(fileName);
+            file.setDirectory(dirName);
+            file.setIsDirectory(Boolean.FALSE);
 
             session.save(file);
         } // else: file exists in DB and thus on disk; we have chosen to overwrite the file on disk
@@ -208,6 +268,30 @@ public class FileAction extends DefaultAction {
 
     public void setSelectedFileId(Long selectedFileId) {
         this.selectedFileId = selectedFileId;
+    }
+
+    public String getSelectedFileIds() {
+        return selectedFileIds;
+    }
+
+    public void setSelectedFileIds(String selectedFileIds) {
+        this.selectedFileIds = selectedFileIds;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
+
+    public List<File> getDirectories() {
+        return directories;
+    }
+
+    public void setDirectories(List<File> directories) {
+        this.directories = directories;
     }
 
 }

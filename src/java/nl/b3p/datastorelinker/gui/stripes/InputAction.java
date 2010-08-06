@@ -61,6 +61,7 @@ public class InputAction extends DefaultAction {
 
     private List<File> files;
     private Long selectedFileId;
+    private String selectedFileDirectory;
 
     private List<String> tables;
     private List<String> failedTables;
@@ -106,6 +107,7 @@ public class InputAction extends DefaultAction {
                 return createDatabaseInput();
             case 2:
                 selectedFileId = input.getFile().getId();
+                selectedFileDirectory = input.getFile().getDirectory();
                 return createFileInput();
             default:
                 log.error("Unknown input type.");
@@ -364,6 +366,14 @@ public class InputAction extends DefaultAction {
 
     public void setRecordValues(List<Object> recordValues) {
         this.recordValues = recordValues;
+    }
+
+    public String getSelectedFileDirectory() {
+        return selectedFileDirectory;
+    }
+
+    public void setSelectedFileDirectory(String selectedFileDirectory) {
+        this.selectedFileDirectory = selectedFileDirectory;
     }
     
 }

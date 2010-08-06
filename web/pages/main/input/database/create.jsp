@@ -7,6 +7,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        initDatabase();
+        
         $("#createInputBackButton, #createInputNextButton").button();
 
         $("#createInputForm").bind("step_shown", function(event, data) {

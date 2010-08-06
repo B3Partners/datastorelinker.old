@@ -12,17 +12,17 @@
 */
 
 .step {
-    width: 100%;
+    /*width: 100%;*/
+    width: 3000px;
     height: 100%;
     margin-bottom: 10px;
 }
 
 .radioList {
-    width: 100%;
     height: 100%;
     overflow: auto;
     margin: 10px 0 10px 0;
-    position: relative; /* to prevent IE <= 7 bug */
+    /*position: relative;  to prevent IE <= 7 bug */
 }
 
 .radioList .ui-button {
@@ -48,14 +48,14 @@
 .crudButtonsArea {
     margin-top: 20px;
     margin-bottom: 20px;
-    width: 100%;
+    /*width: 100%;*/
 }
 
 .wizardButtonsArea {
     text-align: right;
     border-top: 1px solid #fed204;
     padding-top: 10px;
-    height: 100px;
+    /*height: 100px;*/
 }
 
 /* from jquery-ui css: .ui-dialog .ui-dialog-buttonpane button */

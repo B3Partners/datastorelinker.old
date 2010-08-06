@@ -84,25 +84,6 @@ defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
     }
 });
 
-/*defaultFormWizardValidateOptionsOld = $.extend({}, defaultValidateOptions, {
-    errorPlacement: function(error, element) {
-        if (error.length > 0 && error.text() != "") {
-            element.parents(".ui-layout-content:first").before(error);
-            var layoutCenter = element.parents(".ui-layout-center").first();
-            var layoutElement = layoutCenter.parents(":not(form)").first();
-            layoutElement.layout().resizeAll();
-        }
-    },
-    success: function(label) {
-        if (label.length > 0 && label.parent().length > 0) {
-            var layoutCenter = label.parents(".ui-layout-center").first();
-            var layoutElement = layoutCenter.parents(":not(form)").first();
-            label.remove();
-            layoutElement.layout().resizeAll();
-        }
-    }
-});*/
-
 defaultLayoutOptions = {
     resizable: false,
     closable: false
@@ -121,7 +102,7 @@ defaultDialogOptions = {
 
 defaultScrollToDuration = 1000
 defaultScrollToOptions = {
-    //easing: "iets uit easing plugin"
+    easing: "easeOutBounce"
 };
 
 formWizardConfig = {

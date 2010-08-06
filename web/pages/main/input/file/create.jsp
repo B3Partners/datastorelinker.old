@@ -4,10 +4,7 @@
     Author     : Erik van de Pol
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
-
-<stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
-<stripes:url var="inputUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction"/>
-<stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
+<%@include file="/pages/commons/urls.jsp" %>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -19,9 +16,15 @@
             $.extend({}, formWizardConfig, {
                 formOptions: {
                     beforeSend: function() {
+                        //var selectedFileId = $("#createInputForm .ui-state-active").attr("rel");
                         ajaxOpen({
+                            //url: "${inputUrl}",
                             formSelector: "#createInputForm",
                             event: "createFileInputComplete",
+                            /*extraParams: [{
+                                name: "selectedFileId",
+                                value: selectedFileId
+                            }],*/
                             containerSelector: "#inputListContainer",
                             successAfterContainerFill: function() {
                                 $("#inputContainer").dialog("close");

@@ -20,6 +20,7 @@
 
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.2.custom.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.ui-uploader/styles/jquery-ui-upload.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.filetree/jquery.filetree.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/actions.css" />
@@ -49,6 +50,8 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.maxzindex.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo-min.js"></script-->
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.filetree/jquery.filetree-latest.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.easing/jquery.easing-latest.js"></script>
 
             <!-- other 3rd party libs -->
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>

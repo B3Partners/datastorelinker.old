@@ -11,8 +11,13 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#deleteFile").click(function() {
-            if (!$("#createInputForm").valid())
+            if ($("#filetree input:checked").length == 0) {
+                // bericht?
                 return defaultButtonClick(this);
+            }
+
+            /*if (!$("#createInputForm").valid())
+                return defaultButtonClick(this);*/
 
             $("<div><fmt:message key="deleteFileAreYouSure"/></div>").attr("id", "createFileContainer").appendTo(document.body);
 
@@ -25,24 +30,34 @@
                     },
                     "<fmt:message key="yes"/>": function() {
                         $.blockUI(blockUIOptions);
+
+                        var filesToDelete = [];
+                        $("#filetree input:checkbox:checked").each(function(index, value) {
+                            filesToDelete.push($(value).val());
+                        });
+
                         ajaxOpen({
                             url: "${fileUrl}",
-                            formSelector: "#createInputForm",
+                            //formSelector: "#createInputForm",
                             event: "delete",
+                            extraParams: [{
+                                name: "selectedFileIds",
+                                value: JSON.stringify(filesToDelete)
+                            }],
                             containerSelector: "#filesListContainer",
-                            ajaxOptions: {globals: false}, // prevent blockUI being called 3 times. Called manually.
+                            ajaxOptions: {global: false}, // prevent blockUI being called 3 times. Called manually.
                             successAfterContainerFill: function() {
                                 ajaxOpen({
                                     url: "${inputUrl}",
                                     event: "list",
                                     containerSelector: "#inputListContainer",
-                                    ajaxOptions: {globals: false},
+                                    ajaxOptions: {global: false},
                                     successAfterContainerFill: function() {
                                         ajaxOpen({
                                             url: "${processUrl}",
                                             event: "list",
                                             containerSelector: "#processesListContainer",
-                                            ajaxOptions: {globals: false},
+                                            ajaxOptions: {global: false},
                                             successAfterContainerFill: function() {
                                                 $("#createFileContainer").dialog("close");
                                                 $.unblockUI(unblockUIOptions);

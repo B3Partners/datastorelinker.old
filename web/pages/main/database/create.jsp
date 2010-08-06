@@ -20,7 +20,7 @@
     <div>
         <%@include file="/pages/main/database/postgis.jsp" %>
     </div>
-    <h3><a href="#">Or<fmt:message key="oracle"/></a></h3>
+    <h3><a href="#"><fmt:message key="oracle"/></a></h3>
     <div>
         <%@include file="/pages/main/database/oracle.jsp" %>
     </div>
