@@ -30,7 +30,7 @@ public class OutputAction extends DatabaseAction {
     private List<Inout> outputs;
     private Long selectedOutputId;
 
-    // dummy variable (not used)
+    // dummy variable (not used but necessary; bit of a hack)
     private Boolean drop;
 
     @Override

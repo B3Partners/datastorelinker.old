@@ -4,10 +4,15 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.awt.TrayIcon.MessageType;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -175,6 +180,8 @@ public class FileAction extends DefaultAction {
 
     @DefaultHandler
     public Resolution upload() {
+        // TODO: geüploadede file blijft nu in geheugen staan tot nader order.
+        // misschien in de temp dir zetten. kost wel weer tijd.
 
         //TODO URL Encode the messages
         String errorMsg = null;
@@ -186,16 +193,31 @@ public class FileAction extends DefaultAction {
                 java.io.File dirFile = new java.io.File(getUploadDirectory());
                 if (!dirFile.exists())
                     dirFile.mkdir();
-                //java.io.File tempFile = java.io.File.createTempFile(filedata.getFileName() + ".", null, dirFile);
-                java.io.File tempFile = new java.io.File(dirFile, filedata.getFileName());
-
-                filedata.save(tempFile);
-                String absolutePath = tempFile.getAbsolutePath();
-                log.info("Saved file " + absolutePath + ", Successfully!");
-
-                File file = saveFile(tempFile);
-                selectedFileId = file.getId();
                 
+                java.io.File tempFile = java.io.File.createTempFile(filedata.getFileName() + ".", null);
+                //java.io.File tempFile = new java.io.File(dirFile, filedata.getFileName());
+                filedata.save(tempFile);
+
+                if (isZipFile(filedata.getFileName())) {
+                    java.io.File zipDir = new java.io.File(getUploadDirectory(), getZipName(filedata.getFileName()));
+                    try {
+                        extractZip(tempFile, zipDir);
+                    } finally {
+                        boolean deleteSuccess = tempFile.delete();
+                        if (!deleteSuccess)
+                            log.warn("Could not delete: " + tempFile.getAbsolutePath());
+                    }
+                } else {
+
+                    java.io.File destinationFile = new java.io.File(dirFile, filedata.getFileName());
+                    tempFile.renameTo(destinationFile);
+
+                    log.info("Saved file " + destinationFile.getAbsolutePath() + ", Successfully!");
+
+                    File file = saveFile(tempFile);
+                    selectedFileId = file.getId();
+                }
+
             } catch (IOException e) {
                 errorMsg = e.getMessage();
                 log.error("Error while writing file :" + filedata.getFileName() + " / " + errorMsg);
@@ -207,16 +229,101 @@ public class FileAction extends DefaultAction {
         return new StreamingResolution("text/xml", "An unknown error has occurred!");
     }
 
+    /**
+     * Extract a file {name}.zip.temp to {name}
+     * @param file {name}.zip.temp
+     * @throws IOException
+     */
+    private void extractZip(java.io.File file, java.io.File parent) throws IOException {
+        if (!file.exists()) {
+            return;
+        }
+
+        if (!parent.exists()) {
+            /*if (!overwrite) {
+                addAttributeMessage(MessageType.WARNING, new ActionMessage("warning.upload.exists", root.getName()), request);
+                return;
+            }
+        } else {*/
+            parent.mkdir();
+            saveDir(parent);
+        }
+
+        byte[] buf = new byte[1024];
+        ZipInputStream zipinputstream = null;
+        FileOutputStream fileoutputstream = null;
+        ZipEntry zipentry = null;
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            zipinputstream = new ZipInputStream(in);
+            while ((zipentry = zipinputstream.getNextEntry()) != null) {
+                log.debug("extractZip zipentry name: " + zipentry.getName());
+                
+                //for each entry to be extracted
+                java.io.File newFile = new java.io.File(parent, zipentry.getName());
+                /*if (newFile.exists()) {// && !overwrite) {
+                    log.debug("extractZip: extracted file does already exist");
+                    //addAttributeMessage(MessageType.WARNING, new ActionMessage("warning.upload.exists", root.getName()), request);
+                    // TODO: ff nadenken hierover
+                    return;
+                }*/
+
+                if (zipentry.isDirectory()) {
+                    // Entry is directory, create folder
+                    newFile.mkdirs();
+                    // TODO: handle dir contents (recursively)
+                } else {
+                    // TODO: is valid file in zip (delete newFile if necessary)
+
+
+                    // Entry is file, copy file
+                    fileoutputstream = new FileOutputStream(newFile);
+                    int n;
+                    while ((n = zipinputstream.read(buf)) > -1) {
+                        fileoutputstream.write(buf, 0, n);
+                    }
+                    fileoutputstream.close();
+
+                    saveFile(newFile);
+                }
+                zipinputstream.closeEntry();
+            }
+        } catch (Exception ex) {
+            // TODO: ff nadenken hierover
+            log.error(ex);
+            //addAttributeMessage(MessageType.WARNING, new ActionMessage("error.exception", ex.getLocalizedMessage()), request);
+
+        } finally {
+            if (fileoutputstream != null) {
+                fileoutputstream.close();
+            }
+            if (zipinputstream != null) {
+                zipinputstream.close();
+            }
+            if (in != null) {
+                in.close();
+            }
+        }
+    }
+
     private File saveFile(java.io.File tempFile) throws IOException {
+        return saveFileOrDir(tempFile, false);
+    }
+
+    private File saveDir(java.io.File tempFile) throws IOException {
+        return saveFileOrDir(tempFile, true);
+    }
+
+    private File saveFileOrDir(java.io.File ioFile, boolean isDir) throws IOException {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-        String fileName = tempFile.getName();
-        String dirName = tempFile.getParent();
+        String fileName = ioFile.getName();
+        String dirName = ioFile.getParent();
 
-        log.debug(tempFile.getName());
-        log.debug(tempFile.getCanonicalPath());
-        log.debug(tempFile.getAbsolutePath());
+        log.debug("saveFileOrDir name: " + ioFile.getName());
+        log.debug("saveFileOrDir parent: " + ioFile.getParent());
 
         File file = (File)session.createQuery("from File where name = :name and directory = :directory")
                 .setParameter("name", fileName)
@@ -228,7 +335,7 @@ public class FileAction extends DefaultAction {
             file = new File();
             file.setName(fileName);
             file.setDirectory(dirName);
-            file.setIsDirectory(Boolean.FALSE);
+            file.setIsDirectory(isDir);
 
             session.save(file);
         } // else: file exists in DB and thus on disk; we have chosen to overwrite the file on disk
@@ -252,6 +359,8 @@ public class FileAction extends DefaultAction {
             // TODO: exists check is niet goed
             if (tempFile.exists()) {
                 uploaderStatus.setErrtype("exists");
+            } if (isZipFile(tempFile) && zipFileToDirFile(tempFile).exists()) {
+                uploaderStatus.setErrtype("exists");
             } else {
                 uploaderStatus.setErrtype("none");
             }
@@ -259,6 +368,26 @@ public class FileAction extends DefaultAction {
             return new JSONResolution(resultMap);
         }
         return new JSONResolution(false);
+    }
+    
+    private boolean isZipFile(String fileName) {
+        return fileName.toLowerCase().endsWith(".zip");
+    }
+
+    private boolean isZipFile(java.io.File file) {
+        return file.getName().toLowerCase().endsWith(".zip");
+    }
+
+    private String getZipName(String zipFileName) {
+        return zipFileName.substring(0, zipFileName.length() - 4);
+    }
+
+    private String getZipName(java.io.File zipFile) {
+        return zipFile.getName().substring(0, zipFile.getName().length() - 4);
+    }
+
+    private java.io.File zipFileToDirFile(java.io.File zipFile) {
+        return new java.io.File(getUploadDirectory(), getZipName(zipFile));
     }
 
     public List<File> getFiles() {
