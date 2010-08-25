@@ -745,11 +745,11 @@ ALTER TABLE ONLY database_type
 --
 -- TOC entry 1854 (class 2606 OID 33407)
 -- Dependencies: 1536 1536
--- Name: unique_file_name; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: unique_file_dir_name; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY file
-    ADD CONSTRAINT unique_file_name UNIQUE (name);
+    ADD CONSTRAINT unique_file_dir_name UNIQUE (name, directory);
 
 
 --
