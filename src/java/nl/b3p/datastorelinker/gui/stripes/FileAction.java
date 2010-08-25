@@ -4,7 +4,6 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.awt.TrayIcon.MessageType;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -214,7 +213,7 @@ public class FileAction extends DefaultAction {
 
                     log.info("Saved file " + destinationFile.getAbsolutePath() + ", Successfully!");
 
-                    File file = saveFile(tempFile);
+                    File file = saveFile(destinationFile);
                     selectedFileId = file.getId();
                 }
 

@@ -11,18 +11,18 @@
 -- Name: database; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE database (
+CREATE TABLE database_inout (
     id bigint NOT NULL,
     type_id integer NOT NULL,
     name character varying NOT NULL,
-    host character varying,
+    host_name character varying,
     database_name character varying,
     username character varying,
     password character varying,
-    schema character varying,
+    db_schema character varying,
     port integer,
     instance character varying,
-    alias character varying,
+    db_alias character varying,
     url character varying,
     srs character varying,
     col_x character varying,
@@ -48,7 +48,7 @@ CREATE TABLE database_type (
 -- Name: file; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE file (
+CREATE TABLE file_inout (
     name character varying NOT NULL,
     id bigint NOT NULL,
     directory character varying NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE file (
 -- Name: inout; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
-CREATE TABLE "inout" (
+CREATE TABLE input_output (
     id bigint NOT NULL,
     type_id integer NOT NULL,
     datatype_id integer NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE process (
     features_start integer,
     features_end integer,
     mail_id bigint,
-    drop boolean DEFAULT true NOT NULL,
+    drop_table boolean DEFAULT true NOT NULL,
     writer_type character varying DEFAULT 'ActionCombo_GeometrySplitter_Writer'::character varying NOT NULL,
     schedule bigint
 );
@@ -179,7 +179,7 @@ CREATE SEQUENCE database_id_seq
 -- Name: database_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE database_id_seq OWNED BY database.id;
+ALTER SEQUENCE database_id_seq OWNED BY database_inout.id;
 
 
 --
@@ -241,7 +241,7 @@ CREATE SEQUENCE file_id_seq
 -- Name: file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE file_id_seq OWNED BY file.id;
+ALTER SEQUENCE file_id_seq OWNED BY file_inout.id;
 
 
 --
@@ -303,7 +303,7 @@ CREATE SEQUENCE inout_file_id_seq
 -- Name: inout_file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE inout_file_id_seq OWNED BY "inout".file_id;
+ALTER SEQUENCE inout_file_id_seq OWNED BY input_output.file_id;
 
 
 --
@@ -334,7 +334,7 @@ CREATE SEQUENCE inout_id_seq
 -- Name: inout_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE inout_id_seq OWNED BY "inout".id;
+ALTER SEQUENCE inout_id_seq OWNED BY input_output.id;
 
 
 --
@@ -508,7 +508,7 @@ SELECT pg_catalog.setval('schedule_type_id_seq', 6, true);
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE database ALTER COLUMN id SET DEFAULT nextval('database_id_seq'::regclass);
+ALTER TABLE database_inout ALTER COLUMN id SET DEFAULT nextval('database_id_seq'::regclass);
 
 
 --
@@ -526,7 +526,7 @@ ALTER TABLE database_type ALTER COLUMN id SET DEFAULT nextval('database_type_id_
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE file ALTER COLUMN id SET DEFAULT nextval('file_id_seq'::regclass);
+ALTER TABLE file_inout ALTER COLUMN id SET DEFAULT nextval('file_id_seq'::regclass);
 
 
 --
@@ -535,7 +535,7 @@ ALTER TABLE file ALTER COLUMN id SET DEFAULT nextval('file_id_seq'::regclass);
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE "inout" ALTER COLUMN id SET DEFAULT nextval('inout_id_seq'::regclass);
+ALTER TABLE input_output ALTER COLUMN id SET DEFAULT nextval('inout_id_seq'::regclass);
 
 
 --
@@ -609,8 +609,8 @@ INSERT INTO database_type (id, name) VALUES (3, 'postgis');
 -- Data for Name: inout_datatype; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO inout_datatype (id, name) VALUES (1, 'database');
-INSERT INTO inout_datatype (id, name) VALUES (2, 'file');
+INSERT INTO inout_datatype (id, name) VALUES (1, 'database_inout');
+INSERT INTO inout_datatype (id, name) VALUES (2, 'file_inout');
 
 
 --
@@ -653,7 +653,7 @@ ALTER TABLE ONLY mail
 -- Name: pk_database; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY database
+ALTER TABLE ONLY database_inout
     ADD CONSTRAINT pk_database PRIMARY KEY (id);
 
 
@@ -673,7 +673,7 @@ ALTER TABLE ONLY database_type
 -- Name: pk_file; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY file
+ALTER TABLE ONLY file_inout
     ADD CONSTRAINT pk_file PRIMARY KEY (id);
 
 
@@ -683,7 +683,7 @@ ALTER TABLE ONLY file
 -- Name: pk_inout; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY "inout"
+ALTER TABLE ONLY input_output
     ADD CONSTRAINT pk_inout PRIMARY KEY (id);
 
 
@@ -748,7 +748,7 @@ ALTER TABLE ONLY database_type
 -- Name: unique_file_dir_name; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
-ALTER TABLE ONLY file
+ALTER TABLE ONLY file_inout
     ADD CONSTRAINT unique_file_dir_name UNIQUE (name, directory);
 
 
@@ -758,7 +758,7 @@ ALTER TABLE ONLY file
 -- Name: fk_database_database_type; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY database
+ALTER TABLE ONLY database_inout
     ADD CONSTRAINT fk_database_database_type FOREIGN KEY (type_id) REFERENCES database_type(id);
 
 
@@ -768,8 +768,8 @@ ALTER TABLE ONLY database
 -- Name: fk_inout_database; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY "inout"
-    ADD CONSTRAINT fk_inout_database FOREIGN KEY (database_id) REFERENCES database(id);
+ALTER TABLE ONLY input_output
+    ADD CONSTRAINT fk_inout_database FOREIGN KEY (database_id) REFERENCES database_inout(id);
 
 
 --
@@ -778,8 +778,8 @@ ALTER TABLE ONLY "inout"
 -- Name: fk_inout_file; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY "inout"
-    ADD CONSTRAINT fk_inout_file FOREIGN KEY (file_id) REFERENCES file(id);
+ALTER TABLE ONLY input_output
+    ADD CONSTRAINT fk_inout_file FOREIGN KEY (file_id) REFERENCES file_inout(id);
 
 
 --
@@ -788,7 +788,7 @@ ALTER TABLE ONLY "inout"
 -- Name: fk_inout_inout_datatype; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY "inout"
+ALTER TABLE ONLY input_output
     ADD CONSTRAINT fk_inout_inout_datatype FOREIGN KEY (datatype_id) REFERENCES inout_datatype(id);
 
 
@@ -798,7 +798,7 @@ ALTER TABLE ONLY "inout"
 -- Name: fk_inout_inout_type; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY "inout"
+ALTER TABLE ONLY input_output
     ADD CONSTRAINT fk_inout_inout_type FOREIGN KEY (type_id) REFERENCES inout_type(id);
 
 
@@ -809,7 +809,7 @@ ALTER TABLE ONLY "inout"
 --
 
 ALTER TABLE ONLY process
-    ADD CONSTRAINT fk_process_input FOREIGN KEY (input_id) REFERENCES "inout"(id);
+    ADD CONSTRAINT fk_process_input FOREIGN KEY (input_id) REFERENCES input_output(id);
 
 
 --
@@ -829,7 +829,7 @@ ALTER TABLE ONLY process
 --
 
 ALTER TABLE ONLY process
-    ADD CONSTRAINT fk_process_output FOREIGN KEY (output_id) REFERENCES "inout"(id);
+    ADD CONSTRAINT fk_process_output FOREIGN KEY (output_id) REFERENCES input_output(id);
 
 
 --
