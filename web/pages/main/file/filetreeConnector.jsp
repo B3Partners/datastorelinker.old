@@ -10,7 +10,7 @@
         <li class="directory collapsed">
             <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
             <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
-            <a href="#" rel="${dir.name}" style="display: inline">${dir.name}</a>
+            <a href="#" rel="${dir.id}" style="display: inline">${dir.name}</a>
         </li>
     </c:forEach>
     <c:forEach var="file" items="${actionBean.files}">

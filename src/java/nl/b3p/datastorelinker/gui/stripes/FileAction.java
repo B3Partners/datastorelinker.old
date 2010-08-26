@@ -7,6 +7,7 @@ package nl.b3p.datastorelinker.gui.stripes;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,6 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.UploaderStatus;
-import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import org.hibernate.Session;
 
 /**
@@ -41,10 +41,16 @@ import org.hibernate.Session;
 public class FileAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(FileAction.class);
+
+    protected final static String SHAPE_EXT = ".shp";
+    protected final static String ZIP_EXT = ".zip";
+
+
     private final static String CREATE_JSP = "/pages/main/file/create.jsp";
     private final static String LIST_JSP = "/pages/main/file/list.jsp";
     private final static String ADMIN_JSP = "/pages/management/fileAdmin.jsp";
     private final static String DIRCONTENTS_JSP = "/pages/main/file/filetreeConnector.jsp";
+
     private List<File> files;
     private List<File> directories;
 
@@ -54,33 +60,24 @@ public class FileAction extends DefaultAction {
     private FileBean filedata;
     //private Map<Integer, UploaderStatus> uploaderStatuses;
     private UploaderStatus uploaderStatus;
-    private String dir;
+    private Long dir;
 
     public Resolution listDir() {
         log.debug(dir);
         
-        if (dir != null && (
-                dir.startsWith("/") ||
-                dir.startsWith("\\") ||
-                dir.contains("..")) ) {
-            return new DefaultErrorResolution("Wrong dir type.");
-        }
-
-        // TODO: Eigenlijk ook voorkomen dat symlinks in Unix worden geupload.
-
-        String uploadDirectory = getContext().getServletContext().getInitParameter("uploadDirectory");
-        java.io.File combinedDir;
-        if (dir == null)
-            combinedDir = new java.io.File(uploadDirectory);
-        else
-            combinedDir = new java.io.File(uploadDirectory, dir);
-        String directory = combinedDir.getAbsolutePath();
-
-        log.debug(directory);
-        
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
+        String directory = null;
+        if (dir != null) {
+            File directoryObject = (File)session.get(File.class, dir);
+            log.debug(directoryObject.getDirectory());
+            java.io.File directoryFile = new java.io.File(directoryObject.getDirectory(), directoryObject.getName());
+            directory = directoryFile.getAbsolutePath();
+        } else {
+            directory = getUploadDirectory();
+        }
+        
         directories = session.createQuery("from File where directory = (:directory) and isDirectory = true order by name")
                 .setParameter("directory", directory)
                 .list();
@@ -88,10 +85,33 @@ public class FileAction extends DefaultAction {
                 .setParameter("directory", directory)
                 .list();
 
+        filterOutShapeExtraFiles();
+
         //log.debug("dirs: " + directories.size());
         //log.debug("files: " + files.size());
 
         return new ForwardResolution(DIRCONTENTS_JSP);
+    }
+
+    protected void filterOutShapeExtraFiles() {
+        String shapeName = null;
+        for (File file : files) {
+            if (file.getName().endsWith(SHAPE_EXT)) {
+                shapeName = file.getName().substring(0, file.getName().length() - SHAPE_EXT.length());
+            }
+        }
+
+        if (shapeName != null) {
+            List<File> toBeIgnoredFiles = new ArrayList<File>();
+            for (File file : files) {
+                if (file.getName().startsWith(shapeName) && !file.getName().endsWith(SHAPE_EXT)) {
+                    toBeIgnoredFiles.add(file);
+                }
+            }
+            for (File file : toBeIgnoredFiles) {
+                files.remove(file);
+            }
+        }
     }
 
     public Resolution admin() {
@@ -120,22 +140,7 @@ public class FileAction extends DefaultAction {
             
             File file = (File)session.get(File.class, fileId);
 
-            // TODO: eigenlijk moet file/dir verwijderen van de server en file/dir uit de db verwijderen een atomaire operatie zijn.
-            java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
-            boolean deleteSuccess = fsFile.delete();
-
-            session.delete(file);
-            if (file.getIsDirectory() == true) {
-                List<File> filesInDir = session.createQuery("from File where directory = (:directory)")
-                        .setParameter("directory", fsFile.getAbsolutePath())
-                        .list();
-                for (File fileInDir : filesInDir) {
-                    // TODO: recursive delete
-                    fsFile = new java.io.File(file.getDirectory(), file.getName());
-                    deleteSuccess = fsFile.delete();
-                    session.delete(fileInDir);
-                }
-            }
+            deleteImpl(file);
         }
         return list();
 
@@ -148,6 +153,65 @@ public class FileAction extends DefaultAction {
             //throw new Exception();
             return list();
         }*/
+    }
+
+    protected void deleteImpl(File file) {
+        if (file != null) {
+            EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            Session session = (Session)em.getDelegate();
+
+            java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
+            boolean deleteSuccess = fsFile.delete();
+            session.delete(file);
+
+            deleteExtraShapeFilesInDir(file);
+            deleteDirIfDir(file);
+        }
+    }
+
+    private void deleteExtraShapeFilesInDir(File file) {
+        if (file.getName().endsWith(SHAPE_EXT)) {
+            EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            Session session = (Session)em.getDelegate();
+
+            List<File> extraShapeFilesInDir = session.createQuery(
+                    "from File where directory = :directory and name like :shapename")
+                    .setParameter("directory", file.getDirectory())
+                    .setParameter("shapename",
+                        file.getName().substring(0, file.getName().length() - SHAPE_EXT.length())
+                        + ".___")
+                    .list();
+
+            for (File extraShapeFile : extraShapeFilesInDir) {
+                if (!extraShapeFile.getIsDirectory()) {
+                    deleteImpl(extraShapeFile);
+                }
+            }
+        }
+    }
+
+    protected void deleteDirIfDir(File dir) {
+        // can be null if we tried to delete a directory first and then
+        // one or more (recursively) deleted files within it.
+        if (dir != null && dir.getIsDirectory() == true) {
+            EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            Session session = (Session)em.getDelegate();
+
+            // TODO: eigenlijk moet file/dir verwijderen van de server en file/dir uit de db verwijderen een atomaire operatie zijn.
+            java.io.File fsFile = new java.io.File(dir.getDirectory(), dir.getName());
+
+            List<File> filesInDir = session.createQuery("from File where directory = :directory")
+                    .setParameter("directory", fsFile.getAbsolutePath())
+                    .list();
+
+            log.debug(filesInDir);
+            for (File fileInDir : filesInDir) {
+                deleteImpl(fileInDir);
+            }
+
+            // dir must be empty when deleting it
+            boolean deleteDirSuccess = fsFile.delete();
+        }
     }
 
     @DontValidate
@@ -199,13 +263,7 @@ public class FileAction extends DefaultAction {
 
                 if (isZipFile(filedata.getFileName())) {
                     java.io.File zipDir = new java.io.File(getUploadDirectory(), getZipName(filedata.getFileName()));
-                    try {
-                        extractZip(tempFile, zipDir);
-                    } finally {
-                        boolean deleteSuccess = tempFile.delete();
-                        if (!deleteSuccess)
-                            log.warn("Could not delete: " + tempFile.getAbsolutePath());
-                    }
+                    extractZip(tempFile, zipDir);
                 } else {
 
                     java.io.File destinationFile = new java.io.File(dirFile, filedata.getFileName());
@@ -229,79 +287,75 @@ public class FileAction extends DefaultAction {
     }
 
     /**
-     * Extract a file {name}.zip.temp to {name}
-     * @param file {name}.zip.temp
+     * Extract a file {name}.zip.*.tmp to zipDir
+     * @param tempFile {name}.zip.*.tmp
+     * @param zipDir zipDir
      * @throws IOException
      */
-    private void extractZip(java.io.File file, java.io.File parent) throws IOException {
-        if (!file.exists()) {
+    private void extractZip(java.io.File tempFile, java.io.File zipDir) throws IOException {
+        if (!tempFile.exists()) {
             return;
         }
 
-        if (!parent.exists()) {
-            /*if (!overwrite) {
-                addAttributeMessage(MessageType.WARNING, new ActionMessage("warning.upload.exists", root.getName()), request);
-                return;
-            }
-        } else {*/
-            parent.mkdir();
-            saveDir(parent);
+        if (!zipDir.exists()) {
+            zipDir.mkdirs();
+            saveDir(zipDir);
         }
 
-        byte[] buf = new byte[1024];
+        byte[] buffer = new byte[1024];
         ZipInputStream zipinputstream = null;
-        FileOutputStream fileoutputstream = null;
-        ZipEntry zipentry = null;
-        FileInputStream in = null;
+        
         try {
-            in = new FileInputStream(file);
-            zipinputstream = new ZipInputStream(in);
+            zipinputstream = new ZipInputStream(new FileInputStream(tempFile));
+
+            ZipEntry zipentry = null;
             while ((zipentry = zipinputstream.getNextEntry()) != null) {
                 log.debug("extractZip zipentry name: " + zipentry.getName());
                 
-                //for each entry to be extracted
-                java.io.File newFile = new java.io.File(parent, zipentry.getName());
-                /*if (newFile.exists()) {// && !overwrite) {
-                    log.debug("extractZip: extracted file does already exist");
-                    //addAttributeMessage(MessageType.WARNING, new ActionMessage("warning.upload.exists", root.getName()), request);
-                    // TODO: ff nadenken hierover
-                    return;
-                }*/
+                java.io.File newFile = new java.io.File(zipDir, zipentry.getName());
 
                 if (zipentry.isDirectory()) {
-                    // Entry is directory, create folder
+                    // ZipInputStream does not work recursively
+                    // files within this directory will be encountered as a later zipEntry
                     newFile.mkdirs();
-                    // TODO: handle dir contents (recursively)
+                    saveDir(newFile);
+                } else if (isZipFile(zipentry.getName())) {
+                    java.io.File tempZipFile = java.io.File.createTempFile(zipentry.getName() + ".", null);
+                    java.io.File newZipDir = new java.io.File(zipDir, getZipName(zipentry.getName()));
+
+                    copyZipEntryTo(zipinputstream, tempZipFile, buffer);
+
+                    extractZip(tempZipFile, newZipDir);
                 } else {
                     // TODO: is valid file in zip (delete newFile if necessary)
-
-
-                    // Entry is file, copy file
-                    fileoutputstream = new FileOutputStream(newFile);
-                    int n;
-                    while ((n = zipinputstream.read(buf)) > -1) {
-                        fileoutputstream.write(buf, 0, n);
-                    }
-                    fileoutputstream.close();
-
+                    copyZipEntryTo(zipinputstream, newFile, buffer);
                     saveFile(newFile);
                 }
+                
                 zipinputstream.closeEntry();
             }
-        } catch (Exception ex) {
-            // TODO: ff nadenken hierover
-            log.error(ex);
-            //addAttributeMessage(MessageType.WARNING, new ActionMessage("error.exception", ex.getLocalizedMessage()), request);
-
         } finally {
-            if (fileoutputstream != null) {
-                fileoutputstream.close();
-            }
             if (zipinputstream != null) {
                 zipinputstream.close();
             }
-            if (in != null) {
-                in.close();
+
+            boolean deleteSuccess = tempFile.delete();
+            /*if (!deleteSuccess)
+                log.warn("Could not delete: " + tempFile.getAbsolutePath());*/
+        }
+    }
+
+    private void copyZipEntryTo(ZipInputStream zipinputstream, java.io.File newFile, byte[] buffer) throws IOException {
+        FileOutputStream fileoutputstream = null;
+        try {
+            fileoutputstream = new FileOutputStream(newFile);
+            int n;
+            while ((n = zipinputstream.read(buffer)) > -1) {
+                fileoutputstream.write(buffer, 0, n);
+            }
+        } finally {
+            if (fileoutputstream != null) {
+                fileoutputstream.close();
             }
         }
     }
@@ -352,13 +406,18 @@ public class FileAction extends DefaultAction {
             log.debug(tempFile.getAbsolutePath());
             log.debug(tempFile.getPath());
 
+            log.debug("check fpath: ");
+            if (uploaderStatus.getFpath() != null) {
+                log.debug(uploaderStatus.getFpath());
+            }
+
             // TODO: check ook op andere dingen, size enzo. Dit blijft natuurlijk alleen maar een convenience check. Heeft niets met safety te maken.
             Map resultMap = new HashMap();
 
             // TODO: exists check is niet goed
             if (tempFile.exists()) {
                 uploaderStatus.setErrtype("exists");
-            } if (isZipFile(tempFile) && zipFileToDirFile(tempFile).exists()) {
+            } if (isZipFile(tempFile) && zipFileToDirFile(tempFile, new java.io.File(getUploadDirectory())).exists()) {
                 uploaderStatus.setErrtype("exists");
             } else {
                 uploaderStatus.setErrtype("none");
@@ -370,23 +429,23 @@ public class FileAction extends DefaultAction {
     }
     
     private boolean isZipFile(String fileName) {
-        return fileName.toLowerCase().endsWith(".zip");
+        return fileName.toLowerCase().endsWith(ZIP_EXT);
     }
 
     private boolean isZipFile(java.io.File file) {
-        return file.getName().toLowerCase().endsWith(".zip");
+        return file.getName().toLowerCase().endsWith(ZIP_EXT);
     }
 
     private String getZipName(String zipFileName) {
-        return zipFileName.substring(0, zipFileName.length() - 4);
+        return zipFileName.substring(0, zipFileName.length() - ZIP_EXT.length());
     }
 
     private String getZipName(java.io.File zipFile) {
-        return zipFile.getName().substring(0, zipFile.getName().length() - 4);
+        return zipFile.getName().substring(0, zipFile.getName().length() - ZIP_EXT.length());
     }
 
-    private java.io.File zipFileToDirFile(java.io.File zipFile) {
-        return new java.io.File(getUploadDirectory(), getZipName(zipFile));
+    private java.io.File zipFileToDirFile(java.io.File zipFile, java.io.File parent) {
+        return new java.io.File(parent, getZipName(zipFile));
     }
 
     public List<File> getFiles() {
@@ -417,11 +476,11 @@ public class FileAction extends DefaultAction {
         this.selectedFileIds = selectedFileIds;
     }
 
-    public String getDir() {
+    public Long getDir() {
         return dir;
     }
 
-    public void setDir(String dir) {
+    public void setDir(Long dir) {
         this.dir = dir;
     }
 

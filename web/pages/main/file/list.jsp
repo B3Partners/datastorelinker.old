@@ -30,6 +30,7 @@
                 global: false
             },
             activeClass: activeClass,
+            activateDirsOnClick: false,
             fileCallback: function(fileName) {
                 
             },

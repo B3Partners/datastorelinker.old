@@ -27,8 +27,8 @@
             fadeOut: false,
             progressValueColor: "silver",
             ftypes: {
-                "<fmt:message key="inputFile.type.allSupported"/>": ["shp", "dbf", "dxf", "sdl", "sfn", "csv", "zip"],
-                "<fmt:message key="inputFile.type.shape"/>": ["shp", "dbf"],
+                "<fmt:message key="inputFile.type.allSupported"/>": ["shp", "dxf", "sdl", "sfn", "csv", "zip"],
+                "<fmt:message key="inputFile.type.shape"/>": ["shp"],
                 "<fmt:message key="inputFile.type.autodesk"/>": ["dxf", "sdl"],
                 "<fmt:message key="inputFile.type.sufnen"/>": ["sfn"],
                 "<fmt:message key="inputFile.type.csv"/>": ["csv"],
