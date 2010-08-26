@@ -52,12 +52,14 @@ public class DataStoreLinkJob implements Job {
                     dsl = new DataStoreLinker(process);
                 }
                 dsl.process();
+                log.debug("Dsl process done!");
             }
         } catch (InterruptedException intEx) {
             //log.info(intEx, "Process interrupted.");
             log.info("User canceled the process");
         } catch (Exception ex) {
             // TODO: polling must check / know that a fatal eror has occured.
+            log.error(ex);
             throw new JobExecutionException(ex);
         } finally {
             Thread.currentThread().setContextClassLoader(savedClassLoader);

@@ -528,7 +528,31 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-commons-core}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.b3p-gt2-csv}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
         <ant antfile="${project.b3p-gt2-datastorelinker}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-dxf}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-hibernatespatial}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-msaccess}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-ogr}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -539,7 +563,31 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-commons-core}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.b3p-gt2-csv}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
         <ant antfile="${project.b3p-gt2-datastorelinker}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-dxf}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-hibernatespatial}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-msaccess}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-ogr}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -699,6 +747,14 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.GeotoolsJdbc.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.JSON-lib.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Quartz1.8.x.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-csv.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-dxf.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-hibernatespatial.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-msaccess.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-ogr.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-sdl.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-gt2-suf2.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-suf2.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -724,6 +780,14 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.GeotoolsJdbc.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.JSON-lib.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Quartz1.8.x.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-csv.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-dxf.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-hibernatespatial.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-msaccess.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-ogr.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-sdl.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-gt2-suf2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-suf2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -1031,7 +1095,15 @@ exists or setup the property manually. For example like this:
     <target depends="init" if="no.dist.ear.dir" name="deps-clean" unless="no.deps">
         <ant antfile="${project.DataStoreLinkerEntities}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-commons-core}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-csv}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-datastorelinker}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-dxf}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-hibernatespatial}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-msaccess}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-ogr}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="do-clean">
         <condition property="build.dir.to.clean" value="${build.web.dir}">

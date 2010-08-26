@@ -32,8 +32,10 @@ public class SchedulerUtils {
         try {
             Scheduler scheduler = getScheduler(context);
 
+            log.debug("triggers:");
             List<JobExecutionContext> jecs = scheduler.getCurrentlyExecutingJobs();
             for (JobExecutionContext jec : jecs) {
+                log.debug(jec.getTrigger().getName());
                 if (jec.getTrigger().getName().equals(jobUUID)) {
                     return (DataStoreLinkJob)jec.getJobInstance();
                 }
