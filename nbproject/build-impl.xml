@@ -537,9 +537,6 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-gt2-dxf}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
-        <ant antfile="${project.b3p-gt2-hibernatespatial}/build.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
         <ant antfile="${project.b3p-gt2-msaccess}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
@@ -570,9 +567,6 @@ exists or setup the property manually. For example like this:
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.b3p-gt2-dxf}/build.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
-        <ant antfile="${project.b3p-gt2-hibernatespatial}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.b3p-gt2-msaccess}/build.xml" inheritall="false" target="jar">
@@ -749,7 +743,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.Quartz1.8.x.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-csv.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-dxf.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${reference.b3p-gt2-hibernatespatial.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-msaccess.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-ogr.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-sdl.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
@@ -782,7 +775,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.Quartz1.8.x.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-csv.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-dxf.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${reference.b3p-gt2-hibernatespatial.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-msaccess.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-ogr.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-sdl.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -1098,7 +1090,6 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-gt2-csv}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-datastorelinker}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-dxf}/build.xml" inheritall="false" target="clean"/>
-        <ant antfile="${project.b3p-gt2-hibernatespatial}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-msaccess}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-ogr}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="clean"/>
