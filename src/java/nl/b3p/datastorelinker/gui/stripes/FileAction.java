@@ -31,6 +31,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.UploaderStatus;
+import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import org.hibernate.Session;
 
 /**
@@ -282,19 +283,18 @@ public class FileAction extends DefaultAction {
 
             } catch (IOException e) {
                 errorMsg = e.getMessage();
-                log.error("Error while writing file :" + filedata.getFileName() + " / " + errorMsg);
-                return new StreamingResolution("text/xml", errorMsg);
+                log.error("Error while writing file: " + filedata.getFileName() + " :: " + errorMsg);
+                return new DefaultErrorResolution(errorMsg);
             }
             return createComplete();
-            //return new StreamingResolution("text/xml", "success");
         }
-        return new StreamingResolution("text/xml", "An unknown error has occurred!");
+        return new DefaultErrorResolution("An unknown error has occurred!");
     }
 
     /**
-     * Extract a file {name}.zip.*.tmp to zipDir
-     * @param tempFile {name}.zip.*.tmp
-     * @param zipDir zipDir
+     * Extract a tempfile {name}.zip.*uuid*.tmp to the zipDir {name}
+     * @param tempFile {name}.zip.*uuid*.tmp
+     * @param zipDir {name}
      * @throws IOException
      */
     private void extractZip(java.io.File tempFile, java.io.File zipDir) throws IOException {
@@ -310,10 +310,10 @@ public class FileAction extends DefaultAction {
         byte[] buffer = new byte[1024];
         ZipInputStream zipinputstream = null;
         
+        ZipEntry zipentry = null;
         try {
             zipinputstream = new ZipInputStream(new FileInputStream(tempFile));
 
-            ZipEntry zipentry = null;
             while ((zipentry = zipinputstream.getNextEntry()) != null) {
                 log.debug("extractZip zipentry name: " + zipentry.getName());
                 
@@ -325,7 +325,18 @@ public class FileAction extends DefaultAction {
                     newFile.mkdirs();
                     saveDir(newFile);
                 } else if (isZipFile(zipentry.getName())) {
-                    java.io.File tempZipFile = java.io.File.createTempFile(zipentry.getName() + ".", null);
+                    // If the zipfile is in a subdir of the zip,
+                    // we have to extract the filename without the dir.
+                    // It seems the zip-implementation of java always uses "/"
+                    // as file separator in a zip. Even on a windows system.
+                    int lastIndexOfFileSeparator = zipentry.getName().lastIndexOf("/");
+                    String zipName = null;
+                    if (lastIndexOfFileSeparator < 0)
+                        zipName = zipentry.getName().substring(0);
+                    else
+                        zipName = zipentry.getName().substring(lastIndexOfFileSeparator + 1);
+
+                    java.io.File tempZipFile = java.io.File.createTempFile(zipName + ".", null);
                     java.io.File newZipDir = new java.io.File(zipDir, getZipName(zipentry.getName()));
 
                     copyZipEntryTo(zipinputstream, tempZipFile, buffer);
@@ -338,6 +349,13 @@ public class FileAction extends DefaultAction {
                 }
                 
                 zipinputstream.closeEntry();
+            }
+        } catch(IOException ioex) {
+            if (zipentry == null) {
+                throw ioex;
+            } else {
+                throw new IOException(ioex.getMessage() +
+                        "\nProcessing zip entry: " + zipentry.getName());
             }
         } finally {
             if (zipinputstream != null) {
