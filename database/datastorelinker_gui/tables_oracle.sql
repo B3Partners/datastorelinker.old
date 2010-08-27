@@ -5,7 +5,7 @@
         col_x varchar2(255 char),
         col_y varchar2(255 char),
         database_name varchar2(255 char),
-        host_name clob,
+        host_name varchar2(255 char),
         instance varchar2(255 char),
         name varchar2(255 char) not null,
         password varchar2(255 char),
