@@ -57,6 +57,14 @@ h3 {
     width: 100%;
 }
 
+/* jquery ui override: veranderen na (elke) theme verandering */
+.ui-state-active/*, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active*/ {
+    border: 1px solid #196299;
+    background: #f7f7f7 url(images/ui-bg_flat_100_f7f7f7_40x100.png) 50% 50% repeat-x;
+    font-weight: normal;
+    color: #196299;
+}
+
 #uploaderBody, #uploaderQueue * {
     width: auto;
 }

@@ -5,15 +5,37 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<ul class="jqueryFileTree" style="display: none;">
-    <c:forEach var="dir" items="${actionBean.directories}">
-        <li class="directory collapsed">
-            <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-            <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
-            <a href="#" rel="${dir.id}" style="display: inline">${dir.name}</a>
-        </li>
+<c:if test="${empty dirContent}">
+    <c:set var="dirContent" value="${actionBean.dirContent}" scope="request"/>
+</c:if>
+
+<c:set var="dirs" value="${dirContent.dirs}" scope="page"/>
+<c:set var="files" value="${dirContent.files}" scope="page"/>
+
+<ul class="jqueryFileTree" style="display: block;">
+    <c:forEach var="dir" items="${dirs}">
+        <c:choose>
+            <c:when test="${not empty dir.dirContent}">
+                <li class="directory expanded">
+                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
+                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
+                    <a href="#" rel="${dir.id}" style="display: inline">${dir.name}</a>
+
+                    <c:set var="dirContent" value="${dir.dirContent}" scope="request"/>
+                    <jsp:include page="filetreeConnector.jsp"/>
+                    
+                </li>
+            </c:when>
+            <c:otherwise>
+                <li class="directory collapsed">
+                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
+                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
+                    <a href="#" rel="${dir.id}" style="display: inline">${dir.name}</a>
+                </li>
+            </c:otherwise>
+        </c:choose>
     </c:forEach>
-    <c:forEach var="file" items="${actionBean.files}">
+    <c:forEach var="file" items="${files}">
         <li class="file ext_file">
             <input type="checkbox" name="${file.id}" value="${file.id}"/>
             <input type="radio" name="selectedFileId" value="${file.id}" style="display: none"/>
@@ -21,56 +43,3 @@
         </li>
     </c:forEach>
 </ul>
-
-<%--@ page import="java.io.File,java.io.FilenameFilter,java.util.Arrays"%>
-<%
-    /**
-     * jQuery File Tree JSP Connector
-     * Version 1.0
-     * Copyright 2008 Joshua Gould
-     * 21 April 2008
-     */
-    String dir = request.getParameter("dir");
-    if (dir == null) {
-        return;
-    }
-
-    if (dir.charAt(dir.length() - 1) == '\\') {
-        dir = dir.substring(0, dir.length() - 1) + "/";
-    } else if (dir.charAt(dir.length() - 1) != '/') {
-        dir += "/";
-    }
-
-    dir = java.net.URLDecoder.decode(dir, "UTF-8");
-
-    if (new File(dir).exists()) {
-        String[] files = new File(dir).list(new FilenameFilter() {
-
-            public boolean accept(File dir, String name) {
-                return name.charAt(0) != '.';
-            }
-        });
-        Arrays.sort(files, String.CASE_INSENSITIVE_ORDER);
-        out.print("<ul class=\"jqueryFileTree\" style=\"display: none;\">");
-        // All dirs
-        for (String file : files) {
-            if (new File(dir, file).isDirectory()) {
-                out.print("<li class=\"directory collapsed\"><a href=\"#\" rel=\"" + dir + file + "/\">"
-                        + file + "</a></li>");
-            }
-        }
-        // All files
-        for (String file : files) {
-            if (!new File(dir, file).isDirectory()) {
-                int dotIndex = file.lastIndexOf('.');
-                String ext = dotIndex > 0 ? file.substring(dotIndex + 1) : "";
-                
-                out.print("<li class=\"file ext_" + ext + "\">"
-                        + "<input type=\"checkbox\" name=\"jqft_" + dir + file + "\" value=\"" + dir + file + "\" />"
-                        + "<a href=\"#\" rel=\"" + dir + file + "\" style=\"display: inline;\">"
-                        + file + "</a></li>");
-            }
-        }
-        out.print("</ul>");
-    }
---%>

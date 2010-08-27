@@ -31,13 +31,15 @@
             },
             activeClass: activeClass,
             activateDirsOnClick: false,
+            expandOnFirstCallTo: selectedFileId,
             fileCallback: function(fileName) {
                 
             },
             readyCallback: function(root) {
                 if (selectedFileId != null && !selectedFileFound) {
-                    log(root);
+                    //log(root);
                     var selectedFile = root.find("input:radio[value=" + selectedFileId + "]");
+                    //log(selectedFile);
                     if (selectedFile.length > 0) {
                         selectedFileFound = true;
                         selectedFile.attr("checked", "checked");
@@ -47,9 +49,6 @@
                             defaultScrollToDuration,
                             defaultScrollToOptions
                         );
-
-                    } else {
-                        // TODO recurse with correct dir
                     }
                 }
             }

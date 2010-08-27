@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -22,7 +23,6 @@ import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.controller.StripesRequestWrapper;
 import net.sourceforge.stripes.util.Log;
@@ -32,6 +32,7 @@ import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.UploaderStatus;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
+import nl.b3p.datastorelinker.util.DirContent;
 import org.hibernate.Session;
 
 /**
@@ -52,8 +53,7 @@ public class FileAction extends DefaultAction {
     private final static String ADMIN_JSP = "/pages/management/fileAdmin.jsp";
     private final static String DIRCONTENTS_JSP = "/pages/main/file/filetreeConnector.jsp";
 
-    private List<File> files;
-    private List<File> directories;
+    private DirContent dirContent;
 
     private File selectedFile;
     private Long selectedFileId;
@@ -63,6 +63,7 @@ public class FileAction extends DefaultAction {
     //private Map<Integer, UploaderStatus> uploaderStatuses;
     private UploaderStatus uploaderStatus;
     private Long dir;
+    private Long expandTo;
 
     public Resolution listDir() {
         log.debug(dir);
@@ -80,28 +81,73 @@ public class FileAction extends DefaultAction {
             directory = getUploadDirectory();
         }
         
-        directories = session.createQuery("from File where directory = (:directory) and isDirectory = true order by name")
-                .setParameter("directory", directory)
-                .list();
-        files = session.createQuery("from File where directory = (:directory) and isDirectory = false order by name")
-                .setParameter("directory", directory)
-                .list();
+        if (expandTo == null) {
+            dirContent = getDirContent(directory, null);
+        } else {
+            selectedFile = (File)session.get(File.class, expandTo);
 
-        filterOutShapeExtraFiles();
+            String selectedFileDir = selectedFile.getDirectory();
+            if (!selectedFileDir.startsWith(getUploadDirectory())) {
+                log.error("!selectedFileDir.startsWith(getUploadDirectory())");
+                return null;
+            }
+
+            List<String> subDirList = new LinkedList<String>();
+
+            java.io.File uploadDirectory = new java.io.File(directory);
+            java.io.File currentDirFile = new java.io.File(selectedFileDir);
+            while (!currentDirFile.getAbsolutePath().equals(uploadDirectory.getAbsolutePath())) {
+                subDirList.add(0, currentDirFile.getName());
+                currentDirFile = currentDirFile.getParentFile();
+            }
+            
+            dirContent = getDirContent(directory, subDirList);
+        }
 
         //log.debug("dirs: " + directories.size());
         //log.debug("files: " + files.size());
 
-        if (selectedFileId != null) {
-            selectedFile = (File)session.get(File.class, selectedFileId);
-        }
-
         return new ForwardResolution(DIRCONTENTS_JSP);
     }
 
-    protected void filterOutShapeExtraFiles() {
+    protected DirContent getDirContent(String directory, List<String> subDirList) {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        DirContent dc = new DirContent();
+
+        dc.setDirs(session.createQuery("from File where directory = (:directory) and isDirectory = true order by name")
+                .setParameter("directory", directory)
+                .list());
+        dc.setFiles(session.createQuery("from File where directory = (:directory) and isDirectory = false order by name")
+                .setParameter("directory", directory)
+                .list());
+
+        filterOutFilesToHide(dc);
+
+        if (subDirList != null && subDirList.size() > 0) {
+            String subDirString = subDirList.remove(0);
+
+            for (File subDir : dc.getDirs()) {
+                if (subDir.getName().equals(subDirString)) {
+                    subDir.setDirContent(getDirContent(
+                            new java.io.File(subDir.getDirectory(), subDir.getName()).getAbsolutePath(),
+                            subDirList));
+                    break;
+                }
+            }
+        }
+
+        return dc;
+    }
+
+    protected void filterOutFilesToHide(DirContent dc) {
+        filterOutShapeExtraFiles(dc);
+    }
+
+    protected void filterOutShapeExtraFiles(DirContent dc) {
         List<String> shapeNames = new ArrayList<String>();
-        for (File file : files) {
+        for (File file : dc.getFiles()) {
             if (file.getName().endsWith(SHAPE_EXT)) {
                 shapeNames.add(file.getName().substring(0, file.getName().length() - SHAPE_EXT.length()));
             }
@@ -109,13 +155,13 @@ public class FileAction extends DefaultAction {
 
         for (String shapeName : shapeNames) {
             List<File> toBeIgnoredFiles = new ArrayList<File>();
-            for (File file : files) {
+            for (File file : dc.getFiles()) {
                 if (file.getName().startsWith(shapeName) && !file.getName().endsWith(SHAPE_EXT)) {
                     toBeIgnoredFiles.add(file);
                 }
             }
             for (File file : toBeIgnoredFiles) {
-                files.remove(file);
+                dc.getFiles().remove(file);
             }
         }
     }
@@ -292,9 +338,9 @@ public class FileAction extends DefaultAction {
     }
 
     /**
-     * Extract a tempfile {name}.zip.*uuid*.tmp to the zipDir {name}
-     * @param tempFile {name}.zip.*uuid*.tmp
-     * @param zipDir {name}
+     * Extract a zip tempfile to a directory. The tempfile will be deleted by this method.
+     * @param tempFile The zip file to extract. This tempfile will be deleted by this method.
+     * @param zipDir Directory to extract files into
      * @throws IOException
      */
     private void extractZip(java.io.File tempFile, java.io.File zipDir) throws IOException {
@@ -471,14 +517,6 @@ public class FileAction extends DefaultAction {
         return new java.io.File(parent, getZipName(zipFile));
     }
 
-    public List<File> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<File> files) {
-        this.files = files;
-    }
-
     public String getUploadDirectory() {
         return getContext().getServletContext().getInitParameter("uploadDirectory");
     }
@@ -507,12 +545,12 @@ public class FileAction extends DefaultAction {
         this.dir = dir;
     }
 
-    public List<File> getDirectories() {
-        return directories;
+    public Long getExpandTo() {
+        return expandTo;
     }
 
-    public void setDirectories(List<File> directories) {
-        this.directories = directories;
+    public void setExpandTo(Long expandTo) {
+        this.expandTo = expandTo;
     }
 
     public File getSelectedFile() {
@@ -521,6 +559,14 @@ public class FileAction extends DefaultAction {
 
     public void setSelectedFile(File selectedFile) {
         this.selectedFile = selectedFile;
+    }
+
+    public DirContent getDirContent() {
+        return dirContent;
+    }
+
+    public void setDirContent(DirContent dirContent) {
+        this.dirContent = dirContent;
     }
 
 }
