@@ -5,8 +5,6 @@
 
 package nl.b3p.datastorelinker.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.quartz.Job;

@@ -54,6 +54,7 @@ public class FileAction extends DefaultAction {
     private List<File> files;
     private List<File> directories;
 
+    private File selectedFile;
     private Long selectedFileId;
     private String selectedFileIds;
 
@@ -90,18 +91,22 @@ public class FileAction extends DefaultAction {
         //log.debug("dirs: " + directories.size());
         //log.debug("files: " + files.size());
 
+        if (selectedFileId != null) {
+            selectedFile = (File)session.get(File.class, selectedFileId);
+        }
+
         return new ForwardResolution(DIRCONTENTS_JSP);
     }
 
     protected void filterOutShapeExtraFiles() {
-        String shapeName = null;
+        List<String> shapeNames = new ArrayList<String>();
         for (File file : files) {
             if (file.getName().endsWith(SHAPE_EXT)) {
-                shapeName = file.getName().substring(0, file.getName().length() - SHAPE_EXT.length());
+                shapeNames.add(file.getName().substring(0, file.getName().length() - SHAPE_EXT.length()));
             }
         }
 
-        if (shapeName != null) {
+        for (String shapeName : shapeNames) {
             List<File> toBeIgnoredFiles = new ArrayList<File>();
             for (File file : files) {
                 if (file.getName().startsWith(shapeName) && !file.getName().endsWith(SHAPE_EXT)) {
@@ -490,6 +495,14 @@ public class FileAction extends DefaultAction {
 
     public void setDirectories(List<File> directories) {
         this.directories = directories;
+    }
+
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
+    public void setSelectedFile(File selectedFile) {
+        this.selectedFile = selectedFile;
     }
 
 }
