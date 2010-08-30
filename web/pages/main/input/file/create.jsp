@@ -29,13 +29,13 @@
                             return false;
                         }
 
-                        $.blockUI(blockUIOptions);
+                        //$.blockUI(blockUIOptions);
                         ajaxOpen({
                             formSelector: "#createInputForm",
                             event: "createFileInputComplete",
                             containerSelector: "#inputListContainer",
                             successAfterContainerFill: function() {
-                                $.unblockUI(unblockUIOptions);
+                                //$.unblockUI(unblockUIOptions);
                                 $("#inputContainer").dialog("close");
                             }
                         });

@@ -17,9 +17,11 @@
         <c:choose>
             <c:when test="${not empty dir.dirContent}">
                 <li class="directory expanded">
-                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
-                    <a href="#" rel="${dir.id}" style="display: inline">${dir.name}</a>
+                    <a href="#" rel="${dir.id}">
+                        <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
+                        <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
+                        ${dir.name}
+                    </a>
 
                     <c:set var="dirContent" value="${dir.dirContent}" scope="request"/>
                     <jsp:include page="filetreeConnector.jsp"/>
@@ -28,18 +30,22 @@
             </c:when>
             <c:otherwise>
                 <li class="directory collapsed">
-                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
-                    <a href="#" rel="${dir.id}" style="display: inline">${dir.name}</a>
+                    <a href="#" rel="${dir.id}">
+                        <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
+                        <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
+                        ${dir.name}
+                    </a>
                 </li>
             </c:otherwise>
         </c:choose>
     </c:forEach>
     <c:forEach var="file" items="${files}">
         <li class="file ext_file">
-            <input type="checkbox" name="${file.id}" value="${file.id}"/>
-            <input type="radio" name="selectedFileId" value="${file.id}" style="display: none"/>
-            <a href="#" rel="${file.id}" style="display: inline">${file.name}</a>
+            <a href="#" rel="${file.id}">
+                <input type="checkbox" name="${file.id}" value="${file.id}"/>
+                <input type="radio" name="selectedFileId" value="${file.id}" style="display: none"/>
+                ${file.name}
+            </a>
         </li>
     </c:forEach>
 </ul>
