@@ -11,8 +11,18 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#deleteFile").click(function() {
-            if ($("#filetree input:checked").length == 0) {
-                // bericht?
+            if (!isFormValidAndContainsInput("#createInputForm"))
+                return defaultButtonClick(this);
+
+            if ($("#filetree input:checkbox:checked").length == 0) {
+                $("<div></div").html(I18N.deleteFileFail).dialog($.extend({}, defaultDialogOptions, {
+                    title: I18N.error,
+                    buttons: {
+                        "<fmt:message key="ok"/>": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                }));
                 return defaultButtonClick(this);
             }
 
@@ -80,7 +90,7 @@
     <div>
         <h1><fmt:message key="inputFile.selectFile"/></h1>
     </div>
-    <div id="filesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+    <div id="filesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
         <%@include file="/pages/main/file/list.jsp" %>
     </div>
     <div>

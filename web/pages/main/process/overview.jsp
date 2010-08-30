@@ -65,7 +65,7 @@
         });
 
         $("#executeProcess").click(function() {
-            if (!$("#processForm").valid())
+            if (!isFormValidAndContainsInput("#processForm"))
                 return defaultButtonClick(this);
 
             $("<div id='processContainer'><div id='processOutput'></div></div>").appendTo(document.body);
@@ -159,7 +159,7 @@
         });
 
         $("#cancelExecuteProcessPeriodically").click(function() {
-            if (!$("#processForm").valid())
+            if (!isFormValidAndContainsInput("#processForm"))
                 return defaultButtonClick(this);
 
             $("<div></div>").html(I18N.cancelPeriodicallyExecuteProcessAreYouSure)
@@ -189,7 +189,7 @@
         });
 
         $("#deleteProcess").click(function() {
-            if (!$("#processForm").valid())
+            if (!isFormValidAndContainsInput("#processForm"))
                 return defaultButtonClick(this);
 
             $("<div></div>").html(I18N.deleteProcessAreYouSure)
@@ -218,7 +218,7 @@
         });
 
         $("#exportToXml").click(function() {
-            if (!$("#processForm").valid())
+            if (!isFormValidAndContainsInput("#processForm"))
                 return defaultButtonClick(this);
 
             var selectedProcessId = $("#processesListContainer :radio:checked").val();
@@ -246,7 +246,7 @@
                     //log("Process finished");
                     $("#processOutput").html(data.message);
                     clearInterval(intervalId);
-                    changeButtonName("#processContainer", "Annuleren", "Voltooien");
+                    changeButtonName("#processContainer", I18N.cancel, I18N.finish);
                 }
             },
             global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
@@ -279,7 +279,7 @@
             <h1><fmt:message key="main.overview"/></h1>
         </div>
 
-        <div id="processesListContainer" class="ui-layout-center radioList ui-widget-content ui-corner-all">
+        <div id="processesListContainer" class="mandatory-form-input ui-layout-center radioList ui-widget-content ui-corner-all">
             <%@include file="/pages/main/process/list.jsp" %>
         </div>
 

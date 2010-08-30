@@ -22,6 +22,8 @@ for (String rawKey : res.keySet()) {
     }
 }
 %>
+
+// used as objects for Cron:
 I18N.daysOfTheWeek = {
     1: "<fmt:message key="sunday"/>",
     2: "<fmt:message key="monday"/>",

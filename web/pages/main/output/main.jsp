@@ -104,7 +104,7 @@
     <div>
         <h1><fmt:message key="process.selectOutput"/></h1>
     </div>
-    <div id="outputListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+    <div id="outputListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
         <%@include file="/pages/main/output/list.jsp" %>
     </div>
     <div class="crudButtonsArea">

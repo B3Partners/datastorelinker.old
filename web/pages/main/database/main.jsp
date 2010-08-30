@@ -58,7 +58,7 @@
         })
 
         $("#deleteDB").click(function() {
-            if (!$("#createInputForm").valid())
+            if (!isFormValidAndContainsInput("#createInputForm"))
                 return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteDatabaseAreYouSure"/></div>").attr("id", "dbContainer").appendTo($(document.body));
@@ -114,7 +114,7 @@
     <div>
         <h1><fmt:message key="inputDB.selectDB"/></h1>
     </div>
-    <div id="databasesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+    <div id="databasesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
         <%@include file="/pages/main/database/list.jsp" %>
     </div>
     <div class="crudButtonsArea">

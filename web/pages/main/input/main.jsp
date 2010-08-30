@@ -66,7 +66,7 @@
         });
 
         $("#deleteInput").click(function() {
-            if (!$("#createUpdateProcessForm").valid())
+            if (!isFormValidAndContainsInput("#createUpdateProcessForm"))
                 return defaultButtonClick(this);
 
             $("<div></div>").html(I18N.deleteInputAreYouSure)
@@ -113,7 +113,7 @@
     <div>
         <h1><fmt:message key="process.selectInput"/></h1>
     </div>
-    <div id="inputListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+    <div id="inputListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
         <%@include file="/pages/main/input/list.jsp" %>
     </div>
     <div class="crudButtonsArea">

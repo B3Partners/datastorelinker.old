@@ -74,7 +74,7 @@
         <div id="<fmt:message key="inputDB.selectTable.short"/>" class="step submitstep">
             <h1><fmt:message key="inputDB.selectTable"/></h1>
             <fmt:message key="inputDB.tablesFitAsInput"/>
-            <div id="tablesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
+            <div id="tablesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
             </div>
         </div>
     </div>

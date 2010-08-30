@@ -15,18 +15,27 @@
         $("#createInputForm").formwizard(
             $.extend({}, formWizardConfig, {
                 formOptions: {
+                    global: false,
                     beforeSend: function() {
-                        //var selectedFileId = $("#createInputForm .ui-state-active").attr("rel");
+                        if ($("#createInputForm input:radio:checked").length == 0) {
+                            $("<div></div").html(I18N.finishFileFail).dialog($.extend({}, defaultDialogOptions, {
+                                title: I18N.error,
+                                buttons: {
+                                    "<fmt:message key="ok"/>": function() {
+                                        $(this).dialog("close");
+                                    }
+                                }
+                            }));
+                            return false;
+                        }
+
+                        $.blockUI(blockUIOptions);
                         ajaxOpen({
-                            //url: "${inputUrl}",
                             formSelector: "#createInputForm",
                             event: "createFileInputComplete",
-                            /*extraParams: [{
-                                name: "selectedFileId",
-                                value: selectedFileId
-                            }],*/
                             containerSelector: "#inputListContainer",
                             successAfterContainerFill: function() {
+                                $.unblockUI(unblockUIOptions);
                                 $("#inputContainer").dialog("close");
                             }
                         });
