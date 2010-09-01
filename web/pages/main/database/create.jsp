@@ -15,7 +15,7 @@
     });
 </script>
 
-<div id="databaseAccordion" class="form-container step">
+<div id="databaseAccordion" class="form-container">
     <h3><a href="#"><fmt:message key="postgis"/></a></h3>
     <div>
         <%@include file="/pages/main/database/postgis.jsp" %>
