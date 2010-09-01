@@ -5,8 +5,4 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<h3><fmt:message key="postgisoutput"/></h3>
-
-<div class="form-container">
-    <%@include file="/pages/main/database/postgis.jsp" %>
-</div>
+<%@include file="/pages/main/database/create.jsp" %>
