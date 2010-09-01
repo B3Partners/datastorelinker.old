@@ -17,8 +17,8 @@
         $("#processOverviewContainer").layout($.extend({}, defaultLayoutOptions, {
             /*north__size: 50,
             north__minSize: 50,*/
-            south__size: 100,
-            south__minSize: 100
+            south__size: 75,
+            south__minSize: 75
         }));
 
         var newUpdateProcessCommonDialogOptions = $.extend({}, defaultDialogOptions, {

@@ -5,6 +5,12 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+    });
+</script>
+
 <c:if test="${empty dirContent}">
     <c:set var="dirContent" value="${actionBean.dirContent}" scope="request"/>
 </c:if>
@@ -17,9 +23,9 @@
         <c:choose>
             <c:when test="${not empty dir.dirContent}">
                 <li class="directory expanded">
+                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
+                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
                     <a href="#" rel="${dir.id}">
-                        <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-                        <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
                         ${dir.name}
                     </a>
 
@@ -30,9 +36,9 @@
             </c:when>
             <c:otherwise>
                 <li class="directory collapsed">
+                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
+                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
                     <a href="#" rel="${dir.id}">
-                        <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-                        <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
                         ${dir.name}
                     </a>
                 </li>
@@ -41,9 +47,9 @@
     </c:forEach>
     <c:forEach var="file" items="${files}">
         <li class="file ext_file">
+            <input type="checkbox" name="${file.id}" value="${file.id}"/>
+            <input type="radio" name="selectedFileId" value="${file.id}" style="display: none"/>
             <a href="#" rel="${file.id}">
-                <input type="checkbox" name="${file.id}" value="${file.id}"/>
-                <input type="radio" name="selectedFileId" value="${file.id}" style="display: none"/>
                 ${file.name}
             </a>
         </li>
