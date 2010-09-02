@@ -29,57 +29,85 @@
             /*if (!$("#createInputForm").valid())
                 return defaultButtonClick(this);*/
 
-            $("<div><fmt:message key="deleteFileAreYouSure"/></div>").attr("id", "createFileContainer").appendTo(document.body);
+            var filesToDelete = [];
+            $("#filetree input:checkbox:checked").each(function(index, value) {
+                filesToDelete.push($(value).val());
+            });
 
-            $("#createFileContainer").dialog($.extend({}, defaultDialogOptions, {
-                title: "<fmt:message key="deleteFile"/>",
-                width: 350,
-                buttons: {
-                    "<fmt:message key="no"/>": function() {
-                        $(this).dialog("close");
-                    },
-                    "<fmt:message key="yes"/>": function() {
-                        $.blockUI(blockUIOptions);
-
-                        var filesToDelete = [];
-                        $("#filetree input:checkbox:checked").each(function(index, value) {
-                            filesToDelete.push($(value).val());
+            ajaxOpen({
+                url: "${fileUrl}",
+                event: "deleteCheck",
+                extraParams: [{
+                    name: "selectedFileIds",
+                    value: JSON.stringify(filesToDelete)
+                }],
+                successAfterContainerFill: function(data) {
+                    var dialogElem = $("<div></div>").attr("id", "createFileContainer").appendTo(document.body);
+                    if (data.success) {
+                        if (filesToDelete.length > 1)
+                            dialogElem.html(I18N.deleteFilesAreYouSure);
+                        else
+                            dialogElem.html(I18N.deleteFileAreYouSure);
+                    } else {
+                        dialogElem.append("<p>" + I18N.filePreambleAllWillBeDeleted + "</p>");
+                        var list = "<ul>";
+                        $.each(data.array, function(index, value) {
+                            list += "<li>" + value + "</li>";
                         });
+                        list += "</ul>";
+                        dialogElem.append(list);
+                        if (filesToDelete.length > 1)
+                            dialogElem.append("<p>" + I18N.filesConfirmAllWillBeDeleted + "</p>");
+                        else
+                            dialogElem.append("<p>" + I18N.fileConfirmAllWillBeDeleted + "</p>");
+                    }
 
-                        ajaxOpen({
-                            url: "${fileUrl}",
-                            //formSelector: "#createInputForm",
-                            event: "delete",
-                            extraParams: [{
-                                name: "selectedFileIds",
-                                value: JSON.stringify(filesToDelete)
-                            }],
-                            containerSelector: "#filesListContainer",
-                            ajaxOptions: {global: false}, // prevent blockUI being called 3 times. Called manually.
-                            successAfterContainerFill: function() {
+                    $("#createFileContainer").dialog($.extend({}, defaultDialogOptions, {
+                        title: I18N.deleteFile,
+                        width: 500,
+                        buttons: {
+                            "<fmt:message key="no"/>": function() {
+                                $(this).dialog("close");
+                            },
+                            "<fmt:message key="yes"/>": function() {
+                                $.blockUI(blockUIOptions);
+
                                 ajaxOpen({
-                                    url: "${inputUrl}",
-                                    event: "list",
-                                    containerSelector: "#inputListContainer",
-                                    ajaxOptions: {global: false},
+                                    url: "${fileUrl}",
+                                    //formSelector: "#createInputForm",
+                                    event: "delete",
+                                    extraParams: [{
+                                        name: "selectedFileIds",
+                                        value: JSON.stringify(filesToDelete)
+                                    }],
+                                    containerSelector: "#filesListContainer",
+                                    ajaxOptions: {global: false}, // prevent blockUI being called 3 times. Called manually.
                                     successAfterContainerFill: function() {
                                         ajaxOpen({
-                                            url: "${processUrl}",
+                                            url: "${inputUrl}",
                                             event: "list",
-                                            containerSelector: "#processesListContainer",
+                                            containerSelector: "#inputListContainer",
                                             ajaxOptions: {global: false},
                                             successAfterContainerFill: function() {
-                                                $("#createFileContainer").dialog("close");
-                                                $.unblockUI(unblockUIOptions);
+                                                ajaxOpen({
+                                                    url: "${processUrl}",
+                                                    event: "list",
+                                                    containerSelector: "#processesListContainer",
+                                                    ajaxOptions: {global: false},
+                                                    successAfterContainerFill: function() {
+                                                        $("#createFileContainer").dialog("close");
+                                                        $.unblockUI(unblockUIOptions);
+                                                    }
+                                                });
                                             }
                                         });
                                     }
                                 });
                             }
-                        });
-                    }
+                        }
+                    }));
                 }
-            }));
+            });
 
             return defaultButtonClick(this);
         });

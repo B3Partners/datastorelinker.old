@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -22,6 +23,7 @@ import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.controller.StripesRequestWrapper;
@@ -29,6 +31,8 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.File;
+import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.json.ArraySuccessMessage;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.UploaderStatus;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
@@ -180,6 +184,96 @@ public class FileAction extends DefaultAction {
         return new ForwardResolution(LIST_JSP);
     }
 
+    public Resolution deleteCheck() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        log.debug(selectedFileIds);
+
+        List<LocalizableMessage> messages = new ArrayList<LocalizableMessage>();
+
+        try {
+            JSONArray selectedFileIdsJSON = JSONArray.fromObject(selectedFileIds);
+            for (Object fileIdObj : selectedFileIdsJSON) {
+                Long fileId = Long.valueOf((String)fileIdObj);
+
+                File file = (File)session.get(File.class, fileId);
+
+                messages.addAll(deleteCheckImpl(file));
+            }
+        } catch(IOException ioex) {
+            log.error(ioex);
+            // if anything goes wrong here something is wrong with the uploadDir.
+            // db cascades still work though.
+        }
+
+        if (messages.isEmpty()) {
+            return new JSONResolution(new ArraySuccessMessage(true));
+        } else {
+            JSONArray jsonArray = new JSONArray();
+            for (LocalizableMessage m : messages) {
+                jsonArray.element(m.getMessage(Locale.getDefault()));
+            }
+            return new JSONResolution(new ArraySuccessMessage(false, jsonArray));
+        }
+    }
+
+    private List<LocalizableMessage> deleteCheckImpl(File file) throws IOException {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        List<LocalizableMessage> messages = new ArrayList<LocalizableMessage>();
+        
+        if (file.getIsDirectory()) {
+            java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
+
+            List<File> filesInDir = session.createQuery("from File where directory = :directory")
+                    .setParameter("directory", fsFile.getAbsolutePath())
+                    .list();
+
+            for (File fileInDir : filesInDir) {
+                messages.addAll(deleteCheckImpl(fileInDir));
+            }
+        } else {
+            String relativeFileName = getFileNameRelativeToUploadDir(file);
+
+            if (file.getInoutList() != null) {
+                for (Inout inout : file.getInoutList()) {
+                    if (inout.getType().getId() == 1) { // input
+                        messages.add(new LocalizableMessage("file.inuseInput", relativeFileName, inout.getName()));
+
+                        if (inout.getInputProcessList() != null) {
+                            for (nl.b3p.datastorelinker.entity.Process process : inout.getInputProcessList()) {
+                                messages.add(new LocalizableMessage("input.inuse", inout.getName(), process.getName()));
+                            }
+                        }
+                    } else { // output
+                        messages.add(new LocalizableMessage("file.inuseOutput", relativeFileName, inout.getName()));
+
+                        if (inout.getOutputProcessList() != null) {
+                            for (nl.b3p.datastorelinker.entity.Process process : inout.getOutputProcessList()) {
+                                messages.add(new LocalizableMessage("output.inuse", inout.getName(), process.getName()));
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return messages;
+    }
+
+    public String getFileNameRelativeToUploadDir(File file) throws IOException {
+        java.io.File ioFile = new java.io.File(file.getDirectory(), file.getName());
+        String absName = ioFile.getAbsolutePath();
+        if (!absName.startsWith(getUploadDirectory())) {
+            throw new IOException("Wrong file path. Should start with uploadDir: " + absName + "; uploadDir: " + getUploadDirectory());
+        } else {
+            return absName.substring(getUploadDirectory().length());
+        }
+    }
+
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -195,16 +289,6 @@ public class FileAction extends DefaultAction {
             deleteImpl(file);
         }
         return list();
-
-        /*if (deleteSuccess) {
-            session.delete(file);
-            return list();
-        } else {
-            log.error("File could not be deleted from the filesystem: " + fsFile.getAbsolutePath());
-            // silent fail?
-            //throw new Exception();
-            return list();
-        }*/
     }
 
     protected void deleteImpl(File file) {
@@ -214,6 +298,8 @@ public class FileAction extends DefaultAction {
 
             java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
             boolean deleteSuccess = fsFile.delete();
+            if (!deleteSuccess)
+                log.error("Failed to delete file: " + fsFile.getAbsolutePath());
             session.delete(file);
 
             deleteExtraShapeFilesInDir(file);
@@ -263,6 +349,8 @@ public class FileAction extends DefaultAction {
 
             // dir must be empty when deleting it
             boolean deleteDirSuccess = fsFile.delete();
+            if (!deleteDirSuccess)
+                log.error("Failed to delete dir: " + fsFile.getAbsolutePath() + "; This could happen if the dir was not empty at the time of deletion. This should not happen.");
         }
     }
 
@@ -284,7 +372,7 @@ public class FileAction extends DefaultAction {
             if (req.isMultipart()) {
                 filedata = req.getFileParameterValue("Filedata");
             } else if (req.getParameter("status") != null) {
-                log.debug("qwe: " + req.getParameter("status"));
+                //log.debug("qwe: " + req.getParameter("status"));
                 JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
                 uploaderStatus = (UploaderStatus)JSONObject.toBean(jsonObject, UploaderStatus.class);
             }
@@ -518,7 +606,11 @@ public class FileAction extends DefaultAction {
     }
 
     public String getUploadDirectory() {
-        return getContext().getServletContext().getInitParameter("uploadDirectory");
+        return getUploadDirectoryIOFile().getAbsolutePath();
+    }
+
+    public java.io.File getUploadDirectoryIOFile() {
+        return new java.io.File(getContext().getServletContext().getInitParameter("uploadDirectory"));
     }
 
     public Long getSelectedFileId() {

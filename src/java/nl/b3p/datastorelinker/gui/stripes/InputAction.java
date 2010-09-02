@@ -5,9 +5,12 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -176,7 +179,16 @@ public class InputAction extends DefaultAction {
         fileInput.setDatatype(new InoutDatatype(2)); // file
         fileInput.setFile(selectedFile);
         fileInput.setTableName(selectedTable);
-        String name = selectedFile.getName();
+
+        FileAction fileAction = new FileAction();
+        fileAction.setContext(getContext());
+        String name;
+        try {
+            name = fileAction.getFileNameRelativeToUploadDir(selectedFile);
+        } catch (IOException ex) {
+            log.error(ex);
+            name = selectedFile.getName();
+        }
         if (selectedTable != null && !selectedTable.equals(""))
             name += " (" + selectedTable + ")";
         fileInput.setName(name);
