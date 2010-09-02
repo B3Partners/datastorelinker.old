@@ -235,7 +235,7 @@ public class FileAction extends DefaultAction {
                 messages.addAll(deleteCheckImpl(fileInDir));
             }
         } else {
-            String relativeFileName = getFileNameRelativeToUploadDir(file);
+            String relativeFileName = getFileNameRelativeToUploadDirPP(file);
 
             if (file.getInoutList() != null) {
                 for (Inout inout : file.getInoutList()) {
@@ -262,6 +262,12 @@ public class FileAction extends DefaultAction {
         }
 
         return messages;
+    }
+
+    // Pretty printed version of getFileNameRelativeToUploadDir(File file).
+    // This name is uniform on all systems where the server runs (*nix or Windows).
+    public String getFileNameRelativeToUploadDirPP(File file) throws IOException {
+        return getFileNameRelativeToUploadDir(file).replace('\\', '/');
     }
 
     public String getFileNameRelativeToUploadDir(File file) throws IOException {
@@ -590,7 +596,7 @@ public class FileAction extends DefaultAction {
     }
 
     private boolean isZipFile(java.io.File file) {
-        return file.getName().toLowerCase().endsWith(ZIP_EXT);
+        return isZipFile(file.getName());
     }
 
     private String getZipName(String zipFileName) {
@@ -598,7 +604,7 @@ public class FileAction extends DefaultAction {
     }
 
     private String getZipName(java.io.File zipFile) {
-        return zipFile.getName().substring(0, zipFile.getName().length() - ZIP_EXT.length());
+        return getZipName(zipFile.getName());
     }
 
     private java.io.File zipFileToDirFile(java.io.File zipFile, java.io.File parent) {

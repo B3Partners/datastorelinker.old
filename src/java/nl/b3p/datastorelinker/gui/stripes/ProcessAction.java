@@ -5,6 +5,7 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import net.sf.json.JSON;
@@ -14,6 +15,7 @@ import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.util.Log;
@@ -270,40 +272,52 @@ public class ProcessAction extends DefaultAction {
     public Resolution executionProgress() {
         DataStoreLinkJob dslJob = SchedulerUtils.getProcessJob(getContext().getServletContext(), jobUUID);
 
-        if (dslJob == null || dslJob.getDataStoreLinker() == null) {
-            //log.debug("dslJob: " + dslJob);
-            //if (dslJob != null)
-                //log.debug("dslJob.getDataStoreLinker(): " + dslJob.getDataStoreLinker());
+        try {
+            if (dslJob == null || dslJob.getDataStoreLinker() == null) {
+                //log.debug("dslJob: " + dslJob);
+                //if (dslJob != null)
+                    //log.debug("dslJob.getDataStoreLinker(): " + dslJob.getDataStoreLinker());
 
-            log.error("dslJob or dslJob.getDataStoreLinker() null!");
-            return new JSONResolution(new ProgressMessage(0));
-        } else {
-            Status dslStatus = dslJob.getDataStoreLinker().getStatus();
+                log.error("dslJob or dslJob.getDataStoreLinker() null!");
+                return new JSONResolution(new ProgressMessage(0));
+            } else {
+                Status dslStatus = dslJob.getDataStoreLinker().getStatus();
 
-            int totalFeatureCount = dslStatus.getTotalFeatureCount();
-            int totalFeatureSize = dslStatus.getTotalFeatureSize();
+                int totalFeatureCount = dslStatus.getTotalFeatureCount();
+                int totalFeatureSize = dslStatus.getTotalFeatureSize();
 
-            //log.debug("Gedaan: " + totalFeatureCount + " / " + totalFeatureSize);
+                //log.debug("Gedaan: " + totalFeatureCount + " / " + totalFeatureSize);
 
-            int percentage = (int)Math.floor(100.0 * (double)totalFeatureCount / (double)totalFeatureSize);
-            //log.debug("execution progress report: " + percentage + "%");
-            ProgressMessage progressMessage = new ProgressMessage(percentage);
-            if (percentage >= 100)
-                progressMessage.setMessage(dslJob.getDataStoreLinker().getFinishedMessage());
-            
-            return new JSONResolution(progressMessage);
+                int percentage = (int)Math.floor(100.0 * (double)totalFeatureCount / (double)totalFeatureSize);
+                //log.debug("execution progress report: " + percentage + "%");
+                ProgressMessage progressMessage = new ProgressMessage(percentage);
+                if (percentage >= 100)
+                    progressMessage.setMessage(dslJob.getDataStoreLinker().getFinishedMessage());
+
+                return new JSONResolution(progressMessage);
+            }
+        } catch(Exception ex) {
+            String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
+                    + ": " + ex.getMessage();
+            return new JSONResolution(new ProgressMessage(message));
         }
     }
 
     public Resolution cancel() {
         DataStoreLinkJob dslJob = SchedulerUtils.getProcessJob(getContext().getServletContext(), jobUUID);
 
-        if (dslJob == null) {
-            return new JSONResolution(new SuccessMessage(false));
-        } else {
-            dslJob.getDataStoreLinker().getStatus().setInterrupted(true);
-            
-            return new JSONResolution(new SuccessMessage(true));
+        try {
+            if (dslJob == null) {
+                return new JSONResolution(new SuccessMessage(false));
+            } else {
+                dslJob.getDataStoreLinker().getStatus().setInterrupted(true);
+
+                return new JSONResolution(new SuccessMessage(true));
+            }
+        } catch(Exception ex) {
+            String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
+                    + ": " + ex.getMessage();
+            return new JSONResolution(new SuccessMessage(false, message, ""));
         }
     }
 

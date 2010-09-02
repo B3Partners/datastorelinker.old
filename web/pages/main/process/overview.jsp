@@ -68,20 +68,28 @@
             if (!isFormValidAndContainsInput("#processForm"))
                 return defaultButtonClick(this);
 
-            $("<div id='processContainer'><div id='processOutput'></div></div>").appendTo(document.body);
+            $("<div id='processContainer'></div>").css("height", "100%").appendTo(document.body);
 
-            var progressbar = $("<div></div>")
+            $("#processContainer").append($("<div></div>")
+                .attr("id", "executeNorth")
+            );
+            $("<div></div>")
                 .attr("id", "progressbar")
-                .append($("<span></span>").addClass("progressbarLabel"));
-                
-            $("#processContainer").prepend(progressbar);
-            $("#progressbar").progressbar({
-                value: 0,
-                change: function(event, ui) {
-                    var newValue = $(this).progressbar('option', 'value');
-                    $('.progressbarLabel', this).text(newValue + '%');
-                }
-            });
+                .css("margin", "5px 5px")
+                .append($("<span></span>").addClass("progressbarLabel"))
+                .progressbar({
+                    value: 0,
+                    change: function(event, ui) {
+                        var newValue = $(this).progressbar('option', 'value');
+                        $('.progressbarLabel', this).text(newValue + '%');
+                    }
+                })
+                .appendTo("#executeNorth");
+
+            $("#processContainer").append("<div id='processOutput'></div>");
+            $("#processContainer").append("<div id='executeSouth'></div>");
+
+            createDefaultVerticalLayout($("#processContainer"), {north__size: 35});
 
             $("#processContainer").data("jobUUID", null);
             $("#processContainer").data("intervalId", 0);
@@ -114,17 +122,33 @@
                         }
                     },
                     close: function(event, ui) {
-                        var intervalId = $("#processContainer").data("intervalId");
-                        clearInterval(intervalId);
+                        if ($("#processContainer").data("isCanceled")) {
+                            defaultDialogClose(event, ui);
+                        } else {
+                            var jobUUID = $("#processContainer").data("jobUUID");
+                            var intervalId = $("#processContainer").data("intervalId");
+                            clearInterval(intervalId);
 
-                        cancelProcess();
+                            $.getJSON(
+                                "${processUrl}", [
+                                    {name: "cancel", value: ""},
+                                    {name: "jobUUID", value: jobUUID}
+                                ],
+                                function(data, textStatus) {
+                                    if (data.success) {
+                                        //$("#progressbar").progressbar("destroy"); is widget; jq ui regelt dit bij enclosing dialog.close
 
-                        //$("#progressbar").progressbar("destroy"); is widget; jq ui regelt dit bij enclosing dialog.close
-                        
-                        $("#processContainer").removeData("jobUUID");
-                        $("#processContainer").removeData("intervalId");
-                        
-                        defaultDialogClose(event, ui);
+                                        $("#processContainer").removeData(); // removes all data
+
+                                        defaultDialogClose(event, ui);
+                                    } else {
+                                        $("#processContainer").data("isCanceled", true);
+
+                                        stopProcess(data.message);
+                                    }
+                                }
+                            );
+                        }
                     },
                     disabled: true
                 })
@@ -241,34 +265,24 @@
                 {name: "jobUUID", value: jobUUID}
             ],
             success: function(data, textStatus) {
-                $("#progressbar").progressbar("value", data.progress);
-                if (data.progress >= 100) {
-                    //log("Process finished");
-                    $("#processOutput").html(data.message);
-                    clearInterval(intervalId);
-                    changeButtonName("#processContainer", I18N.cancel, I18N.finish);
+                if (data.fatalError) {
+                    stopProcess(data.fatalError);
+                } else {
+                    $("#progressbar").progressbar("value", data.progress);
+                    if (data.progress >= 100) {
+                        //log("Process finished");
+                        stopProcess(data.message);
+                    }
                 }
             },
             global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
         });
     }
 
-    function changeButtonName(dialogSelector, fromName, toName) {
-        $(dialogSelector).parent().find(".ui-dialog-buttonpane .ui-button:first .ui-button-text").html(toName);
-    }
-
-    function cancelProcess() {
-        var jobUUID = $("#processContainer").data("jobUUID");
-
-        $.getJSON(
-            "${processUrl}", [
-                {name: "cancel", value: ""},
-                {name: "jobUUID", value: jobUUID}
-            ],
-            function(data, textStatus) {
-
-            }
-        );
+    function stopProcess(message) {
+        clearInterval($("#processContainer").data("intervalId"));
+        $("#processOutput").html(message);
+        $("#processContainer").parent().find(".ui-dialog-buttonpane .ui-button:first .ui-button-text").html(I18N.finish);
     }
 
 </script>

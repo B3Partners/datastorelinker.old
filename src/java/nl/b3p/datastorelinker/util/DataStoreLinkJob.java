@@ -19,29 +19,33 @@ public class DataStoreLinkJob implements Job {
     private final static Log log = Log.getInstance(DataStoreLinkJob.class);
 
     private DataStoreLinker dsl = null;
+    private Exception fatalException = null;
 
-    public synchronized DataStoreLinker getDataStoreLinker() {
+    public synchronized DataStoreLinker getDataStoreLinker() throws Exception {
         DataStoreLinker tempDsl = dsl;
         // if job is finished and in wait() mode, we let the job continue/terminate.
         notify();
+        if (fatalException != null)
+            throw fatalException;
         return tempDsl;
     }
 
     public void execute(JobExecutionContext jec) throws JobExecutionException {
-        log.debug("Quartz started process");
-        String xmlProcess = jec.getJobDetail().getJobDataMap().getString("process");
-        log.debug(xmlProcess);
-        nl.b3p.datastorelinker.entity.Process process = null;
-
-        ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-
-        log.debug("savedClassLoader: " + savedClassLoader.toString());
-        log.debug("this.getClass().getClassLoader(): " + this.getClass().getClassLoader().toString());
-        log.debug("parent savedClassLoader: " + savedClassLoader.getParent().toString());
-        log.debug("parent this.getClass().getClassLoader(): " + this.getClass().getClassLoader().getParent().toString());
-        
         try {
+            log.debug("Quartz started process");
+            String xmlProcess = jec.getJobDetail().getJobDataMap().getString("process");
+            log.debug(xmlProcess);
+            nl.b3p.datastorelinker.entity.Process process = null;
+
+            /*ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+
+            log.debug("savedClassLoader: " + savedClassLoader.toString());
+            log.debug("this.getClass().getClassLoader(): " + this.getClass().getClassLoader().toString());
+            log.debug("parent savedClassLoader: " + savedClassLoader.getParent().toString());
+            log.debug("parent this.getClass().getClassLoader(): " + this.getClass().getClassLoader().getParent().toString());
+            */
+            
             process = MarshalUtils.unmarshalProcess(xmlProcess);
 
             if (process != null) {
@@ -49,6 +53,7 @@ public class DataStoreLinkJob implements Job {
                 synchronized(this) {
                     dsl = new DataStoreLinker(process);
                 }
+                //throw new Exception("test: oeps!");
                 dsl.process();
                 log.debug("Dsl process done!");
             }
@@ -57,10 +62,10 @@ public class DataStoreLinkJob implements Job {
             log.info("User canceled the process");
         } catch (Exception ex) {
             // TODO: polling must check / know that a fatal eror has occured.
+            fatalException = ex;
             log.error(ex);
-            throw new JobExecutionException(ex);
         } finally {
-            Thread.currentThread().setContextClassLoader(savedClassLoader);
+            //Thread.currentThread().setContextClassLoader(savedClassLoader);
 
             if (dsl != null) {
                 try {

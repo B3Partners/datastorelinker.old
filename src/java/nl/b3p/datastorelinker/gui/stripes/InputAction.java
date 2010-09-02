@@ -184,7 +184,7 @@ public class InputAction extends DefaultAction {
         fileAction.setContext(getContext());
         String name;
         try {
-            name = fileAction.getFileNameRelativeToUploadDir(selectedFile);
+            name = fileAction.getFileNameRelativeToUploadDirPP(selectedFile);
         } catch (IOException ex) {
             log.error(ex);
             name = selectedFile.getName();

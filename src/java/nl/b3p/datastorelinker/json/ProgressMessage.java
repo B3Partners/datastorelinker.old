@@ -11,6 +11,7 @@ package nl.b3p.datastorelinker.json;
  */
 public class ProgressMessage extends Message {
     private int progress;
+    private String fatalError;
 
     public ProgressMessage(int progress) {
         super("", "");
@@ -27,6 +28,11 @@ public class ProgressMessage extends Message {
         this.progress = progress;
     }
 
+    public ProgressMessage(String fatalError) {
+        super("", "");
+        this.fatalError = fatalError;
+    }
+
     public int getProgress() {
         return progress;
     }
@@ -35,5 +41,12 @@ public class ProgressMessage extends Message {
         this.progress = progress;
     }
 
-    
+    public String getFatalError() {
+        return fatalError;
+    }
+
+    public void setFatalError(String fatalError) {
+        this.fatalError = fatalError;
+    }
+
 }
