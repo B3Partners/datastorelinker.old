@@ -118,11 +118,16 @@
                     height: 300,
                     buttons: {
                         "<fmt:message key="cancel"/>": function() {
+                            log("execute cancel");
                             $(this).dialog("close");
                         }
                     },
                     close: function(event, ui) {
-                        if ($("#processContainer").data("isCanceled")) {
+                        log("execute close");
+                        log(event);
+                        log(ui);
+                        if ($("#processContainer").data("isStopped")) {
+                            log("execute close iscanceled");
                             defaultDialogClose(event, ui);
                         } else {
                             var jobUUID = $("#processContainer").data("jobUUID");
@@ -137,13 +142,8 @@
                                 function(data, textStatus) {
                                     if (data.success) {
                                         //$("#progressbar").progressbar("destroy"); is widget; jq ui regelt dit bij enclosing dialog.close
-
-                                        $("#processContainer").removeData(); // removes all data
-
                                         defaultDialogClose(event, ui);
                                     } else {
-                                        $("#processContainer").data("isCanceled", true);
-
                                         stopProcess(data.message);
                                     }
                                 }
@@ -282,7 +282,13 @@
     function stopProcess(message) {
         clearInterval($("#processContainer").data("intervalId"));
         $("#processOutput").html(message);
-        $("#processContainer").parent().find(".ui-dialog-buttonpane .ui-button:first .ui-button-text").html(I18N.finish);
+        $("#processContainer").data("isStopped", true);
+        $("#processContainer").dialog("option", "buttons", {
+            "<fmt:message key="finish"/>": function() {
+                log("execute finish");
+                $(this).dialog("close");
+            }
+        });
     }
 
 </script>

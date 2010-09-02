@@ -33,7 +33,7 @@ public class JSONResolution extends StreamingResolution {
 
     @Override
     public void stream(HttpServletResponse response) throws Exception {
-        log.debug(JSONObject.fromObject(object).toString());
+        //log.debug(JSONObject.fromObject(object).toString());
         response.getOutputStream().print(JSONObject.fromObject(object).toString());
     }
 }
