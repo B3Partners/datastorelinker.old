@@ -110,7 +110,7 @@
         // klap juiste accordion tabbladen uit:
         <c:if test="${not empty actionBean.cronType}">
             <c:choose>
-                <c:when test="${actionBean.cronType == 6}">
+                <c:when test="${actionBean.cronType == 'ADVANCED'}">
                     $("#cronAccordion").accordion("activate", "#advancedCron");
                 </c:when>
                 <c:otherwise>
@@ -156,7 +156,7 @@
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
                     <stripes:wizard-fields/>
-                    <input type="hidden" name="cronType" value="1"/>
+                    <input type="hidden" name="cronType" value="HOUR"/>
                     <table>
                         <stripes:layout-render name="/pages/main/cron/executeFromDateRow.jsp" cronType="hour" />
                         <tr>
@@ -171,7 +171,7 @@
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
                     <stripes:wizard-fields/>
-                    <input type="hidden" name="cronType" value="2"/>
+                    <input type="hidden" name="cronType" value="DAY"/>
                     <table>
                         <stripes:layout-render name="/pages/main/cron/executeFromDateRow.jsp" cronType="day" />
                         <tr>
@@ -186,7 +186,7 @@
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
                     <stripes:wizard-fields/>
-                    <input type="hidden" name="cronType" value="3"/>
+                    <input type="hidden" name="cronType" value="WEEK"/>
                     <table>
                         <stripes:layout-render name="/pages/main/cron/executeFromDateRow.jsp" cronType="week" />
                         <tr>
@@ -205,7 +205,7 @@
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
                     <stripes:wizard-fields/>
-                    <input type="hidden" name="cronType" value="4"/>
+                    <input type="hidden" name="cronType" value="MONTH"/>
                     <table>
                         <stripes:layout-render name="/pages/main/cron/executeFromDateRow.jsp" cronType="month" />
                         <stripes:layout-render name="/pages/main/cron/executeDayOfTheMonthRow.jsp" cronType="month" />
@@ -221,7 +221,7 @@
                 <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
                     <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
                     <stripes:wizard-fields/>
-                    <input type="hidden" name="cronType" value="5"/>
+                    <input type="hidden" name="cronType" value="YEAR"/>
                     <table>
                         <stripes:layout-render name="/pages/main/cron/executeFromDateRow.jsp" cronType="year" />
                         <stripes:layout-render name="/pages/main/cron/executeDayOfTheMonthRow.jsp" cronType="year" />
@@ -243,7 +243,7 @@
         <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction">
             <!-- wizard-fields nodig voor bewerken voor een periode van een proces: selectedProcessId wordt dan meegenomen -->
             <stripes:wizard-fields/>
-            <input type="hidden" name="cronType" value="6"/>
+            <input type="hidden" name="cronType" value="ADVANCED"/>
             <fmt:message key="cronExpression"/> <stripes:text name="cronExpression"/>
             <a id="cronInfo" href="${cronInfoUrl}" target="_blank"><span>help</span></a>
         </stripes:form>

@@ -7,7 +7,6 @@ package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.List;
 import javax.persistence.EntityManager;
-import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
@@ -15,8 +14,6 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
-import nl.b3p.datastorelinker.entity.InoutDatatype;
-import nl.b3p.datastorelinker.entity.InoutType;
 import org.hibernate.Session;
 
 /**
@@ -53,7 +50,9 @@ public class OutputAction extends DatabaseAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        outputs = session.createQuery("from Inout where type.id = 2 order by name").list();
+        outputs = session.getNamedQuery("Inout.find")
+                .setParameter("typeName", Inout.Type.OUTPUT)
+                .list();
 
         return new ForwardResolution(getListJsp());
     }
@@ -84,7 +83,7 @@ public class OutputAction extends DatabaseAction {
 
     @Override
     public Resolution createComplete() {
-        Database database = saveDatabase();
+        Database database = saveDatabase(Database.TypeInout.OUTPUT);
 
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -95,8 +94,8 @@ public class OutputAction extends DatabaseAction {
         else
             output = (Inout)session.get(Inout.class, selectedOutputId);
 
-        output.setType(new InoutType(2)); // output
-        output.setDatatype(new InoutDatatype(1)); // database
+        output.setType(Inout.Type.OUTPUT);
+        output.setDatatype(Inout.Datatype.DATABASE);
         output.setDatabase(database);
         output.setName(database.getName());
         // no tablename needed.

@@ -5,14 +5,11 @@
 
     <class>nl.b3p.datastorelinker.entity.Process</class>
     <class>nl.b3p.datastorelinker.entity.Inout</class>
-    <class>nl.b3p.datastorelinker.entity.InoutType</class>
-    <class>nl.b3p.datastorelinker.entity.InoutDatatype</class>
     <class>nl.b3p.datastorelinker.entity.Database</class>
-    <class>nl.b3p.datastorelinker.entity.DatabaseType</class>
     <class>nl.b3p.datastorelinker.entity.File</class>
     <class>nl.b3p.datastorelinker.entity.Mail</class>
     <class>nl.b3p.datastorelinker.entity.Schedule</class>
-    <class>nl.b3p.datastorelinker.entity.ScheduleType</class>
+    <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
     
     <properties>
       <property name="hibernate.connection.username" value="postgres"/>

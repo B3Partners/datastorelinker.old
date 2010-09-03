@@ -239,7 +239,7 @@ public class FileAction extends DefaultAction {
 
             if (file.getInoutList() != null) {
                 for (Inout inout : file.getInoutList()) {
-                    if (inout.getType().getId() == 1) { // input
+                    if (inout.getType() == Inout.Type.INPUT) {
                         messages.add(new LocalizableMessage("file.inuseInput", relativeFileName, inout.getName()));
 
                         if (inout.getInputProcessList() != null) {

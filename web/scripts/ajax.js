@@ -8,10 +8,28 @@ $.ajaxSetup({
     cache: false
 });
 
+$.blockUI.defaults.css = {}; 
+
 var blockUIOptions = {
-    message: "<h2 style='text-align: center'>Bezig met laden...</h2>",
-    theme: true,
-    baseZ: 10000
+    message: "<img src='styles/images/ui-anim_basic_16x16.gif' />",
+    theme: false,
+    baseZ: 10000,
+    css: {
+        padding:        0,
+        margin:         0,
+        width:          '30%',
+        top:            '40%',
+        left:           '35%',
+        textAlign:      'center',
+        color:          '#000',
+        //border:         '3px solid #aaa',
+        //backgroundColor:'#fff',
+        cursor:         'wait'
+    },
+    overlayCSS:  {
+        backgroundColor: '#fff',
+        opacity:         0.8
+    }
     //showOverlay: false
 }
 var unblockUIOptions = {
@@ -78,8 +96,8 @@ defaultCheckInputPresentSelector = ".mandatory-form-input";
 // Use this function for all your ajax calls
 function ajaxOpen(sendOptions) {
     var options = $.extend({
-        url: "", // Sends ajax request to this url. Send type will be GET. It will be POST if the formSelector option is defined (see below).
-        formSelector: "", // Ajax-submit the form. Type will be form's type. Default url is the form's own url. Url can be changed by url-option above.
+        url: "", // Sends ajax request to this url. The send type will be GET. It will be the form's type if the formSelector option is defined (see below).
+        formSelector: "", // Ajax-submit the form. The type will be the form's type. Default url is the form's own url. Url can be changed by url-option above.
         event: "", // Event to call server-side. Translated to data parameters.
         containerFill: true, // Fill the container with the response data
         containerSelector: "", // Selects an already created container.
@@ -90,7 +108,7 @@ function ajaxOpen(sendOptions) {
         ajaxOptions: {}, // Extra regular jQuery ajax options
         openInDialog: false, // Open result in a dialog? Dialog source will be the container (id or selector as explained above.)
         dialogOptions: {}, // JQuery UI dialog Options.
-        checkInputPresentSelector: defaultCheckInputPresentSelector // Descendants of this selector will be checked for presence of input elements. If not present, the form (if any) will not validate.
+        checkInputPresentSelector: defaultCheckInputPresentSelector // Descendants of this selector inside the form (if formSelector is defined) will be checked for presence of input elements. If no input elements are present, the form (if any) will not validate. If no element with this class is found within the form, the form will not fail to validate because of a lack of input elements.
     }, sendOptions);
 
     var ajaxOptions = {

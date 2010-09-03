@@ -5,12 +5,12 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<c:set var="dbTypeId" value="1"/>
+<c:set var="dbType" value="ORACLE"/>
 
 <script type="text/javascript">
     $(document).ready(function() {
         <c:choose>
-            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}">
+            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type == dbType}">
                 $("#oraclehost").val("<c:out value="${actionBean.selectedDatabase.host}"/>");
                 $("#oracledatabaseName").val("<c:out value="${actionBean.selectedDatabase.databaseName}"/>");
                 $("#oracleusername").val("<c:out value="${actionBean.selectedDatabase.username}"/>");
@@ -37,7 +37,7 @@
 </script>
 
 <stripes:form id="oracleForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-    <stripes:hidden name="dbType" value="${dbTypeId}" />
+    <stripes:hidden name="dbType" value="${dbType}" />
     <stripes:wizard-fields/>
     <table>
         <tbody>

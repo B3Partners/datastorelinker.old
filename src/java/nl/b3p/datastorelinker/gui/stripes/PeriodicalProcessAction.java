@@ -16,7 +16,6 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Schedule;
-import nl.b3p.datastorelinker.entity.ScheduleType;
 import nl.b3p.datastorelinker.util.DataStoreLinkJob;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
@@ -54,7 +53,7 @@ public class PeriodicalProcessAction extends DefaultAction {
 
     protected Long selectedProcessId;
 
-    protected Integer cronType;
+    protected Schedule.Type cronType;
     protected Date fromDate;
 
     protected Integer onMinute;
@@ -79,11 +78,11 @@ public class PeriodicalProcessAction extends DefaultAction {
         Schedule schedule = process.getSchedule();
 
         if (schedule != null) {
-            cronType = schedule.getScheduleType().getId();
+            cronType = schedule.getScheduleType();
             cronExpression = schedule.getCronExpression();
             fromDate = schedule.getFromDate();
 
-            if (cronType != 6/*!.equals("advanced")*/)
+            if (cronType != Schedule.Type.ADVANCED)
                 decodeCronExpression(cronExpression);
         }
 
@@ -106,22 +105,22 @@ public class PeriodicalProcessAction extends DefaultAction {
         else
             schedule = new Schedule();
         schedule.setFromDate(fromDate);
-        schedule.setScheduleType((ScheduleType)session.get(ScheduleType.class, cronType));
+        schedule.setScheduleType(cronType);
 
         try {
-            String processString = MarshalUtils.marshalProcess(process);
+            //String processString = MarshalUtils.marshalProcess(process);
             //log.debug(processString);
 
             String uuid = UUID.randomUUID().toString();
 
             String jobName = "job" + uuid;
             JobDetail jobDetail = new JobDetail(jobName, DataStoreLinkJob.class);
-            jobDetail.getJobDataMap().put("process", processString);
+            jobDetail.getJobDataMap().put("processId", process.getId());//processString);
 
             String triggerName = "trig" + uuid;
             
             String cronExpressionString = null;
-            if (cronType == 6/*.equals("advanced")*/) {
+            if (cronType == Schedule.Type.ADVANCED) {
                 if (cronExpression != null) // advanced option
                     cronExpressionString = cronExpression;
                 else 
@@ -206,18 +205,18 @@ public class PeriodicalProcessAction extends DefaultAction {
             cronType = 1;//"hour";*/
 
         try {
-            if (cronType == 5)//.equals("year"))
+            if (cronType == Schedule.Type.YEAR)
                 onMonth = Integer.valueOf(cronArray[MONTH]);
-            if (cronType == 5/*.equals("year")*/ || cronType == 4/*.equals("month")*/) {
+            if (cronType == Schedule.Type.YEAR || cronType == Schedule.Type.MONTH) {
                 try {
                     onDayOfTheMonth = Integer.valueOf(cronArray[DAY_OF_MONTH]);
                 } catch(NumberFormatException nfe) { onDayOfTheMonth = null; } // last day of the month
             }
-            if (cronType == 3/*.equals("week")*/)
+            if (cronType == Schedule.Type.WEEK)
                 onDayOfTheWeek = Integer.valueOf(cronArray[DAY_OF_WEEK]);
 
             Integer minutes = Integer.valueOf(cronArray[MINUTES]);
-            if (cronType == 1/*.equals("hour")*/)
+            if (cronType == Schedule.Type.HOUR)
                 onMinute = minutes;
             else {
                 Integer hours = Integer.valueOf(cronArray[HOURS]);
@@ -253,7 +252,7 @@ public class PeriodicalProcessAction extends DefaultAction {
         if (onDayOfTheMonth != null) {
             cronArgs[DAY_OF_WEEK] = "?"; // Quartz 1.8.3: Support for specifying both a day-of-week AND a day-of-month parameter is not implemented.
             cronArgs[DAY_OF_MONTH] = onDayOfTheMonth;
-        } else if (cronType == 4/*.equals("month")*/ || cronType == 5/*.equals("year")*/) {
+        } else if (cronType == Schedule.Type.MONTH || cronType == Schedule.Type.YEAR) {
             cronArgs[DAY_OF_WEEK] = "?"; // Quartz 1.8.3: Support for specifying both a day-of-week AND a day-of-month parameter is not implemented.
             cronArgs[DAY_OF_MONTH] = "L"; // last day of the month
         }
@@ -366,11 +365,11 @@ public class PeriodicalProcessAction extends DefaultAction {
         this.fromDate = fromDate;
     }
 
-    public Integer getCronType() {
+    public Schedule.Type getCronType() {
         return cronType;
     }
 
-    public void setCronType(Integer cronType) {
+    public void setCronType(Schedule.Type cronType) {
         this.cronType = cronType;
     }
 

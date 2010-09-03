@@ -190,4 +190,11 @@ INSERT INTO schedule_type (id, type) VALUES (4, 'month');
 INSERT INTO schedule_type (id, type) VALUES (5, 'year');
 INSERT INTO schedule_type (id, type) VALUES (6, 'advanced');
 
+INSERT INTO process_status_type (id, name) VALUES (1, 'has never run');
+INSERT INTO process_status_type (id, name) VALUES (2, 'running');
+INSERT INTO process_status_type (id, name) VALUES (3, 'last run ok');
+INSERT INTO process_status_type (id, name) VALUES (4, 'last run error');
+
+
+
 

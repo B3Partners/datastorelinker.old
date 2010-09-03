@@ -4,6 +4,7 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -23,6 +24,7 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.Mail;
+import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
 import nl.b3p.datastorelinker.json.SuccessMessage;
@@ -96,8 +98,12 @@ public class ProcessAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        inputs = session.createQuery("from Inout where type.id = 1 order by name").list();
-        outputs = session.createQuery("from Inout where type.id = 2 order by name").list();
+        inputs = session.getNamedQuery("Inout.find")
+                .setParameter("typeName", Inout.Type.INPUT)
+                .list();
+        outputs = session.getNamedQuery("Inout.find")
+                .setParameter("typeName", Inout.Type.OUTPUT)
+                .list();
 
         if (actionsList == null)
             actionsList = new JSONArray().toString();
@@ -135,29 +141,7 @@ public class ProcessAction extends DefaultAction {
         process.setName(input.getName() + " -> " + output.getName());
         process.setInput(input);
         process.setOutput(output);
-        if (actionsList == null || actionsList.trim().equals(""))
-            actionsList = new JSONArray().toString();
-
-        JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        //log.debug("beforeRemove: " + actionsListJSONArray);
-        ActionsAction.removeViewData(actionsListJSONArray);
-        //log.debug("afterRemove: " + actionsListJSONArray);
-        ActionsAction.addExpandableProperty(actionsListJSONArray);
-        //log.debug("afterExpandableProp: " + actionsListJSONArray);
-
-        JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
-        XMLSerializer xmlSerializer = new XMLSerializer();
-        xmlSerializer.setArrayName("actions");
-        xmlSerializer.setElementName("action");
-        xmlSerializer.setExpandableProperties(new String[] {
-            "parameter"
-        });
-        xmlSerializer.setTypeHintsEnabled(false);
-        String actionsListXml = xmlSerializer.write(actionsListJSON);
-        //log.debug(actionsListXml);
-
-        process.setActionsString(actionsListXml);
-        //log.debug("actionsList: " + actionsList);
+        process.setActionsString(getCreateActionsListString());
         process.setDrop(drop);
         
         Mail mail = null;
@@ -175,11 +159,45 @@ public class ProcessAction extends DefaultAction {
             session.save(mail);
             process.setMail(mail);
         }
+
+        if (process.getProcessStatus() == null) {
+            ProcessStatus processStatus = ProcessStatus.getDefault();
+            session.save(processStatus);
+            process.setProcessStatus(processStatus);
+        }
         
         if (selectedProcessId == null)
             selectedProcessId = (Long)session.save(process);
-        
+
         return list();
+    }
+
+    private String getCreateActionsListString() {
+        if (actionsList == null || actionsList.trim().equals(""))
+            actionsList = new JSONArray().toString();
+
+        JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
+        //log.debug("beforeRemove: " + actionsListJSONArray);
+        ActionsAction.removeViewData(actionsListJSONArray);
+        //log.debug("afterRemove: " + actionsListJSONArray);
+        ActionsAction.addExpandableProperty(actionsListJSONArray);
+        //log.debug("afterExpandableProp: " + actionsListJSONArray);
+
+        JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
+        
+        XMLSerializer xmlSerializer = new XMLSerializer();
+        xmlSerializer.setArrayName("actions");
+        xmlSerializer.setElementName("action");
+        xmlSerializer.setExpandableProperties(new String[] {
+            "parameter"
+        });
+        xmlSerializer.setTypeHintsEnabled(false);
+
+        String actionsListXml = xmlSerializer.write(actionsListJSON);
+        //log.debug(actionsListXml);
+        //log.debug("actionsList: " + actionsList);
+
+        return actionsListXml;
     }
 
     @Transactional
@@ -192,18 +210,26 @@ public class ProcessAction extends DefaultAction {
 
         selectedInputId = process.getInput().getId();
         selectedOutputId = process.getOutput().getId();
+        actionsList = getUpdateActionsListString(process);
+        drop = process.getDrop();
+        emailAddress = process.getMail().getToEmailAddress();
+        subject = process.getMail().getSubject();
 
+        return create();
+    }
+
+    private String getUpdateActionsListString(nl.b3p.datastorelinker.entity.Process process) {
         String xmlActions = process.getActionsString();
         XMLSerializer xmlSerializer = new XMLSerializer();
         JSON jsonActions = xmlSerializer.read(xmlActions);
         JSONArray jsonArrayActions = JSONArray.fromObject(jsonActions);
-        
+
         if (jsonArrayActions.size() == 1) {
             if (jsonArrayActions.get(0).toString().equals("null")) {
                 // als inhoud leeg is wordt dit verkeerd geserialized. Dit fixen we hier:
                 jsonArrayActions.clear();
             } else {
-                // als inhoud 1 valide action bevat wordt dit verkeerd geserialized. 
+                // als inhoud 1 valide action bevat wordt dit verkeerd geserialized.
                 // Er zit dan namelijk 1 "laag" teveel in met de key "action"
                 // Dit fixen we hier:
                 JSONObject singleActionJSON = jsonArrayActions.getJSONObject(0);
@@ -214,15 +240,9 @@ public class ProcessAction extends DefaultAction {
         log.debug("beforeInsert: " + jsonArrayActions);
         ActionsAction.addViewData(jsonArrayActions);
         log.debug("afterInsert: " + jsonArrayActions);
-
-        actionsList = jsonArrayActions.toString();
         //log.debug(actionsList);
-        
-        drop = process.getDrop();
-        emailAddress = process.getMail().getToEmailAddress();
-        subject = process.getMail().getSubject();
 
-        return create();
+        return jsonArrayActions.toString();
     }
 
     @Transactional
@@ -249,12 +269,12 @@ public class ProcessAction extends DefaultAction {
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
         try {
-            String processString = MarshalUtils.marshalProcess(process);
+            //String processString = MarshalUtils.marshalProcess(process);
             //log.debug(processString);
 
             String generatedJobUUID = "job" + UUID.randomUUID().toString();
             JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
-            jobDetail.getJobDataMap().put("process", processString);
+            jobDetail.getJobDataMap().put("processId", process.getId());//processString);
             
             Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());

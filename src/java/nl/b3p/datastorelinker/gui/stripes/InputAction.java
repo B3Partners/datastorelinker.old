@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -21,21 +19,16 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
-import nl.b3p.datastorelinker.entity.InoutDatatype;
-import nl.b3p.datastorelinker.entity.InoutType;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.util.logging.Log4JLoggerFactory;
-import org.geotools.util.logging.Logging;
 import org.hibernate.Session;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.Name;
 
 /**
  *
@@ -51,10 +44,6 @@ public class InputAction extends DefaultAction {
     private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
     private final static String EXAMPLE_RECORD_JSP = "/pages/main/actions/exampleRecord.jsp";
     private final static String ADMIN_JSP = "/pages/management/inputAdmin.jsp";
-
-    static {
-        Logging.ALL.setLoggerFactory(Log4JLoggerFactory.getInstance());
-    }
 
     private List<Inout> inputs;
     private Long selectedInputId;
@@ -83,7 +72,11 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        inputs = session.createQuery("from Inout where type.id = 1 order by name").list();
+        inputs = session.getNamedQuery("Inout.find")
+                .setParameter("typeName", Inout.Type.INPUT)
+                .list();
+
+        log.debug(inputs);
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -104,11 +97,11 @@ public class InputAction extends DefaultAction {
         Inout input = (Inout)session.get(Inout.class, selectedInputId);
         selectedTable = input.getTableName();
 
-        switch(input.getDatatype().getId()) {
-            case 1:
+        switch(input.getDatatype()) {
+            case DATABASE:
                 selectedDatabaseId = input.getDatabase().getId();
                 return createDatabaseInput();
-            case 2:
+            case FILE:
                 selectedFileId = input.getFile().getId();
                 selectedFileDirectory = input.getFile().getDirectory();
                 return createFileInput();
@@ -122,7 +115,9 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        databases = session.getNamedQuery("Database.findInput").list();
+        databases = session.getNamedQuery("Database.find")
+                .setParameter("typeInout", Database.TypeInout.INPUT)
+                .list();
         
         return new ForwardResolution(CREATE_DATABASE_JSP);
     }
@@ -148,8 +143,8 @@ public class InputAction extends DefaultAction {
         else
             dbInput = (Inout)session.get(Inout.class, selectedInputId);
 
-        dbInput.setType(new InoutType(1)); // input
-        dbInput.setDatatype(new InoutDatatype(1)); // database
+        dbInput.setType(Inout.Type.INPUT);
+        dbInput.setDatatype(Inout.Datatype.DATABASE);
         dbInput.setDatabase(selectedDatabase);
         dbInput.setTableName(selectedTable);
         String name = selectedDatabase.getName();
@@ -175,8 +170,8 @@ public class InputAction extends DefaultAction {
         else
             fileInput = (Inout)session.get(Inout.class, selectedInputId);
 
-        fileInput.setType(new InoutType(1)); // input
-        fileInput.setDatatype(new InoutDatatype(2)); // file
+        fileInput.setType(Inout.Type.INPUT);
+        fileInput.setDatatype(Inout.Datatype.FILE);
         fileInput.setFile(selectedFile);
         fileInput.setTableName(selectedTable);
 

@@ -48,9 +48,13 @@ h3 {
     font-weight: bold;
 }
 
-.overview-hover {
-    /*cursor: hand;*/
+/*.overview-hover {
+    cursor: hand;
     cursor: pointer;
+}*/
+
+.process-status-image {
+    float: right;
 }
 
 .ui-dialog-content {

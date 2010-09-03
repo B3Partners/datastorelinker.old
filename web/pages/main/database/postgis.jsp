@@ -5,12 +5,12 @@
 --%>
 <%@include file="/pages/commons/taglibs.jsp" %>
 
-<c:set var="dbTypeId" value="3"/>
+<c:set var="dbType" value="POSTGIS"/>
 
 <script type="text/javascript">
     $(document).ready(function() {
         <c:choose>
-            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type.id == dbTypeId}">
+            <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type == dbType}">
                 $("#postgishost").val("<c:out value="${actionBean.selectedDatabase.host}"/>");
                 $("#postgisdatabaseName").val("<c:out value="${actionBean.selectedDatabase.databaseName}"/>");
                 $("#postgisusername").val("<c:out value="${actionBean.selectedDatabase.username}"/>");
@@ -33,7 +33,7 @@
 </script>
 
 <stripes:form id="postgisForm" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
-    <stripes:hidden name="dbType" value="${dbTypeId}" />
+    <stripes:hidden name="dbType" value="${dbType}" />
     <c:if test="${not empty actionBean.selectedDatabase}">
         <stripes:hidden name="selectedDatabaseId" value="${actionBean.selectedDatabase.id}"/>
     </c:if>
