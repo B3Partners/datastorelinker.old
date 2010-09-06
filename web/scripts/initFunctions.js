@@ -37,5 +37,9 @@ function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {
         $(children[1]).addClass("ui-layout-center");
         $(children[2]).addClass("ui-layout-south");
         jqElem.layout($.extend({}, defaultLayoutOptions, extraLayoutOptions));
+        //jqElem.layout($.extend({}, defaultLayoutOptions, extraLayoutOptions)).initContent("center");
+        $(children[0]).css("z-index", "auto");
+        $(children[1]).css("z-index", "auto");
+        $(children[2]).css("z-index", "auto");
     }
 }

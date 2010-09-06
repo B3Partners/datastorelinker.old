@@ -59,8 +59,13 @@ public class DataStoreLinkJob implements Job {
 
                 log.debug("process status: " + processStatus);
 
-                session.save(processStatus);
-                process.setProcessStatus(processStatus);
+                if (process.getProcessStatus() == null) {
+                    session.save(processStatus);
+                    process.setProcessStatus(processStatus);
+                } else {
+                    process.getProcessStatus().setMessage(processStatus.getMessage());
+                    process.getProcessStatus().setProcessStatusType(processStatus.getProcessStatusType());
+                }
 
                 if (tx.isActive()) {
                     log.debug("Committing active transaction");
@@ -146,7 +151,7 @@ public class DataStoreLinkJob implements Job {
                     if (dsl.getStatus().getErrorCount() <= 0)
                         finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK);
                     else
-                        finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, dsl.getStatus().getErrorReport());
+                        finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, dsl.getStatus().getNonFatalErrorReport("<br />", 3));
                 }
                 try {
                     dsl.dispose();

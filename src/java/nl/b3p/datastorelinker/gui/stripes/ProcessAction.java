@@ -311,8 +311,10 @@ public class ProcessAction extends DefaultAction {
                 int percentage = (int)Math.floor(100.0 * (double)totalFeatureCount / (double)totalFeatureSize);
                 //log.debug("execution progress report: " + percentage + "%");
                 ProgressMessage progressMessage = new ProgressMessage(percentage);
-                if (percentage >= 100)
-                    progressMessage.setMessage(dslJob.getDataStoreLinker().getFinishedMessage());
+                if (percentage >= 100) {
+                    //progressMessage.setMessage(dslJob.getDataStoreLinker().getStatus().getFinishedMessage());
+                    progressMessage.setMessage(dslJob.getDataStoreLinker().getStatus().getNonFatalErrorReport("<br />", 3));
+                }
 
                 return new JSONResolution(progressMessage);
             }

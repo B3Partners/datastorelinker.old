@@ -15,20 +15,22 @@
             $("#radioNoDrop").attr("checked", "checked");
         </c:if>
 
+        connectionSuccessOutputDBAjaxOpenOptions = {
+            url: "${outputUrl}",
+            formSelector: ".form-container .ui-accordion-content-active form",
+            event: "createComplete",
+            containerSelector: "#outputListContainer",
+            successAfterContainerFill: function(data, textStatus, xhr) {
+                $("#outputContainer").dialog("close");
+            }
+        }
+        
         var newUpdateOutputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
             width: 550,
             //height: 400,
             buttons: {
                 "<fmt:message key="finish"/>" : function() {
-                    testConnection({
-                        url: "${outputUrl}",
-                        formSelector: "#postgisForm",
-                        event: "createComplete",
-                        containerSelector: "#outputListContainer",
-                        successAfterContainerFill: function() {
-                            $("#outputContainer").dialog("close");
-                        }
-                    });
+                    testConnection(connectionSuccessOutputDBAjaxOpenOptions);
                 }
             }
         });

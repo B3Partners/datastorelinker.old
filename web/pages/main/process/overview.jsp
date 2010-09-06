@@ -86,10 +86,8 @@
                 })
                 .appendTo("#executeNorth");
 
-            $("#processContainer").append("<div id='processOutput'></div>");
+            $("#processContainer").append("<div id='processOutput' style='overflow: auto'></div>");
             $("#processContainer").append("<div id='executeSouth'></div>");
-
-            createDefaultVerticalLayout($("#processContainer"), {north__size: 35});
 
             $("#processContainer").data("jobUUID", null);
             $("#processContainer").data("intervalId", 0);
@@ -107,8 +105,14 @@
                         $("#processContainer").data("intervalId", intervalId);
                     } else {
                         $("#processOutput").html("Proces kon niet gestart worden:");
-                        $("#processOutput").append("<p>" + data.message + "</p>");
+                        $("#processOutput").append(data.message);
                     }
+
+                    defaultExecuteLayoutOptions = $.extend({}, defaultLayoutOptions, {
+                        //north__size: 35
+                    });
+                    createDefaultVerticalLayout($("#processContainer"), defaultExecuteLayoutOptions);
+
                     $("#processContainer").dialog("option", "disabled", false);
                 },
                 openInDialog: true,
@@ -282,6 +286,7 @@
     function stopProcess(message) {
         clearInterval($("#processContainer").data("intervalId"));
         $("#processOutput").html(message);
+        //$("#processContainer").layout(defaultExecuteLayoutOptions).initContent("center");
         $("#processContainer").data("isStopped", true);
         $("#processContainer").dialog("option", "buttons", {
             "<fmt:message key="finish"/>": function() {
@@ -289,12 +294,19 @@
                 $(this).dialog("close");
             }
         });
+        ajaxOpen({
+            formSelector: "#processForm",
+            event: "list",
+            containerSelector: "#processesListContainer",
+            global: false
+        });
     }
 
 </script>
 
 <div id="processOverviewContainer" style="height: 100%">
     <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+        <stripes:wizard-fields/>
         <div id="processHeader" class="ui-layout-north">
             <h1><fmt:message key="main.overview"/></h1>
         </div>
