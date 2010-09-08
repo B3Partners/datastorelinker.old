@@ -26,9 +26,9 @@ public class DataStoreLinkJob implements Job {
     private DataStoreLinker dsl = null;
     private nl.b3p.datastorelinker.entity.Process process = null;
     private Long processId = null;
-    private Exception fatalException = null;
+    private Throwable fatalException = null;
 
-    public synchronized DataStoreLinker getDataStoreLinker() throws Exception {
+    public synchronized DataStoreLinker getDataStoreLinker() throws Throwable {
         DataStoreLinker tempDsl = dsl;
         // if job is finished and in wait() mode, we let the job continue/terminate.
         notify();
@@ -138,10 +138,14 @@ public class DataStoreLinkJob implements Job {
             log.info("User canceled the process");
             finishedStatus = new ProcessStatus(ProcessStatus.Type.CANCELED_BY_USER);
         } catch (Exception ex) {
-            // TODO: polling must check / know that a fatal eror has occured.
-            fatalException = ex;
             log.error(ex);
-            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_FATAL_ERROR, ex.getMessage());
+
+            Throwable cause = ex;
+            while (cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            fatalException = cause;
+            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_FATAL_ERROR, cause.getMessage());
         } finally {
             //Thread.currentThread().setContextClassLoader(savedClassLoader);
 

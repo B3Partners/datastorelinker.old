@@ -318,9 +318,9 @@ public class ProcessAction extends DefaultAction {
 
                 return new JSONResolution(progressMessage);
             }
-        } catch(Exception ex) {
+        } catch(Throwable t) {
             String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
-                    + ": " + ex.getMessage();
+                    + ": " + t.getMessage();
             return new JSONResolution(new ProgressMessage(message));
         }
     }
@@ -336,9 +336,9 @@ public class ProcessAction extends DefaultAction {
 
                 return new JSONResolution(new SuccessMessage(true));
             }
-        } catch(Exception ex) {
+        } catch(Throwable t) {
             String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
-                    + ": " + ex.getMessage();
+                    + ": " + t.getMessage();
             return new JSONResolution(new SuccessMessage(false, message, ""));
         }
     }
@@ -352,6 +352,7 @@ public class ProcessAction extends DefaultAction {
 
         try {
             String xml = MarshalUtils.marshalProcess(process, MarshalUtils.getDslSchema());
+            // TODO: set filename als een geëscapedete procesnaam.
             return new StreamingResolution("text/xml", xml).setFilename("dsl_process.xml");
         } catch(Exception ex) {
             log.error(ex);
@@ -359,7 +360,7 @@ public class ProcessAction extends DefaultAction {
         }
     }
 
-    //TODO: test: is output DB PostGIS (itt alleen Postgres)?
+    //TODO: test: is output DB PostGIS (itt alleen Postgres)? merk je nu bij run als het goed is.
 
     public List<Process> getProcesses() {
         return processes;
