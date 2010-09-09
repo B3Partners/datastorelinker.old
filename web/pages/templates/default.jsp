@@ -74,7 +74,9 @@
                     $("body").layout(defaultLayoutOptions);
                     $("#contenttext").layout($.extend({}, defaultLayoutOptions, {
                         west__size: 50,
-                        east__size: 50
+                        east__size: 50,
+                        north__size: 50,
+                        south__size: 50
                     }));
                 });
             </script>
