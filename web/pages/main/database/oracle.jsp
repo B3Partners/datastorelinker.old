@@ -12,21 +12,21 @@
         <c:choose>
             <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type == dbType}">
                 $("#oraclehost").val("<c:out value="${actionBean.selectedDatabase.host}"/>");
-                $("#oracledatabaseName").val("<c:out value="${actionBean.selectedDatabase.databaseName}"/>");
+                $("#oracleschema").val("<c:out value="${actionBean.selectedDatabase.schema}"/>");
                 $("#oracleusername").val("<c:out value="${actionBean.selectedDatabase.username}"/>");
                 $("#oraclepassword").val("<c:out value="${actionBean.selectedDatabase.password}"/>");
                 $("#oracleport").val("<c:out value="${actionBean.selectedDatabase.port}"/>");
-                $("#oracleschema").val("<c:out value="${actionBean.selectedDatabase.schema}"/>");
+                $("#oracledatabaseName").val("<c:out value="${actionBean.selectedDatabase.databaseName}"/>");
                 $("#oracleinstance").val("<c:out value="${actionBean.selectedDatabase.instance}"/>");
                 $("#oraclealias").val("<c:out value="${actionBean.selectedDatabase.alias}"/>");
             </c:when>
             <c:otherwise>
                 $("#oraclehost").val("");
-                $("#oracledatabaseName").val("");
+                $("#oracleschema").val("");
                 $("#oracleusername").val("");
                 $("#oraclepassword").val("");
                 $("#oracleport").val("1521");
-                $("#oracleschema").val("ORCL");
+                $("#oracledatabaseName").val("ORCL");
                 $("#oracleinstance").val("ORCL");
                 $("#oraclealias").val("");
             </c:otherwise>
@@ -46,8 +46,8 @@
                 <td><stripes:text id="oraclehost" name="host" class="required"/></td>
             </tr>
             <tr>
-                <td><stripes:label name="databaseName" for="oracledatabaseName"/></td>
-                <td><stripes:text id="oracledatabaseName" name="databaseName" class="required"/></td>
+                <td><stripes:label name="schema" for="oracleschema"/></td>
+                <td><stripes:text id="oracleschema" name="schema" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="username" for="oracleusername"/></td>
@@ -62,8 +62,8 @@
                 <td><stripes:text id="oracleport" name="port" class="required number"/></td>
             </tr>
             <tr>
-                <td><stripes:label name="schema" for="oracleschema"/></td>
-                <td><stripes:text id="oracleschema" name="schema" class="required"/></td>
+                <td><stripes:label name="databaseName" for="oracledatabaseName"/></td>
+                <td><stripes:text id="oracledatabaseName" name="databaseName" class="required"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="instance" for="oracleinstance"/></td>

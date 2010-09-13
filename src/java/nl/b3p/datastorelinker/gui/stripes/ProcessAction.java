@@ -141,7 +141,7 @@ public class ProcessAction extends DefaultAction {
         process.setName(input.getName() + " -> " + output.getName());
         process.setInput(input);
         process.setOutput(output);
-        process.setActionsString(getCreateActionsListString());
+        process.setActionsString(getActionsListJsonToXmlString());
         process.setDrop(drop);
         
         Mail mail = null;
@@ -172,7 +172,7 @@ public class ProcessAction extends DefaultAction {
         return list();
     }
 
-    private String getCreateActionsListString() {
+    private String getActionsListJsonToXmlString() {
         if (actionsList == null || actionsList.trim().equals(""))
             actionsList = new JSONArray().toString();
 
@@ -188,6 +188,7 @@ public class ProcessAction extends DefaultAction {
         XMLSerializer xmlSerializer = new XMLSerializer();
         xmlSerializer.setArrayName("actions");
         xmlSerializer.setElementName("action");
+        xmlSerializer.setNamespace("", "http://www.b3partners.nl/schemas/dsl");
         xmlSerializer.setExpandableProperties(new String[] {
             "parameter"
         });
@@ -210,7 +211,7 @@ public class ProcessAction extends DefaultAction {
 
         selectedInputId = process.getInput().getId();
         selectedOutputId = process.getOutput().getId();
-        actionsList = getUpdateActionsListString(process);
+        actionsList = getActionsListXmlToJsonString(process);
         drop = process.getDrop();
         emailAddress = process.getMail().getToEmailAddress();
         subject = process.getMail().getSubject();
@@ -218,7 +219,7 @@ public class ProcessAction extends DefaultAction {
         return create();
     }
 
-    private String getUpdateActionsListString(nl.b3p.datastorelinker.entity.Process process) {
+    private String getActionsListXmlToJsonString(nl.b3p.datastorelinker.entity.Process process) {
         String xmlActions = process.getActionsString();
         XMLSerializer xmlSerializer = new XMLSerializer();
         JSON jsonActions = xmlSerializer.read(xmlActions);

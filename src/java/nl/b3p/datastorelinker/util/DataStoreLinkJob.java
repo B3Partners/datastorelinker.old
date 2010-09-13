@@ -140,12 +140,11 @@ public class DataStoreLinkJob implements Job {
         } catch (Exception ex) {
             log.error(ex);
 
-            Throwable cause = ex;
-            while (cause.getCause() != null) {
-                cause = cause.getCause();
-            }
-            fatalException = cause;
-            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_FATAL_ERROR, cause.getMessage());
+            fatalException = ExceptionUtils.getUltimateCause(ex);
+            
+            finishedStatus = new ProcessStatus(
+                    ProcessStatus.Type.LAST_RUN_FATAL_ERROR,
+                    ExceptionUtils.getReadableExceptionMessage(fatalException));
         } finally {
             //Thread.currentThread().setContextClassLoader(savedClassLoader);
 
