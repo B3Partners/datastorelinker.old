@@ -72,13 +72,20 @@
             <script type="text/javascript">
                 $(document).ready(function() {
                     $("body").layout(defaultLayoutOptions);
-                    $("#contenttext").layout($.extend({}, defaultLayoutOptions, {
+                    layoutMainTabs();
+                });
+
+                function layoutMainTabs() {
+                    var mainTabsLayout = $("#contenttext").layout($.extend({}, defaultLayoutOptions, {
                         west__size: 50,
                         east__size: 50,
                         north__size: 50,
-                        south__size: 50
+                        south__size: 50,
+                        spacing_open: 0,
+                        spacing_close: 0
                     }));
-                });
+                    return mainTabsLayout;
+                }
             </script>
 
         </head>

@@ -351,7 +351,8 @@ public class ProcessAction extends DefaultAction {
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
         try {
-            String xml = MarshalUtils.marshalProcess(process, MarshalUtils.getDslSchema());
+            String xml = MarshalUtils.marshalProcess(process);
+            //String xml = MarshalUtils.marshalProcess(process, MarshalUtils.getDslSchema());
             // TODO: set filename als een geëscapedete procesnaam.
             return new StreamingResolution("text/xml", xml).setFilename("dsl_process.xml");
         } catch(Exception ex) {
