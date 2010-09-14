@@ -115,6 +115,11 @@ public class ActionsAction extends DefaultAction {
         }
     }
 
+    /**
+     * Also puts parameters in an array instead of an object if we dealing with a single parameter.
+     * This is caused by the JSON to XML serialization and back.
+     * @param actionsListJSONArray
+     */
     public static void addViewData(JSONArray actionsListJSONArray) {
         for (Object actionObject : actionsListJSONArray) {
             JSONObject action = (JSONObject)actionObject;
@@ -126,16 +131,28 @@ public class ActionsAction extends DefaultAction {
             action.put("description", res.getString(type + ".longdesc"));
 
             JSONArray parameters = action.optJSONArray("parameters");
-            if (parameters != null) {
+            if (parameters == null) {
+                JSONObject singleParameter = action.optJSONObject("parameters");
+                if (singleParameter != null && singleParameter.containsKey("parameter")) {
+                    singleParameter = singleParameter.getJSONObject("parameter");
+                    addParameterViewData(singleParameter);
+                    parameters = new JSONArray();
+                    parameters.add(singleParameter);
+                    action.put("parameters", parameters);
+                }
+            } else {
                 for (Object parameterObject : parameters) {
                     JSONObject parameter = (JSONObject)parameterObject;
-
-                    String nameResourceKey = "keys." + parameter.getString("paramId").toUpperCase();
-                    parameter.put("name", res.getString(nameResourceKey));
-                    parameter.put("type", res.getString(nameResourceKey + ".type"));
+                    addParameterViewData(parameter);
                 }
             }
         }
+    }
+
+    private static void addParameterViewData(JSONObject parameter) {
+        String nameResourceKey = "keys." + parameter.getString("paramId").toUpperCase();
+        parameter.put("name", res.getString(nameResourceKey));
+        parameter.put("type", res.getString(nameResourceKey + ".type"));
     }
 
     public static void addExpandableProperty(JSONArray actionsListJSONArray) {

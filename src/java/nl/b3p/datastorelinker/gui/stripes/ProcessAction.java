@@ -188,7 +188,11 @@ public class ProcessAction extends DefaultAction {
         XMLSerializer xmlSerializer = new XMLSerializer();
         xmlSerializer.setArrayName("actions");
         xmlSerializer.setElementName("action");
-        xmlSerializer.setNamespace("", "http://www.b3partners.nl/schemas/dsl");
+        // dit doet allemaal niets!
+        //xmlSerializer.setSkipNamespaces(false);
+        //xmlSerializer.addNamespace("dsl", "http://www.b3partners.nl/schemas/dsl");
+        //xmlSerializer.setNamespace("dsl", "http://www.b3partners.nl/schemas/dsl");
+        //xmlSerializer.setNamespace("dsl", "http://www.b3partners.nl/schemas/dsl", "actions");
         xmlSerializer.setExpandableProperties(new String[] {
             "parameter"
         });
