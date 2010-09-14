@@ -52,6 +52,8 @@
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo-min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery.filetree/jquery.filetree-latest.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.easing/jquery.easing-latest.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.qtip/jquery.qtip-latest.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery.qtip/jquery.qtip-latest.min.js"></script-->
 
             <!-- other 3rd party libs -->
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>

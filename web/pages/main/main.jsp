@@ -16,6 +16,10 @@
                     select: function(event, ui) {
                         // voorkomt het dubbel voorkomen van id's en dus fouten.
                         $("#tabsTarget").children().empty();
+
+                        /*log(ui.panel);
+                        $("#tabs").data("currentTabTitle", $(ui.panel).attr("title"));
+                        $(ui.panel).removeAttr("title");*/
                     },
                     /*fx: {
                         opacity: "toggle"
@@ -30,8 +34,6 @@
                     }
                 });
 
-                //$("#tabs").layout(defaultLayoutOptions);
-                //$("#tabHome").layout(defaultLayoutOptions);
             });
         </script>
 
@@ -77,11 +79,11 @@
                 </li>
             </ul>
             <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
-                <div id="tabHome" title="tabHome" style="height: 100%"></div>
-                <div id="tabInput" title="tabInput" style="height: 100%"></div>
-                <div id="tabOutput" title="tabOutput" style="height: 100%"></div>
-                <div id="tabDatabase" title="tabDatabase" style="height: 100%"></div>
-                <div id="tabFile" title="tabFile" style="height: 100%"></div>
+                <div id="tabHome" style="height: 100%"></div>
+                <div id="tabInput" style="height: 100%"></div>
+                <div id="tabOutput" style="height: 100%"></div>
+                <div id="tabDatabase" style="height: 100%"></div>
+                <div id="tabFile" style="height: 100%"></div>
             </div>
         </div>
 

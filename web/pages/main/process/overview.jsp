@@ -322,10 +322,10 @@
                 <stripes:button id="deleteProcess" name="delete"/>
             </div>
             <div style="margin-top: 5px">
+                <stripes:button id="exportToXml" name="exportToXml" style="float: right;"/>
                 <stripes:button id="executeProcess" name="execute"/>
                 <stripes:button id="executeProcessPeriodically" name="executePeriodically"/>
                 <stripes:button id="cancelExecuteProcessPeriodically" name="cancelExecutePeriodically"/>
-                <stripes:button id="exportToXml" name="exportToXml" style="float: right;"/>
             </div>
         </div>
 

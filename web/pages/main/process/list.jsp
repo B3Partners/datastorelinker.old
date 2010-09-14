@@ -8,6 +8,28 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $("#processesList").buttonset();
+        $("#processesList img[title]").qtip({
+            content: false,
+            position: {
+                corner: {
+                    tooltip: "topRight",
+                    target: "bottomLeft"
+                }
+            },
+            style: {
+                "font-size": 12,
+                //width: "200px",
+                width: {
+                    max: 700
+                },
+                border: {
+                    width: 2,
+                    radius: 8
+                },
+                name: "cream",
+                tip: true
+            }
+        });
     });
 </script>
 
@@ -34,7 +56,6 @@
             </c:choose>
 
             <stripes:label for="process${process.id}">
-                <c:out value="${process.name}"/>
                 <span class="process-status-image">
                     <c:if test="${not empty process.schedule}">
                         <img src="<stripes:url value="/images/clock_48.gif"/>"
@@ -69,6 +90,7 @@
                         </c:when>
                     </c:choose>
                 </span>
+                <c:out value="${process.name}"/>
             </stripes:label>
 
             <%-- Add schedule icon if this process is scheduled >
