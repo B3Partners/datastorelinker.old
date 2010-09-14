@@ -109,7 +109,7 @@ public class ActionsAction extends DefaultAction {
                 for (Object parameterObject : parameters) {
                     JSONObject parameter = (JSONObject)parameterObject;
                     parameter.remove("name");
-                    parameter.remove("type");
+                    parameter.remove("type");// old: type needed by dsl backend (Geotools)
                 }
             }
         }

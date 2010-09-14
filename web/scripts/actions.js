@@ -190,7 +190,7 @@ function openParametersDialog(action) {
         label.append(parameter.name);
         key.append(label);
         var value = $("<td></td>");
-        var input = $("<input />").addClass("required").attr({
+        var input = $("<input />").attr({
             name: parameter.paramId // required for validation
         });
         if (parameter.type && parameter.type === "boolean") {
@@ -200,6 +200,7 @@ function openParametersDialog(action) {
         } else {
             input.val(parameter.value);
             input.addClass(parameter.type);
+            input.addClass("required"); // checkbox is not required (can be false), only textbox.
         }
         value.append(input);
         row.append(key);
@@ -227,7 +228,7 @@ function openParametersDialog(action) {
 
             var input = $(parameterRow).find("input");
 
-            if (input.is(":checkbox")) {
+            if (input.log("inputding").is(":checkbox")) {
                 paramMetadata.value = input.is(":checked");
             } else {
                 paramMetadata.value = input.val();

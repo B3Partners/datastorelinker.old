@@ -27,6 +27,11 @@
 
             <!-- 3rd party libs: -->
             <!-- jQuery (UI) and plugins -->
+            <!--
+            WARNING: DO NOT switch to minified versions blindly!
+            Bugfixes have been applied to (non-minified) jquery ui and qtip for example.
+            Create your own minified versions with the Google Closure Compiler: http://code.google.com/closure/compiler/
+            -->
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui.js"></script>

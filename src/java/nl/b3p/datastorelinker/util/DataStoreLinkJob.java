@@ -11,6 +11,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -139,12 +140,11 @@ public class DataStoreLinkJob implements Job {
             finishedStatus = new ProcessStatus(ProcessStatus.Type.CANCELED_BY_USER);
         } catch (Exception ex) {
             log.error(ex);
-
-            fatalException = ExceptionUtils.getUltimateCause(ex);
+            fatalException = ex;
             
             finishedStatus = new ProcessStatus(
                     ProcessStatus.Type.LAST_RUN_FATAL_ERROR,
-                    ExceptionUtils.getReadableExceptionMessage(fatalException));
+                    ExceptionUtils.getRootCauseMessage(fatalException));
         } finally {
             //Thread.currentThread().setContextClassLoader(savedClassLoader);
 
@@ -171,7 +171,7 @@ public class DataStoreLinkJob implements Job {
 
             // We keep this thread alive for 10 seconds
             // to let the execution progress polling system know we are done.
-            // Possible problem: server is shut down before this method finishes; Leaving a job not marked finished.
+            // Possible problem: server is shut down before this method finishes; Leaving a job not marked finished on the client browser.
             try {
                 synchronized(this) {
                     wait(10000);

@@ -33,6 +33,7 @@ import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
 import nl.b3p.geotools.data.linker.Status;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -325,7 +326,7 @@ public class ProcessAction extends DefaultAction {
             }
         } catch(Throwable t) {
             String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
-                    + ": " + t.getMessage();
+                    + ": " + ExceptionUtils.getRootCauseMessage(t);
             return new JSONResolution(new ProgressMessage(message));
         }
     }
