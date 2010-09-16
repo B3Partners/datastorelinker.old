@@ -37,16 +37,16 @@
             });
         </script>
 
-        <div class="ui-layout-north" style="background-image: url(/DataStoreLinker2/images/bovenbalk.gif); background-repeat: repeat-x;">
-            <img src="/DataStoreLinker2/images/datastorelinkerlogo.png" alt="DataStoreLinker Logo" style="margin-left: 50px;" />
+        <div class="ui-layout-north" style="background-image: url(<stripes:url value="${contextPath}/images/bovenbalk.gif"/>); background-repeat: repeat-x;">
+            <img src="<stripes:url value="${contextPath}/images/datastorelinkerlogo.png"/>" alt="DataStoreLinker Logo" style="margin-left: 50px;" />
         </div>
-        <div class="ui-layout-west" style="background-image: url(/DataStoreLinker2/images/leftbg.gif); background-repeat: repeat-y;">
+        <div class="ui-layout-west" style="background-image: url(<stripes:url value="${contextPath}/images/leftbg.gif"/>); background-repeat: repeat-y;">
 
         </div>
-        <div class="ui-layout-east" style="background-image: url(/DataStoreLinker2/images/rightbg.gif); background-repeat: repeat-y;">
+        <div class="ui-layout-east" style="background-image: url(<stripes:url value="${contextPath}/images/rightbg.gif"/>); background-repeat: repeat-y;">
 
         </div>
-        <div class="ui-layout-south" style="background-image: url(/DataStoreLinker2/images/onderbalk.gif); background-repeat: repeat-x;">
+        <div class="ui-layout-south" style="background-image: url(<stripes:url value="${contextPath}/images/onderbalk.gif"/>); background-repeat: repeat-x;">
 
         </div>
 

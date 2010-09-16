@@ -555,6 +555,12 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.b3p-zoeker}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
     </target>
     <target depends="init" if="dist.ear.dir" name="deps-ear-jar" unless="no.deps">
         <ant antfile="${project.DataStoreLinkerEntities}/build.xml" inheritall="false" target="jar">
@@ -588,6 +594,12 @@ exists or setup the property manually. For example like this:
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-zoeker}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
     </target>
@@ -728,8 +740,7 @@ exists or setup the property manually. For example like this:
     <target depends="init" if="dist.ear.dir" name="library-inclusion-in-manifest">
         <copyfiles files="${reference.b3p-commons-core.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Stripes.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.CommonsNoJDOM.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.JDOM.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.Commons.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Jaxen.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.jstl11.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.PostGIS.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
@@ -755,14 +766,16 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.b3p-gt2-suf2.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-suf2.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gisviewer.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.securityfilter-b3p.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.SecurityFilterDeps.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-zoeker.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
         <copyfiles files="${reference.b3p-commons-core.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Stripes.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.CommonsNoJDOM.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.JDOM.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${libs.Commons.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Jaxen.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.jstl11.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.PostGIS.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -788,6 +801,9 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.b3p-gt2-suf2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-suf2.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gisviewer.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.securityfilter-b3p.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${libs.SecurityFilterDeps.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-zoeker.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -1104,6 +1120,8 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-zoeker}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="do-clean">
         <condition property="build.dir.to.clean" value="${build.web.dir}">
