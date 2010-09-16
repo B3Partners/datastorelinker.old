@@ -72,6 +72,28 @@
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>securityconfig</servlet-name>
+        <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
+        <init-param>
+            <param-name>kburl</param-name>
+            <param-value>http://www.kaartenbalie.nl/kaartenbalie/services/</param-value>
+        </init-param>
+        <init-param>
+            <param-name>anonymous_user</param-name>
+            <param-value>anoniem</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>xmlsecuritydatabase</servlet-name>
+        <servlet-class>nl.b3p.commons.security.XmlSecurityDatabase</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/users.xml</param-value>
+        </init-param>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>

@@ -36,7 +36,7 @@
             <url-pattern>/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>*</role-name>
+            <role-name>beheerder</role-name>
         </auth-constraint>
     </security-constraint>
 
@@ -50,6 +50,6 @@
         </form-login-config>
     </login-config>
 
-    <realm className="nl.b3p.gis.viewer.services.GisSecurityRealm"/>
+    <realm className="nl.b3p.datastorelinker.security.GisSecurityRealm"/>
     
 </securityfilter-config>
