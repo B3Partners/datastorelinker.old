@@ -1,20 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/DataStoreLinker2">
-    <Resource
-  	auth="Container"
-  	driverClassName="oracle.jdbc.driver.OracleDriver"
-  	logAbandoned="true"
-  	maxActive="100"
-  	maxIdle="30"
-  	maxWait="10000"
-  	name="jdbc/gisviewer"
-  	username="gisviewer"
-  	password="gisviewer"
-  	removeAbandoned="true"
-  	removeAbandonedTimeout="60"
-  	type="javax.sql.DataSource"
-  	url="jdbc:oracle:thin:@localhost:1521:ORCL"
-	minEvictableIdleTimeMillis="10000"
-	timeBetweenEvictionRunsMillis="60000"
-  />
-    </Context>
+<Context antiJARLocking="true" path="/DataStoreLinker2"/>

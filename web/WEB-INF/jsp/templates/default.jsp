@@ -52,7 +52,6 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.layout/jquery.layout-latest.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.maskedinput/jquery.maskedinput-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.maskedinput/jquery.maskedinput-latest.min.js"></script-->
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.maxzindex.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.scrollTo/jquery.scrollTo-min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery.filetree/jquery.filetree-latest.js"></script>
@@ -78,12 +77,11 @@
 
             <script type="text/javascript">
                 $(document).ready(function() {
-                    $("body").layout(defaultLayoutOptions);
                     layoutMainTabs();
                 });
 
                 function layoutMainTabs() {
-                    var mainTabsLayout = $("#contenttext").layout($.extend({}, defaultLayoutOptions, {
+                    var mainTabsLayout = $("body").layout($.extend({}, defaultLayoutOptions, {
                         west__size: 50,
                         east__size: 50,
                         north__size: 50,
@@ -97,9 +95,34 @@
 
         </head>
         <body>
-            <div id="contenttext" class="ui-layout-center" style="height: 100%">
+            <div class="ui-layout-north">
+                <stripes:layout-component name="header">
+                    <jsp:include page="/WEB-INF/jsp/commons/header.jsp"/>
+                </stripes:layout-component>
+            </div>
+
+            <div class="ui-layout-west">
+                <stripes:layout-component name="west">
+                    <jsp:include page="/WEB-INF/jsp/commons/west.jsp"/>
+                </stripes:layout-component>
+            </div>
+
+            <div class="ui-layout-east">
+                <stripes:layout-component name="east">
+                    <jsp:include page="/WEB-INF/jsp/commons/east.jsp"/>
+                </stripes:layout-component>
+            </div>
+
+            <div class="ui-layout-south">
+                <stripes:layout-component name="footer">
+                    <jsp:include page="/WEB-INF/jsp/commons/footer.jsp"/>
+                </stripes:layout-component>
+            </div>
+
+            <div id="content" class="ui-layout-center" style="height: 100%">
                 <stripes:layout-component name="content"/>
             </div>
+
         </body>
     </html>
 

@@ -83,7 +83,7 @@
             <param-name>anonymous_user</param-name>
             <param-value>anoniem</param-value>
         </init-param>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>3</load-on-startup>
     </servlet>
     <servlet>
         <servlet-name>xmlsecuritydatabase</servlet-name>
@@ -92,7 +92,7 @@
             <param-name>config</param-name>
             <param-value>/WEB-INF/users.xml</param-value>
         </init-param>
-        <load-on-startup>3</load-on-startup>
+        <load-on-startup>4</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
@@ -104,7 +104,7 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>/WEB-INF/jsp/index.jsp</welcome-file>
+        <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
 
     <listener>
