@@ -32,17 +32,17 @@ public class OutputAction extends DatabaseAction {
 
     @Override
     protected String getAdminJsp() {
-        return "/pages/management/outputAdmin.jsp";
+        return "/WEB-INF/jsp/management/outputAdmin.jsp";
     }
 
     @Override
     protected String getCreateJsp() {
-        return "/pages/main/output/create.jsp";
+        return "/WEB-INF/jsp/main/output/create.jsp";
     }
 
     @Override
     protected String getListJsp() {
-        return "/pages/main/output/list.jsp";
+        return "/WEB-INF/jsp/main/output/list.jsp";
     }
 
     @Override

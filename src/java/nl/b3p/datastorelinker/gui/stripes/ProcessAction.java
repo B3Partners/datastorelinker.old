@@ -48,10 +48,10 @@ public class ProcessAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(ProcessAction.class);
     
-    private final static String JSP = "/pages/main/process/overview.jsp";
-    private final static String LIST_JSP = "/pages/main/process/list.jsp";
-    private final static String CREATE_JSP = "/pages/main/process/create.jsp";
-    private final static String EXECUTE_JSP = "/pages/main/process/execute.jsp";
+    private final static String JSP = "/WEB-INF/jsp/main/process/overview.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/process/list.jsp";
+    private final static String CREATE_JSP = "/WEB-INF/jsp/main/process/create.jsp";
+    private final static String EXECUTE_JSP = "/WEB-INF/jsp/main/process/execute.jsp";
     
     private List<Process> processes;
     private Long selectedProcessId;

@@ -31,8 +31,8 @@ public class ActionsAction extends DefaultAction {
     public final static List<String> RESERVED_JS_KEYWORDS = Arrays.asList("length");
     public final static String SAFE_PREFIX = "SAFE_JS_";
 
-    private final static String CREATE_JSP = "/pages/main/actions/create.jsp";
-    private final static String LIST_JSP = "/pages/main/actions/list.jsp";
+    private final static String CREATE_JSP = "/WEB-INF/jsp/main/actions/create.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/actions/list.jsp";
 
     private final static ResourceBundle res = ResourceBundle.getBundle("StripesResources");
 

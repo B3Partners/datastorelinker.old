@@ -38,12 +38,12 @@ import org.opengis.feature.type.AttributeDescriptor;
 public class InputAction extends DefaultAction {
     private final static Log log = Log.getInstance(InputAction.class);
 
-    private final static String LIST_JSP = "/pages/main/input/list.jsp";
-    private final static String TABLE_LIST_JSP = "/pages/main/input/table/list.jsp";
-    private final static String CREATE_DATABASE_JSP = "/pages/main/input/database/create.jsp";
-    private final static String CREATE_FILE_JSP = "/pages/main/input/file/create.jsp";
-    private final static String EXAMPLE_RECORD_JSP = "/pages/main/actions/exampleRecord.jsp";
-    private final static String ADMIN_JSP = "/pages/management/inputAdmin.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/input/list.jsp";
+    private final static String TABLE_LIST_JSP = "/WEB-INF/jsp/main/input/table/list.jsp";
+    private final static String CREATE_DATABASE_JSP = "/WEB-INF/jsp/main/input/database/create.jsp";
+    private final static String CREATE_FILE_JSP = "/WEB-INF/jsp/main/input/file/create.jsp";
+    private final static String EXAMPLE_RECORD_JSP = "/WEB-INF/jsp/main/actions/exampleRecord.jsp";
+    private final static String ADMIN_JSP = "/WEB-INF/jsp/management/inputAdmin.jsp";
 
     private List<Inout> inputs;
     private Long selectedInputId;

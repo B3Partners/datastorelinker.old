@@ -61,15 +61,15 @@ public class DatabaseAction extends DefaultAction {
     }
 
     protected String getAdminJsp() {
-        return "/pages/management/databaseAdmin.jsp";
+        return "/WEB-INF/jsp/management/databaseAdmin.jsp";
     }
 
     protected String getCreateJsp() {
-        return "/pages/main/database/create.jsp";
+        return "/WEB-INF/jsp/main/database/create.jsp";
     }
 
     protected String getListJsp() {
-        return "/pages/main/database/list.jsp";
+        return "/WEB-INF/jsp/main/database/list.jsp";
     }
 
     @DontValidate
@@ -145,6 +145,9 @@ public class DatabaseAction extends DefaultAction {
 
         switch (dbType) {
             case ORACLE:
+                // different name for Oracle:
+                database.setName(host + "/" + schema);
+
                 database.setHost(host);
                 database.setDatabaseName(databaseName);
                 database.setUsername(username);

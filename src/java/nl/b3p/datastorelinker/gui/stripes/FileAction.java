@@ -52,10 +52,10 @@ public class FileAction extends DefaultAction {
     protected final static String ZIP_EXT = ".zip";
 
 
-    private final static String CREATE_JSP = "/pages/main/file/create.jsp";
-    private final static String LIST_JSP = "/pages/main/file/list.jsp";
-    private final static String ADMIN_JSP = "/pages/management/fileAdmin.jsp";
-    private final static String DIRCONTENTS_JSP = "/pages/main/file/filetreeConnector.jsp";
+    private final static String CREATE_JSP = "/WEB-INF/jsp/main/file/create.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/file/list.jsp";
+    private final static String ADMIN_JSP = "/WEB-INF/jsp/management/fileAdmin.jsp";
+    private final static String DIRCONTENTS_JSP = "/WEB-INF/jsp/main/file/filetreeConnector.jsp";
 
     private DirContent dirContent;
 

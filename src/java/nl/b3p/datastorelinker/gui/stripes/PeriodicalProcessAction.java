@@ -35,8 +35,8 @@ import org.quartz.Trigger;
 public class PeriodicalProcessAction extends DefaultAction {
     private final static Log log = Log.getInstance(PeriodicalProcessAction.class);
 
-    protected final static String EXECUTE_PERIODICALLY_JSP = "/pages/main/cron/executePeriodically.jsp";
-    protected final static String LIST_JSP = "/pages/main/process/list.jsp";
+    protected final static String EXECUTE_PERIODICALLY_JSP = "/WEB-INF/jsp/main/cron/executePeriodically.jsp";
+    protected final static String LIST_JSP = "/WEB-INF/jsp/main/process/list.jsp";
 
     // cron expression sequence:
     protected final static int SECONDS = 0;

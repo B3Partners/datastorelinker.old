@@ -8,7 +8,7 @@
 
 <%@page contentType="text/javascript" %>
 
-<%@include file="/pages/commons/taglibs.jsp" %>
+<%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
 I18N = {};
 <%
