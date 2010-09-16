@@ -12,18 +12,20 @@
     });
 </script>
 
-<form action="j_security_check" method="POST">
-    <table>
-        <tr>
-            <td>Gebruikersnaam:</td>
-            <td><input id="usernameInput" type="text" name="j_username" size="36"></td>
-        </tr>
-        <tr>
-            <td>Wachtwoord:</td>
-            <td><input type="password" name="j_password" size="36"></td>
-        </tr>
-        <tr>
-            <td style="text-align: right;" colspan="2"><input type="Submit" value="Login"></td>
-        </tr>
-    </table>
-</form>
+<div class="ui-helper-reset ui-widget-content ui-corner-all">
+    <form action="j_security_check" method="POST">
+        <table>
+            <tr>
+                <td>Gebruikersnaam:</td>
+                <td><input id="usernameInput" type="text" name="j_username" size="36"></td>
+            </tr>
+            <tr>
+                <td>Wachtwoord:</td>
+                <td><input type="password" name="j_password" size="36"></td>
+            </tr>
+            <tr>
+                <td style="text-align: right;" colspan="2"><input type="Submit" value="Login"></td>
+            </tr>
+        </table>
+    </form>
+</div>

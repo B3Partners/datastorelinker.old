@@ -35,6 +35,54 @@ h3 {
     font-size: 1.2em;
 }
 
+.header {
+    background-image: url(../images/bovenbalk.gif); 
+    background-repeat: repeat-x;
+}
+
+.footer {
+    background-image: url(../images/onderbalk.gif);
+    background-repeat: repeat-x;
+}
+
+.west {
+    background-image: url(../images/leftbg.gif);
+    background-repeat: repeat-y;
+}
+
+.east {
+    background-image: url(../images/rightbg.gif);
+    background-repeat: repeat-y;
+}
+
+/*.logo {
+    background-image: url(../images/datastorelinkerlogo.png);
+    background-repeat: no-repeat;
+    margin-left: 50px;
+    height: 50px;
+}*/
+
+.footer-text {
+    color: #7891A5;
+    font-size: 11px;
+}
+
+#footer-text-left {
+    left: 50px;
+    position: absolute;
+    top: 18px;
+}
+
+.login {
+    font-size: 1.5em;
+}
+
+.message {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.5em;
+}
+
 .ui-progressbar {
     position: relative;
 }

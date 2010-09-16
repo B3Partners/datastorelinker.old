@@ -4,7 +4,9 @@
 <stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="DataStoreLinker login">
     <stripes:layout-component name="content">
 
-        <%@include file="/loginForm.jsp" %>
+        <div class="login">
+            <%@include file="/loginForm.jsp" %>
+        </div>
 
     </stripes:layout-component>
 </stripes:layout-render>

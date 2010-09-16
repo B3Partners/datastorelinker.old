@@ -4,9 +4,11 @@
 <stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="DataStoreLinker fout">
     <stripes:layout-component name="content">
 
-        <span style="color: red; font-weight: bold">Loginfout!</span>
+        <div class="login">
+            <div class="ui-state-error message">Loginfout!</div>
 
-        <%@include file="/loginForm.jsp" %>
-
+            <%@include file="/loginForm.jsp" %>
+        </div>
+        
     </stripes:layout-component>
 </stripes:layout-render>
