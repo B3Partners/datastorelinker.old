@@ -24,6 +24,10 @@
     /*position: relative;  to prevent IE <= 7 bug */
 }
 
+.clickable-list {
+    cursor: pointer;
+}
+
 .radioList .ui-button {
     margin: 3px;
     display: block;

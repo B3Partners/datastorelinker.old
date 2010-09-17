@@ -43,7 +43,7 @@
         <tbody>
             <tr>
                 <td><stripes:label name="host" for="oraclehost"/></td>
-                <td><stripes:text id="oraclehost" name="host" class="required"/></td>
+                <td><stripes:text id="oraclehost" name="host"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="schema" for="oracleschema"/></td>
@@ -59,7 +59,7 @@
             </tr>
             <tr>
                 <td><stripes:label name="port" for="oracleport"/></td>
-                <td><stripes:text id="oracleport" name="port" class="required number"/></td>
+                <td><stripes:text id="oracleport" name="port" class="number"/></td>
             </tr>
             <tr>
                 <td><stripes:label name="databaseName" for="oracledatabaseName"/></td>

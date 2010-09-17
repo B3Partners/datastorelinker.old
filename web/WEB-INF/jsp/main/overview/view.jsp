@@ -61,7 +61,7 @@
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
             <fmt:message key="input"/>
         </div>
-        <div id="inputOverviewContainer" class="action-list" style="height: 300px">
+        <div id="inputOverviewContainer" class="action-list clickable-list" style="height: 300px">
         </div>
     </div>
 
@@ -73,7 +73,7 @@
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
             <fmt:message key="actions"/>
         </div>
-        <div id="actionsOverviewContainer" class="action-list" style="height: 300px">
+        <div id="actionsOverviewContainer" class="action-list clickable-list" style="height: 300px">
         </div>
     </div>
 
@@ -85,7 +85,7 @@
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
             <fmt:message key="output"/>
         </div>
-        <div id="outputOverviewContainer" class="action-list" style="height: 300px">
+        <div id="outputOverviewContainer" class="action-list clickable-list" style="height: 300px">
         </div>
     </div>
 
