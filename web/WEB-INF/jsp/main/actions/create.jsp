@@ -91,7 +91,10 @@
                             name: "selectedInputId",
                             value: inputId
                         }],
-                        containerSelector: "#exampleRecordContainer"
+                        containerSelector: "#exampleRecordContainer",
+                        successAfterContainerFill: function() {
+                            $("#actionsMainContainer").layout(defaultLayoutOptions).resizeAll();//initContent("south");
+                        }
                     });
                 } else {
                     $("#exampleRecordContainer").show(500);
@@ -132,6 +135,6 @@
             <input type="checkbox" id="exampleRecordCheckBox" name="showExampleRecord"/>
             <fmt:message key="showExampleRecord"/>
         </div>
-        <div id="exampleRecordContainer" style="height: 50px"></div>
+        <div id="exampleRecordContainer" style="height: 55px"></div>
     </div>
 </div>

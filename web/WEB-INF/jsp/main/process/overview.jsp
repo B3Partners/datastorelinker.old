@@ -23,7 +23,7 @@
 
         var newUpdateProcessCommonDialogOptions = $.extend({}, defaultDialogOptions, {
             width: Math.floor($('body').width() * .70),
-            height: Math.floor($('body').height() * .65),
+            height: 525,//Math.floor($('body').height() * .65),// overzicht is nog niet dynamisch qua hoogte
             resize: function(event, ui) {
                 $("#processContainer").layout().resizeAll();
                 $("#processSteps").layout().resizeAll();

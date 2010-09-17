@@ -34,8 +34,8 @@
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
                     title: "<fmt:message key="createActions"/>",
-                    width: 750,//Math.floor($('body').width() * .60),
-                    height: 700,//Math.floor($('body').height() * .80), // actielijst hoogte is absoluut dus we kunnen dit nog niet dynamisch maken
+                    width: Math.floor($('body').width() * .60),
+                    height: 710,//Math.floor($('body').height() * .80), // actielijst hoogte is absoluut dus we kunnen dit nog niet dynamisch maken
                     buttons: {
                         "<fmt:message key="finish"/>" : function() {
                             var actionsListJSON = getCreatedActionList();

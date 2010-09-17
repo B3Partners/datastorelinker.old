@@ -11,7 +11,7 @@ $.ajaxSetup({
 $.blockUI.defaults.css = {}; 
 
 var blockUIOptions = {
-    message: "<img src='styles/images/ui-anim_basic_16x16.gif' />",
+    message: "<img src='styles/images/ui-anim_basic_16x16.gif' />", // wel een erg apart image path
     theme: false,
     baseZ: 10000,
     css: {
@@ -46,6 +46,13 @@ $(document).ajaxStart(function() {
 
 $(document).ajaxStop(function() {
     $.unblockUI(unblockUIOptions);
+});
+
+$(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
+    log("ajax success");
+    // TODO: check if login page/loginError page. if so load in new dialog without header/footer/etc.
+    // prevent fallthrough to normal success function?
+    // get and store normal success handler?
 });
 
 // deze code wordt serverside en clientside gebruikt voor user errors.

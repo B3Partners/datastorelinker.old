@@ -72,3 +72,15 @@
     list-style-type: decimal;*/
 }
 
+.action-table-header {
+    max-width: 20em;
+    overflow: hidden;
+}
+
+.action-table-definition {
+    max-width: 20em;
+    max-height: 1em; /* werkt niet */
+    vertical-align: text-top;
+    overflow: hidden;
+}
+
