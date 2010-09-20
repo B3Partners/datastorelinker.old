@@ -36,12 +36,14 @@ public class ConfigServlet extends HttpServlet {
             return code;
         }
         String url = getKbUrl();
-        url = url.trim();
-        if (code != null && code.length()>0) {
-            if (url.lastIndexOf('/') == url.length() - 1) {
-                url += code;
-            } else {
-                url += '/' + code;
+        if (url!=null){
+            url = url.trim();
+            if (code != null && code.length()>0) {
+                if (url.lastIndexOf('/') == url.length() - 1) {
+                    url += code;
+                } else {
+                    url += '/' + code;
+                }
             }
         }
         return url;

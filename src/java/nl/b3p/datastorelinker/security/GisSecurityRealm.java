@@ -69,15 +69,17 @@ public class GisSecurityRealm implements FlexibleRealmInterface, ExternalAuthent
 
     public static String createCapabilitiesURL(String code) {
         String url = ConfigServlet.createPersonalKbUrl(code);
-        if (url.indexOf('?') == -1) {
-            url += "?";
-        }
-        if (url.indexOf('?') == url.length() - 1) {
-            url += CAPABILITIES_QUERYSTRING;
-        } else if (url.lastIndexOf('&') == url.length() - 1) {
-            url += CAPABILITIES_QUERYSTRING;
-        } else {
-            url += "&" + CAPABILITIES_QUERYSTRING;
+            if (url!=null){
+            if (url.indexOf('?') == -1) {
+                url += "?";
+            }
+            if (url.indexOf('?') == url.length() - 1) {
+                url += CAPABILITIES_QUERYSTRING;
+            } else if (url.lastIndexOf('&') == url.length() - 1) {
+                url += CAPABILITIES_QUERYSTRING;
+            } else {
+                url += "&" + CAPABILITIES_QUERYSTRING;
+            }
         }
         return url;
     }
@@ -94,12 +96,13 @@ public class GisSecurityRealm implements FlexibleRealmInterface, ExternalAuthent
     public static GisPrincipal authenticateHttp(String location, String username, String password, String code) {
         WMSCapabilitiesReader wmscr = new WMSCapabilitiesReader();
         ServiceProvider sp = null;
-        try {
-            sp = wmscr.getProvider(location, username, password);
-        } catch (Exception ex) {
-            log.error("Error reading GetCapabilities: " + ex.getLocalizedMessage());
+        if (location!=null){
+            try {
+                sp = wmscr.getProvider(location, username, password);
+            } catch (Exception ex) {
+                log.error("Error reading GetCapabilities: " + ex.getLocalizedMessage());
+            }
         }
-
         if (sp == null || sp.getAllRoles() == null || sp.getAllRoles().isEmpty()) {
             log.info("No ServiceProvider found, get roles with XmlSecurityDatabase realm!");
             if (!XmlSecurityDatabase.booleanAuthenticate(username, password)) {
