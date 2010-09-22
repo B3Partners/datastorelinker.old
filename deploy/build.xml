@@ -29,6 +29,11 @@
 		      http://xmedeko.blogspot.com/2009/09/ant-removing-file-from-zip-or-jar.html
 		 -->		      
 		
-		<zip destfile="${deploy.basedir}/${config}/${war.file}" basedir="${deploy.basedir}/${config}" roundup="false" excludes="${war.file}" update="true"/>
+		<zip destfile="${deploy.basedir}/${config}/${war.file}" 
+		     basedir="${deploy.basedir}/${config}" 
+		     roundup="false" 
+		     excludes="${war.file}"
+		     update="true"
+		/>
 	</target>
 </project>
