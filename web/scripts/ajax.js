@@ -3,11 +3,6 @@
  *
  */
 
-// Global ajax settings:
-$.ajaxSetup({
-    cache: false
-});
-
 $.blockUI.defaults.css = {}; 
 
 var blockUIOptions = {
@@ -40,6 +35,11 @@ var unblockUIOptions = {
     fadeOut: 0
 }
 
+// Global ajax settings:
+$.ajaxSetup({
+    cache: false
+});
+
 $(document).ajaxStart(function() {
     $.blockUI(blockUIOptions);
 });
@@ -50,9 +50,48 @@ $(document).ajaxStop(function() {
 
 $(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
     log("ajax success");
-    // TODO: check if login page/loginError page. if so load in new dialog without header/footer/etc.
-    // prevent fallthrough to normal success function?
+    log(event);
+    log(xhr);
+    log(ajaxOptions);
+    //$("<div>test</div>").dialog();
+    //
+    // Session timeout solution:
+    //
+    // Current solution is ugly. Also a bit for the user, but it works.
+    // TODO: prevent fallthrough to normal success function?
     // get and store normal success handler?
+    var response = $(".login", xhr.responseXML);
+    if (response.length > 0) {
+        log("relogin screen");
+        log(response);
+        log(window.location);
+        window.location = webappRoot;
+        // our session has timed out. we got a login screen
+
+        // prevent regular success function from being called (does not seem to work)
+        //xhr.abort();
+        //ajaxOptions.success = $.noop;
+
+        // show login screen in dialog:
+        /*$("<div></div>").attr("id", "loginDialog").appendTo(document.body);
+        $("#loginDialog").append(I18N.loginTimeout);
+        $("#loginDialog").append(response);
+        $("#loginDialog form").submit(function() {
+            $("#loginDialog").dialog("close");
+        });
+        log($("#loginDialog"));
+        $("#loginDialog").dialog($.extend({}, defaultDialogOptions, {
+            title: I18N.login
+        }));
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        event.stopPropagation();*/
+        //return false;
+    } else {
+        log("normal screen");
+        //return true;
+    }
 });
 
 // deze code wordt serverside en clientside gebruikt voor user errors.
@@ -65,6 +104,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     log(xhr);
     log(ajaxOptions);
     log(thrownError);*/
+    log(xhr.status);
 
     var errorMessage;
     if (xhr.status == defaultCustomErrorCode) {
@@ -79,7 +119,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
         errorMessage = "Parsen van het request is mislukt.";
     } else if (thrownError == "timeout") {
         errorMessage = "Het ophalen van de pagina duurde te lang.";
-    } else {
+    }else {
         errorMessage = "Onbekende fout";
     }
 

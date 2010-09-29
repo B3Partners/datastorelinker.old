@@ -75,10 +75,12 @@ h3 {
 
 .login {
     font-size: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.5em;
 }
 
 .message {
-    margin-top: 1em;
     margin-bottom: 1em;
     padding: 0.5em;
 }

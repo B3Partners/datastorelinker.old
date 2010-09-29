@@ -99,21 +99,17 @@
         <url-pattern>*.action</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
-
     <listener>
         <listener-class>org.quartz.ee.servlet.QuartzInitializerListener</listener-class>
     </listener>
     <listener>
         <listener-class>nl.b3p.commons.geotools.GeoToolsLoggingInitializer</listener-class>
     </listener>
-
     <!-- Quartz Scheduler init: -->
     <context-param>
         <param-name>quartz:config-file</param-name>
@@ -127,14 +123,12 @@
         <param-name>quartz:start-on-load</param-name>
         <param-value>true</param-value>
     </context-param>
-
     <!-- See http://www.stripesframework.org/display/stripes/Localization (bottom of the page) -->
     <context-param>
         <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
-        <param-value>StripesResources</param-value><!-- huidige locale wordt hier automatisch slim achtergeplakt (_nl etc.) -->
+        <param-value>StripesResources</param-value>
+        <!-- huidige locale wordt hier automatisch slim achtergeplakt (_nl etc.) -->
     </context-param>
-
-
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
@@ -156,6 +150,4 @@
         <param-name>defaultSubject</param-name>
         <param-value>DataStoreLinker process is klaar.</param-value>
     </context-param>
-
-
 </web-app>

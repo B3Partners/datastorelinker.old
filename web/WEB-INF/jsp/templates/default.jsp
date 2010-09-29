@@ -64,6 +64,7 @@
 
             <!-- B3p libs: -->
             <script type="text/javascript" src="${contextPath}/scripts/log.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/init.js.jsp"></script>
             <script type="text/javascript" src="${contextPath}/scripts/i18n.js.jsp"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
 

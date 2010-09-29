@@ -9,6 +9,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#usernameInput").focus();
+        $("#loginSubmit").button();
     });
 </script>
 
@@ -24,7 +25,9 @@
                 <td><input type="password" name="j_password" size="36"></td>
             </tr>
             <tr>
-                <td style="text-align: right;" colspan="2"><input type="Submit" value="Login"></td>
+                <td style="text-align: right;" colspan="2">
+                    <input id="loginSubmit" type="Submit" value="Login">
+                </td>
             </tr>
         </table>
     </form>
