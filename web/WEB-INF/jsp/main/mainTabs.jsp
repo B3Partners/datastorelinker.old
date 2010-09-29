@@ -30,9 +30,12 @@
                         data: {},
                         success: function(data, textStatus) {
                         }
+                    },
+                    show: function(event, ui) {
+                        layoutMain();
                     }
                 });
-
+                
             });
         </script>
 

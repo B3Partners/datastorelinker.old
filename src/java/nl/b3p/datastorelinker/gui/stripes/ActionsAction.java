@@ -9,11 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.localization.DefaultLocalePicker;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.json.ActionModel;
@@ -34,12 +37,18 @@ public class ActionsAction extends DefaultAction {
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/actions/create.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/actions/list.jsp";
 
-    private final static ResourceBundle res = ResourceBundle.getBundle("StripesResources");
-
+    private static ResourceBundle res = null;
 
     private String actionsWorkbenchList;
     private String actionsList;
     private Long selectedProcessId;
+
+    private static void resourceBundleInit(ActionBeanContext context) {
+        DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
+        res = ResourceBundle.getBundle(
+            "StripesResources",
+            context.getLocale());
+    }
 
     @DefaultHandler
     public Resolution list() {
@@ -68,6 +77,8 @@ public class ActionsAction extends DefaultAction {
     }
 
     private ActionModel createAction(Map.Entry<String, List<List<String>>> actionBlock) {
+        resourceBundleInit(getContext());
+
         JSONArray parameters = new JSONArray();
         if (actionBlock.getValue() != null) {
             for (List<String> paramList : actionBlock.getValue()) {
@@ -120,7 +131,9 @@ public class ActionsAction extends DefaultAction {
      * This is caused by the JSON to XML serialization and back.
      * @param actionsListJSONArray
      */
-    public static void addViewData(JSONArray actionsListJSONArray) {
+    public static void addViewData(JSONArray actionsListJSONArray, ActionBeanContext context) {
+        resourceBundleInit(context);
+
         for (Object actionObject : actionsListJSONArray) {
             JSONObject action = (JSONObject)actionObject;
             
@@ -135,7 +148,7 @@ public class ActionsAction extends DefaultAction {
                 JSONObject singleParameter = action.optJSONObject("parameters");
                 if (singleParameter != null && singleParameter.containsKey("parameter")) {
                     singleParameter = singleParameter.getJSONObject("parameter");
-                    addParameterViewData(singleParameter);
+                    addParameterViewData(singleParameter, context);
                     parameters = new JSONArray();
                     parameters.add(singleParameter);
                     action.put("parameters", parameters);
@@ -143,13 +156,15 @@ public class ActionsAction extends DefaultAction {
             } else {
                 for (Object parameterObject : parameters) {
                     JSONObject parameter = (JSONObject)parameterObject;
-                    addParameterViewData(parameter);
+                    addParameterViewData(parameter, context);
                 }
             }
         }
     }
 
-    private static void addParameterViewData(JSONObject parameter) {
+    private static void addParameterViewData(JSONObject parameter, ActionBeanContext context) {
+        resourceBundleInit(context);
+        
         String nameResourceKey = "keys." + parameter.getString("paramId").toUpperCase();
         parameter.put("name", res.getString(nameResourceKey));
         parameter.put("type", res.getString(nameResourceKey + ".type"));

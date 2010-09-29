@@ -119,7 +119,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
         errorMessage = "Parsen van het request is mislukt.";
     } else if (thrownError == "timeout") {
         errorMessage = "Het ophalen van de pagina duurde te lang.";
-    }else {
+    } else {
         errorMessage = "Onbekende fout";
     }
 

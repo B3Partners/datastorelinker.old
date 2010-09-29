@@ -3,6 +3,10 @@
     Created on : 26-jul-2010, 14:05:40
     Author     : Erik van de Pol
 --%>
+<%@page import="java.util.Locale"%>
+<%@page import="nl.b3p.datastorelinker.gui.stripes.ProcessAction"%>
+<%@page import="net.sourceforge.stripes.util.Log"%>
+<%@page import="net.sourceforge.stripes.localization.DefaultLocalePicker"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@page import="java.util.ResourceBundle"%>
 
@@ -12,7 +16,21 @@
 
 I18N = {};
 <%
-ResourceBundle res = ResourceBundle.getBundle("StripesResources");
+Log log = Log.getInstance(ProcessAction.class);
+
+DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
+log.debug("i18n.js.jsp");
+//log.debug(defaultLocalePicker.pickLocale(request));
+
+//pageContext. // is geen ActionBeanContext en bevat dus geen .getLocale() !!?!! 
+//Enige enigszins nette optie is Locale
+
+ResourceBundle res = ResourceBundle.getBundle(
+        "StripesResources",
+        //defaultLocalePicker.pickLocale(request));
+        new Locale("nl")); // FIXME: this is so hardcoded ugly, I just can't look at it.
+                           // TODO: get Locale from web.xml Stripes config
+
 for (String rawKey : res.keySet()) {
     // will only print keys without a "." in it
     if (!rawKey.contains(".")) {

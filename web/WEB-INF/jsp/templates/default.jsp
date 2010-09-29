@@ -78,10 +78,10 @@
 
             <script type="text/javascript">
                 $(document).ready(function() {
-                    layoutMainTabs();
+                    
                 });
 
-                function layoutMainTabs() {
+                function layoutMain() {
                     var mainTabsLayout = $("body").layout($.extend({}, defaultLayoutOptions, {
                         west__size: 50,
                         east__size: 50,
@@ -90,6 +90,12 @@
                         spacing_open: 0,
                         spacing_close: 0
                     }));
+                    createDefaultVerticalLayout($("#centerWrapper"), {
+                        north__size: 5,
+                        south__size: 5,
+                        spacing_open: 0,
+                        spacing_close: 0
+                    });
                     return mainTabsLayout;
                 }
             </script>
@@ -120,8 +126,12 @@
                 </stripes:layout-component>
             </div>
 
-            <div id="content" class="ui-layout-center" style="height: 100%">
-                <stripes:layout-component name="content"/>
+            <div id="centerWrapper" class="ui-layout-center" style="height: 100%">
+                <div>&nbsp;</div>
+                <div id="content">
+                    <stripes:layout-component name="content"/>
+                </div>
+                <div>&nbsp;</div>
             </div>
 
         </body>

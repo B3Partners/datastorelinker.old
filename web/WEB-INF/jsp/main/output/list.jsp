@@ -7,8 +7,10 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#outputList").buttonset();
+
     });
+
+
 </script>
 
 <div id="outputList">

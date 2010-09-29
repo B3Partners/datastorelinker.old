@@ -7,8 +7,9 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $("#inputList").buttonset();
+        
     });
+
 </script>
 
 <div id="inputList">

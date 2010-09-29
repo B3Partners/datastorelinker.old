@@ -10,6 +10,7 @@
     $(document).ready(function () {
         $("#usernameInput").focus();
         $("#loginSubmit").button();
+        layoutMain();
     });
 </script>
 

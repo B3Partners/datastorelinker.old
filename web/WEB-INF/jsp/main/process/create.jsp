@@ -21,6 +21,9 @@
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
             formWizardStep(data);
 
+            initGuiInput();
+            initGuiOutput();
+
             $("#processContainer").layout(defaultDialogLayoutOptions);
             $("#processSteps").layout(defaultDialogLayoutOptions).destroy();
             

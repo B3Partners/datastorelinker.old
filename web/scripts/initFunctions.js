@@ -5,10 +5,20 @@
 
 function initInput() {
     $("#createInputDB, #createInputFile, #updateInput, #deleteInput").button();
+    initGuiInput();
+}
+
+function initGuiInput() {
+    $("#inputList").buttonset();
 }
 
 function initOutput() {
     $("#createOutput, #updateOutput, #deleteOutput").button();
+    initGuiOutput();
+}
+
+function initGuiOutput() {
+    $("#outputList").buttonset();
 }
 
 function initDatabase() {

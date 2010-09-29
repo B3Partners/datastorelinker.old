@@ -244,7 +244,7 @@ public class ProcessAction extends DefaultAction {
             }
         }
         log.debug("beforeInsert: " + jsonArrayActions);
-        ActionsAction.addViewData(jsonArrayActions);
+        ActionsAction.addViewData(jsonArrayActions, getContext());
         log.debug("afterInsert: " + jsonArrayActions);
         //log.debug(actionsList);
 
