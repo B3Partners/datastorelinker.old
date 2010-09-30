@@ -38,6 +38,7 @@
 
             },
             onComplete: function(event, fileID, fileObj, response, data) {
+                $("#filesListContainer").html(response);
                 $("#fileUploadProgressContainer").dialog("close");
                 /*$("#uploaderStop").button("disable");
                 //$("#uploaderStop").css("display", "none");
@@ -54,7 +55,7 @@
                 upload.append($("#uploaderStop"));
 
                 upload.dialog($.extend({}, defaultDialogOptions, {
-                    title: "<fmt:message key="inputFile.uploading"/>",
+                    title: I18N["inputFile.uploading"],
                     width: 400,
                     close: function(event, ui) {
                         $("#uploaderStop, #uploaderQueue").css("display", "none");

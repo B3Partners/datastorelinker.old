@@ -8,4 +8,4 @@
 
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
-webappRoot = "<stripes:url value="/"/>";
+webappRoot = "<c:out value="$contextPath"/>";

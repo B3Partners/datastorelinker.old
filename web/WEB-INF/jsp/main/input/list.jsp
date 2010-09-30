@@ -7,9 +7,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        
+        initGuiInput();
     });
-
 </script>
 
 <div id="inputList">

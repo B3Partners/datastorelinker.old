@@ -7,10 +7,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-
+        initGuiOutput();
     });
-
-
 </script>
 
 <div id="outputList">
