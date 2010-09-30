@@ -38,9 +38,14 @@
 
             },
             onComplete: function(event, fileID, fileObj, response, data) {
-                $("#uploaderStop").button("disable");
+                $("#fileUploadProgressContainer").dialog("close");
+                /*$("#uploaderStop").button("disable");
+                //$("#uploaderStop").css("display", "none");
                 $("#fileUploadProgressContainer").dialog("widget").find(".ui-dialog-titlebar-close").css("display", "inline");
-                $("#filesListContainer").html(response);
+                $("#filesListContainer").html(response);*/
+            },
+            onError: function(event, fileID, fileObj, errorObj) {
+                $("#fileUploadProgressContainer").dialog("close");
             },
             onSelect: function() {
                 var upload = $("<div></div>").attr("id", "fileUploadProgressContainer").appendTo($("body"));

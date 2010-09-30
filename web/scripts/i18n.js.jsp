@@ -66,5 +66,5 @@ I18N.monthsOfTheYear = {
     12: "<fmt:message key="december"/>"
 };
 
-log(I18N);
+//log(I18N);
 

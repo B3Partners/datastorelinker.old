@@ -9,7 +9,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>styles</web-resource-name>
-            <url-pattern>/styles/*</url-pattern>
+            <url-pattern>/styles/**</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
@@ -17,7 +17,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>scripts</web-resource-name>
-            <url-pattern>/scripts/*</url-pattern>
+            <url-pattern>/scripts/**</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
@@ -25,7 +25,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>images</web-resource-name>
-            <url-pattern>/images/*</url-pattern>
+            <url-pattern>/images/**</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
@@ -33,7 +33,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>all</web-resource-name>
-            <url-pattern>/*</url-pattern>
+            <url-pattern>/**</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>beheerder</role-name>

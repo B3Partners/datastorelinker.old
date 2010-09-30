@@ -48,11 +48,22 @@ $(document).ajaxStop(function() {
     $.unblockUI(unblockUIOptions);
 });
 
-$(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
-    log("ajax success");
+//$(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
+    /*log("ajax success");
     log(event);
     log(xhr);
     log(ajaxOptions);
+    log(xhr);
+    log(xhr.getAllResponseHeaders());
+    log(xhr.getResponseHeader("Content-Type"));
+    log(xhr.status);*/
+
+    /*var contentType = xhr.getResponseHeader("Content-Type");
+    log(contentType);
+    if (!contentType || contentType !== "text/html") { // to be future-proof we should xhtml types etc. (we might want to change our content type in the future)
+        return;
+    }*/
+
     //$("<div>test</div>").dialog();
     //
     // Session timeout solution:
@@ -60,12 +71,15 @@ $(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
     // Current solution is ugly. Also a bit for the user, but it works.
     // TODO: prevent fallthrough to normal success function?
     // get and store normal success handler?
-    var response = $(".login", xhr.responseXML);
-    if (response.length > 0) {
+    //log(xhr.responseXML);
+    //log(xhr.responseText);
+    /*var response = $(".login", xhr.responseXML);
+    var response2 = $(".login", xhr.responseText);
+    if (response.length > 0 || response2.length > 0) { // || xhr.status == 302
         log("relogin screen");
         log(response);
         log(window.location);
-        window.location = webappRoot;
+        window.location = webappRoot;*/
         // our session has timed out. we got a login screen
 
         // prevent regular success function from being called (does not seem to work)
@@ -88,11 +102,11 @@ $(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
         event.stopImmediatePropagation();
         event.stopPropagation();*/
         //return false;
-    } else {
-        log("normal screen");
+    /*} else {
+        //log("normal screen");
         //return true;
-    }
-});
+    }*/
+//});
 
 // deze code wordt serverside en clientside gebruikt voor user errors.
 defaultCustomErrorCode = 1000;
