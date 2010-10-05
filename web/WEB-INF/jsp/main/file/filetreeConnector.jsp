@@ -21,24 +21,24 @@
 <ul class="jqueryFileTree" style="display: block;">
     <c:forEach var="dir" items="${dirs}">
         <c:choose>
-            <c:when test="${not empty dir.dirContent}">
+            <c:when test="${not empty dir.content}">
                 <li class="directory expanded">
-                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
+                    <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
+                    <input type="radio" name="selectedFilePath" value="${dir.path}" style="display: none"/>
                     <a href="#" rel="${dir.id}">
                         ${dir.name}
                     </a>
 
-                    <c:set var="dirContent" value="${dir.dirContent}" scope="request"/>
+                    <c:set var="dirContent" value="${dir.content}" scope="request"/>
                     <jsp:include page="filetreeConnector.jsp"/>
                     
                 </li>
             </c:when>
             <c:otherwise>
                 <li class="directory collapsed">
-                    <input type="checkbox" name="${dir.id}" value="${dir.id}"/>
-                    <input type="radio" name="selectedFileId" value="${dir.id}" style="display: none"/>
-                    <a href="#" rel="${dir.id}">
+                    <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
+                    <input type="radio" name="selectedFilePath" value="${dir.path}" style="display: none"/>
+                    <a href="#" rel="${dir.path}">
                         ${dir.name}
                     </a>
                 </li>
@@ -47,9 +47,9 @@
     </c:forEach>
     <c:forEach var="file" items="${files}">
         <li class="file ext_file">
-            <input type="checkbox" name="${file.id}" value="${file.id}"/>
-            <input type="radio" name="selectedFileId" value="${file.id}" style="display: none"/>
-            <a href="#" rel="${file.id}">
+            <input type="checkbox" name="${file.path}" value="${file.path}"/>
+            <input type="radio" name="selectedFilePath" value="${file.path}" style="display: none"/>
+            <a href="#" rel="${file.path}">
                 ${file.name}
             </a>
         </li>

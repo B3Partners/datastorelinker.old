@@ -5,7 +5,6 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +16,6 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
-import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
@@ -51,9 +49,8 @@ public class InputAction extends DefaultAction {
     private List<Database> databases;
     private Long selectedDatabaseId;
 
-    private List<File> files;
-    private Long selectedFileId;
-    private String selectedFileDirectory;
+    private String selectedFilePath;
+    //private String selectedFileDirectory;
 
     private List<String> tables;
     private List<String> failedTables;
@@ -101,10 +98,10 @@ public class InputAction extends DefaultAction {
             case DATABASE:
                 selectedDatabaseId = input.getDatabase().getId();
                 return createDatabaseInput();
-            case FILE:
+            /*case FILE:
                 selectedFileId = input.getFile().getId();
                 selectedFileDirectory = input.getFile().getDirectory();
-                return createFileInput();
+                return createFileInput();*/
             default:
                 log.error("Unknown input type.");
                 return null;
@@ -123,11 +120,6 @@ public class InputAction extends DefaultAction {
     }
 
     public Resolution createFileInput() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        files = session.createQuery("from File").list();
-
         return new ForwardResolution(CREATE_FILE_JSP);
     }
 
@@ -158,7 +150,7 @@ public class InputAction extends DefaultAction {
         return list();
     }
 
-    public Resolution createFileInputComplete() {
+    /*public Resolution createFileInputComplete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -192,7 +184,7 @@ public class InputAction extends DefaultAction {
             selectedInputId = (Long)session.save(fileInput);
 
         return list();
-    }
+    }*/
 
     public Resolution createTablesList() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -307,20 +299,12 @@ public class InputAction extends DefaultAction {
         this.selectedDatabaseId = selectedDatabaseId;
     }
 
-    public List<File> getFiles() {
-        return files;
+    public String getSelectedFilePath() {
+        return selectedFilePath;
     }
 
-    public void setFiles(List<File> files) {
-        this.files = files;
-    }
-
-    public Long getSelectedFileId() {
-        return selectedFileId;
-    }
-
-    public void setSelectedFileId(Long selectedFileId) {
-        this.selectedFileId = selectedFileId;
+    public void setSelectedFilePath(String selectedFilePath) {
+        this.selectedFilePath = selectedFilePath;
     }
 
     public Long getSelectedInputId() {
@@ -375,12 +359,4 @@ public class InputAction extends DefaultAction {
         this.recordValues = recordValues;
     }
 
-    public String getSelectedFileDirectory() {
-        return selectedFileDirectory;
-    }
-
-    public void setSelectedFileDirectory(String selectedFileDirectory) {
-        this.selectedFileDirectory = selectedFileDirectory;
-    }
-    
 }

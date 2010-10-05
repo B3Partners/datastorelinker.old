@@ -38,7 +38,7 @@
                 url: "${fileUrl}",
                 event: "deleteCheck",
                 extraParams: [{
-                    name: "selectedFileIds",
+                    name: "selectedFilePaths",
                     value: JSON.stringify(filesToDelete)
                 }],
                 successAfterContainerFill: function(data) {
@@ -77,7 +77,7 @@
                                     //formSelector: "#createInputForm",
                                     event: "delete",
                                     extraParams: [{
-                                        name: "selectedFileIds",
+                                        name: "selectedFilePaths",
                                         value: JSON.stringify(filesToDelete)
                                     }],
                                     containerSelector: "#filesListContainer",

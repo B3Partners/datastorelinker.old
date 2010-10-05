@@ -4,6 +4,7 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,13 +31,14 @@ import net.sourceforge.stripes.controller.StripesRequestWrapper;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
-import nl.b3p.datastorelinker.entity.File;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.json.ArraySuccessMessage;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.UploaderStatus;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
+import nl.b3p.datastorelinker.util.Dir;
 import nl.b3p.datastorelinker.util.DirContent;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 /**
@@ -50,6 +52,7 @@ public class FileAction extends DefaultAction {
 
     protected final static String SHAPE_EXT = ".shp";
     protected final static String ZIP_EXT = ".zip";
+    protected final static String PRETTY_DIR_SEPARATOR = "/";
 
 
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/file/create.jsp";
@@ -59,38 +62,40 @@ public class FileAction extends DefaultAction {
 
     private DirContent dirContent;
 
-    private File selectedFile;
-    private Long selectedFileId;
-    private String selectedFileIds;
-
     private FileBean filedata;
-    //private Map<Integer, UploaderStatus> uploaderStatuses;
     private UploaderStatus uploaderStatus;
-    private Long dir;
-    private Long expandTo;
+
+    private String dir;
+    private String expandToFilePath;
+    private String selectedFilePath;
+    private String selectedFilePaths;
+
 
     public Resolution listDir() {
         log.debug(dir);
         
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        String directory = null;
+        java.io.File directory = null;
         if (dir != null) {
-            File directoryObject = (File)session.get(File.class, dir);
-            log.debug(directoryObject.getDirectory());
-            java.io.File directoryFile = new java.io.File(directoryObject.getDirectory(), directoryObject.getName());
-            directory = directoryFile.getAbsolutePath();
+            // wordt dit niet gewoon goed geregeld met user privileges?
+            // De tomcat user kan in *nix niet naar de root / parent dir?
+            // Voorbeelden bekijken / info inwinnen.
+            if (dir.contains("..")) {
+                log.error("Possible hack attempt; Dir requested: " + dir);
+                return null;
+            }
+
+            directory = getFileFromPPFileName(dir);
         } else {
-            directory = getUploadDirectory();
+            directory = getUploadDirectoryIOFile();
         }
         
-        if (expandTo == null) {
+        if (expandToFilePath == null) {
             dirContent = getDirContent(directory, null);
         } else {
-            selectedFile = (File)session.get(File.class, expandTo);
+            selectedFilePath = expandToFilePath; // kan ook class @Wizard maken (alles wordt hidden field in next request)
+            //selectedFile = (File)session.get(File.class, expandTo);
 
-            String selectedFileDir = selectedFile.getDirectory();
+            String selectedFileDir = new java.io.File(selectedFilePath).getParent();
             if (!selectedFileDir.startsWith(getUploadDirectory())) {
                 log.error("!selectedFileDir.startsWith(getUploadDirectory())");
                 return null;
@@ -98,9 +103,8 @@ public class FileAction extends DefaultAction {
 
             List<String> subDirList = new LinkedList<String>();
 
-            java.io.File uploadDirectory = new java.io.File(directory);
             java.io.File currentDirFile = new java.io.File(selectedFileDir);
-            while (!currentDirFile.getAbsolutePath().equals(uploadDirectory.getAbsolutePath())) {
+            while (!currentDirFile.getAbsolutePath().equals(directory.getAbsolutePath())) {
                 subDirList.add(0, currentDirFile.getName());
                 currentDirFile = currentDirFile.getParentFile();
             }
@@ -114,29 +118,49 @@ public class FileAction extends DefaultAction {
         return new ForwardResolution(DIRCONTENTS_JSP);
     }
 
-    protected DirContent getDirContent(String directory, List<String> subDirList) {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
+    protected DirContent getDirContent(java.io.File directory, List<String> subDirList) {
         DirContent dc = new DirContent();
 
-        dc.setDirs(session.createQuery("from File where directory = (:directory) and isDirectory = true order by name")
-                .setParameter("directory", directory)
-                .list());
-        dc.setFiles(session.createQuery("from File where directory = (:directory) and isDirectory = false order by name")
-                .setParameter("directory", directory)
-                .list());
+        java.io.File[] dirs = directory.listFiles(new FileFilter() {
+            public boolean accept(java.io.File file) {
+                return file.isDirectory();
+            }
+        });
+
+        java.io.File[] files = directory.listFiles(new FileFilter() {
+            public boolean accept(java.io.File file) {
+                return !file.isDirectory();
+            }
+        });
+        
+        List<Dir> dirsList = new ArrayList<Dir>();
+        for (java.io.File dir : dirs) {
+            Dir newDir = new Dir();
+            newDir.setName(dir.getName());
+            newDir.setPath(getFileNameRelativeToUploadDirPP(dir));
+            dirsList.add(newDir);
+        }
+
+        List<nl.b3p.datastorelinker.util.File> filesStrings = new ArrayList<nl.b3p.datastorelinker.util.File>();
+        for (java.io.File file : files) {
+            nl.b3p.datastorelinker.util.File newFile = new nl.b3p.datastorelinker.util.File();
+            newFile.setName(file.getName());
+            newFile.setPath(getFileNameRelativeToUploadDirPP(file));
+            filesStrings.add(newFile);
+        }
+
+        dc.setDirs(dirsList);
+        dc.setFiles(filesStrings);
 
         filterOutFilesToHide(dc);
 
         if (subDirList != null && subDirList.size() > 0) {
             String subDirString = subDirList.remove(0);
 
-            for (File subDir : dc.getDirs()) {
+            for (Dir subDir : dc.getDirs()) {
                 if (subDir.getName().equals(subDirString)) {
-                    subDir.setDirContent(getDirContent(
-                            new java.io.File(subDir.getDirectory(), subDir.getName()).getAbsolutePath(),
-                            subDirList));
+                    java.io.File followSubDir = getFileFromPPFileName(subDir.getPath());
+                    subDir.setContent(getDirContent(followSubDir, subDirList));
                     break;
                 }
             }
@@ -151,20 +175,20 @@ public class FileAction extends DefaultAction {
 
     protected void filterOutShapeExtraFiles(DirContent dc) {
         List<String> shapeNames = new ArrayList<String>();
-        for (File file : dc.getFiles()) {
+        for (nl.b3p.datastorelinker.util.File file : dc.getFiles()) {
             if (file.getName().endsWith(SHAPE_EXT)) {
                 shapeNames.add(file.getName().substring(0, file.getName().length() - SHAPE_EXT.length()));
             }
         }
 
         for (String shapeName : shapeNames) {
-            List<File> toBeIgnoredFiles = new ArrayList<File>();
-            for (File file : dc.getFiles()) {
+            List<nl.b3p.datastorelinker.util.File> toBeIgnoredFiles = new ArrayList<nl.b3p.datastorelinker.util.File>();
+            for (nl.b3p.datastorelinker.util.File file : dc.getFiles()) {
                 if (file.getName().startsWith(shapeName) && !file.getName().endsWith(SHAPE_EXT)) {
                     toBeIgnoredFiles.add(file);
                 }
             }
-            for (File file : toBeIgnoredFiles) {
+           for (nl.b3p.datastorelinker.util.File file : toBeIgnoredFiles) {
                 dc.getFiles().remove(file);
             }
         }
@@ -185,26 +209,25 @@ public class FileAction extends DefaultAction {
     }
 
     public Resolution deleteCheck() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        log.debug(selectedFileIds);
+        log.debug(selectedFilePaths);
 
         List<LocalizableMessage> messages = new ArrayList<LocalizableMessage>();
 
         try {
-            JSONArray selectedFileIdsJSON = JSONArray.fromObject(selectedFileIds);
-            for (Object fileIdObj : selectedFileIdsJSON) {
-                Long fileId = Long.valueOf((String)fileIdObj);
-
-                File file = (File)session.get(File.class, fileId);
-
-                messages.addAll(deleteCheckImpl(file));
+            JSONArray selectedFilePathsJSON = JSONArray.fromObject(selectedFilePaths);
+            for (Object filePathObj : selectedFilePathsJSON) {
+                String pathToDelete = (String)filePathObj;
+                String relativePathToDelete = pathToDelete.replace(PRETTY_DIR_SEPARATOR, java.io.File.separator);
+                java.io.File fileToDelete = new java.io.File(getUploadDirectoryIOFile(), relativePathToDelete);
+                
+                List<LocalizableMessage> deleteMessages = deleteCheckImpl(fileToDelete);
+                
+                messages.addAll(deleteMessages);
             }
         } catch(IOException ioex) {
             log.error(ioex);
+            // Still needed?
             // if anything goes wrong here something is wrong with the uploadDir.
-            // db cascades still work though.
         }
 
         if (messages.isEmpty()) {
@@ -218,29 +241,22 @@ public class FileAction extends DefaultAction {
         }
     }
 
-    private List<LocalizableMessage> deleteCheckImpl(File file) throws IOException {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
+    private List<LocalizableMessage> deleteCheckImpl(java.io.File fileToDelete) throws IOException {
         List<LocalizableMessage> messages = new ArrayList<LocalizableMessage>();
-        
-        if (file.getIsDirectory()) {
-            java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
 
-            List<File> filesInDir = session.createQuery("from File where directory = :directory")
-                    .setParameter("directory", fsFile.getAbsolutePath())
-                    .list();
-
-            for (File fileInDir : filesInDir) {
+        if (fileToDelete.isDirectory()) {
+            for (java.io.File fileInDir : fileToDelete.listFiles()) {
                 messages.addAll(deleteCheckImpl(fileInDir));
             }
         } else {
-            String relativeFileName = getFileNameRelativeToUploadDirPP(file);
+            String ppFileName = getFileNameRelativeToUploadDirPP(fileToDelete);
 
-            if (file.getInoutList() != null) {
-                for (Inout inout : file.getInoutList()) {
+            List<Inout> inouts = getDependingInouts(fileToDelete);
+
+            if (inouts != null && !inouts.isEmpty()) {
+                for (Inout inout : inouts) {
                     if (inout.getType() == Inout.Type.INPUT) {
-                        messages.add(new LocalizableMessage("file.inuseInput", relativeFileName, inout.getName()));
+                        messages.add(new LocalizableMessage("file.inuseInput", ppFileName, inout.getName()));
 
                         if (inout.getInputProcessList() != null) {
                             for (nl.b3p.datastorelinker.entity.Process process : inout.getInputProcessList()) {
@@ -248,7 +264,7 @@ public class FileAction extends DefaultAction {
                             }
                         }
                     } else { // output
-                        messages.add(new LocalizableMessage("file.inuseOutput", relativeFileName, inout.getName()));
+                        messages.add(new LocalizableMessage("file.inuseOutput", ppFileName, inout.getName()));
 
                         if (inout.getOutputProcessList() != null) {
                             for (nl.b3p.datastorelinker.entity.Process process : inout.getOutputProcessList()) {
@@ -264,99 +280,111 @@ public class FileAction extends DefaultAction {
         return messages;
     }
 
-    // Pretty printed version of getFileNameRelativeToUploadDir(File file).
-    // This name is uniform on all systems where the server runs (*nix or Windows).
-    public String getFileNameRelativeToUploadDirPP(File file) throws IOException {
-        return getFileNameRelativeToUploadDir(file).replace('\\', '/');
+    private List<Inout> getDependingInouts(java.io.File file) throws IOException {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        List<Inout> inouts = session.createQuery("from Inout where file = :file")
+                .setParameter("file", getFileNameRelativeToUploadDirPP(file))
+                .list();
+
+        return inouts;
     }
 
-    public String getFileNameRelativeToUploadDir(File file) throws IOException {
-        java.io.File ioFile = new java.io.File(file.getDirectory(), file.getName());
-        String absName = ioFile.getAbsolutePath();
+    private java.io.File getFileFromPPFileName(String fileName) {
+        String subPath = fileName.replace(PRETTY_DIR_SEPARATOR, java.io.File.separator);
+        return new java.io.File(getUploadDirectoryIOFile(), subPath);
+    }
+
+    // Pretty printed version of getFileNameRelativeToUploadDir(File file).
+    // This name is uniform on all systems where the server runs (*nix or Windows).
+    private String getFileNameRelativeToUploadDirPP(java.io.File file) {
+        return getFileNameRelativeToUploadDir(file).replace(java.io.File.separator, PRETTY_DIR_SEPARATOR);
+    }
+
+    private String getFileNameRelativeToUploadDir(java.io.File file) {
+        String absName = file.getAbsolutePath();
         if (!absName.startsWith(getUploadDirectory())) {
-            throw new IOException("Wrong file path. Should start with uploadDir: " + absName + "; uploadDir: " + getUploadDirectory());
+            return null;
         } else {
             return absName.substring(getUploadDirectory().length());
         }
     }
 
     public Resolution delete() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        log.debug(selectedFilePaths);
 
-        log.debug(selectedFileIds);
-
-        JSONArray selectedFileIdsJSON = JSONArray.fromObject(selectedFileIds);
-        for (Object fileIdObj : selectedFileIdsJSON) {
-            Long fileId = Long.valueOf((String)fileIdObj);
+        JSONArray selectedFilePathsJSON = JSONArray.fromObject(selectedFilePaths);
+        for (Object filePathObj : selectedFilePathsJSON) {
+            String filePath = (String)filePathObj;
             
-            File file = (File)session.get(File.class, fileId);
-
-            deleteImpl(file);
+            deleteImpl(getFileFromPPFileName(filePath));
         }
         return list();
     }
 
-    protected void deleteImpl(File file) {
+    protected void deleteImpl(java.io.File file) {
         if (file != null) {
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
             Session session = (Session)em.getDelegate();
 
-            java.io.File fsFile = new java.io.File(file.getDirectory(), file.getName());
-            boolean deleteSuccess = fsFile.delete();
-            if (!deleteSuccess)
-                log.error("Failed to delete file: " + fsFile.getAbsolutePath());
-            session.delete(file);
-
-            deleteExtraShapeFilesInDir(file);
+            // file could already be deleted if an ancestor directory was also deleted in the same request.
+            if (!file.isDirectory() && file.exists()) {
+                boolean deleteSuccess = file.delete();
+                if (!deleteSuccess)
+                    log.error("Failed to delete file: " + file.getAbsolutePath());
+            }
+            
+            try {
+                List<Inout> inouts = getDependingInouts(file);
+                for (Inout inout : inouts) {
+                    session.delete(inout);
+                }
+            } catch(IOException ioex) {
+                log.error(ioex);
+            }
+            
+            deleteExtraShapeFilesInSameDir(file);
             deleteDirIfDir(file);
         }
     }
 
-    private void deleteExtraShapeFilesInDir(File file) {
-        if (file.getName().endsWith(SHAPE_EXT)) {
-            EntityManager em = JpaUtilServlet.getThreadEntityManager();
-            Session session = (Session)em.getDelegate();
+    private void deleteExtraShapeFilesInSameDir(final java.io.File file) {
+        if (!file.isDirectory() && file.exists() && file.getName().endsWith(SHAPE_EXT)) {
+            final String fileBaseName = file.getName().substring(0, file.getName().length() - SHAPE_EXT.length());
 
-            List<File> extraShapeFilesInDir = session.createQuery(
-                    "from File where directory = :directory and name like :shapename")
-                    .setParameter("directory", file.getDirectory())
-                    .setParameter("shapename",
-                        file.getName().substring(0, file.getName().length() - SHAPE_EXT.length())
-                        + ".___")
-                    .list();
+            java.io.File currentDir = file.getParentFile();
+            log.debug("currentDir == " + currentDir);
+            if (currentDir != null) {
+                java.io.File[] extraShapeFilesInDir = currentDir.listFiles(new FileFilter() {
+                    public boolean accept(java.io.File extraFile) {
+                        return extraFile.getName().startsWith(fileBaseName) &&
+                               extraFile.getName().length() == file.getName().length();
+                    }
+                });
 
-            for (File extraShapeFile : extraShapeFilesInDir) {
-                if (!extraShapeFile.getIsDirectory()) {
-                    deleteImpl(extraShapeFile);
+                for (java.io.File extraShapeFile : extraShapeFilesInDir) {
+                    if (!extraShapeFile.isDirectory()) {
+                        deleteImpl(extraShapeFile);
+                    }
                 }
             }
         }
     }
 
-    protected void deleteDirIfDir(File dir) {
+    protected void deleteDirIfDir(java.io.File dir) {
+        // Does this still apply?
         // can be null if we tried to delete a directory first and then
         // one or more (recursively) deleted files within it.
-        if (dir != null && dir.getIsDirectory() == true) {
-            EntityManager em = JpaUtilServlet.getThreadEntityManager();
-            Session session = (Session)em.getDelegate();
-
-            // TODO: eigenlijk moet file/dir verwijderen van de server en file/dir uit de db verwijderen een atomaire operatie zijn.
-            java.io.File fsFile = new java.io.File(dir.getDirectory(), dir.getName());
-
-            List<File> filesInDir = session.createQuery("from File where directory = :directory")
-                    .setParameter("directory", fsFile.getAbsolutePath())
-                    .list();
-
-            log.debug(filesInDir);
-            for (File fileInDir : filesInDir) {
+        if (dir != null && dir.isDirectory()) {
+            for (java.io.File fileInDir : dir.listFiles()) {
                 deleteImpl(fileInDir);
             }
 
             // dir must be empty when deleting it
-            boolean deleteDirSuccess = fsFile.delete();
+            boolean deleteDirSuccess = dir.delete();
             if (!deleteDirSuccess)
-                log.error("Failed to delete dir: " + fsFile.getAbsolutePath() + "; This could happen if the dir was not empty at the time of deletion. This should not happen.");
+                log.error("Failed to delete dir: " + dir.getAbsolutePath() + "; This could happen if the dir was not empty at the time of deletion. This should not happen.");
         }
     }
 
@@ -417,8 +445,7 @@ public class FileAction extends DefaultAction {
 
                     log.info("Saved file " + destinationFile.getAbsolutePath() + ", Successfully!");
 
-                    File file = saveFile(destinationFile);
-                    selectedFileId = file.getId();
+                    selectedFilePath = getFileNameRelativeToUploadDirPP(destinationFile);
                 }
 
             } catch (IOException e) {
@@ -444,7 +471,6 @@ public class FileAction extends DefaultAction {
 
         if (!zipDir.exists()) {
             zipDir.mkdirs();
-            saveDir(zipDir);
         }
 
         byte[] buffer = new byte[1024];
@@ -463,7 +489,6 @@ public class FileAction extends DefaultAction {
                     // ZipInputStream does not work recursively
                     // files within this directory will be encountered as a later zipEntry
                     newFile.mkdirs();
-                    saveDir(newFile);
                 } else if (isZipFile(zipentry.getName())) {
                     // If the zipfile is in a subdir of the zip,
                     // we have to extract the filename without the dir.
@@ -485,7 +510,6 @@ public class FileAction extends DefaultAction {
                 } else {
                     // TODO: is valid file in zip (delete newFile if necessary)
                     copyZipEntryTo(zipinputstream, newFile, buffer);
-                    saveFile(newFile);
                 }
                 
                 zipinputstream.closeEntry();
@@ -521,42 +545,6 @@ public class FileAction extends DefaultAction {
                 fileoutputstream.close();
             }
         }
-    }
-
-    private File saveFile(java.io.File tempFile) throws IOException {
-        return saveFileOrDir(tempFile, false);
-    }
-
-    private File saveDir(java.io.File tempFile) throws IOException {
-        return saveFileOrDir(tempFile, true);
-    }
-
-    private File saveFileOrDir(java.io.File ioFile, boolean isDir) throws IOException {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session) em.getDelegate();
-
-        String fileName = ioFile.getName();
-        String dirName = ioFile.getParent();
-
-        log.debug("saveFileOrDir name: " + ioFile.getName());
-        log.debug("saveFileOrDir parent: " + ioFile.getParent());
-
-        File file = (File)session.createQuery("from File where name = :name and directory = :directory")
-                .setParameter("name", fileName)
-                .setParameter("directory", dirName)
-                .uniqueResult();
-
-        if (file == null) {
-            // file does not exist in DB; we are not overwriting a file
-            file = new File();
-            file.setName(fileName);
-            file.setDirectory(dirName);
-            file.setIsDirectory(isDir);
-
-            session.save(file);
-        } // else: file exists in DB and thus on disk; we have chosen to overwrite the file on disk
-        
-        return file;
     }
 
     public Resolution check() {
@@ -619,52 +607,44 @@ public class FileAction extends DefaultAction {
         return new java.io.File(getContext().getServletContext().getInitParameter("uploadDirectory"));
     }
 
-    public Long getSelectedFileId() {
-        return selectedFileId;
-    }
-
-    public void setSelectedFileId(Long selectedFileId) {
-        this.selectedFileId = selectedFileId;
-    }
-
-    public String getSelectedFileIds() {
-        return selectedFileIds;
-    }
-
-    public void setSelectedFileIds(String selectedFileIds) {
-        this.selectedFileIds = selectedFileIds;
-    }
-
-    public Long getDir() {
-        return dir;
-    }
-
-    public void setDir(Long dir) {
-        this.dir = dir;
-    }
-
-    public Long getExpandTo() {
-        return expandTo;
-    }
-
-    public void setExpandTo(Long expandTo) {
-        this.expandTo = expandTo;
-    }
-
-    public File getSelectedFile() {
-        return selectedFile;
-    }
-
-    public void setSelectedFile(File selectedFile) {
-        this.selectedFile = selectedFile;
-    }
-
     public DirContent getDirContent() {
         return dirContent;
     }
 
     public void setDirContent(DirContent dirContent) {
         this.dirContent = dirContent;
+    }
+
+    public String getExpandToFilePath() {
+        return expandToFilePath;
+    }
+
+    public void setExpandToFilePath(String expandToFilePath) {
+        this.expandToFilePath = expandToFilePath;
+    }
+
+    public String getSelectedFilePaths() {
+        return selectedFilePaths;
+    }
+
+    public void setSelectedFilePaths(String selectedFilePaths) {
+        this.selectedFilePaths = selectedFilePaths;
+    }
+
+    public String getDir() {
+        return dir;
+    }
+
+    public void setDir(String dir) {
+        this.dir = dir;
+    }
+
+    public String getSelectedFilePath() {
+        return selectedFilePath;
+    }
+
+    public void setSelectedFilePath(String selectedFilePath) {
+        this.selectedFilePath = selectedFilePath;
     }
 
 }

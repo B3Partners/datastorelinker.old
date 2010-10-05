@@ -85,13 +85,13 @@
                             formSelector: "#createUpdateProcessForm",
                             event: "delete",
                             containerSelector: "#inputListContainer",
-                            ajaxOptions: {globals: false}, // prevent blockUI being called 2 times. Called manually.
+                            ajaxOptions: {global: false}, // prevent blockUI being called 2 times. Called manually.
                             successAfterContainerFill: function() {
                                 ajaxOpen({
                                     url: "${processUrl}",
                                     event: "list",
                                     containerSelector: "#processesListContainer",
-                                    ajaxOptions: {globals: false},
+                                    ajaxOptions: {global: false},
                                     successAfterContainerFill: function() {
                                         $("#inputContainer").dialog("close");
                                         $.unblockUI(unblockUIOptions);

@@ -10,10 +10,10 @@
     $(document).ready(function() {
         //$("#filesList").buttonset();
 
-        selectedFileId = null;
+        selectedFilePath = null;
         selectedFileFound = false;
-        <c:if test="${not empty actionBean.selectedFileId}">
-            selectedFileId = <c:out value="${actionBean.selectedFileId}"/>;
+        <c:if test="${not empty actionBean.selectedFilePath}">
+            selectedFilePath = <c:out value="${actionBean.selectedFilePath}"/>;
         </c:if>
 
         var activeClass = "ui-state-active";
@@ -31,14 +31,14 @@
             },
             activeClass: activeClass,
             activateDirsOnClick: false,
-            expandOnFirstCallTo: selectedFileId,
+            expandOnFirstCallTo: selectedFilePath,
             fileCallback: function(fileName) {
                 
             },
             readyCallback: function(root) {
-                if (selectedFileId != null && !selectedFileFound) {
+                if (selectedFilePath != null && !selectedFileFound) {
                     //log(root);
-                    var selectedFile = root.find("input:radio[value=" + selectedFileId + "]");
+                    var selectedFile = root.find("input:radio[value=" + selectedFilePath + "]");
                     //log(selectedFile);
                     if (selectedFile.length > 0) {
                         selectedFileFound = true;
