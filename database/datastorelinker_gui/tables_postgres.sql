@@ -19,22 +19,15 @@
         primary key (id)
     );
 
-    create table file_inout (
-        id int8 not null,
-        directory varchar(255) not null,
-        is_directory bool not null,
-        name varchar(255) not null,
-        primary key (id)
-    );
-
     create table input_output (
         id int8 not null,
         input_output_datatype varchar(255) not null,
+        file_name varchar(255),
         name varchar(255) not null,
+        srs varchar(255),
         table_name varchar(255),
         input_output_type varchar(255) not null,
         database_id int8,
-        file_id int8,
         primary key (id)
     );
 
@@ -78,11 +71,6 @@
         schedule_type varchar(255) not null,
         primary key (id)
     );
-
-    alter table input_output 
-        add constraint FK3D1347161C5BF2D6 
-        foreign key (file_id) 
-        references file_inout;
 
     alter table input_output 
         add constraint FK3D134716341B5076 
