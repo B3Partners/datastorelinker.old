@@ -18,6 +18,7 @@ html {
 
 body {
     font-size: 10px;
+    font-family: Verdana;
     line-height:1.125em;
     width: 100%;
     height: 100%;
@@ -68,8 +69,8 @@ h3 {
 }
 
 #footer-text-left {
-    left: 50px;
     position: absolute;
+    left: 50px;
     top: 18px;
 }
 
@@ -80,6 +81,7 @@ h3 {
 
 .login-info-block {
     font-size: 12px;
+    line-height: 1.5em; /* IE 7 fix */
     float: right;
     position: absolute;
     right: 50px;
@@ -95,6 +97,10 @@ h3 {
     text-decoration: none;
     color: #fff;
     margin-left: 10px;
+}
+
+.login-field {
+    width: 200px;
 }
 
 .message {
