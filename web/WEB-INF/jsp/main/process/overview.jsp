@@ -308,7 +308,7 @@
     <stripes:form id="processForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
         <stripes:wizard-fields/>
         <div id="processHeader" class="ui-layout-north">
-            <h1 style="line-height: 1em"><fmt:message key="main.overview"/></h1><%-- line-height is fix for IE7 --%>
+            <h1><fmt:message key="main.overview"/></h1><%-- line-height is fix for IE7 --%>
         </div>
 
         <div id="processesListContainer" class="mandatory-form-input ui-layout-center radioList ui-widget-content ui-corner-all">
