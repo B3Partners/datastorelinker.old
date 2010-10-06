@@ -78,6 +78,24 @@ h3 {
     padding: 0.5em;
 }
 
+.login-info-block {
+    font-size: 12px;
+    float: right;
+    margin-right: 50px;
+    margin-top: 32px;
+}
+
+.logged-in-as {
+    display: inline;
+    color: #7891A5;
+}
+
+.logout-link {
+    text-decoration: none;
+    color: #fff;
+    margin-left: 10px;
+}
+
 .message {
     margin-bottom: 1em;
     padding: 0.5em;

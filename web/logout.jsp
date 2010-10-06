@@ -7,6 +7,11 @@
 
 <stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="DataStoreLinker uitgelogd">
     <stripes:layout-component name="content">
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $(".login-info-block").remove();
+            });
+        </script>
 
         <div class="login">
             <div class="ui-state-success message">U bent uitgelogd.</div>
