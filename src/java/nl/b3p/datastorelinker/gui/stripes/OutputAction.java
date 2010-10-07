@@ -47,14 +47,18 @@ public class OutputAction extends DatabaseAction {
 
     @Override
     public Resolution list() {
+        outputs = findOutputs();
+
+        return new ForwardResolution(getListJsp());
+    }
+
+    public static List<Inout> findOutputs() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        outputs = session.getNamedQuery("Inout.find")
+        return session.getNamedQuery("Inout.find")
                 .setParameter("typeName", Inout.Type.OUTPUT)
                 .list();
-
-        return new ForwardResolution(getListJsp());
     }
 
     @Override

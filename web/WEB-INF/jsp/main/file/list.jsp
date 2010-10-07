@@ -8,8 +8,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        //$("#filesList").buttonset();
-
         selectedFilePath = null;
         selectedFileFound = false;
         <c:if test="${not empty actionBean.selectedFilePath}">

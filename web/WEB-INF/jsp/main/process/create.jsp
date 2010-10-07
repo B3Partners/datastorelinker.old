@@ -7,6 +7,11 @@
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
 <script type="text/javascript">
+
+    inputDialogLayoutOptions = $.extend({}, defaultDialogLayoutOptions, {
+        center__findNestedContent: true
+    });
+
     $(document).ready(function() {
         initInput();
         initOutput();
@@ -19,19 +24,28 @@
         );
         
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
+            //log("step_shown");
             formWizardStep(data);
 
             initGuiInput();
             initGuiOutput();
 
             $("#processContainer").layout(defaultDialogLayoutOptions);
-            $("#processSteps").layout(defaultDialogLayoutOptions).destroy();
+            if (data.currentStep === "SelecteerInvoer") {
+                $("#processSteps").layout(inputDialogLayoutOptions).destroy();
+            } else {
+                $("#processSteps").layout(defaultDialogLayoutOptions).destroy();
+            }
             
             if (data.previousStep)
                 $("#" + data.previousStep).removeClass("ui-layout-center");
             $("#" + data.currentStep).addClass("ui-layout-center");
 
-            $("#processSteps").layout(defaultDialogLayoutOptions).initContent("center");
+            if (data.currentStep === "SelecteerInvoer") {
+                $("#processSteps").layout(inputDialogLayoutOptions).initContent("center");
+            } else {
+                $("#processSteps").layout(defaultDialogLayoutOptions).initContent("center");
+            }
 
             // layout plugin messes up z-indices; sets them to 1
             var topZIndexCss = { "z-index": "auto" };
@@ -39,7 +53,12 @@
             $("#" + data.currentStep).css(topZIndexCss);
 
             if (data.currentStep === "Overzicht") {
-                var inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
+                var inputText = "";
+                if ($("#inputTabs").tabs("option", "selected") === 0) {
+                    inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
+                } else {
+                    inputText = $("#filesListContainer input:radio:checked").val();
+                }
                 $("#inputOverviewContainer").html(inputText);
                 var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
                 $("#outputOverviewContainer").html(outputText);
@@ -68,7 +87,40 @@
                         // prevent regular ajax submit:
                         return false;
                     }
-                }
+                },
+                validationOptions: $.extend({}, defaultValidateOptions, {
+                    errorPlacement: function(error, element) {
+                        var state = $("#createUpdateProcessForm").formwizard("state");
+                        if (state["currentStep"] !== "SelecteerInvoer") {
+                            defaultFormWizardValidateOptions.errorPlacement(error, element);
+                        } else {
+                            if (error.length > 0 && error.text() != "") {
+                                if ($("#inputTabs").tabs("option", "selected") === 0) {
+                                    $("#databaseInputHeader").append(error);
+                                    $("#databaseTab").layout().resizeAll();
+                                } else {
+                                    $("#fileHeader").append(error);
+                                    $("#fileTab").layout().resizeAll();
+                                }
+                            }
+                        }
+                    },
+                    success: function(label) {
+                        var state = $("#createUpdateProcessForm").formwizard("state");
+                        if (state["currentStep"] !== "SelecteerInvoer") {
+                            defaultFormWizardValidateOptions.success(label);
+                        } else {
+                            if (label.length > 0 && label.parent().length > 0) {
+                                label.remove();
+                                if ($("#inputTabs").tabs("option", "selected") === 0) {
+                                    $("#databaseTab").layout().resizeAll();
+                                } else {
+                                    $("#fileTab").layout().resizeAll();
+                                }
+                            }
+                        }
+                    }
+                })
             })
         );
     });

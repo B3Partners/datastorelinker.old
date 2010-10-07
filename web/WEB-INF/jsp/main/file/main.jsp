@@ -10,9 +10,13 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        initFile();
+
         $("#deleteFile").click(function() {
-            if (!isFormValidAndContainsInput("#createInputForm"))
+            if (!containsInput("#filesListContainer"))
                 return defaultButtonClick(this);
+            /*if (!isFormValidAndContainsInput("#createInputForm"))
+                return defaultButtonClick(this);*/
 
             if ($("#filetree input:checkbox:checked").length == 0) {
                 $("<div></div").html(I18N.deleteFileFail).dialog($.extend({}, defaultDialogOptions, {
@@ -115,8 +119,7 @@
 </script>
 
 <stripes:form partial="true" action="#">
-    <div>
-        <h1><fmt:message key="inputFile.selectFile"/></h1>
+    <div id="fileHeader">
     </div>
     <div id="filesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
         <%@include file="/WEB-INF/jsp/main/file/list.jsp" %>

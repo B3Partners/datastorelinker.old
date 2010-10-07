@@ -22,8 +22,8 @@
         }));
 
         var newUpdateProcessCommonDialogOptions = $.extend({}, defaultDialogOptions, {
-            width: Math.floor($('body').width() * .70),
-            height: 525,//Math.floor($('body').height() * .65),// overzicht is nog niet dynamisch qua hoogte
+            width: calculateDialogWidth(70, 600),
+            height: 525,//calculateDialogWidth(65, 400),// overzicht is nog niet dynamisch qua hoogte
             resize: function(event, ui) {
                 $("#processContainer").layout().resizeAll();
                 $("#processSteps").layout().resizeAll();

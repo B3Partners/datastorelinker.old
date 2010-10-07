@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.zip.ZipInputStream;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Before;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
@@ -38,7 +41,6 @@ import nl.b3p.datastorelinker.json.UploaderStatus;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.Dir;
 import nl.b3p.datastorelinker.util.DirContent;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 /**
@@ -141,16 +143,19 @@ public class FileAction extends DefaultAction {
             dirsList.add(newDir);
         }
 
-        List<nl.b3p.datastorelinker.util.File> filesStrings = new ArrayList<nl.b3p.datastorelinker.util.File>();
+        List<nl.b3p.datastorelinker.util.File> filesList = new ArrayList<nl.b3p.datastorelinker.util.File>();
         for (java.io.File file : files) {
             nl.b3p.datastorelinker.util.File newFile = new nl.b3p.datastorelinker.util.File();
             newFile.setName(file.getName());
             newFile.setPath(getFileNameRelativeToUploadDirPP(file));
-            filesStrings.add(newFile);
+            filesList.add(newFile);
         }
 
+        Collections.sort(dirsList, new DirExtensionComparator());
+        Collections.sort(filesList, new FileExtensionComparator());
+
         dc.setDirs(dirsList);
-        dc.setFiles(filesStrings);
+        dc.setFiles(filesList);
 
         filterOutFilesToHide(dc);
 
@@ -285,15 +290,27 @@ public class FileAction extends DefaultAction {
         Session session = (Session)em.getDelegate();
 
         List<Inout> inouts = session.createQuery("from Inout where file = :file")
-                .setParameter("file", getFileNameRelativeToUploadDirPP(file))
+                .setParameter("file", file.getAbsolutePath())
                 .list();
 
         return inouts;
     }
 
     private java.io.File getFileFromPPFileName(String fileName) {
+        return getFileFromPPFileName(fileName, getContext());
+    }
+
+    private String getFileNameFromPPFileName(String fileName) {
+        return getFileFromPPFileName(fileName).getAbsolutePath();
+    }
+
+    private static java.io.File getFileFromPPFileName(String fileName, ActionBeanContext context) {
         String subPath = fileName.replace(PRETTY_DIR_SEPARATOR, java.io.File.separator);
-        return new java.io.File(getUploadDirectoryIOFile(), subPath);
+        return new java.io.File(getUploadDirectoryIOFile(context), subPath);
+    }
+
+    public static String getFileNameFromPPFileName(String fileName, ActionBeanContext context) {
+        return getFileFromPPFileName(fileName, context).getAbsolutePath();
     }
 
     // Pretty printed version of getFileNameRelativeToUploadDir(File file).
@@ -350,12 +367,12 @@ public class FileAction extends DefaultAction {
     }
 
     private void deleteExtraShapeFilesInSameDir(final java.io.File file) {
-        if (!file.isDirectory() && file.exists() && file.getName().endsWith(SHAPE_EXT)) {
+        if (!file.isDirectory() && file.getName().endsWith(SHAPE_EXT)) {
             final String fileBaseName = file.getName().substring(0, file.getName().length() - SHAPE_EXT.length());
 
             java.io.File currentDir = file.getParentFile();
             log.debug("currentDir == " + currentDir);
-            if (currentDir != null) {
+            if (currentDir != null && currentDir.exists()) {
                 java.io.File[] extraShapeFilesInDir = currentDir.listFiles(new FileFilter() {
                     public boolean accept(java.io.File extraFile) {
                         return extraFile.getName().startsWith(fileBaseName) &&
@@ -376,7 +393,7 @@ public class FileAction extends DefaultAction {
         // Does this still apply?
         // can be null if we tried to delete a directory first and then
         // one or more (recursively) deleted files within it.
-        if (dir != null && dir.isDirectory()) {
+        if (dir != null && dir.isDirectory() && dir.exists()) {
             for (java.io.File fileInDir : dir.listFiles()) {
                 deleteImpl(fileInDir);
             }
@@ -604,7 +621,11 @@ public class FileAction extends DefaultAction {
     }
 
     public java.io.File getUploadDirectoryIOFile() {
-        return new java.io.File(getContext().getServletContext().getInitParameter("uploadDirectory"));
+        return getUploadDirectoryIOFile(getContext());
+    }
+
+    public static java.io.File getUploadDirectoryIOFile(ActionBeanContext context) {
+        return new java.io.File(context.getServletContext().getInitParameter("uploadDirectory"));
     }
 
     public DirContent getDirContent() {
@@ -647,4 +668,42 @@ public class FileAction extends DefaultAction {
         this.selectedFilePath = selectedFilePath;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Comparison methods for file/dir sorting">
+    private int compareExtensions(String s1, String s2) {
+        // the +1 is to avoid including the '.' in the extension and to avoid exceptions
+        // EDIT:
+        // We first need to make sure that either both files or neither file
+        // has an extension (otherwise we'll end up comparing the extension of one
+        // to the start of the other, or else throwing an exception)
+        final int s1Dot = s1.lastIndexOf('.');
+        final int s2Dot = s2.lastIndexOf('.');
+        if ((s1Dot == -1) == (s2Dot == -1)) { // both or neither
+            s1 = s1.substring(s1Dot + 1);
+            s2 = s2.substring(s2Dot + 1);
+            return s1.compareTo(s2);
+        } else if (s1Dot == -1) { // only s2 has an extension, so s1 goes first
+            return -1;
+        } else { // only s1 has an extension, so s1 goes second
+            return 1;
+        }
+    }
+
+    private class DirExtensionComparator implements Comparator<Dir> {
+        @Override
+        public int compare(Dir d1, Dir d2) {
+            String s1 = d1.getName();
+            String s2 = d2.getName();
+            return compareExtensions(s1, s2);
+        }
+    }
+
+    private class FileExtensionComparator implements Comparator<nl.b3p.datastorelinker.util.File> {
+        @Override
+        public int compare(nl.b3p.datastorelinker.util.File f1, nl.b3p.datastorelinker.util.File f2) {
+            String s1 = f1.getName();
+            String s2 = f2.getName();
+            return compareExtensions(s1, s2);
+        }
+    }
+    // </editor-fold>
 }

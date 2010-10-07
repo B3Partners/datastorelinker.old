@@ -118,7 +118,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     log(xhr);
     log(ajaxOptions);
     log(thrownError);*/
-    log(xhr.status);
+    //log(xhr.status);
 
     var errorMessage;
     if (xhr.status == defaultCustomErrorCode) {
@@ -231,10 +231,10 @@ function ajaxOpen(sendOptions) {
 }
 
 function isFormValidAndContainsInput(formSelector, checkInputPresentSelector) {
-    return $(formSelector).valid() && _containsInput(formSelector, checkInputPresentSelector);
+    return $(formSelector).valid() && containsInput(formSelector, checkInputPresentSelector);
 }
 
-function _containsInput(formSelector, checkInputPresentSelector) {
+function containsInput(formSelector, checkInputPresentSelector) {
     if (!checkInputPresentSelector)
         checkInputPresentSelector = defaultCheckInputPresentSelector;
 

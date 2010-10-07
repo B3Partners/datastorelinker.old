@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <filter>
-        <display-name>Security Filter</display-name>
-        <filter-name>SecurityFilter</filter-name>
-        <filter-class>org.securityfilter.filter.SecurityFilter</filter-class>
-        <init-param>
-            <param-name>config</param-name>
-            <param-value>/WEB-INF/securityfilter-config.xml</param-value>
-        </init-param>
-        <init-param>
-            <param-name>validate</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
-    <filter>
         <display-name>Stripes Filter</display-name>
         <filter-name>StripesFilter</filter-name>
         <filter-class>net.sourceforge.stripes.controller.StripesFilter</filter-class>
@@ -38,10 +25,27 @@
             <param-value>nl_NL, nl</param-value>
         </init-param>
     </filter>
-    <filter-mapping>
+    <filter>
+        <display-name>Security Filter</display-name>
         <filter-name>SecurityFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+        <filter-class>org.securityfilter.filter.SecurityFilter</filter-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/securityfilter-config.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>validate</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+	<filter>
+		<filter-name>Request encoding filter</filter-name>
+		<filter-class>nl.b3p.commons.services.SetRequestEncodingFilter</filter-class>
+		<init-param>
+			<param-name>requestEncoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
     <filter-mapping>
         <filter-name>StripesFilter</filter-name>
         <url-pattern>*.jsp</url-pattern>
@@ -58,6 +62,14 @@
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>ERROR</dispatcher>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+	<filter-mapping>
+		<filter-name>Request encoding filter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
     <servlet>
         <servlet-name>StripesDispatcher</servlet-name>
         <servlet-class>net.sourceforge.stripes.controller.DispatcherServlet</servlet-class>

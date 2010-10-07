@@ -66,16 +66,21 @@ public class InputAction extends DefaultAction {
     }
 
     public Resolution list() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        inputs = session.getNamedQuery("Inout.find")
-                .setParameter("typeName", Inout.Type.INPUT)
-                .list();
+        inputs = findDBInputs();
 
         log.debug(inputs);
 
         return new ForwardResolution(LIST_JSP);
+    }
+
+    public static List<Inout> findDBInputs() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        return session.getNamedQuery("Inout.findAllOfDataType")
+                .setParameter("typeName", Inout.Type.INPUT)
+                .setParameter("datatypeName", Inout.Datatype.DATABASE)
+                .list();
     }
 
     public Resolution delete() {

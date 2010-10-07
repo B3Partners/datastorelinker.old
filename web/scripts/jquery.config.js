@@ -86,7 +86,11 @@ defaultFormWizardValidateOptions = $.extend({}, defaultValidateOptions, {
 
 defaultLayoutOptions = {
     resizable: false,
-    closable: false
+    closable: false/*,
+    resizeWithWindowDelay: 300,
+    resizeWithWindowMaxDelay: 1000,
+    zIndex: "auto", // does not work, must be a number
+    */
 };
 
 defaultDialogLayoutOptions = $.extend({}, defaultLayoutOptions, {
@@ -120,4 +124,30 @@ function formWizardStep(data) {
     // Dit is om ervoor te zorgen dat de formWizard plugin goed samenwerkt met buttonset van jQuery UI.
     // Dit doet het niet automatisch.
     $("#" + data.currentStep + " .ui-buttonset").buttonset("enable");
+}
+
+function calculateDialogWidth(percentageOfBodyWidth, minWidth, maxWidth) {
+    return _calculateDialogSize(percentageOfBodyWidth, minWidth, maxWidth, $("body").width());
+}
+
+function calculateDialogHeight(percentageOfBodyHeight, minHeight, maxHeight) {
+    return _calculateDialogSize(percentageOfBodyHeight, minHeight, maxHeight, $("body").height());
+}
+
+function _calculateDialogSize(percentage, minSize, maxSize, bodySize) {
+    var size = Math.floor(bodySize * percentage / 100.0);
+    if (!!minSize) {
+        if (size < minSize) {
+            if (minSize < bodySize) {
+                size = minSize;
+            } else {
+                size = bodySize;
+            }
+        }
+    }
+    if (!!maxSize) {
+        if (size > maxSize)
+            size = maxSize;
+    }
+    return size;
 }

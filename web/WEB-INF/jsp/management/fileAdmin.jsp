@@ -9,8 +9,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        initFile();
-
+        $("#fileHeader").append("<h1><fmt:message key="inputFile.selectFile"/></h1>");
+        
         createDefaultVerticalLayout($("#fileAdmin"), $.extend({}, defaultLayoutOptions, {
             south__size: 50,
             south__minSize: 50

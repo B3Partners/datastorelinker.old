@@ -41,15 +41,17 @@ function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {
         alert("Number of children for vertical layout must be 3. It is " + children.length + ". Element: " + jqElem);
         log(jqElem);
         log(children);
+        return false;
     } else {
         children.removeClass("ui-layout-content ui-layout-north ui-layout-center ui-layout-south ui-layout-west ui-layout-east");
         $(children[0]).addClass("ui-layout-north");
         $(children[1]).addClass("ui-layout-center");
         $(children[2]).addClass("ui-layout-south");
-        jqElem.layout($.extend({}, defaultLayoutOptions, extraLayoutOptions));
+        var layout = jqElem.layout($.extend({}, defaultLayoutOptions, extraLayoutOptions));
         //jqElem.layout($.extend({}, defaultLayoutOptions, extraLayoutOptions)).initContent("center");
         $(children[0]).css("z-index", "auto");
         $(children[1]).css("z-index", "auto");
         $(children[2]).css("z-index", "auto");
+        return layout;
     }
 }

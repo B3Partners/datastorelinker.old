@@ -8,8 +8,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        initFile();
-
         $("#createInputBackButton, #createInputNextButton").button();
 
         $("#createInputForm").formwizard(

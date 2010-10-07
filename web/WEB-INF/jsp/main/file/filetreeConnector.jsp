@@ -48,7 +48,7 @@
     <c:forEach var="file" items="${files}">
         <li class="file ext_file">
             <input type="checkbox" name="${file.path}" value="${file.path}"/>
-            <input type="radio" name="selectedFilePath" value="${file.path}" style="display: none"/>
+            <input type="radio" name="selectedFilePath" value="${file.path}" class="required" style="display: none"/>
             <a href="#" rel="${file.path}">
                 ${file.name}
             </a>

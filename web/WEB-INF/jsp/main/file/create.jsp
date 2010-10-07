@@ -16,7 +16,7 @@
             checkScript: "${fileUrl}",
             checkScriptData: {"check": ""},
             checkScriptAjaxOptions: {global: false},
-            //fpath: "<c:out value="${actionBean.uploadDirectory}"/>", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
+            //fpath: "<%--c:out value="${actionBean.uploadDirectory}"/--%>", // IE kan dit niet lezen. Daardoor wordt uiload geskipped. // is ook niet nodig
             fdata: "Filedata",
             maxfiles: 1,
             maxfilesize: 524288000, // == 500 MB
@@ -92,5 +92,5 @@
     <stripes:file name="uploader" id="uploader" />
 </stripes:form>
 
-<!--div>IE is raar: <c:out value="${actionBean.uploadDirectory}"/></div-->
+<%--div>IE is raar: c:out value="${actionBean.uploadDirectory}"/></div--%>
 

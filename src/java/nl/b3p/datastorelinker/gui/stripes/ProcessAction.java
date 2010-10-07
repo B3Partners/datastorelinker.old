@@ -4,7 +4,7 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.sql.SQLException;
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -73,6 +73,8 @@ public class ProcessAction extends DefaultAction {
     private String emailAddress;
     private String subject;
 
+    private String selectedFilePath;
+
     // dummy variable
     private Boolean admin;
 
@@ -96,15 +98,8 @@ public class ProcessAction extends DefaultAction {
 
     @Transactional
     public Resolution create() {//throws Exception {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        inputs = session.getNamedQuery("Inout.find")
-                .setParameter("typeName", Inout.Type.INPUT)
-                .list();
-        outputs = session.getNamedQuery("Inout.find")
-                .setParameter("typeName", Inout.Type.OUTPUT)
-                .list();
+        inputs = InputAction.findDBInputs();
+        outputs = OutputAction.findOutputs();
 
         if (actionsList == null)
             actionsList = new JSONArray().toString();
@@ -128,7 +123,23 @@ public class ProcessAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Inout input = (Inout)session.get(Inout.class, selectedInputId);
+        Inout input = null;
+        if (selectedFilePath == null) {
+            input = (Inout)session.get(Inout.class, selectedInputId);
+        } else {
+            String fullPath = FileAction.getFileNameFromPPFileName(selectedFilePath, getContext());
+            input = (Inout)session.createQuery("from Inout where file = :file")
+                    .setParameter("file", fullPath)
+                    .uniqueResult();
+            if (input == null) {
+                input = new Inout();
+                input.setType(Inout.Type.INPUT);
+                input.setDatatype(Inout.Datatype.FILE);
+                input.setFile(fullPath);
+                input.setName(selectedFilePath);
+                session.save(input);
+            }
+        }
         Inout output = (Inout)session.get(Inout.class, selectedOutputId);
 
         nl.b3p.datastorelinker.entity.Process process;
@@ -479,6 +490,14 @@ public class ProcessAction extends DefaultAction {
 
     public void setAdmin(Boolean admin) {
         this.admin = admin;
+    }
+
+    public String getSelectedFilePath() {
+        return selectedFilePath;
+    }
+
+    public void setSelectedFilePath(String selectedFilePath) {
+        this.selectedFilePath = selectedFilePath;
     }
 
 }

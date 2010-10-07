@@ -67,7 +67,7 @@
             </li>
         </ul>
         <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
-            <div id="tabHome" style="height: 100%"></div>
+            <div id="tabHome" style="height: 100%"></div><!-- class="ui-tabs-hide" : optional class for tabs to prevent Flash of Unstyled Content -->
             <div id="tabInput" style="height: 100%"></div>
             <div id="tabOutput" style="height: 100%"></div>
             <div id="tabDatabase" style="height: 100%"></div>
