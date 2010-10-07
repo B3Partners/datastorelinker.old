@@ -241,7 +241,7 @@ public class FileAction extends DefaultAction {
         } else {
             JSONArray jsonArray = new JSONArray();
             for (LocalizableMessage m : messages) {
-                jsonArray.element(m.getMessage(Locale.getDefault()));
+                jsonArray.element(m.getMessage(getContext().getLocale()));
             }
             return new JSONResolution(new ArraySuccessMessage(false, jsonArray));
         }

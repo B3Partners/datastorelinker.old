@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
@@ -19,7 +20,9 @@ import nl.b3p.datastorelinker.json.JSONErrorResolution;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.geotools.data.DataStore;
+import org.geotools.feature.FeatureIterator;
 import org.hibernate.Session;
+import org.opengis.feature.simple.SimpleFeature;
 
 /**
  *
@@ -179,12 +182,24 @@ public class DatabaseAction extends DefaultAction {
         DataStore dataStore = null;
         try {
             dataStore = DataStoreLinker.openDataStore(getDatabase(true));
+            if (dataStore == null)
+                throw new Exception("Datastore is null");
+
+            // Oracle DataStore will only only complain about invalid user/pw if we use the next line:
+            String[] typeNames = dataStore.getTypeNames();
+            // Oracle DataStore will only only fail on a non-existent schema if we use the next block:
+            if (typeNames == null || typeNames.length == 0) {
+                LocalizableMessage message = new LocalizableMessage("database.schemafail");
+                throw new Exception(message.getMessage(getContext().getLocale()));
+            }
         } catch (Exception e) {
+            log.debug("db connection error", e);
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
         } finally {
             if (dataStore != null)
                 dataStore.dispose();
         }
+        log.debug("db connection success");
         return new JSONResolution(new SuccessMessage());
     }
 
