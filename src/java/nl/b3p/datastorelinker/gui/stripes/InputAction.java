@@ -6,6 +6,7 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -18,6 +19,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
+import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
@@ -77,10 +79,12 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        return session.getNamedQuery("Inout.findAllOfDataType")
+        List<Inout> list = session.getNamedQuery("Inout.findAllOfDataType")
                 .setParameter("typeName", Inout.Type.INPUT)
                 .setParameter("datatypeName", Inout.Datatype.DATABASE)
                 .list();
+        Collections.sort(list, new NameableComparer());
+        return list;
     }
 
     public Resolution delete() {

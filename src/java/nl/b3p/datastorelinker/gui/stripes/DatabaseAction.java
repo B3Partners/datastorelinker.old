@@ -4,6 +4,8 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -18,11 +20,11 @@ import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.json.JSONErrorResolution;
 import nl.b3p.datastorelinker.json.JSONResolution;
+import nl.b3p.datastorelinker.util.Nameable;
+import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.geotools.data.DataStore;
-import org.geotools.feature.FeatureIterator;
 import org.hibernate.Session;
-import org.opengis.feature.simple.SimpleFeature;
 
 /**
  *
@@ -88,6 +90,8 @@ public class DatabaseAction extends DefaultAction {
         databases = session.getNamedQuery("Database.find")
                 .setParameter("typeInout", Database.TypeInout.INPUT)
                 .list();
+
+        Collections.sort(databases, new NameableComparer());
 
         return new ForwardResolution(getListJsp());
     }

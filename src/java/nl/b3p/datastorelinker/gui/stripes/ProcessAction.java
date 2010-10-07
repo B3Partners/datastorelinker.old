@@ -4,6 +4,7 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -30,6 +31,7 @@ import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.util.DataStoreLinkJob;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
+import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
 import nl.b3p.geotools.data.linker.Status;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -52,7 +54,7 @@ public class ProcessAction extends DefaultAction {
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/process/create.jsp";
     private final static String EXECUTE_JSP = "/WEB-INF/jsp/main/process/execute.jsp";
     
-    private List<Process> processes;
+    private List<nl.b3p.datastorelinker.entity.Process> processes;
     private Long selectedProcessId;
     
     private List<Inout> inputs;
@@ -85,6 +87,7 @@ public class ProcessAction extends DefaultAction {
         // moet even wat hulp krijgen om die order by's goed te krijgen
         // (te maken met de dot-notation voor joins die niet werkt zoals ik denk dat ie werkt.).
         processes = session.createQuery("from Process order by name").list();
+        Collections.sort(processes, new NameableComparer());
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -377,11 +380,11 @@ public class ProcessAction extends DefaultAction {
 
     //TODO: test: is output DB PostGIS (itt alleen Postgres)? merk je nu bij run als het goed is.
 
-    public List<Process> getProcesses() {
+    public List<nl.b3p.datastorelinker.entity.Process> getProcesses() {
         return processes;
     }
 
-    public void setProcesses(List<Process> processes) {
+    public void setProcesses(List<nl.b3p.datastorelinker.entity.Process> processes) {
         this.processes = processes;
     }
 

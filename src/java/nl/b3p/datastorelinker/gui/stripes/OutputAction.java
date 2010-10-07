@@ -5,6 +5,7 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.ForwardResolution;
@@ -14,6 +15,7 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.util.NameableComparer;
 import org.hibernate.Session;
 
 /**
@@ -56,9 +58,11 @@ public class OutputAction extends DatabaseAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        return session.getNamedQuery("Inout.find")
+        List<Inout> list = session.getNamedQuery("Inout.find")
                 .setParameter("typeName", Inout.Type.OUTPUT)
                 .list();
+        Collections.sort(list, new NameableComparer());
+        return list;
     }
 
     @Override
