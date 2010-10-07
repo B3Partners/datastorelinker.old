@@ -4,7 +4,6 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -149,8 +148,6 @@ public class ProcessAction extends DefaultAction {
             process = (nl.b3p.datastorelinker.entity.Process)
                     session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
         
-        // TODO: custom name:
-        process.setName(input.getName() + " -> " + output.getName());
         process.setInput(input);
         process.setOutput(output);
         process.setActionsString(getActionsListJsonToXmlString());

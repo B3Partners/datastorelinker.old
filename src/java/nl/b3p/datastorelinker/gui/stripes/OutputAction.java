@@ -101,7 +101,6 @@ public class OutputAction extends DatabaseAction {
         output.setType(Inout.Type.OUTPUT);
         output.setDatatype(Inout.Datatype.DATABASE);
         output.setDatabase(database);
-        output.setName(database.getName());
         // no tablename needed.
 
         if (selectedOutputId == null)

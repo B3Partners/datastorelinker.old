@@ -10,6 +10,8 @@
     $(document).ready(function() {
         initInput();
 
+        $("#databaseInputHeader").html("<h1><fmt:message key="process.selectDatabaseInput"/></h1>");
+
         createDefaultVerticalLayout($("#inputAdmin"), $.extend({}, defaultLayoutOptions, {
             south__size: 50,
             south__minSize: 50
@@ -21,6 +23,6 @@
 
 <div id="inputAdmin" style="height: 100%">
     <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
-        <%@include file="/WEB-INF/jsp/main/input/main.jsp" %>
+        <%@include file="/WEB-INF/jsp/main/input/database/main.jsp" %>
     </stripes:form>
 </div>

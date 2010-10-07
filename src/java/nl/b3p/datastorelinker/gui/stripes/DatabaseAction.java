@@ -118,7 +118,7 @@ public class DatabaseAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-        Database database = getDatabase();
+        Database database = getDatabase(false);
         database.setTypeInout(typeInout);
 
         // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
@@ -129,25 +129,22 @@ public class DatabaseAction extends DefaultAction {
         return database;
     }
 
-    protected Database getDatabase() {
+    protected Database getDatabase(boolean alwaysCreateNewDB) {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
         Database database;
-        if (selectedDatabaseId == null) {
+        if (selectedDatabaseId == null || alwaysCreateNewDB) {
             database = new Database();
         } else {
             database = (Database) session.get(Database.class, selectedDatabaseId);
+            database.reset();
         }
 
-        database.setName(host + "/" + databaseName);
         database.setType(dbType);
 
         switch (dbType) {
             case ORACLE:
-                // different name for Oracle:
-                database.setName(host + "/" + schema);
-
                 database.setHost(host);
                 database.setDatabaseName(databaseName);
                 database.setUsername(username);
@@ -181,7 +178,7 @@ public class DatabaseAction extends DefaultAction {
     public Resolution testConnection() {
         DataStore dataStore = null;
         try {
-            dataStore = DataStoreLinker.openDataStore(getDatabase());
+            dataStore = DataStoreLinker.openDataStore(getDatabase(true));
         } catch (Exception e) {
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
         } finally {

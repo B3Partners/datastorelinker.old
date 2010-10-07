@@ -184,17 +184,7 @@
         </ul>
         <div class="ui-layout-center">
             <div id="databaseTab">
-                <div id="databaseInputHeader" class="ui-layout-north">
-                </div>
-                <div id="inputListContainer" class="ui-layout-center radioList ui-widget-content ui-corner-all">
-                    <%@include file="/WEB-INF/jsp/main/input/list.jsp" %>
-                </div>
-                <div class="ui-layout-south crudButtonsArea">
-                    <stripes:button id="createInputDB" name="create"/>
-                    <%--stripes:button id="createInputFile" name="createInputFile"/--%>
-                    <stripes:button id="updateInput" name="update"/>
-                    <stripes:button id="deleteInput" name="delete"/>
-                </div>
+                <%@include file="/WEB-INF/jsp/main/input/database/main.jsp" %>
             </div>
             <div id="fileTab">
                 <%@include file="/WEB-INF/jsp/main/file/main.jsp" %>

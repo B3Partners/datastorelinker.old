@@ -36,7 +36,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 public class InputAction extends DefaultAction {
     private final static Log log = Log.getInstance(InputAction.class);
 
-    private final static String LIST_JSP = "/WEB-INF/jsp/main/input/list.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/input/database/list.jsp";
     private final static String TABLE_LIST_JSP = "/WEB-INF/jsp/main/input/table/list.jsp";
     private final static String CREATE_DATABASE_JSP = "/WEB-INF/jsp/main/input/database/create.jsp";
     private final static String CREATE_FILE_JSP = "/WEB-INF/jsp/main/input/file/create.jsp";
@@ -144,10 +144,6 @@ public class InputAction extends DefaultAction {
         dbInput.setDatatype(Inout.Datatype.DATABASE);
         dbInput.setDatabase(selectedDatabase);
         dbInput.setTableName(selectedTable);
-        String name = selectedDatabase.getName();
-        if (selectedTable != null && !selectedTable.equals(""))
-            name += " (" + selectedTable + ")";
-        dbInput.setName(name);
 
         if (selectedInputId == null)
             selectedInputId = (Long)session.save(dbInput);
