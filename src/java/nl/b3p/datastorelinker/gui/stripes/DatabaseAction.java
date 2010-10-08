@@ -49,7 +49,6 @@ public class DatabaseAction extends DefaultAction {
     private Integer port;
     private String schema;
     // Oracle specific (plus above):
-    private String instance;
     private String alias;
     // MS Access specific:
     private String url;
@@ -158,7 +157,6 @@ public class DatabaseAction extends DefaultAction {
                 database.setPassword(password);
                 database.setPort(port);
                 database.setSchema(schema);
-                database.setInstance(instance);
                 database.setAlias(alias);
                 break;
             case MSACCESS:
@@ -269,14 +267,6 @@ public class DatabaseAction extends DefaultAction {
 
     public void setSchema(String schema) {
         this.schema = schema;
-    }
-
-    public String getInstance() {
-        return instance;
-    }
-
-    public void setInstance(String instance) {
-        this.instance = instance;
     }
 
     public String getAlias() {

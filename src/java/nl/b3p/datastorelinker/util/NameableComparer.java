@@ -13,6 +13,6 @@ import java.util.Comparator;
  */
 public class NameableComparer implements Comparator<Nameable> {
     public int compare(Nameable n1, Nameable n2) {
-        return n1.getName().compareToIgnoreCase(n2.getName());
+        return n1.getName().compareTo(n2.getName());
     }
 }
