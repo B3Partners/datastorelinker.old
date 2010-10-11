@@ -294,12 +294,19 @@
                 $(this).dialog("close");
             }
         });
-        ajaxOpen({
-            formSelector: "#processForm",
-            event: "list",
-            containerSelector: "#processesListContainer",
-            global: false
-        });
+
+        // allow server to finish its stuff, then update all statuses:
+        setTimeout(
+            function() {
+                ajaxOpen({
+                    formSelector: "#processForm",
+                    event: "list",
+                    containerSelector: "#processesListContainer",
+                    global: false
+                });
+            },
+            500
+        );
     }
 
 </script>

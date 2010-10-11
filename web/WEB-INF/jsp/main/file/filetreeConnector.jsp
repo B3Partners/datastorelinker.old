@@ -25,7 +25,7 @@
                 <li class="directory expanded">
                     <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
                     <input type="radio" name="selectedFilePath" value="${dir.path}" style="display: none"/>
-                    <a href="#" rel="${dir.id}">
+                    <a href="#" rel="${dir.path}">
                         ${dir.name}
                     </a>
 

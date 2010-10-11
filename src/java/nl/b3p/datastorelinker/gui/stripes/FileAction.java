@@ -12,10 +12,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -56,10 +56,14 @@ public class FileAction extends DefaultAction {
     protected final static String SHAPE_EXT = ".shp";
     protected final static String ZIP_EXT = ".zip";
     protected final static String PRETTY_DIR_SEPARATOR = "/";
+    protected final static String[] ALLOWED_CONTENT_TYPES = {
+        ""
+    };
 
 
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/file/create.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/file/list.jsp";
+    private final static String WRAPPER_JSP = "/WEB-INF/jsp/main/file/filetreeWrapper.jsp";
     private final static String ADMIN_JSP = "/WEB-INF/jsp/management/fileAdmin.jsp";
     private final static String DIRCONTENTS_JSP = "/WEB-INF/jsp/main/file/filetreeConnector.jsp";
 
@@ -69,13 +73,13 @@ public class FileAction extends DefaultAction {
     private UploaderStatus uploaderStatus;
 
     private String dir;
-    private String expandToFilePath;
+    private String expandTo;
     private String selectedFilePath;
     private String selectedFilePaths;
 
 
     public Resolution listDir() {
-        log.debug(dir);
+        log.debug("Directory requested: " + dir);
         
         File directory = null;
         if (dir != null) {
@@ -92,21 +96,14 @@ public class FileAction extends DefaultAction {
             directory = getUploadDirectoryIOFile();
         }
         
-        if (expandToFilePath == null) {
+        if (expandTo == null) {
             dirContent = getDirContent(directory, null);
         } else {
-            selectedFilePath = expandToFilePath; // kan ook class @Wizard maken (alles wordt hidden field in next request)
-            //selectedFile = (File)session.get(File.class, expandTo);
-
-            String selectedFileDir = new File(selectedFilePath).getParent();
-            if (!selectedFileDir.startsWith(getUploadDirectory())) {
-                log.error("!selectedFileDir.startsWith(getUploadDirectory())");
-                return null;
-            }
+            selectedFilePath = expandTo;
 
             List<String> subDirList = new LinkedList<String>();
 
-            File currentDirFile = new File(selectedFileDir);
+            File currentDirFile = getFileFromPPFileName(selectedFilePath);
             while (!currentDirFile.getAbsolutePath().equals(directory.getAbsolutePath())) {
                 subDirList.add(0, currentDirFile.getName());
                 currentDirFile = currentDirFile.getParentFile();
@@ -206,11 +203,6 @@ public class FileAction extends DefaultAction {
     }
 
     public Resolution list() {
-        /*EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        files = session.createQuery("from File order by name").list();*/
-
         return new ForwardResolution(LIST_JSP);
     }
 
@@ -316,16 +308,28 @@ public class FileAction extends DefaultAction {
 
     // Pretty printed version of getFileNameRelativeToUploadDir(File file).
     // This name is uniform on all systems where the server runs (*nix or Windows).
+    public static String getFileNameRelativeToUploadDirPP(String file, ActionBeanContext context) {
+        return getFileNameRelativeToUploadDirPP(new File(file), context);
+    }
+
     private String getFileNameRelativeToUploadDirPP(File file) {
-        return getFileNameRelativeToUploadDir(file).replace(File.separator, PRETTY_DIR_SEPARATOR);
+        return getFileNameRelativeToUploadDirPP(file, getContext());
+    }
+
+    private static String getFileNameRelativeToUploadDirPP(File file, ActionBeanContext context) {
+        return getFileNameRelativeToUploadDir(file, context).replace(File.separator, PRETTY_DIR_SEPARATOR);
     }
 
     private String getFileNameRelativeToUploadDir(File file) {
+        return getFileNameRelativeToUploadDir(file, getContext());
+    }
+
+    private static String getFileNameRelativeToUploadDir(File file, ActionBeanContext context) {
         String absName = file.getAbsolutePath();
-        if (!absName.startsWith(getUploadDirectory())) {
+        if (!absName.startsWith(getUploadDirectory(context))) {
             return null;
         } else {
-            return absName.substring(getUploadDirectory().length());
+            return absName.substring(getUploadDirectory(context).length());
         }
     }
 
@@ -412,7 +416,8 @@ public class FileAction extends DefaultAction {
     }
 
     public Resolution createComplete() {
-        return list();
+        //return list();
+        return new ForwardResolution(WRAPPER_JSP);
     }
 
     @SuppressWarnings("unused")
@@ -422,9 +427,23 @@ public class FileAction extends DefaultAction {
 
         try {
             if (req.isMultipart()) {
-                filedata = req.getFileParameterValue("Filedata");
+                /*log.debug("req.isMultipart()");
+                Enumeration<String> fpns = req.getFileParameterNames();
+                while (fpns.hasMoreElements()) {
+                    String fpn = fpns.nextElement();
+                    log.debug("req.getFileParameterNames(): " + fpn);
+                }
+
+                Enumeration<String> pns = req.getParameterNames();
+                while (pns.hasMoreElements()) {
+                    String pn = pns.nextElement();
+                    log.debug("req.getParameterNames(): " + pn);
+                }*/
+
+                //filedata = req.getFileParameterValue("Filedata");
+                filedata = req.getFileParameterValue("uploader");
             } else if (req.getParameter("status") != null) {
-                //log.debug("qwe: " + req.getParameter("status"));
+                log.debug("req.getParameter('status'): " + req.getParameter("status"));
                 JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
                 uploaderStatus = (UploaderStatus)JSONObject.toBean(jsonObject, UploaderStatus.class);
             }
@@ -435,39 +454,29 @@ public class FileAction extends DefaultAction {
 
     @DefaultHandler
     public Resolution upload() {
-        // TODO: geüploadede file blijft nu in geheugen staan tot nader order.
-        // misschien in de temp dir zetten. kost wel weer tijd.
-
-        //TODO URL Encode the messages
-        String errorMsg = null;
-
         if (filedata != null) {
-
             log.debug("Filedata: " + filedata.getFileName());
             try {
                 File dirFile = new File(getUploadDirectory());
                 if (!dirFile.exists())
-                    dirFile.mkdir();
+                    dirFile.mkdirs();
                 
-                File tempFile = File.createTempFile(filedata.getFileName() + ".", null);
-                //File tempFile = new File(dirFile, filedata.getFileName());
-                filedata.save(tempFile);
-
                 if (isZipFile(filedata.getFileName())) {
+                    File tempFile = File.createTempFile(filedata.getFileName() + ".", null);
+                    filedata.save(tempFile);
                     File zipDir = new File(getUploadDirectory(), getZipName(filedata.getFileName()));
+                    
                     extractZip(tempFile, zipDir);
                 } else {
-
                     File destinationFile = new File(dirFile, filedata.getFileName());
-                    tempFile.renameTo(destinationFile);
+                    filedata.save(destinationFile);
 
                     log.info("Saved file " + destinationFile.getAbsolutePath() + ", Successfully!");
 
                     selectedFilePath = getFileNameRelativeToUploadDirPP(destinationFile);
                 }
-
             } catch (IOException e) {
-                errorMsg = e.getMessage();
+                String errorMsg = e.getMessage();
                 log.error("Error while writing file: " + filedata.getFileName() + " :: " + errorMsg);
                 return new DefaultErrorResolution(errorMsg);
             }
@@ -617,11 +626,15 @@ public class FileAction extends DefaultAction {
         return new File(parent, getZipName(zipFile));
     }
 
-    public String getUploadDirectory() {
-        return getUploadDirectoryIOFile().getAbsolutePath();
+    private String getUploadDirectory() {
+        return getUploadDirectory(getContext());
     }
 
-    public File getUploadDirectoryIOFile() {
+    public static String getUploadDirectory(ActionBeanContext context) {
+        return getUploadDirectoryIOFile(context).getAbsolutePath();
+    }
+
+    private File getUploadDirectoryIOFile() {
         return getUploadDirectoryIOFile(getContext());
     }
 
@@ -637,12 +650,12 @@ public class FileAction extends DefaultAction {
         this.dirContent = dirContent;
     }
 
-    public String getExpandToFilePath() {
-        return expandToFilePath;
+    public String getExpandTo() {
+        return expandTo;
     }
 
-    public void setExpandToFilePath(String expandToFilePath) {
-        this.expandToFilePath = expandToFilePath;
+    public void setExpandTo(String expandTo) {
+        this.expandTo = expandTo;
     }
 
     public String getSelectedFilePaths() {

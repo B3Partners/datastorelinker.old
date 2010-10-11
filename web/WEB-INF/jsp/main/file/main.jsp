@@ -12,6 +12,42 @@
     $(document).ready(function() {
         initFile();
 
+        $("#uploadFile").click(function() {
+            //log($("#createUpdateProcessForm"));
+            var oldAction = $("#createUpdateProcessForm").attr("action");
+            var oldMethod = $("#createUpdateProcessForm").attr("method");
+            var oldEncType = $("#createUpdateProcessForm").attr("enctype");
+            var oldEncoding = $("#createUpdateProcessForm").attr("encoding");
+            //log("oldEncType: " + oldEncType);
+
+            $("#createUpdateProcessForm")
+                .attr("action", "${fileUrl}")
+                .attr("method", "POST")
+                .attr((this.encoding ? "encoding" : "enctype"), "multipart/form-data");
+
+            $("#createUpdateProcessForm").ajaxSubmit({
+                success: function(responseText, statusText, xhr, form) {
+                    /*log("ajaxSubmit success");
+                    log(responseText);
+                    log(statusText);
+                    log(xhr);
+                    log(form);*/
+                    $("#filesListContainer").html($(responseText).find("textarea").val());
+                    initFiletree();
+                }
+            });
+            $("#createUpdateProcessForm")
+                .attr("action", oldAction)
+                .attr("method", oldMethod)
+                .attr("enctype", oldEncType)
+                .attr("encoding", oldEncoding);
+
+            //log("enctype: " + $("#createUpdateProcessForm").attr("enctype"));
+            //log("encoding: " + $("#createUpdateProcessForm").attr("encoding"));
+
+            return defaultButtonClick(this);
+        });
+
         $("#deleteFile").click(function() {
             if (!containsInput("#filesListContainer"))
                 return defaultButtonClick(this);
@@ -125,9 +161,15 @@
         <%@include file="/WEB-INF/jsp/main/file/list.jsp" %>
     </div>
     <div>
-        <%@include file="/WEB-INF/jsp/main/file/create.jsp" %>
-        <stripes:link href="#" id="deleteFile" onclick="return false;">
+        <input type="file" name="uploader" id="uploader" size="40"/>
+        <stripes:button id="uploadFile" name="upload" value="upload"/>
+        <%--stripes:link href="#" id="uploadFile" onclick="return false;">
+            <fmt:message key="upload"/>
+        </stripes:link--%>
+        <%--%@include file="/WEB-INF/jsp/main/file/create.jsp" %--%>
+        <stripes:button id="deleteFile" name="delete" value="delete"/>
+        <%--stripes:link href="#" id="deleteFile" onclick="return false;">
             <fmt:message key="delete"/>
-        </stripes:link>
+        </stripes:link--%>
     </div>
 </stripes:form>

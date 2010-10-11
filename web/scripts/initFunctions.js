@@ -26,7 +26,7 @@ function initDatabase() {
 }
 
 function initFile() {
-    $("#deleteFile").button();
+    //$("#uploadFile, #deleteFile, #uploader").button();
 }
 
 function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {

@@ -16,12 +16,13 @@
             south__minSize: 50
         }));
 
-        $("#createInputForm").validate(defaultRadioValidateOptions);
+        $("#createUpdateProcessForm").validate(defaultRadioValidateOptions);
+
     });
 </script>
 
 <div id="fileAdmin" style="height: 100%">
-    <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
+    <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction" method="POST" enctype="multipart/form-data">
         <%@include file="/WEB-INF/jsp/main/file/main.jsp" %>
     </stripes:form>
 </div>

@@ -72,6 +72,12 @@
                     beforeSend: function() {
                         var actionsListJson = JSON.stringify(getActionsList());
 
+                        if ($("#inputTabs").tabs("option", "selected") === 0) {
+                            $("#createUpdateProcessForm input[name='selectedFilePath']").attr("checked", false);
+                        } else {
+                            $("#createUpdateProcessForm input[name='selectedInputId']").attr("checked", false);
+                        }
+
                         ajaxOpen({
                             formSelector: "#createUpdateProcessForm",
                             event: "createComplete",

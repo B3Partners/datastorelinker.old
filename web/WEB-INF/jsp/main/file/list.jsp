@@ -8,11 +8,16 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        initFiletree();
+    });
+
+    function initFiletree() {
         selectedFilePath = null;
         selectedFileFound = false;
         <c:if test="${not empty actionBean.selectedFilePath}">
-            selectedFilePath = <c:out value="${actionBean.selectedFilePath}"/>;
+            selectedFilePath = "<c:out value="${actionBean.selectedFilePath}"/>";
         </c:if>
+        log("selectedFilePath: " + selectedFilePath);
 
         var activeClass = "ui-state-active";
 
@@ -20,7 +25,7 @@
             script: "${fileUrl}",
             scriptEvent: "listDir",
             root: "",
-            spinnerImage: "${contextPath}/scripts/jquery.filetree/images/spinner.png",
+            //spinnerImage: "${contextPath}/scripts/jquery.filetree/images/spinner.png",
             expandEasing: "easeOutBounce",
             collapseEasing: "easeOutBounce",
             dragAndDrop: false,
@@ -31,7 +36,7 @@
             activateDirsOnClick: false,
             expandOnFirstCallTo: selectedFilePath,
             fileCallback: function(fileName) {
-                
+
             },
             readyCallback: function(root) {
                 if (selectedFilePath != null && !selectedFileFound) {
@@ -51,8 +56,7 @@
                 }
             }
         });
-
-    });
+    }
 </script>
 
 <div id="filetree"></div>

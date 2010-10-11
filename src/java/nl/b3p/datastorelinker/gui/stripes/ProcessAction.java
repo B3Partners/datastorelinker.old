@@ -99,7 +99,7 @@ public class ProcessAction extends DefaultAction {
     }
 
     @Transactional
-    public Resolution create() {//throws Exception {
+    public Resolution create() {
         inputs = InputAction.findDBInputs();
         outputs = OutputAction.findOutputs();
 
@@ -111,11 +111,6 @@ public class ProcessAction extends DefaultAction {
 
         if (subject == null)
             subject = getContext().getServletContext().getInitParameter("defaultSubject");
-
-        //log.debug("actionsList:");
-        //log.debug(actionsList);
-        
-        //throw new Exception("qweqwe"); // error test
 
         return new ForwardResolution(CREATE_JSP);
     }
@@ -145,11 +140,25 @@ public class ProcessAction extends DefaultAction {
         Inout output = (Inout)session.get(Inout.class, selectedOutputId);
 
         nl.b3p.datastorelinker.entity.Process process;
-        if (selectedProcessId == null)
+        if (selectedProcessId == null) {
             process = new nl.b3p.datastorelinker.entity.Process();
-        else
+        } else {
             process = (nl.b3p.datastorelinker.entity.Process)
                     session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+            
+            Inout oldInput = process.getInput();
+            if (oldInput.getDatatype() == Inout.Datatype.FILE &&
+                    !oldInput.getFile().equals(input.getFile()) &&
+                    oldInput.getInputProcessList().size() == 1) {
+                // if this is the only process using this file input and
+                // the input for this process is updated by the user, delete this file input object.
+                // cut ties with process first to prevent cascades from kicking in
+                // (deleting the process we are updating)
+                process.getInput().getInputProcessList().clear();
+                process.getInput().getOutputProcessList().clear();
+                session.delete(process.getInput());
+            }
+        }
         
         process.setInput(input);
         process.setOutput(output);
@@ -226,6 +235,8 @@ public class ProcessAction extends DefaultAction {
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
         selectedInputId = process.getInput().getId();
+        if (process.getInput().getFile() != null && process.getInput().getFile().trim().length() > 0)
+            selectedFilePath = FileAction.getFileNameRelativeToUploadDirPP(process.getInput().getFile(), getContext());
         selectedOutputId = process.getOutput().getId();
         actionsList = getActionsListXmlToJsonString(process);
         drop = process.getDrop();
@@ -270,7 +281,15 @@ public class ProcessAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId));
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
+                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+
+        if (process.getInput().getInputProcessList().size() == 1) { 
+            // if this is the only process using this file input, delete this file input object.
+            session.delete(process.getInput());
+        }
+
+        session.delete(process);
         
         return list();
     }

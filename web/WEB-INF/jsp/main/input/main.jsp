@@ -22,6 +22,11 @@
             overflow: "scroll"*/
         });
 
+        var selectedTab = 0;
+        if (!!"${actionBean.selectedFilePath}") {
+            selectedTab = 1;
+        }
+
         $("#inputList").addClass(classesUsed);
         
         $("#inputTabs").tabs({
@@ -31,6 +36,7 @@
             select: function(event, ui) {
                 //log("tabselect");
             },
+            selected: selectedTab,
             show: function(event, ui) {
                 //log("tabshow");
                 //log(ui);
