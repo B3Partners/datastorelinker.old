@@ -96,17 +96,22 @@ public class GisSecurityRealm implements FlexibleRealmInterface, ExternalAuthent
     public static GisPrincipal authenticateHttp(String location, String username, String password, String code) {
         WMSCapabilitiesReader wmscr = new WMSCapabilitiesReader();
         ServiceProvider sp = null;
+        Exception kbException=null;
         if (location!=null){
             try {
                 sp = wmscr.getProvider(location, username, password);
             } catch (Exception ex) {
-                log.error("Error reading GetCapabilities: " + ex.getLocalizedMessage());
+                kbException=ex;
+                //log.error("Error reading GetCapabilities: " + ex.getLocalizedMessage());
             }
         }
         if (sp == null || sp.getAllRoles() == null || sp.getAllRoles().isEmpty()) {
             log.info("No ServiceProvider found, get roles with XmlSecurityDatabase realm!");
             if (!XmlSecurityDatabase.booleanAuthenticate(username, password)) {
-                log.info("Can't log in with XmlSecurityDatabase realm!");
+                log.error("Can't log in with XmlSecurityDatabase realm nor with WMSurl!");
+                if (kbException!=null){
+                     log.error("Can't log in with WMS url/Kb url",kbException);
+                }
                 return null;
             }
         }
