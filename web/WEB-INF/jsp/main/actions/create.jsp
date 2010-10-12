@@ -39,6 +39,9 @@
 
         $("#actionsWorkbenchContainer .action").draggable({
             //snap: true,
+            start: function(event, ui) {
+                ui.helper.width($("#actionsWorkbenchContainer .action").first().width());
+            },
             revert: "invalid",
             helper: "clone",
             cursor: "move",

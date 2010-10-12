@@ -44,7 +44,7 @@ public class ActionsAction extends DefaultAction {
     private Long selectedProcessId;
 
     private static void resourceBundleInit(ActionBeanContext context) {
-        DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
+        //DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
         res = ResourceBundle.getBundle(
             "StripesResources",
             context.getLocale());
