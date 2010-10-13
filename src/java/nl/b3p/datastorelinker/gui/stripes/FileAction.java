@@ -294,7 +294,11 @@ public class FileAction extends DefaultAction {
     }
 
     private String getFileNameFromPPFileName(String fileName) {
-        return getFileFromPPFileName(fileName).getAbsolutePath();
+        File file = getFileFromPPFileName(fileName);
+        if (file == null)
+            return null;
+        else
+            return file.getAbsolutePath();
     }
 
     private static File getFileFromPPFileName(String fileName, ActionBeanContext context) {
@@ -303,7 +307,11 @@ public class FileAction extends DefaultAction {
     }
 
     public static String getFileNameFromPPFileName(String fileName, ActionBeanContext context) {
-        return getFileFromPPFileName(fileName, context).getAbsolutePath();
+        File file = getFileFromPPFileName(fileName, context);
+        if (file == null)
+            return null;
+        else
+            return file.getAbsolutePath();
     }
 
     // Pretty printed version of getFileNameRelativeToUploadDir(File file).
@@ -317,7 +325,11 @@ public class FileAction extends DefaultAction {
     }
 
     private static String getFileNameRelativeToUploadDirPP(File file, ActionBeanContext context) {
-        return getFileNameRelativeToUploadDir(file, context).replace(File.separator, PRETTY_DIR_SEPARATOR);
+        String name = getFileNameRelativeToUploadDir(file, context);
+        if (name == null)
+            return null;
+        else
+            return name.replace(File.separator, PRETTY_DIR_SEPARATOR);
     }
 
     private String getFileNameRelativeToUploadDir(File file) {
@@ -326,7 +338,8 @@ public class FileAction extends DefaultAction {
 
     private static String getFileNameRelativeToUploadDir(File file, ActionBeanContext context) {
         String absName = file.getAbsolutePath();
-        if (!absName.startsWith(getUploadDirectory(context))) {
+        String uploadDir = getUploadDirectory(context);
+        if (uploadDir == null || !absName.startsWith(uploadDir)) {
             return null;
         } else {
             return absName.substring(getUploadDirectory(context).length());
