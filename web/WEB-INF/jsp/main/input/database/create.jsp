@@ -21,7 +21,8 @@
                 $("#" + data.previousStep).removeClass("ui-layout-center");
             $("#" + data.currentStep).addClass("ui-layout-center");
 
-            $("#inputSteps").layout(defaultDialogLayoutOptions).initContent("center");
+            //$("#inputContainer").layout(defaultDialogLayoutOptions);
+            $("#inputSteps").layout(defaultDialogLayoutOptions);//.initContent("center");
 
             // layout plugin messes up z-indices; sets them to 1
             var topZIndexCss = { "z-index": "auto" };

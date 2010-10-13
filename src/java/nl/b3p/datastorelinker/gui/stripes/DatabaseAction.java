@@ -4,8 +4,9 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -20,10 +21,10 @@ import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.json.JSONErrorResolution;
 import nl.b3p.datastorelinker.json.JSONResolution;
-import nl.b3p.datastorelinker.util.Nameable;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.geotools.data.DataStore;
+import org.geotools.jdbc.JDBCDataStore;
 import org.hibernate.Session;
 
 /**
@@ -189,11 +190,29 @@ public class DatabaseAction extends DefaultAction {
 
             // Oracle DataStore will only only complain about invalid user/pw if we use the next line:
             String[] typeNames = dataStore.getTypeNames();
-            // Oracle DataStore will only only fail on a non-existent schema if we use the next block:
-            if (typeNames == null || typeNames.length == 0) {
-                LocalizableMessage message = new LocalizableMessage("database.schemafail");
-                throw new Exception(message.getMessage(getContext().getLocale()));
-            }
+
+            /*if (dbType == Database.Type.ORACLE) {
+                // Oracle DataStore will only only fail on a non-existent schema if we use the next block:
+                JDBCDataStore jdbcDataStore = (JDBCDataStore)dataStore;
+                Connection con = jdbcDataStore.getDataSource().getConnection();
+                con.setAutoCommit(true);
+
+                PreparedStatement ps = con.prepareStatement("SELECT ? FROM dba_users");
+                ps.setString(1, schema);
+                LocalizableMessage message = null;
+                try {
+                    boolean result = ps.execute();
+                    if (!result) {
+                        message = new LocalizableMessage("database.schemafail");
+                    }
+                } catch(Exception e) {
+                    message = new LocalizableMessage("database.schemafail");
+                }
+
+                if (message != null) {
+                    throw new Exception(message.getMessage(getContext().getLocale()));
+                }
+            }*/
         } catch (Exception e) {
             log.debug("db connection error", e);
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");

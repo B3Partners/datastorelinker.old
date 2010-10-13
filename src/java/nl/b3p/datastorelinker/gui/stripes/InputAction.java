@@ -205,7 +205,7 @@ public class InputAction extends DefaultAction {
         Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
 
         try {
-            DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toMap());
+            DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toGeotoolsDataStoreParametersMap());
 
             if (dataTypeList != null) {
 
