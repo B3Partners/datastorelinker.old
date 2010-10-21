@@ -339,12 +339,12 @@ public class ProcessAction extends DefaultAction {
             } else {
                 Status dslStatus = dslJob.getDataStoreLinker().getStatus();
 
-                int totalFeatureCount = dslStatus.getTotalFeatureCount();
+                int visitedFeatures = dslStatus.getVisitedFeatures();
                 int totalFeatureSize = dslStatus.getTotalFeatureSize();
 
-                //log.debug("Gedaan: " + totalFeatureCount + " / " + totalFeatureSize);
+                //log.debug("Gedaan: " + visitedFeatures + " / " + totalFeatureSize);
 
-                int percentage = (int)Math.floor(100.0 * (double)totalFeatureCount / (double)totalFeatureSize);
+                int percentage = (int)Math.floor(100.0 * (double)visitedFeatures / (double)totalFeatureSize);
                 //log.debug("execution progress report: " + percentage + "%");
                 ProgressMessage progressMessage = new ProgressMessage(percentage);
                 if (percentage >= 100) {
