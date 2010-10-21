@@ -57,7 +57,7 @@
 
     create table process_status (
         id int8 not null,
-        message varchar(255),
+        message text,
         process_status_type varchar(255) not null,
         primary key (id)
     );

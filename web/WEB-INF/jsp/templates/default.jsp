@@ -36,7 +36,7 @@
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
             <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script-->
-            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery.ui.datepicker-nl.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.ui.datepicker-nl/jquery.ui.datepicker-nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script-->
