@@ -14,7 +14,8 @@
         </init-param>
         <init-param>
             <param-name>MultipartWrapper.Class</param-name>
-            <param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value>
+            <!--param-value>net.sourceforge.stripes.controller.multipart.CommonsMultipartWrapper</param-value-->
+            <param-value>nl.b3p.datastorelinker.uploadprogress.ProgressMultipartWrapper</param-value>
         </init-param>
         <init-param>
             <param-name>FileUpload.MaximumPostSize</param-name>

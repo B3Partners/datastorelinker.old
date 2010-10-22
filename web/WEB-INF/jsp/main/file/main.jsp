@@ -13,6 +13,7 @@
         initFile();
 
         $("#uploadFile").click(function() {
+            log("uploadFile");
             //log($("#createUpdateProcessForm"));
             var oldAction = $("#createUpdateProcessForm").attr("action");
             var oldMethod = $("#createUpdateProcessForm").attr("method");
@@ -32,9 +33,25 @@
                     log(statusText);
                     log(xhr);
                     log(form);*/
-                    $("#filesListContainer").html($(responseText).find("textarea").val());
-                    initFiletree();
-                }
+                    //$("#filesListContainer").html($(responseText).find("textarea").val());
+                    //initFiletree();
+                    log("$(responseText).find('textarea').val(): " + $(responseText).find("textarea").val());
+                    $.blockUI(blockUIOptions);
+                    // allow server to finish its stuff, then update all statuses:
+                    setTimeout(
+                        function() {
+                            ajaxOpen({
+                                url: "${fileUrl}",
+                                event: "listDir",
+                                data: [{expandTo: $(responseText).find("textarea").val()}],
+                                containerSelector: "#filesListContainer",
+                                global: true
+                            });
+                        },
+                        500
+                    );
+                },
+                global: false
             });
             $("#createUpdateProcessForm")
                 .attr("action", oldAction)
@@ -44,6 +61,8 @@
 
             //log("enctype: " + $("#createUpdateProcessForm").attr("enctype"));
             //log("encoding: " + $("#createUpdateProcessForm").attr("encoding"));
+
+            startFileUploadProgress();
 
             return defaultButtonClick(this);
         });
@@ -78,9 +97,9 @@
                 url: "${fileUrl}",
                 event: "deleteCheck",
                 extraParams: [{
-                    name: "selectedFilePaths",
-                    value: JSON.stringify(filesToDelete)
-                }],
+                        name: "selectedFilePaths",
+                        value: JSON.stringify(filesToDelete)
+                    }],
                 successAfterContainerFill: function(data) {
                     var dialogElem = $("<div></div>").attr("id", "createFileContainer").appendTo(document.body);
                     if (data.success) {
@@ -117,9 +136,9 @@
                                     //formSelector: "#createInputForm",
                                     event: "delete",
                                     extraParams: [{
-                                        name: "selectedFilePaths",
-                                        value: JSON.stringify(filesToDelete)
-                                    }],
+                                            name: "selectedFilePaths",
+                                            value: JSON.stringify(filesToDelete)
+                                        }],
                                     containerSelector: "#filesListContainer",
                                     ajaxOptions: {global: false}, // prevent blockUI being called 3 times. Called manually.
                                     successAfterContainerFill: function() {
@@ -152,6 +171,59 @@
             return defaultButtonClick(this);
         });
     });
+    
+    function startFileUploadProgress() {
+        $("<div></div>")
+            .attr("id", "uploadDialog")
+            .appendTo($("body"))
+            .dialog($.extend({}, defaultDialogOptions, {
+                title: I18N.uploading,
+                height: 100,
+                closeOnEscape: false
+            }
+        ));
+        $("#uploadDialog").parents(".ui-dialog").first()
+            .find(".ui-dialog-titlebar-close").remove();
+        $("<div></div>")
+            .attr("id", "progressbar")
+            .appendTo($("#uploadDialog"))
+            .css("margin", "5px 5px")
+            .append($("<span></span>").addClass("progressbarLabel"))
+            .progressbar({
+                value: 0,
+                change: function(event, ui) {
+                    var newValue = $(this).progressbar('option', 'value');
+                    $('.progressbarLabel', this).text(newValue + '%');
+                }
+        });
+        setTimeout(refreshFileUploadProgress, 1000);
+    }
+
+    function refreshFileUploadProgress() {
+        $.ajax({
+            url: "${fileUrl}",
+            dataType: "json",
+            data: {uploadProgress: ""},
+            success: function(data, textStatus) {
+                if (data.fatalError) {
+                    stopFileUploadProgress();
+                } else {
+                    $("#progressbar").progressbar("value", data.progress);
+                    if (data.progress >= 100) {
+                        //log("Process finished");
+                        stopFileUploadProgress();
+                    } else {
+                        setTimeout(refreshFileUploadProgress, 1000);
+                    }
+                }
+            },
+            global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
+        });
+    }
+
+    function stopFileUploadProgress() {
+        $("#uploadDialog").dialog("close");
+    }
 </script>
 
 <stripes:form partial="true" action="#">
@@ -163,13 +235,6 @@
     <div>
         <input type="file" name="uploader" id="uploader" size="40"/>
         <stripes:button id="uploadFile" name="upload" value="upload"/>
-        <%--stripes:link href="#" id="uploadFile" onclick="return false;">
-            <fmt:message key="upload"/>
-        </stripes:link--%>
-        <%--%@include file="/WEB-INF/jsp/main/file/create.jsp" %--%>
         <stripes:button id="deleteFile" name="delete" value="delete"/>
-        <%--stripes:link href="#" id="deleteFile" onclick="return false;">
-            <fmt:message key="delete"/>
-        </stripes:link--%>
     </div>
 </stripes:form>

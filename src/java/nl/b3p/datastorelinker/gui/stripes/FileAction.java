@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +29,7 @@ import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.controller.StripesRequestWrapper;
 import net.sourceforge.stripes.util.Log;
@@ -38,7 +38,10 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.json.ArraySuccessMessage;
 import nl.b3p.datastorelinker.json.JSONResolution;
+import nl.b3p.datastorelinker.json.ProgressMessage;
 import nl.b3p.datastorelinker.json.UploaderStatus;
+import nl.b3p.datastorelinker.uploadprogress.ProgressMultipartWrapper;
+import nl.b3p.datastorelinker.uploadprogress.UploadProgressListener;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.Dir;
 import nl.b3p.datastorelinker.util.DirContent;
@@ -52,35 +55,28 @@ import org.hibernate.Session;
 public class FileAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(FileAction.class);
-
     protected final static String SHAPE_EXT = ".shp";
     protected final static String ZIP_EXT = ".zip";
     protected final static String PRETTY_DIR_SEPARATOR = "/";
     protected final static String[] ALLOWED_CONTENT_TYPES = {
         ""
     };
-
-
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/file/create.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/file/list.jsp";
     private final static String WRAPPER_JSP = "/WEB-INF/jsp/main/file/filetreeWrapper.jsp";
     private final static String ADMIN_JSP = "/WEB-INF/jsp/management/fileAdmin.jsp";
     private final static String DIRCONTENTS_JSP = "/WEB-INF/jsp/main/file/filetreeConnector.jsp";
-
     private DirContent dirContent;
-
     private FileBean filedata;
     private UploaderStatus uploaderStatus;
-
     private String dir;
     private String expandTo;
     private String selectedFilePath;
     private String selectedFilePaths;
 
-
     public Resolution listDir() {
         log.debug("Directory requested: " + dir);
-        
+
         File directory = null;
         if (dir != null) {
             // wordt dit niet gewoon goed geregeld met user privileges?
@@ -95,7 +91,7 @@ public class FileAction extends DefaultAction {
         } else {
             directory = getUploadDirectoryIOFile();
         }
-        
+
         if (expandTo == null) {
             dirContent = getDirContent(directory, null);
         } else {
@@ -108,7 +104,7 @@ public class FileAction extends DefaultAction {
                 subDirList.add(0, currentDirFile.getName());
                 currentDirFile = currentDirFile.getParentFile();
             }
-            
+
             dirContent = getDirContent(directory, subDirList);
         }
 
@@ -122,17 +118,19 @@ public class FileAction extends DefaultAction {
         DirContent dc = new DirContent();
 
         File[] dirs = directory.listFiles(new FileFilter() {
+
             public boolean accept(File file) {
                 return file.isDirectory();
             }
         });
 
         File[] files = directory.listFiles(new FileFilter() {
+
             public boolean accept(File file) {
                 return !file.isDirectory();
             }
         });
-        
+
         List<Dir> dirsList = new ArrayList<Dir>();
         for (File dir : dirs) {
             Dir newDir = new Dir();
@@ -191,7 +189,7 @@ public class FileAction extends DefaultAction {
                     toBeIgnoredFiles.add(file);
                 }
             }
-           for (nl.b3p.datastorelinker.util.File file : toBeIgnoredFiles) {
+            for (nl.b3p.datastorelinker.util.File file : toBeIgnoredFiles) {
                 dc.getFiles().remove(file);
             }
         }
@@ -214,15 +212,15 @@ public class FileAction extends DefaultAction {
         try {
             JSONArray selectedFilePathsJSON = JSONArray.fromObject(selectedFilePaths);
             for (Object filePathObj : selectedFilePathsJSON) {
-                String pathToDelete = (String)filePathObj;
+                String pathToDelete = (String) filePathObj;
                 String relativePathToDelete = pathToDelete.replace(PRETTY_DIR_SEPARATOR, File.separator);
                 File fileToDelete = new File(getUploadDirectoryIOFile(), relativePathToDelete);
-                
+
                 List<LocalizableMessage> deleteMessages = deleteCheckImpl(fileToDelete);
-                
+
                 messages.addAll(deleteMessages);
             }
-        } catch(IOException ioex) {
+        } catch (IOException ioex) {
             log.error(ioex);
             // Still needed?
             // if anything goes wrong here something is wrong with the uploadDir.
@@ -280,11 +278,9 @@ public class FileAction extends DefaultAction {
 
     private List<Inout> getDependingInouts(File file) throws IOException {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
-        List<Inout> inouts = session.createQuery("from Inout where file = :file")
-                .setParameter("file", file.getAbsolutePath())
-                .list();
+        List<Inout> inouts = session.createQuery("from Inout where file = :file").setParameter("file", file.getAbsolutePath()).list();
 
         return inouts;
     }
@@ -295,10 +291,11 @@ public class FileAction extends DefaultAction {
 
     private String getFileNameFromPPFileName(String fileName) {
         File file = getFileFromPPFileName(fileName);
-        if (file == null)
+        if (file == null) {
             return null;
-        else
+        } else {
             return file.getAbsolutePath();
+        }
     }
 
     private static File getFileFromPPFileName(String fileName, ActionBeanContext context) {
@@ -308,10 +305,11 @@ public class FileAction extends DefaultAction {
 
     public static String getFileNameFromPPFileName(String fileName, ActionBeanContext context) {
         File file = getFileFromPPFileName(fileName, context);
-        if (file == null)
+        if (file == null) {
             return null;
-        else
+        } else {
             return file.getAbsolutePath();
+        }
     }
 
     // Pretty printed version of getFileNameRelativeToUploadDir(File file).
@@ -326,10 +324,11 @@ public class FileAction extends DefaultAction {
 
     private static String getFileNameRelativeToUploadDirPP(File file, ActionBeanContext context) {
         String name = getFileNameRelativeToUploadDir(file, context);
-        if (name == null)
+        if (name == null) {
             return null;
-        else
+        } else {
             return name.replace(File.separator, PRETTY_DIR_SEPARATOR);
+        }
     }
 
     private String getFileNameRelativeToUploadDir(File file) {
@@ -351,8 +350,8 @@ public class FileAction extends DefaultAction {
 
         JSONArray selectedFilePathsJSON = JSONArray.fromObject(selectedFilePaths);
         for (Object filePathObj : selectedFilePathsJSON) {
-            String filePath = (String)filePathObj;
-            
+            String filePath = (String) filePathObj;
+
             deleteImpl(getFileFromPPFileName(filePath));
         }
         return list();
@@ -361,24 +360,25 @@ public class FileAction extends DefaultAction {
     protected void deleteImpl(File file) {
         if (file != null) {
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
-            Session session = (Session)em.getDelegate();
+            Session session = (Session) em.getDelegate();
 
             // file could already be deleted if an ancestor directory was also deleted in the same request.
             if (!file.isDirectory() && file.exists()) {
                 boolean deleteSuccess = file.delete();
-                if (!deleteSuccess)
+                if (!deleteSuccess) {
                     log.error("Failed to delete file: " + file.getAbsolutePath());
+                }
             }
-            
+
             try {
                 List<Inout> inouts = getDependingInouts(file);
                 for (Inout inout : inouts) {
                     session.delete(inout);
                 }
-            } catch(IOException ioex) {
+            } catch (IOException ioex) {
                 log.error(ioex);
             }
-            
+
             deleteExtraShapeFilesInSameDir(file);
             deleteDirIfDir(file);
         }
@@ -392,9 +392,10 @@ public class FileAction extends DefaultAction {
             log.debug("currentDir == " + currentDir);
             if (currentDir != null && currentDir.exists()) {
                 File[] extraShapeFilesInDir = currentDir.listFiles(new FileFilter() {
+
                     public boolean accept(File extraFile) {
-                        return extraFile.getName().startsWith(fileBaseName) &&
-                               extraFile.getName().length() == file.getName().length();
+                        return extraFile.getName().startsWith(fileBaseName)
+                                && extraFile.getName().length() == file.getName().length();
                     }
                 });
 
@@ -418,8 +419,9 @@ public class FileAction extends DefaultAction {
 
             // dir must be empty when deleting it
             boolean deleteDirSuccess = dir.delete();
-            if (!deleteDirSuccess)
+            if (!deleteDirSuccess) {
                 log.error("Failed to delete dir: " + dir.getAbsolutePath() + "; This could happen if the dir was not empty at the time of deletion. This should not happen.");
+            }
         }
     }
 
@@ -437,28 +439,13 @@ public class FileAction extends DefaultAction {
     @Before(stages = LifecycleStage.BindingAndValidation)
     private void rehydrate() {
         StripesRequestWrapper req = StripesRequestWrapper.findStripesWrapper(getContext().getRequest());
-
         try {
             if (req.isMultipart()) {
-                /*log.debug("req.isMultipart()");
-                Enumeration<String> fpns = req.getFileParameterNames();
-                while (fpns.hasMoreElements()) {
-                    String fpn = fpns.nextElement();
-                    log.debug("req.getFileParameterNames(): " + fpn);
-                }
-
-                Enumeration<String> pns = req.getParameterNames();
-                while (pns.hasMoreElements()) {
-                    String pn = pns.nextElement();
-                    log.debug("req.getParameterNames(): " + pn);
-                }*/
-
-                //filedata = req.getFileParameterValue("Filedata");
                 filedata = req.getFileParameterValue("uploader");
             } else if (req.getParameter("status") != null) {
                 log.debug("req.getParameter('status'): " + req.getParameter("status"));
                 JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
-                uploaderStatus = (UploaderStatus)JSONObject.toBean(jsonObject, UploaderStatus.class);
+                uploaderStatus = (UploaderStatus) JSONObject.toBean(jsonObject, UploaderStatus.class);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -469,16 +456,18 @@ public class FileAction extends DefaultAction {
     public Resolution upload() {
         if (filedata != null) {
             log.debug("Filedata: " + filedata.getFileName());
+
             try {
                 File dirFile = new File(getUploadDirectory());
-                if (!dirFile.exists())
+                if (!dirFile.exists()) {
                     dirFile.mkdirs();
-                
+                }
+
                 if (isZipFile(filedata.getFileName())) {
                     File tempFile = File.createTempFile(filedata.getFileName() + ".", null);
                     filedata.save(tempFile);
                     File zipDir = new File(getUploadDirectory(), getZipName(filedata.getFileName()));
-                    
+
                     extractZip(tempFile, zipDir);
                 } else {
                     File destinationFile = new File(dirFile, filedata.getFileName());
@@ -487,6 +476,7 @@ public class FileAction extends DefaultAction {
                     log.info("Saved file " + destinationFile.getAbsolutePath() + ", Successfully!");
 
                     selectedFilePath = getFileNameRelativeToUploadDirPP(destinationFile);
+                    log.debug("selectedFilePath: " + selectedFilePath);
                 }
             } catch (IOException e) {
                 String errorMsg = e.getMessage();
@@ -496,6 +486,19 @@ public class FileAction extends DefaultAction {
             return createComplete();
         }
         return new DefaultErrorResolution("An unknown error has occurred!");
+    }
+
+    public Resolution uploadProgress() {
+        int progress;
+        UploadProgressListener listener = (UploadProgressListener)
+                getContext().getRequest().getSession().getAttribute(UploadProgressListener.class.toString());
+
+        if (listener != null) {
+            progress = (int) (listener.getProgress() * 100);
+        } else {
+            progress = 100;
+        }
+        return new JSONResolution(new ProgressMessage(progress));
     }
 
     /**
@@ -515,14 +518,14 @@ public class FileAction extends DefaultAction {
 
         byte[] buffer = new byte[1024];
         ZipInputStream zipinputstream = null;
-        
+
         ZipEntry zipentry = null;
         try {
             zipinputstream = new ZipInputStream(new FileInputStream(tempFile));
 
             while ((zipentry = zipinputstream.getNextEntry()) != null) {
                 log.debug("extractZip zipentry name: " + zipentry.getName());
-                
+
                 File newFile = new File(zipDir, zipentry.getName());
 
                 if (zipentry.isDirectory()) {
@@ -536,10 +539,11 @@ public class FileAction extends DefaultAction {
                     // as file separator in a zip. Even on a windows system.
                     int lastIndexOfFileSeparator = zipentry.getName().lastIndexOf("/");
                     String zipName = null;
-                    if (lastIndexOfFileSeparator < 0)
+                    if (lastIndexOfFileSeparator < 0) {
                         zipName = zipentry.getName().substring(0);
-                    else
+                    } else {
                         zipName = zipentry.getName().substring(lastIndexOfFileSeparator + 1);
+                    }
 
                     File tempZipFile = File.createTempFile(zipName + ".", null);
                     File newZipDir = new File(zipDir, getZipName(zipentry.getName()));
@@ -551,15 +555,15 @@ public class FileAction extends DefaultAction {
                     // TODO: is valid file in zip (delete newFile if necessary)
                     copyZipEntryTo(zipinputstream, newFile, buffer);
                 }
-                
+
                 zipinputstream.closeEntry();
             }
-        } catch(IOException ioex) {
+        } catch (IOException ioex) {
             if (zipentry == null) {
                 throw ioex;
             } else {
-                throw new IOException(ioex.getMessage() +
-                        "\nProcessing zip entry: " + zipentry.getName());
+                throw new IOException(ioex.getMessage()
+                        + "\nProcessing zip entry: " + zipentry.getName());
             }
         } finally {
             if (zipinputstream != null) {
@@ -568,7 +572,7 @@ public class FileAction extends DefaultAction {
 
             boolean deleteSuccess = tempFile.delete();
             /*if (!deleteSuccess)
-                log.warn("Could not delete: " + tempFile.getAbsolutePath());*/
+            log.warn("Could not delete: " + tempFile.getAbsolutePath());*/
         }
     }
 
@@ -590,8 +594,9 @@ public class FileAction extends DefaultAction {
     public Resolution check() {
         if (uploaderStatus != null) {
             File dirFile = new File(getUploadDirectory());
-            if (!dirFile.exists())
+            if (!dirFile.exists()) {
                 dirFile.mkdir();
+            }
 
             File tempFile = new File(dirFile, uploaderStatus.getFname());
             log.debug(tempFile.getAbsolutePath());
@@ -608,7 +613,8 @@ public class FileAction extends DefaultAction {
             // TODO: exists check is niet goed
             if (tempFile.exists()) {
                 uploaderStatus.setErrtype("exists");
-            } if (isZipFile(tempFile) && zipFileToDirFile(tempFile, new File(getUploadDirectory())).exists()) {
+            }
+            if (isZipFile(tempFile) && zipFileToDirFile(tempFile, new File(getUploadDirectory())).exists()) {
                 uploaderStatus.setErrtype("exists");
             } else {
                 uploaderStatus.setErrtype("none");
@@ -618,7 +624,7 @@ public class FileAction extends DefaultAction {
         }
         return new JSONResolution(false);
     }
-    
+
     private boolean isZipFile(String fileName) {
         return fileName.toLowerCase().endsWith(ZIP_EXT);
     }
@@ -716,6 +722,7 @@ public class FileAction extends DefaultAction {
     }
 
     private class DirExtensionComparator implements Comparator<Dir> {
+
         @Override
         public int compare(Dir d1, Dir d2) {
             String s1 = d1.getName();
@@ -725,6 +732,7 @@ public class FileAction extends DefaultAction {
     }
 
     private class FileExtensionComparator implements Comparator<nl.b3p.datastorelinker.util.File> {
+
         @Override
         public int compare(nl.b3p.datastorelinker.util.File f1, nl.b3p.datastorelinker.util.File f2) {
             String s1 = f1.getName();

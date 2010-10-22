@@ -41,11 +41,11 @@
             readyCallback: function(root) {
                 if (selectedFilePath != null && !selectedFileFound) {
                     //log(root);
-                    var selectedFile = root.find("input:radio[value=" + selectedFilePath + "]");
-                    //log(selectedFile);
+                    var selectedFile = root.find("input:radio[value='" + selectedFilePath + "']");
+                    log(selectedFile);
                     if (selectedFile.length > 0) {
                         selectedFileFound = true;
-                        selectedFile.attr("checked", "checked");
+                        selectedFile.attr("checked", true);
                         selectedFile.siblings("a").addClass(activeClass);
                         $("#filetree").parent().scrollTo(
                             selectedFile,
