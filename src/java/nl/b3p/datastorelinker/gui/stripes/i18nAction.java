@@ -4,6 +4,7 @@
 
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.Enumeration;
 import java.util.ResourceBundle;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -29,7 +30,9 @@ public class i18nAction extends DefaultAction {
     public Resolution view() {
         ResourceBundle res = ResourceBundle.getBundle("StripesResources", getContext().getLocale());
 
-        for (String key : res.keySet()) {
+        Enumeration<String> keyEnum = res.getKeys();
+        while (keyEnum.hasMoreElements()) {
+            String key = keyEnum.nextElement();
             keys.put(key, res.getString(key));
         }
 
