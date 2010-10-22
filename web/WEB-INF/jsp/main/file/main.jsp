@@ -28,27 +28,20 @@
 
             $("#createUpdateProcessForm").ajaxSubmit({
                 success: function(responseText, statusText, xhr, form) {
-                    /*log("ajaxSubmit success");
-                    log(responseText);
-                    log(statusText);
-                    log(xhr);
-                    log(form);*/
-                    //$("#filesListContainer").html($(responseText).find("textarea").val());
-                    //initFiletree();
-                    log("$(responseText).find('textarea').val(): " + $(responseText).find("textarea").val());
+                    //log($(responseText).text());
                     $.blockUI(blockUIOptions);
                     // allow server to finish its stuff, then update all statuses:
                     setTimeout(
                         function() {
                             ajaxOpen({
                                 url: "${fileUrl}",
-                                event: "listDir",
-                                data: [{expandTo: $(responseText).find("textarea").val()}],
+                                event: "list",
+                                extraParams: [{name: "selectedFilePath", value: $(responseText).text()}],
                                 containerSelector: "#filesListContainer",
                                 global: true
                             });
                         },
-                        500
+                        100
                     );
                 },
                 global: false

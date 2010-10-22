@@ -29,7 +29,6 @@ import net.sourceforge.stripes.action.FileBean;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.controller.LifecycleStage;
 import net.sourceforge.stripes.controller.StripesRequestWrapper;
 import net.sourceforge.stripes.util.Log;
@@ -40,7 +39,6 @@ import nl.b3p.datastorelinker.json.ArraySuccessMessage;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
 import nl.b3p.datastorelinker.json.UploaderStatus;
-import nl.b3p.datastorelinker.uploadprogress.ProgressMultipartWrapper;
 import nl.b3p.datastorelinker.uploadprogress.UploadProgressListener;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.Dir;
@@ -76,6 +74,7 @@ public class FileAction extends DefaultAction {
 
     public Resolution listDir() {
         log.debug("Directory requested: " + dir);
+        log.debug("expandTo: " + expandTo);
 
         File directory = null;
         if (dir != null) {
@@ -95,7 +94,8 @@ public class FileAction extends DefaultAction {
         if (expandTo == null) {
             dirContent = getDirContent(directory, null);
         } else {
-            selectedFilePath = expandTo;
+            selectedFilePath = expandTo.trim().replace("\n", "").replace("\r", "");
+            log.debug("selectedFilePath/expandTo: " + selectedFilePath);
 
             List<String> subDirList = new LinkedList<String>();
 
@@ -118,14 +118,12 @@ public class FileAction extends DefaultAction {
         DirContent dc = new DirContent();
 
         File[] dirs = directory.listFiles(new FileFilter() {
-
             public boolean accept(File file) {
                 return file.isDirectory();
             }
         });
 
         File[] files = directory.listFiles(new FileFilter() {
-
             public boolean accept(File file) {
                 return !file.isDirectory();
             }
@@ -442,11 +440,11 @@ public class FileAction extends DefaultAction {
         try {
             if (req.isMultipart()) {
                 filedata = req.getFileParameterValue("uploader");
-            } else if (req.getParameter("status") != null) {
+            } /*else if (req.getParameter("status") != null) {
                 log.debug("req.getParameter('status'): " + req.getParameter("status"));
                 JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
                 uploaderStatus = (UploaderStatus) JSONObject.toBean(jsonObject, UploaderStatus.class);
-            }
+            }*/
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

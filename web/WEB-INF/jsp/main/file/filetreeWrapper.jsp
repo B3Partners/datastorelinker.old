@@ -6,7 +6,7 @@
 
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
-<textarea rows="1" cols="1">
+<textarea>
     ${actionBean.selectedFilePath}
     <%--%@include file="list.jsp" --%>
 </textarea>
