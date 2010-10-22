@@ -37,8 +37,7 @@
                                 url: "${fileUrl}",
                                 event: "list",
                                 extraParams: [{name: "selectedFilePath", value: $(responseText).text()}],
-                                containerSelector: "#filesListContainer",
-                                global: true
+                                containerSelector: "#filesListContainer"
                             });
                         },
                         100

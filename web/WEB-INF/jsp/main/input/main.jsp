@@ -73,6 +73,8 @@
                 $("#SelecteerInvoer, .wizardButtonsArea, #inputTabs > *, #" + ui.panel.id + " > *").css("z-index", "auto");
             }
         });
+
+        $("#uploadFile, #deleteFile, #uploader").removeClass("ui-state-default ui-helper-reset");
     });
 </script>
 
