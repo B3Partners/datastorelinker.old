@@ -57,6 +57,7 @@
 
     create table process_status (
         id number(19,0) not null,
+        executing_job_uuid varchar2(255 char),
         message clob,
         process_status_type varchar2(255 char) not null,
         primary key (id)
