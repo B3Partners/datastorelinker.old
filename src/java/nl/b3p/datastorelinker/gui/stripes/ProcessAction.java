@@ -36,6 +36,7 @@ import nl.b3p.datastorelinker.util.SchedulerUtils;
 import nl.b3p.geotools.data.linker.Status;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
@@ -289,7 +290,9 @@ public class ProcessAction extends DefaultAction {
             session.delete(process.getInput());
         }
 
+        //Transaction transaction = session.beginTransaction();
         session.delete(process);
+        //transaction.commit();
         
         return list();
     }
@@ -315,6 +318,8 @@ public class ProcessAction extends DefaultAction {
             Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());
             Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
+            process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
+            process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
             scheduler.scheduleJob(jobDetail, trigger);
             
             //log.debug(result);
@@ -329,12 +334,24 @@ public class ProcessAction extends DefaultAction {
         DataStoreLinkJob dslJob = SchedulerUtils.getProcessJob(getContext().getServletContext(), jobUUID);
 
         try {
-            if (dslJob == null || dslJob.getDataStoreLinker() == null) {
-                //log.debug("dslJob: " + dslJob);
-                //if (dslJob != null)
-                    //log.debug("dslJob.getDataStoreLinker(): " + dslJob.getDataStoreLinker());
+            if (dslJob == null) {
+                log.debug("dslJob null!");
+                EntityManager em = JpaUtilServlet.getThreadEntityManager();
+                Session session = (Session)em.getDelegate();
 
-                log.error("dslJob or dslJob.getDataStoreLinker() null!");
+                ProcessStatus processStatus = (ProcessStatus)
+                        session.createQuery("from ProcessStatus where executingJobUUID = :executingJobUUID")
+                            .setParameter("executingJobUUID", jobUUID)
+                            .uniqueResult();
+                if (processStatus != null) {
+                    log.debug("dslJob null; job has already finished (probably very quickly).");
+                    return new JSONResolution(new ProgressMessage(100, processStatus.getMessage()));
+                } else {
+                    log.debug("dslJob null; job is still starting up.");
+                    return new JSONResolution(new ProgressMessage(0));
+                }
+            }  else if (dslJob.getDataStoreLinker() == null) {
+                log.debug("dslJob.getDataStoreLinker() null!");
                 return new JSONResolution(new ProgressMessage(0));
             } else {
                 Status dslStatus = dslJob.getDataStoreLinker().getStatus();
@@ -343,8 +360,11 @@ public class ProcessAction extends DefaultAction {
                 int totalFeatureSize = dslStatus.getTotalFeatureSize();
 
                 //log.debug("Gedaan: " + visitedFeatures + " / " + totalFeatureSize);
-
-                int percentage = (int)Math.floor(100.0 * (double)visitedFeatures / (double)totalFeatureSize);
+                double fraction = 0.0;
+                if (totalFeatureSize > 0) {
+                    fraction = (double)visitedFeatures / (double)totalFeatureSize;
+                }
+                int percentage = (int)Math.floor(100 * fraction);
                 //log.debug("execution progress report: " + percentage + "%");
                 ProgressMessage progressMessage = new ProgressMessage(percentage);
                 if (percentage >= 100) {

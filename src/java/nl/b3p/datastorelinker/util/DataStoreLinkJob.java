@@ -11,6 +11,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
+import nl.b3p.geotools.data.linker.Status;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.quartz.Job;
@@ -29,12 +30,17 @@ public class DataStoreLinkJob implements Job {
     private Long processId = null;
     private Throwable fatalException = null;
 
+    public synchronized void setFatalException(Throwable fatalException) {
+        this.fatalException = fatalException;
+    }
+
     public synchronized DataStoreLinker getDataStoreLinker() throws Throwable {
-        DataStoreLinker tempDsl = dsl;
-        // if job is finished and in wait() mode, we let the job continue/terminate.
-        notify();
         if (fatalException != null)
             throw fatalException;
+        DataStoreLinker tempDsl = dsl;
+        // if job is finished and in wait() mode, we let the job continue/terminate.
+        if (tempDsl != null)
+            this.notify();
         return tempDsl;
     }
 
@@ -140,7 +146,7 @@ public class DataStoreLinkJob implements Job {
             finishedStatus = new ProcessStatus(ProcessStatus.Type.CANCELED_BY_USER);
         } catch (Exception ex) {
             log.error(ex);
-            fatalException = ex;
+            setFatalException(fatalException);
             
             finishedStatus = new ProcessStatus(
                     ProcessStatus.Type.LAST_RUN_FATAL_ERROR,
@@ -150,11 +156,17 @@ public class DataStoreLinkJob implements Job {
 
             if (dsl != null) { // dsl finished with error if dsl == null
                 if (finishedStatus == null) {
-                    log.debug("Error-count: " + dsl.getStatus().getErrorCount());
-                    if (dsl.getStatus().getErrorCount() <= 0)
-                        finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK);
-                    else
-                        finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, dsl.getStatus().getNonFatalErrorReport("<br />", 3));
+                    Status status = dsl.getStatus();
+                    log.debug("Error-count: " + status.getErrorCount());
+                    if (status.getErrorCount() == 0) {
+                        if (status.getProcessedFeatures() == 0) {
+                            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, status.getNonFatalErrorReport("<br />", 3));
+                        } else {// if (status.getProcessedFeatures() == status.getVisitedFeatures()) {
+                            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK);
+                        }
+                    } else {
+                        finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, status.getNonFatalErrorReport("<br />", 3));
+                    }
                 }
                 try {
                     dsl.dispose();
@@ -171,14 +183,17 @@ public class DataStoreLinkJob implements Job {
 
             // We keep this thread alive for 10 seconds
             // to let the execution progress polling system know we are done.
-            // Possible problem: server is shut down before this method finishes; Leaving a job not marked finished on the client browser.
+            // For some obscure reason wait() does not wait.
             try {
                 synchronized(this) {
-                    wait(10000);
+                    log.debug("start wait");
+                    this.wait(10000);
                     if (log != null) // server could be shutting down; leaving us without a logger.
                         log.debug("woken up from wait");
                 }
-            } catch (InterruptedException intEx) {}
+            } catch (InterruptedException intEx) {
+                log.debug("wait interrupted");
+            }
         }
     }
 

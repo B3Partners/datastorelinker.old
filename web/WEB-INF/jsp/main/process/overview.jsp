@@ -302,7 +302,9 @@
                     formSelector: "#processForm",
                     event: "list",
                     containerSelector: "#processesListContainer",
-                    global: false
+                    ajaxOptions: {
+                        global: false
+                    }
                 });
             },
             500
