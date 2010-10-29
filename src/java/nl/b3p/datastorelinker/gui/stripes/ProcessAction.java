@@ -33,10 +33,10 @@ import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
+import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.Status;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
@@ -332,7 +332,6 @@ public class ProcessAction extends DefaultAction {
 
     public Resolution executionProgress() {
         DataStoreLinkJob dslJob = SchedulerUtils.getProcessJob(getContext().getServletContext(), jobUUID);
-
         try {
             if (dslJob == null) {
                 log.debug("dslJob null!");
@@ -344,35 +343,36 @@ public class ProcessAction extends DefaultAction {
                             .setParameter("executingJobUUID", jobUUID)
                             .uniqueResult();
                 if (processStatus != null) {
-                    log.debug("dslJob null; job has already finished (probably very quickly).");
+                    log.debug("job has already finished.");
                     return new JSONResolution(new ProgressMessage(100, processStatus.getMessage()));
                 } else {
-                    log.debug("dslJob null; job is still starting up.");
+                    log.debug("job is still starting up.");
                     return new JSONResolution(new ProgressMessage(0));
                 }
-            }  else if (dslJob.getDataStoreLinker() == null) {
-                log.debug("dslJob.getDataStoreLinker() null!");
-                return new JSONResolution(new ProgressMessage(0));
-            } else {
-                Status dslStatus = dslJob.getDataStoreLinker().getStatus();
+            }  else {
+                DataStoreLinker dsl = dslJob.getDataStoreLinker();
+                if (dsl == null) {
+                    log.debug("dsl null! dslJob niet, dus bezig met starten van job.");
+                    return new JSONResolution(new ProgressMessage(0));
+                } else {
+                    Status dslStatus = dsl.getStatus();
 
-                int visitedFeatures = dslStatus.getVisitedFeatures();
-                int totalFeatureSize = dslStatus.getTotalFeatureSize();
+                    int visitedFeatures = dslStatus.getVisitedFeatures();
+                    int totalFeatureSize = dslStatus.getTotalFeatureSize();
 
-                //log.debug("Gedaan: " + visitedFeatures + " / " + totalFeatureSize);
-                double fraction = 0.0;
-                if (totalFeatureSize > 0) {
-                    fraction = (double)visitedFeatures / (double)totalFeatureSize;
+                    //log.debug("Gedaan: " + visitedFeatures + " / " + totalFeatureSize);
+                    double fraction = 0.0;
+                    if (totalFeatureSize > 0) {
+                        fraction = (double)visitedFeatures / (double)totalFeatureSize;
+                    }
+                    int percentage = (int)Math.floor(100 * fraction);
+                    //log.debug("execution progress report: " + percentage + "%");
+                    ProgressMessage progressMessage = new ProgressMessage(percentage);
+                    if (percentage >= 100) {
+                        progressMessage.setMessage(dsl.getStatus().getNonFatalErrorReport("<br />", 3));
+                    }
+                    return new JSONResolution(progressMessage);
                 }
-                int percentage = (int)Math.floor(100 * fraction);
-                //log.debug("execution progress report: " + percentage + "%");
-                ProgressMessage progressMessage = new ProgressMessage(percentage);
-                if (percentage >= 100) {
-                    //progressMessage.setMessage(dslJob.getDataStoreLinker().getStatus().getFinishedMessage());
-                    progressMessage.setMessage(dslJob.getDataStoreLinker().getStatus().getNonFatalErrorReport("<br />", 3));
-                }
-
-                return new JSONResolution(progressMessage);
             }
         } catch(Throwable t) {
             String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())

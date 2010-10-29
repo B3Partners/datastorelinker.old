@@ -8,4 +8,4 @@
 
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
-webappRoot = "<c:out value="$contextPath"/>";
+webappRoot = "<c:out value="${contextPath}"/>";

@@ -6,7 +6,7 @@
 $.blockUI.defaults.css = {}; 
 
 var blockUIOptions = {
-    message: "<img src='styles/images/ui-anim_basic_16x16.gif' />", // wel een erg apart image path
+    message: "<img src='" + webappRoot + "/images/spinner_big.gif' />",
     theme: false,
     baseZ: 10000,
     css: {

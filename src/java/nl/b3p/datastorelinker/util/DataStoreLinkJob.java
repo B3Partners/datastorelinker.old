@@ -2,29 +2,30 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package nl.b3p.datastorelinker.util;
 
+import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.Status;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Session;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.apache.commons.lang.exception.ExceptionUtils;
 
 /**
  *
  * @author Erik van de Pol
  */
 public class DataStoreLinkJob implements Job {
-    private final static Log log = Log.getInstance(DataStoreLinkJob.class);
 
+    private final static Log log = Log.getInstance(DataStoreLinkJob.class);
     private DataStoreLinker dsl = null;
     private nl.b3p.datastorelinker.entity.Process process = null;
     private Long processId = null;
@@ -35,12 +36,14 @@ public class DataStoreLinkJob implements Job {
     }
 
     public synchronized DataStoreLinker getDataStoreLinker() throws Throwable {
-        if (fatalException != null)
+        if (fatalException != null) {
             throw fatalException;
+        }
         DataStoreLinker tempDsl = dsl;
         // if job is finished and in wait() mode, we let the job continue/terminate.
-        if (tempDsl != null)
+        /*if (tempDsl != null) {
             this.notify();
+        }*/
         return tempDsl;
     }
 
@@ -59,10 +62,9 @@ public class DataStoreLinkJob implements Job {
             tx.begin();
 
             try {
-                Session session = (Session)em.getDelegate();
+                Session session = (Session) em.getDelegate();
 
-                process = (nl.b3p.datastorelinker.entity.Process)
-                        session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
+                process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
 
                 log.debug("process status: " + processStatus);
 
@@ -97,7 +99,7 @@ public class DataStoreLinkJob implements Job {
                     }
                     throw e1;
                 }
-            } finally  {
+            } finally {
                 JpaUtilServlet.closeThreadEntityManager();
             }
         }
@@ -107,53 +109,35 @@ public class DataStoreLinkJob implements Job {
         ProcessStatus finishedStatus = null;
         try {
             log.debug("Quartz started process");
-            //String xmlProcess
-            processId = jec.getJobDetail().getJobDataMap().getLong("processId");//.getString("process");
-            
+            processId = jec.getJobDetail().getJobDataMap().getLong("processId");
+
             setProcessStatus(new ProcessStatus(ProcessStatus.Type.RUNNING));
-            //log.debug(xmlProcess);
-            //nl.b3p.datastorelinker.entity.Process process = null;
-
-            /*ClassLoader savedClassLoader = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
-
-            log.debug("savedClassLoader: " + savedClassLoader.toString());
-            log.debug("this.getClass().getClassLoader(): " + this.getClass().getClassLoader().toString());
-            log.debug("parent savedClassLoader: " + savedClassLoader.getParent().toString());
-            log.debug("parent this.getClass().getClassLoader(): " + this.getClass().getClassLoader().getParent().toString());
-            */
-            
-            //process = MarshalUtils.unmarshalProcess(xmlProcess);
 
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
-            Session session = (Session)em.getDelegate();
+            Session session = (Session) em.getDelegate();
 
-            process = (nl.b3p.datastorelinker.entity.Process)
-                    session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
+            process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
 
             if (process != null) {
                 log.debug("Xml for process unmarshalled.");
-                synchronized(this) {
+                synchronized (this) {
                     dsl = new DataStoreLinker(process);
                 }
-                //throw new Exception("test: oeps!");
                 dsl.process();
                 log.debug("Dsl process done!");
             }
         } catch (InterruptedException intEx) {
-            //log.info(intEx, "Process interrupted.");
             log.info("User canceled the process");
             finishedStatus = new ProcessStatus(ProcessStatus.Type.CANCELED_BY_USER);
         } catch (Exception ex) {
-            log.error(ex);
-            setFatalException(fatalException);
-            
+            setFatalException(ex);
+            log.warn(fatalException);
+
             finishedStatus = new ProcessStatus(
                     ProcessStatus.Type.LAST_RUN_FATAL_ERROR,
-                    ExceptionUtils.getRootCauseMessage(fatalException));
+                    new LocalizableMessage("fatalError").getMessage(Locale.getDefault()) + ": "
+                        + ExceptionUtils.getRootCauseMessage(fatalException));
         } finally {
-            //Thread.currentThread().setContextClassLoader(savedClassLoader);
-
             if (dsl != null) { // dsl finished with error if dsl == null
                 if (finishedStatus == null) {
                     Status status = dsl.getStatus();
@@ -162,7 +146,7 @@ public class DataStoreLinkJob implements Job {
                         if (status.getProcessedFeatures() == 0) {
                             finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, status.getNonFatalErrorReport("<br />", 3));
                         } else {// if (status.getProcessedFeatures() == status.getVisitedFeatures()) {
-                            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK);
+                            finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK, status.getNonFatalErrorReport("<br />", 3));
                         }
                     } else {
                         finishedStatus = new ProcessStatus(ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS, status.getNonFatalErrorReport("<br />", 3));
@@ -174,27 +158,26 @@ public class DataStoreLinkJob implements Job {
                     log.error(ex, "Could not dispose DataStoreLinker.");
                 }
             }
-            
+
             try {
                 setProcessStatus(finishedStatus);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 log.error(e);
             }
 
             // We keep this thread alive for 10 seconds
             // to let the execution progress polling system know we are done.
             // For some obscure reason wait() does not wait.
-            try {
-                synchronized(this) {
-                    log.debug("start wait");
-                    this.wait(10000);
-                    if (log != null) // server could be shutting down; leaving us without a logger.
-                        log.debug("woken up from wait");
-                }
-            } catch (InterruptedException intEx) {
-                log.debug("wait interrupted");
+            /*try {
+            synchronized(this) {
+            log.debug("start wait");
+            this.wait(10000);
+            if (log != null) // server could be shutting down; leaving us without a logger.
+            log.debug("woken up from wait");
             }
+            } catch (InterruptedException intEx) {
+            log.debug("wait interrupted");
+            }*/
         }
     }
-
 }

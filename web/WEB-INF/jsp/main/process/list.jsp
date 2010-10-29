@@ -64,7 +64,7 @@
                     </c:if>
                     <c:choose>
                         <c:when test="${process.processStatus.processStatusType == 'RUNNING'}">
-                            <img src="<stripes:url value="/styles/images/ui-anim_basic_16x16.gif"/>"
+                            <img src="<stripes:url value="/images/spinner.gif"/>"
                                  title="<fmt:message key="process.running"/>"
                                  alt="process.running" />
                         </c:when>
