@@ -285,15 +285,15 @@ public class ProcessAction extends DefaultAction {
         nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
-        if (process.getInput().getInputProcessList().size() == 1) { 
+        if (process.getInput().getFile() != null &&
+                !process.getInput().getFile().trim().equals("") &&
+                process.getInput().getInputProcessList().size() == 1) {
             // if this is the only process using this file input, delete this file input object.
             session.delete(process.getInput());
+            // cascades will make sure process itself also gets deleted.
+        } else {
+            session.delete(process);
         }
-
-        //Transaction transaction = session.beginTransaction();
-        session.delete(process);
-        //transaction.commit();
-        
         return list();
     }
 
