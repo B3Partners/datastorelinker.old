@@ -155,6 +155,7 @@ public class ProcessAction extends DefaultAction {
                 // the input for this process is updated by the user, delete this file input object.
                 // cut ties with process first to prevent cascades from kicking in
                 // (deleting the process we are updating)
+                log.debug("delete file input that is no longer used. (file itself is not deleted)");
                 process.getInput().getInputProcessList().clear();
                 process.getInput().getOutputProcessList().clear();
                 session.delete(process.getInput());
@@ -285,15 +286,25 @@ public class ProcessAction extends DefaultAction {
         nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
                 session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
-        if (process.getInput().getFile() != null &&
-                !process.getInput().getFile().trim().equals("") &&
-                process.getInput().getInputProcessList().size() == 1) {
-            // if this is the only process using this file input, delete this file input object.
-            session.delete(process.getInput());
-            // cascades will make sure process itself also gets deleted.
-        } else {
-            session.delete(process);
+        log.debug("delete process");
+        Inout input = process.getInput();
+        if (input.getFile() != null && !input.getFile().trim().equals("")) {
+            if (input.getInputProcessList().size() == 1) {
+                // if this is the only process using this file input, delete this file input object.
+                log.debug("deleting input: " + input + " from process: " + process + "; cascades delete project too.");
+                session.delete(input);
+                // cascades will make sure process itself also gets deleted.
+            } else {
+                log.debug("clearing InputProcessList");
+                // prevents org.hibernate.ObjectDeletedException: deleted entity passed to persist. -errors
+                // reference to the (soon to be) process must be cleared, otherwise Hibernate will try to persist the process.
+                input.getInputProcessList().clear();
+            }
         }
+
+        log.debug("delete process simple");
+        session.delete(process);
+        
         return list();
     }
 
