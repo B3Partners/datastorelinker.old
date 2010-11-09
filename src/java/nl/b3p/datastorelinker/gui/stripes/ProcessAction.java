@@ -297,7 +297,7 @@ public class ProcessAction extends DefaultAction {
             } else {
                 log.debug("clearing InputProcessList");
                 // prevents org.hibernate.ObjectDeletedException: deleted entity passed to persist. -errors
-                // reference to the (soon to be) process must be cleared, otherwise Hibernate will try to persist the process.
+                // reference to the (soon to be deleted) process must be cleared, otherwise Hibernate will try to persist the process that was deleted.
                 input.getInputProcessList().clear();
             }
         }
