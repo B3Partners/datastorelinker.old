@@ -6,7 +6,6 @@
     <class>nl.b3p.datastorelinker.entity.Process</class>
     <class>nl.b3p.datastorelinker.entity.Inout</class>
     <class>nl.b3p.datastorelinker.entity.Database</class>
-    <class>nl.b3p.datastorelinker.entity.File</class>
     <class>nl.b3p.datastorelinker.entity.Mail</class>
     <class>nl.b3p.datastorelinker.entity.Schedule</class>
     <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
