@@ -5,6 +5,9 @@
 --%>
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
 
 <script type="text/javascript">

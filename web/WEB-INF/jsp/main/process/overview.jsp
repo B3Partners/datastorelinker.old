@@ -6,6 +6,9 @@
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <script type="text/javascript">
     $(document).ready(function() {
         $("#processForm").validate(defaultRadioValidateOptions);
@@ -32,7 +35,7 @@
 
         $("#createProcess").click(function() {
             // TODO: wacht op een volgende versie van jquery UI waar http://dev.jqueryui.com/ticket/5295
-            // in is geïntegreerd.
+            // in is geÃ¯ntegreerd.
             // Of bouw eigen jquery UI met de patch uit de link.
             // Of integreer onderstaande korte patch bij elke knop.
             //

@@ -5,6 +5,9 @@
 --%>
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <stripes:url var="cronInfoUrl" value="/WEB-INF/jsp/main/cron/cron.htm"/>
 
 <script type="text/javascript">

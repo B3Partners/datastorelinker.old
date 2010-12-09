@@ -5,6 +5,9 @@
 --%>
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <c:set var="dbType" value="POSTGIS"/>
 
 <script type="text/javascript">

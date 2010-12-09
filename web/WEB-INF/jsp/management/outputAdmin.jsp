@@ -6,6 +6,9 @@
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <script type="text/javascript">
     $(document).ready(function() {
         initOutput();

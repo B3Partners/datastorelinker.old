@@ -6,6 +6,9 @@
 
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <div class="ui-widget-content ui-corner-all" style="height: 50px; max-height: 50px; overflow: scroll">
     <table>
         <tr>

@@ -6,6 +6,9 @@
 
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
+
 <textarea>
     ${actionBean.selectedFilePath}
     <%--%@include file="list.jsp" --%>

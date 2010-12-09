@@ -6,3 +6,6 @@
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
 <%@include file="/WEB-INF/jsp/main/database/create.jsp" %>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+

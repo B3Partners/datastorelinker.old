@@ -6,6 +6,8 @@
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <script type="text/javascript">
 
     inputDialogLayoutOptions = $.extend({}, defaultDialogLayoutOptions, {
@@ -22,7 +24,8 @@
             <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
             "${contextPath}"
         );
-        
+        log("BLAAT!");
+        log(getActionsList());
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
             //log("step_shown");
             formWizardStep(data);
