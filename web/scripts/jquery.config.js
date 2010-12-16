@@ -32,6 +32,11 @@ $(document).ready(function() {
         }
     }, "Voer een correcte tijd in.");
 
+    // buttonset bug fix IE 7:
+    $(".ui-buttonset .ui-button").live("click", function(event) {
+        $("#" + $(this).attr("for")).attr("checked", true);
+    });
+
 });
 
 defaultButtonClick = function(button) {
