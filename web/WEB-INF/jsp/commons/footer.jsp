@@ -8,9 +8,9 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-
-<div class="ui-layout-content footer">
-    <div id="footer-text-left" class="footer-text">
-        &copy; 2009-2010 B3Partners
+<div id="footer">
+    <div id="footer_content">
+        <div id="footer_tekst_links" class="footer_tekst">This program is distributed under the terms of the <a class="gpl_link" href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a></div>
+        <div id="footer_tekst_rechts" class="footer_tekst">GIS Suite 3.5</div>
     </div>
 </div>

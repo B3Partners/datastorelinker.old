@@ -44,9 +44,42 @@ h3 {
     background-repeat: repeat-x;
 }
 
-.footer {
+#footer {
     background-image: url(../images/onderbalk.gif);
     background-repeat: repeat-x;
+    height: 50px;
+    width: 100%;
+}
+
+#footer_content {
+    background-image: url(../images/footerbar.gif);
+    background-repeat: no-repeat;
+    width: 960px;
+    height: 50px;
+    text-align: left;
+}
+
+.footer_tekst {
+    color: #7891A5;
+    font-size: 11px;
+    margin-top: 18px;
+}
+
+.footer_tekst a.gpl_link{
+    color: #7891A5;
+    font-size: 11px;
+    margin-top: 18px;
+    text-decoration: underline;
+}
+
+#footer_tekst_links {
+    float: left;
+    margin-left: 47px;
+}
+
+#footer_tekst_rechts {
+    float: right;
+    margin-right: 125px;
 }
 
 .west {
