@@ -18,7 +18,7 @@
 
             <title>${pageTitle}</title>
 
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.5.custom.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.11.custom.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.ui-uploader/styles/jquery-ui-upload.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.filetree/jquery.filetree.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css" />
@@ -34,9 +34,9 @@
             -->
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.min.js"></script-->
-            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.js"></script>
-            <!--script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-latest.custom.min.js"></script-->
-            <script type="text/javascript" src="${contextPath}/scripts/jquery.ui.datepicker-nl/jquery.ui.datepicker-nl.js"></script>
+            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-1.8.11.custom.js"></script>
+            <!--script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery-ui-1.8.11.custom.min.js"></script-->
+            <script type="text/javascript" src="${contextPath}/scripts/jquery-ui/jquery.ui.datepicker-nl.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form/jquery.form.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.form.wizard/jquery.form.wizard-latest-min.js"></script-->
