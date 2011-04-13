@@ -29,7 +29,7 @@
             <!-- jQuery (UI) and plugins -->
             <!--
             WARNING: DO NOT switch to minified versions blindly!
-            Bugfixes have been applied to (non-minified) jquery ui and qtip for example.
+            Bugfixes have been applied to qtip for example. (jquery ui modal dialog bug seems fixed in jquery ui 1.8.11)
             Create your own minified versions with the Google Closure Compiler: http://code.google.com/closure/compiler/
             -->
             <script type="text/javascript" src="${contextPath}/scripts/jquery/jquery-latest.js"></script>
