@@ -5,14 +5,8 @@
 --%>
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page pageEncoding="UTF-8"%>
 
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        
-    });
-</script>
 
 <c:if test="${empty dirContent}">
     <c:set var="dirContent" value="${actionBean.dirContent}" scope="request"/>
@@ -21,7 +15,7 @@
 <c:set var="dirs" value="${dirContent.dirs}" scope="page"/>
 <c:set var="files" value="${dirContent.files}" scope="page"/>
 
-<ul class="jqueryFileTree" style="display: block;">
+<ul class="jqueryFileTree">
     <c:forEach var="dir" items="${dirs}">
         <c:choose>
             <c:when test="${not empty dir.content}">

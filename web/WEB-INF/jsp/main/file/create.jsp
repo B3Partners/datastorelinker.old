@@ -10,7 +10,7 @@
 
 <stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         $("#uploader").uiload({
             swfuploader: "${contextPath}/scripts/jquery.ui-uploader/flash/jquery-ui-upload.swf",

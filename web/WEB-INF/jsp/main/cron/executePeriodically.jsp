@@ -8,9 +8,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
-<stripes:url var="cronInfoUrl" value="/WEB-INF/jsp/main/cron/cron.htm"/>
+<stripes:url var="cronInfoUrl" value="/html/cron.htm"/>
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         $("#cronEachAccordion").accordion();
         $("#cronAccordion").accordion();

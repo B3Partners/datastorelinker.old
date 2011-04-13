@@ -76,7 +76,7 @@
 
             <stripes:layout-component name="head"/>
 
-            <script type="text/javascript">
+            <script type="text/javascript" class="ui-layout-ignore">
                 $(document).ready(function() {
                     
                 });

@@ -9,10 +9,10 @@
 
 <stripes:url var="actionsUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ActionsAction"/>
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
 
     $(document).ready(function() {
-        $("#inputOverview, #outputOverview, #actionsOverview").hover(
+        /*$("#inputOverview, #outputOverview, #actionsOverview").hover(
             function() { $(this).addClass("overview-hover"); },
             function() { $(this).removeClass("overview-hover"); }
         );
@@ -23,7 +23,7 @@
         
         $("#outputOverview").click(function() {
             $("#createUpdateProcessForm").data("formwizard").show("SelecteerUitvoer");
-        });
+        });*/
 
         $("#actionsOverview").click(function() {
             //log("currentActionsList:");
@@ -63,7 +63,7 @@
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
             <fmt:message key="input"/>
         </div>
-        <div id="inputOverviewContainer" class="action-list clickable-list" style="height: 300px">
+        <div id="inputOverviewContainer" class="action-list" style="height: 300px">
         </div>
     </div>
 
@@ -87,7 +87,7 @@
         <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
             <fmt:message key="output"/>
         </div>
-        <div id="outputOverviewContainer" class="action-list clickable-list" style="height: 300px">
+        <div id="outputOverviewContainer" class="action-list" style="height: 300px">
         </div>
     </div>
 

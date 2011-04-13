@@ -10,7 +10,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         var newUpdateInputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
             width: Math.floor($('body').width() * .65),

@@ -8,7 +8,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
 
     inputDialogLayoutOptions = $.extend({}, defaultDialogLayoutOptions, {
         center__findNestedContent: true

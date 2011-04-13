@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         $("#tablesList").buttonset();
     });
@@ -20,7 +20,7 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedTable and table == actionBean.selectedTable}">
                     <input type="radio" id="table${status.index}" name="selectedTable" value="${table}" class="required" checked="checked" />
-                    <script type="text/javascript">
+                    <script type="text/javascript" class="ui-layout-ignore">
                         $(document).ready(function() {
                             $("#tablesList").parent().scrollTo(
                                 $("#table${status.index}"),

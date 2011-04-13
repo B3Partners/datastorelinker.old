@@ -10,7 +10,7 @@
 
 <c:set var="dbType" value="POSTGIS"/>
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         <c:choose>
             <c:when test="${not empty actionBean.selectedDatabase and actionBean.selectedDatabase.type == dbType}">

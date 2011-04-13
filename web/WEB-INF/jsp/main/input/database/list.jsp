@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         initGuiInput();
     });
@@ -20,7 +20,7 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedInputId and input.id == actionBean.selectedInputId}">
                     <input type="radio" id="input${status.index}" name="selectedInputId" value="${input.id}" class="required" checked="checked"/>
-                    <script type="text/javascript">
+                    <script type="text/javascript" class="ui-layout-ignore">
                         $(document).ready(function() {
                             $("#inputList").parent().scrollTo(
                                 $("#input${status.index}"),

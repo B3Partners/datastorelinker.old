@@ -53,6 +53,7 @@ import org.hibernate.Session;
 public class FileAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(FileAction.class);
+    protected final static boolean ALWAYS_EXPAND_DIRS = true;
     protected final static String SHAPE_EXT = ".shp";
     protected final static String ZIP_EXT = ".zip";
     protected final static String PRETTY_DIR_SEPARATOR = "/";
@@ -91,7 +92,9 @@ public class FileAction extends DefaultAction {
             directory = getUploadDirectoryIOFile();
         }
 
-        if (expandTo == null) {
+        if (ALWAYS_EXPAND_DIRS) {
+            dirContent = getDirContent(directory, null);
+        } else if (expandTo == null) {
             dirContent = getDirContent(directory, null);
         } else {
             selectedFilePath = expandTo.trim().replace("\n", "").replace("\r", "");
@@ -153,7 +156,12 @@ public class FileAction extends DefaultAction {
 
         filterOutFilesToHide(dc);
 
-        if (subDirList != null && subDirList.size() > 0) {
+        if (ALWAYS_EXPAND_DIRS) {
+            for (Dir subDir : dc.getDirs()) {
+                File followSubDir = getFileFromPPFileName(subDir.getPath());
+                subDir.setContent(getDirContent(followSubDir, null));
+            }
+        } else if (subDirList != null && subDirList.size() > 0) {
             String subDirString = subDirList.remove(0);
 
             for (Dir subDir : dc.getDirs()) {

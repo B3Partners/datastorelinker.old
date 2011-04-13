@@ -28,6 +28,7 @@
       <property name="hibernate.c3p0.min_size" value="0"/>
       <property name="hibernate.c3p0.timeout" value="60"/>
       <property name="hibernate.c3p0.idle_test_period" value="100"/>
+      <!-- rigoureuze optie: in c3p0.properties: testConnectionOnCheckout=true-->
 
       <property name="hibernate.show_sql" value="false"/>
     </properties>

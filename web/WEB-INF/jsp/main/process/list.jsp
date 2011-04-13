@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 
-<script type="text/javascript">
+<script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         $("#processesList").buttonset();
         $("#processesList img[title]").qtip({
@@ -43,7 +43,7 @@
             <c:choose>
                 <c:when test="${not empty actionBean.selectedProcessId and process.id == actionBean.selectedProcessId}">
                     <input type="radio" id="process${process.id}" name="selectedProcessId" value="${process.id}" class="required" checked="checked"/>
-                    <script type="text/javascript">
+                    <script type="text/javascript" class="ui-layout-ignore">
                         $(document).ready(function() {
                             $("#processesList").parent().scrollTo(
                                 $("#process${process.id}"),
@@ -98,7 +98,7 @@
 
             <%-- Add schedule icon if this process is scheduled >
             <c:if test="${not empty process.schedule}">
-                <script type="text/javascript">
+                <script type="text/javascript" class="ui-layout-ignore">
                     $(document).ready(function() {
                         $("#process${process.id}").button("option", "icons", {primary: "ui-icon-clock"});
                     });

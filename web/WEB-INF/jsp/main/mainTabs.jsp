@@ -9,7 +9,7 @@
 
 <stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="DataStoreLinker">
     <stripes:layout-component name="content">
-        <script type="text/javascript">
+        <script type="text/javascript" class="ui-layout-ignore">
             $(document).ready(function() {
                 $("#content").tabs({
                     select: function(event, ui) {
@@ -51,8 +51,8 @@
                 </stripes:link>
             </li>
             <li>
-                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction" title="tabOutput">
-                    <fmt:message key="menu.admin.output"/>
+                <stripes:link href="${fileUrl}?admin=" title="tabFile">
+                    <fmt:message key="menu.admin.file"/>
                 </stripes:link>
             </li>
             <li>
@@ -61,8 +61,8 @@
                 </stripes:link>
             </li>
             <li>
-                <stripes:link href="${fileUrl}?admin=" title="tabFile">
-                    <fmt:message key="menu.admin.file"/>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction" title="tabOutput">
+                    <fmt:message key="menu.admin.output"/>
                 </stripes:link>
             </li>
         </ul>
