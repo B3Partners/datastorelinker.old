@@ -54,6 +54,10 @@
     /*width: 100%;*/
 }
 
+.crudButtonsArea input[type=radio] {
+    border: 0px solid #fff;
+}
+
 .wizardButtonsArea {
     text-align: right;
     border-top: 1px solid #fed204;
