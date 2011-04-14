@@ -178,8 +178,12 @@ function ajaxOpen(sendOptions) {
         data: [],
         success: function(data, textStatus, xhr) {
             // possible TODO: maybe create dialog here to prevent rare blockUI/dialogUI-overlay bug? Must be after ajaxStop.
-            if (options.containerFill && container != null)
+            if (options.containerFill && container != null) {
                 container.html(data);
+                /*if (options.openInDialog) {
+                    container.dialog(options.dialogOptions);
+                }*/
+            }
             options.successAfterContainerFill(data, textStatus, xhr, container);
         }
     };

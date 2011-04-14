@@ -193,3 +193,8 @@ h3 {
 #uploaderStop {
     float: right;
 }
+
+#cronAccordion form, #cronAccordion table {
+    margin: 0;
+    padding: 0;
+}

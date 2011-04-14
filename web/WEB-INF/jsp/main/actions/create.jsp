@@ -69,7 +69,7 @@
                 // prevent it with an ugly hack:
                 if (!alcDropAlreadyCalled) {
                     $("#actionsListContainer .placeholder").remove();
-                    appendButtons(ui.draggable);
+                    addButtons(ui.draggable);
                 }
                 
                 alcDropAlreadyCalled = !alcDropAlreadyCalled;

@@ -75,7 +75,7 @@ function getCreatedActionList() {
     return actionList;
 }
 
-function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, addButtons) {
+function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, mustAddButtons) {
     //log("actionsListJSON.length: " + actionsListJSON.length);
     //log("actionsListSelector: " + actionsListSelector);
     //log("later");
@@ -108,20 +108,20 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
         
         //log(div.attr("jqmetadata"));
 
-        if (addButtons) {
-            appendButtons(div);
+        if (mustAddButtons) {
+            addButtons(div);
         }
 
         $(actionsListSelector).append(div);
     });
 }
 
-function appendButtons(div) {
-    appendRemoveButton(div);
-    appendParametersButton(div);
+function addButtons(div) {
+    addParametersButton(div);
+    addRemoveButton(div);
 }
 
-function appendRemoveButton(div) {
+function addRemoveButton(div) {
     div.addClass("action-dropped");
 
     var removeButton = $('<a></a>').css({
@@ -136,10 +136,10 @@ function appendRemoveButton(div) {
     removeButton.click(function() {
         div.remove();
     });
-    div.find(".type").append(removeButton);
+    div.find(".type").prepend(removeButton); // prepend moet voor IE7 en IE9
 }
 
-function appendParametersButton(div) {
+function addParametersButton(div) {
     var action = div.metadata();
     //var action = div.data("action");
     //log(action);
@@ -160,7 +160,7 @@ function appendParametersButton(div) {
         parametersButton.click(function() {
             openParametersDialog(action);
         });
-        div.find(".type").append(parametersButton);
+        div.find(".type").prepend(parametersButton); // prepend moet voor IE7 en IE9
     }
 }
 
