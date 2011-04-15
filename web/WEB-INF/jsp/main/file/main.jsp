@@ -15,6 +15,10 @@
         initFile();
 
         $("#uploadFile").click(function() {
+            if (!$("#uploader").val()) {
+                return defaultButtonClick(this);
+            }
+
             log("uploadFile");
             //log($("#createUpdateProcessForm"));
             var oldAction = $("#createUpdateProcessForm").attr("action");

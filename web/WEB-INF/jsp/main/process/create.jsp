@@ -24,7 +24,6 @@
             <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
             "${contextPath}"
         );
-        log("BLAAT!");
         log(getActionsList());
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
             //log("step_shown");

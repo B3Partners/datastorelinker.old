@@ -68,7 +68,7 @@
         })
 
         $("#deleteOutput").click(function() {
-            if (!$("#createUpdateProcessForm").valid())
+            if (!isFormValidAndContainsInput("#createUpdateProcessForm"))
                 return defaultButtonClick(this);
 
             $("<div><fmt:message key="deleteOutputAreYouSure"/></div>").attr("id", "outputContainer").appendTo($(document.body));

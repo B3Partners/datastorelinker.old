@@ -101,7 +101,7 @@
 <stripes:form partial="true" action="#">
     <div id="databaseInputHeader" class="ui-layout-north">
     </div>
-    <div id="inputListContainer" class="ui-layout-center radioList ui-widget-content ui-corner-all">
+    <div id="inputListContainer" class="mandatory-form-input ui-layout-center radioList ui-widget-content ui-corner-all">
         <%@include file="/WEB-INF/jsp/main/input/database/list.jsp" %>
     </div>
     <div class="ui-layout-south crudButtonsArea">

@@ -30,7 +30,7 @@
             selectedTab = 1;
         }
 
-        $("#inputList").addClass(classesUsed);
+        $("#inputListContainer").addClass(classesUsed);
         
         $("#inputTabs").tabs({
             /*fx: {
@@ -56,12 +56,12 @@
                 if (ui.panel.id === "databaseTab") {
                     $("#fileTab").removeClass(layoutContentClass);
                     $("#fileTab input:radio").removeClass("required");
-                    $("#filesListContainer").removeClass(layoutContentClass);
-                    $("#inputList").addClass(classesUsed);
+                    $("#filesListContainer").removeClass(classesUsed);
+                    $("#inputListContainer").addClass(classesUsed);
                 } else if (ui.panel.id === "fileTab") {
                     $("#databaseTab").removeClass(layoutContentClass);
                     $("#databaseTab input:radio").removeClass("required");
-                    $("#inputList").removeClass(layoutContentClass);
+                    $("#inputListContainer").removeClass(classesUsed);
                     $("#filesListContainer").addClass(classesUsed);
                 }
 
