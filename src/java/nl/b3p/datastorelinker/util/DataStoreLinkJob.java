@@ -107,6 +107,8 @@ public class DataStoreLinkJob implements Job {
 
     public void execute(JobExecutionContext jec) throws JobExecutionException {
         ProcessStatus finishedStatus = null;
+        EntityTransaction tx = null;
+        
         try {
             log.debug("Quartz started process");
             processId = jec.getJobDetail().getJobDataMap().getLong("processId");
@@ -114,9 +116,17 @@ public class DataStoreLinkJob implements Job {
             setProcessStatus(new ProcessStatus(ProcessStatus.Type.RUNNING));
 
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            tx = em.getTransaction();
+
             Session session = (Session) em.getDelegate();
 
+            tx.begin();
+
             process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
+
+            /* Deze niet aan het einde van methode plaatsen om zo de transactie zo kort
+             * mogelijk open te houden */
+            tx.commit();
 
             if (process != null) {
                 log.debug("Xml for process unmarshalled.");
@@ -126,10 +136,17 @@ public class DataStoreLinkJob implements Job {
                 dsl.process();
                 log.debug("Dsl process done!");
             }
+
         } catch (InterruptedException intEx) {
+            if (tx != null)
+                tx.rollback();
+
             log.info("User canceled the process");
             finishedStatus = new ProcessStatus(ProcessStatus.Type.CANCELED_BY_USER);
         } catch (Exception ex) {
+            if (tx != null)
+                tx.rollback();
+
             setFatalException(ex);
             log.warn(fatalException);
 
@@ -138,6 +155,8 @@ public class DataStoreLinkJob implements Job {
                     new LocalizableMessage("fatalError").getMessage(Locale.getDefault()) + ": "
                         + ExceptionUtils.getRootCauseMessage(fatalException));
         } finally {
+            JpaUtilServlet.closeThreadEntityManager();
+
             if (dsl != null) { // dsl finished with error if dsl == null
                 if (finishedStatus == null) {
                     Status status = dsl.getStatus();

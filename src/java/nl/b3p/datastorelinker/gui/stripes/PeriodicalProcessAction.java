@@ -32,6 +32,7 @@ import org.quartz.Trigger;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class PeriodicalProcessAction extends DefaultAction {
     private final static Log log = Log.getInstance(PeriodicalProcessAction.class);
 
@@ -67,7 +68,6 @@ public class PeriodicalProcessAction extends DefaultAction {
     // advanced
     protected String cronExpression;
 
-    @Transactional
     public Resolution executePeriodically() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -89,7 +89,6 @@ public class PeriodicalProcessAction extends DefaultAction {
         return new ForwardResolution(EXECUTE_PERIODICALLY_JSP);
     }
 
-    @Transactional
     public Resolution executePeriodicallyComplete() {
         log.debug("Periodically executing process with id: " + selectedProcessId);
 
@@ -157,8 +156,7 @@ public class PeriodicalProcessAction extends DefaultAction {
             return new DefaultErrorResolution(e.getLocalizedMessage());
         }
     }
-
-    @Transactional
+    
     public Resolution cancelExecutePeriodically() {
         cancelExecutePeriodicallyImpl(selectedProcessId, getContext().getServletContext());
         

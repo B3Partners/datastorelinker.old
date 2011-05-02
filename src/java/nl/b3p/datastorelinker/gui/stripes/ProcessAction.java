@@ -46,6 +46,7 @@ import org.quartz.TriggerUtils;
  *
  * @author Erik van de Pol
  */
+@Transactional
 public class ProcessAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(ProcessAction.class);
@@ -80,7 +81,6 @@ public class ProcessAction extends DefaultAction {
     // dummy variable
     private Boolean admin;
 
-    @Transactional
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -89,6 +89,8 @@ public class ProcessAction extends DefaultAction {
         // (te maken met de dot-notation voor joins die niet werkt zoals ik denk dat ie werkt.).
         processes = session.createQuery("from Process order by name").list();
         Collections.sort(processes, new NameableComparer());
+
+        //session.getTransaction().commit();
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -99,7 +101,6 @@ public class ProcessAction extends DefaultAction {
         return new ForwardResolution(JSP);
     }
 
-    @Transactional
     public Resolution create() {
         inputs = InputAction.findDBInputs();
         outputs = OutputAction.findOutputs();
@@ -116,7 +117,6 @@ public class ProcessAction extends DefaultAction {
         return new ForwardResolution(CREATE_JSP);
     }
 
-    @Transactional
     public Resolution createComplete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -228,7 +228,6 @@ public class ProcessAction extends DefaultAction {
         return actionsListXml;
     }
 
-    @Transactional
     public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -275,7 +274,6 @@ public class ProcessAction extends DefaultAction {
         return jsonArrayActions.toString();
     }
 
-    @Transactional
     public Resolution delete() {
         PeriodicalProcessAction ppaction = new PeriodicalProcessAction();
         ppaction.cancelExecutePeriodicallyImpl(selectedProcessId, getContext().getServletContext());
@@ -308,7 +306,6 @@ public class ProcessAction extends DefaultAction {
         return list();
     }
 
-    @Transactional
     public Resolution execute() {
         log.debug("Executing process with id: " + selectedProcessId);
 
