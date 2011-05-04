@@ -198,3 +198,7 @@ h3 {
     margin: 0;
     padding: 0;
 }
+
+#cronAccordion .ui-accordion-content {
+    overflow: hidden;
+}
