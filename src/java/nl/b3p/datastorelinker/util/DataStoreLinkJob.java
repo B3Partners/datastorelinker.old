@@ -8,7 +8,6 @@ import java.util.Locale;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import net.sourceforge.stripes.action.LocalizableMessage;
-import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
@@ -18,6 +17,8 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -25,7 +26,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
  */
 public class DataStoreLinkJob implements Job {
 
-    private final static Log log = Log.getInstance(DataStoreLinkJob.class);
+    private final static Log log = LogFactory.getLog(DataStoreLinkJob.class);
     private DataStoreLinker dsl = null;
     private nl.b3p.datastorelinker.entity.Process process = null;
     private Long processId = null;
@@ -57,11 +58,13 @@ public class DataStoreLinkJob implements Job {
             log.error("processId was null when attempting to write status to it. " + processStatus);
         } else {
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
-            EntityTransaction tx = em.getTransaction();
-            log.debug("Starting transaction for default persistence unit.");
-            tx.begin();
+            EntityTransaction tx = null;
 
             try {
+                tx = em.getTransaction();
+                log.debug("Starting transaction for default persistence unit.");
+                tx.begin();
+
                 Session session = (Session) em.getDelegate();
 
                 process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
@@ -76,29 +79,10 @@ public class DataStoreLinkJob implements Job {
                     process.getProcessStatus().setProcessStatusType(processStatus.getProcessStatusType());
                 }
 
-                if (tx.isActive()) {
-                    log.debug("Committing active transaction");
-                    tx.commit();
-                } else {
-                    log.debug("Transaction is not active - not committing");
-                }
-            } catch (Exception e1) {
-                if (!tx.isActive()) {
-                    log.debug("Exception occurred but the transaction is not active - not rolling back");
-                } else {
-                    log.error("Exception occurred - rolling back active transaction");
-                    try {
-                        tx.rollback();
-                    } catch (Exception e2) {
-                        /* log de exception maar swallow deze verder, omdat alleen
-                         * wordt gerollback()'d indien er al een eerdere exception
-                         * was gethrowed. Die wordt door deze te swallowen verder
-                         * gethrowed.
-                         */
-                        log.error("Exception rolling back transaction", e2);
-                    }
-                    throw e1;
-                }
+                tx.commit();
+            } catch (Exception e) {
+                tryRollback(tx);
+                throw e;
             } finally {
                 JpaUtilServlet.closeThreadEntityManager();
             }
@@ -117,10 +101,9 @@ public class DataStoreLinkJob implements Job {
 
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
             tx = em.getTransaction();
+            tx.begin();
 
             Session session = (Session) em.getDelegate();
-
-            tx.begin();
 
             process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
 
@@ -138,14 +121,13 @@ public class DataStoreLinkJob implements Job {
             }
 
         } catch (InterruptedException intEx) {
-            if (tx != null)
-                tx.rollback();
-
+            tryRollback(tx);
+            
             log.info("User canceled the process");
+            
             finishedStatus = new ProcessStatus(ProcessStatus.Type.CANCELED_BY_USER);
         } catch (Exception ex) {
-            if (tx != null)
-                tx.rollback();
+            tryRollback(tx);
 
             setFatalException(ex);
             log.warn(fatalException);
@@ -174,14 +156,14 @@ public class DataStoreLinkJob implements Job {
                 try {
                     dsl.dispose();
                 } catch (Exception ex) {
-                    log.error(ex, "Could not dispose DataStoreLinker.");
+                    log.error("Could not dispose DataStoreLinker.", ex);
                 }
             }
 
             try {
                 setProcessStatus(finishedStatus);
             } catch (Exception e) {
-                log.error(e);
+                log.error("", e);
             }
 
             // We keep this thread alive for 10 seconds
@@ -197,6 +179,17 @@ public class DataStoreLinkJob implements Job {
             } catch (InterruptedException intEx) {
             log.debug("wait interrupted");
             }*/
+        }
+    }
+
+    private void tryRollback(EntityTransaction tx) {
+        if (tx != null && tx.isActive()) {
+            log.error("Exception occurred - rolling back active transaction");
+            try {
+                tx.rollback();
+            } catch (Exception e) {
+                log.error("Exception rolling back transaction", e);
+            }
         }
     }
 }
