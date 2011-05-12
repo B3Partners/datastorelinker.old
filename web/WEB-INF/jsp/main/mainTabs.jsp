@@ -46,6 +46,11 @@
                 </stripes:link>
             </li>
             <li>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction" title="tabDatabase">
+                    <fmt:message key="menu.admin.database"/>
+                </stripes:link>
+            </li>
+            <li>
                 <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction" title="tabInput">
                     <fmt:message key="menu.admin.input"/>
                 </stripes:link>
@@ -53,11 +58,6 @@
             <li>
                 <stripes:link href="${fileUrl}?admin=" title="tabFile">
                     <fmt:message key="menu.admin.file"/>
-                </stripes:link>
-            </li>
-            <li>
-                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction" title="tabDatabase">
-                    <fmt:message key="menu.admin.database"/>
                 </stripes:link>
             </li>
             <li>
