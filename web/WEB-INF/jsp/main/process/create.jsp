@@ -24,7 +24,7 @@
             <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
             "${contextPath}"
         );
-        log(getActionsList());
+        //log(getActionsList());
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
             //log("step_shown");
             formWizardStep(data);
@@ -39,9 +39,33 @@
                 $("#processSteps").layout(defaultDialogLayoutOptions).destroy();
             }
             
-            if (data.previousStep)
+            if (data.previousStep && data.previousStep !== data.currentStep)
                 $("#" + data.previousStep).removeClass("ui-layout-center");
             $("#" + data.currentStep).addClass("ui-layout-center");
+
+            if (data.previousStep === "SelecteerInvoer" && data.currentStep !== "SelecteerInvoer") {
+                //log('data.previousStep === "SelecteerInvoer"');
+                var params = {getTypeNames: ""};
+                if ($("#inputTabs").tabs("option", "selected") === 0) {
+                    params.selectedInputId = $("#createUpdateProcessForm input[name='selectedInputId']").val();
+                } else {
+                    params.selectedFilePath = $("#createUpdateProcessForm input[name='selectedFilePath']").val();
+                }
+                //log("retrieving col names...");
+                //log(params);
+                inputColumnNamesJqXhr = $.ajax({
+                    url: "${inputUrl}",
+                    data: params,
+                    dataType: "json",
+                    global: false,
+                    success: function(data, textStatus, jqXHR) {
+                        inputColumnNames = data;
+                        log("col names:");
+                        log(inputColumnNames);
+                    },
+                    error: handleError
+                });
+            }
 
             if (data.currentStep === "SelecteerInvoer") {
                 $("#processSteps").layout(inputDialogLayoutOptions).initContent("center");
@@ -75,9 +99,9 @@
                         var actionsListJson = JSON.stringify(getActionsList());
 
                         if ($("#inputTabs").tabs("option", "selected") === 0) {
-                            $("#createUpdateProcessForm input[name='selectedFilePath']").attr("checked", false);
+                            $("#createUpdateProcessForm input[name='selectedFilePath']").prop("checked", false);
                         } else {
-                            $("#createUpdateProcessForm input[name='selectedInputId']").attr("checked", false);
+                            $("#createUpdateProcessForm input[name='selectedInputId']").prop("checked", false);
                         }
 
                         ajaxOpen({

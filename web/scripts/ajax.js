@@ -113,7 +113,10 @@ defaultCustomErrorCode = 1000;
 
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     $.unblockUI(unblockUIOptions);
-    
+    handleError(xhr, "", thrownError);
+});
+
+function handleError(xhr, textStatus, thrownError) {
     /*log(event);
     log(xhr);
     log(ajaxOptions);
@@ -126,7 +129,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     } else if (xhr.status == 0) {
         errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
     } else if (xhr.status == 404) {
-        errorMessage = "Opgevraagde pagina niet gevonden: " + ajaxOptions.url;
+        errorMessage = "Opgevraagde pagina niet gevonden.";
     } else if (xhr.status == 500) {
         errorMessage = "Interne server fout";//: " + xhr.responseText; // show error to user?
     } else if (thrownError == "parsererror") {
@@ -146,7 +149,7 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
             }
         }
     }));
-});
+}
 
 function isErrorResponse(xhr) {
     return xhr.status == defaultCustomErrorCode;

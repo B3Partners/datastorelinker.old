@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
+import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -18,6 +19,8 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.json.JSONErrorResolution;
+import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
@@ -223,6 +226,47 @@ public class InputAction extends DefaultAction {
         }
     }
 
+    public Resolution getTypeNames() {
+        log.debug("getTypeNames");
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        try {
+            Inout input = null;
+            if (selectedFilePath == null) {
+                input = (Inout)session.get(Inout.class, selectedInputId);
+            } else {
+                String fullPath = FileAction.getFileNameFromPPFileName(selectedFilePath, getContext());
+                input = new Inout();
+                input.setFile(fullPath);
+            }
+
+            DataStore ds = null;
+            String tableName = null;
+            if (input.getDatabase() != null) {
+                ds = DataStoreLinker.openDataStore(input.getDatabase());
+                tableName = input.getTableName();
+            } else if (input.getFile() != null) {
+                ds = DataStoreLinker.openDataStore(input.getFile());
+            } else {
+                throw new Exception("unsupported input type.");
+            }
+            SimpleFeature feature = getExampleFeature(ds, tableName);
+
+            JSONObject colNames = new JSONObject();
+            log.debug("feature.getFeatureType().getAttributeDescriptors().size(): " + feature.getFeatureType().getAttributeDescriptors().size());
+            for (AttributeDescriptor desc : feature.getFeatureType().getAttributeDescriptors()) {
+                String col = desc.getLocalName();
+                String type = desc.getType().getBinding().getSimpleName();
+                colNames.put(col + "(" + type + ")", col);
+            }
+            return new JSONResolution(colNames);
+        } catch (Exception e) {
+            log.error(e);
+            return new JSONErrorResolution(e.getMessage(), "Error retrieving input attribute names");
+        }
+    }
+
     public Resolution getExampleRecord() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -238,9 +282,7 @@ public class InputAction extends DefaultAction {
             } else if (input.getFile() != null) {
                 ds = DataStoreLinker.openDataStore(input.getFile());
             } else {
-                Exception ex = new Exception("unsupported input type.");
-                log.error(ex);
-                throw ex;
+                throw new Exception("unsupported input type.");
             }
             SimpleFeature feature = getExampleFeature(ds, tableName);
 

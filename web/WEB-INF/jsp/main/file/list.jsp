@@ -48,7 +48,7 @@
                     log(selectedFile);
                     if (selectedFile.length > 0) {
                         selectedFileFound = true;
-                        selectedFile.attr("checked", true);
+                        selectedFile.prop("checked", true);
                         selectedFile.siblings("a").addClass(activeClass);
                         $("#filetree").parent().scrollTo(
                             selectedFile,

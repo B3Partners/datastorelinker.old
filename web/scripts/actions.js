@@ -201,6 +201,9 @@ function openParametersDialog(action) {
             input.val(parameter.value);
             input.addClass(parameter.type);
             input.addClass("required"); // checkbox is not required (can be false), only textbox.
+            if (parameter.name === "Attribuutnaam") {
+                
+            }
         }
         value.append(input);
         row.append(key);

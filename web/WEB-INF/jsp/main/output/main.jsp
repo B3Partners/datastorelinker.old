@@ -11,11 +11,11 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
-        $("#radioNoDrop").removeAttr("checked");
-        $("#radioDrop").attr("checked", "checked");
+        $("#radioNoDrop").prop("checked", false);
+        $("#radioDrop").prop("checked", true);
         <c:if test="${not empty actionBean.drop and actionBean.drop == false}">
-            $("#radioDrop").removeAttr("checked");
-            $("#radioNoDrop").attr("checked", "checked");
+            $("#radioDrop").prop("checked", false);
+            $("#radioNoDrop").prop("checked", true);
         </c:if>
 
         connectionSuccessOutputDBAjaxOpenOptions = {

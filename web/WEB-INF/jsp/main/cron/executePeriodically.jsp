@@ -48,7 +48,7 @@
         });
         $("#hourFrom, #dayFrom, #weekFrom, #monthFrom, #yearFrom").datepicker({
             beforeShow: function(input, inst) {
-                $(input).prevAll(":radio").first().attr("checked", "checked");
+                $(input).prevAll(":radio").first().prop("checked", true);
                 $(input).addClass("required");
             }
         });
@@ -74,7 +74,7 @@
         // -> Verantwoordelijkheid van de gebruiker! -> Gebruik anders "last day of the month""
         // values: 0-31; 32-39 wordt afgevangen door de validation plugin bij submit poging.
         $("#monthOnDayOfTheMonth, #yearOnDayOfTheMonth").mask("39").val(dayOfTheMonthDefault).click(function() {
-            $(this).prevAll(":radio").first().attr("checked", "checked");
+            $(this).prevAll(":radio").first().prop("checked", true);
             $(this).addClass("required");
         });
 
@@ -88,7 +88,7 @@
         // Fill with existing cron job data
         <c:if test="${not empty actionBean.fromDate}">
             $("#yearFromDate, #monthFromDate, #weekFromDate, #dayFromDate, #hourFromDate").val("${actionBean.fromDate}");
-            $("#yearDate, #monthDate, #weekDate, #dayDate, #hourDate").attr("checked", "checked");
+            $("#yearDate, #monthDate, #weekDate, #dayDate, #hourDate").prop("checked", true);
         </c:if>
         <c:if test="${not empty actionBean.onMinute}">
             $("#hourOnMinute").val("${actionBean.onMinute}");
@@ -101,7 +101,7 @@
         </c:if>
         <c:if test="${not empty actionBean.onDayOfTheMonth}">
             $("#yearOnDayOfTheMonth, #monthOnDayOfTheMonth").val("${actionBean.onDayOfTheMonth}");
-            $("#yearRadioDayOfTheMonth, #monthRadioDayOfTheMonth").attr("checked", "checked");
+            $("#yearRadioDayOfTheMonth, #monthRadioDayOfTheMonth").prop("checked", true);
         </c:if>
         <c:if test="${not empty actionBean.onMonth}">
             $("#yearOnMonth").val("${actionBean.onMonth}");
