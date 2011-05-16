@@ -34,7 +34,7 @@ $(document).ready(function() {
 
     // buttonset bug fix IE 7:
     $(".ui-buttonset .ui-button").live("click", function(event) {
-        $("#" + $(this).attr("for")).attr("checked", true);
+        $("#" + $(this).attr("for")).prop("checked", true);
     });
 
 });

@@ -125,7 +125,12 @@ function handleError(xhr, textStatus, thrownError) {
 
     var errorMessage;
     if (xhr.status == defaultCustomErrorCode) {
-        errorMessage = xhr.responseText;//thrownError + event;
+        try {
+            openJSONErrorDialog($.parseJSON(xhr.responseText));
+            return;
+        } catch (ex) {
+            errorMessage = xhr.responseText;//thrownError + event;
+        }
     } else if (xhr.status == 0) {
         errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
     } else if (xhr.status == 404) {
@@ -139,7 +144,10 @@ function handleError(xhr, textStatus, thrownError) {
     } else {
         errorMessage = "Onbekende fout";
     }
+    openSimpleErrorDialog(errorMessage);
+}
 
+function openSimpleErrorDialog(errorMessage) {
     $("<div></div>").attr("id", "errorDialog").html(errorMessage).appendTo(document.body);
     $("#errorDialog").dialog($.extend({}, defaultDialogOptions, {
         title: I18N.error,
@@ -149,6 +157,20 @@ function handleError(xhr, textStatus, thrownError) {
             }
         }
     }));
+}
+
+function openJSONErrorDialog(data) {
+    $("<div id='errorDialog'>" + data.message + "</div>").appendTo(document.body);
+    $("#errorDialog").dialog({
+        title: data.title,
+        modal: true,
+        buttons: {
+            "Ok": function() {
+                $("#errorDialog").dialog("close");
+            }
+        },
+        close: defaultDialogClose
+    });
 }
 
 function isErrorResponse(xhr) {

@@ -44,12 +44,20 @@
             $("#" + data.currentStep).addClass("ui-layout-center");
 
             if (data.previousStep === "SelecteerInvoer" && data.currentStep !== "SelecteerInvoer") {
+                var inputText = "";
+                if ($("#inputTabs").tabs("option", "selected") === 0) {
+                    inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
+                } else {
+                    inputText = $("#filesListContainer input:radio:checked").val();
+                }
+                $("#inputOverviewContainer").html(inputText);
+
                 //log('data.previousStep === "SelecteerInvoer"');
                 var params = {getTypeNames: ""};
                 if ($("#inputTabs").tabs("option", "selected") === 0) {
-                    params.selectedInputId = $("#createUpdateProcessForm input[name='selectedInputId']").val();
+                    params.selectedInputId = $("#inputListContainer input:radio:checked").val();
                 } else {
-                    params.selectedFilePath = $("#createUpdateProcessForm input[name='selectedFilePath']").val();
+                    params.selectedFilePath = $("#filesListContainer input:radio:checked").val();
                 }
                 //log("retrieving col names...");
                 //log(params);
@@ -58,12 +66,13 @@
                     data: params,
                     dataType: "json",
                     global: false,
-                    success: function(data, textStatus, jqXHR) {
-                        inputColumnNames = data;
-                        log("col names:");
-                        log(inputColumnNames);
-                    },
                     error: handleError
+                }).done(function(columns) {
+                    log("columns:");
+                    log(columns);
+                    $.each(columns, function(key, value) {
+                        $("#inputOverviewContainer").append(key);
+                    });
                 });
             }
 
@@ -79,13 +88,6 @@
             $("#" + data.currentStep).css(topZIndexCss);
 
             if (data.currentStep === "Overzicht") {
-                var inputText = "";
-                if ($("#inputTabs").tabs("option", "selected") === 0) {
-                    inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
-                } else {
-                    inputText = $("#filesListContainer input:radio:checked").val();
-                }
-                $("#inputOverviewContainer").html(inputText);
                 var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
                 $("#outputOverviewContainer").html(outputText);
             }
