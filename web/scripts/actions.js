@@ -233,6 +233,7 @@ function openParametersDialog(action) {
         parametersDialog.find("tbody").append(row);
         if (parameter.name === "Attribuutnaam") {
             input.combobox();
+            input.siblings(":text").addClass("required");
         }
     });
 
