@@ -58,6 +58,7 @@
             <script type="text/javascript" src="${contextPath}/scripts/jquery.easing/jquery.easing-latest.js"></script>
             <script type="text/javascript" src="${contextPath}/scripts/jquery.qtip/jquery.qtip-latest.js"></script>
             <!--script type="text/javascript" src="${contextPath}/scripts/jquery.qtip/jquery.qtip-latest.min.js"></script-->
+            <script type="text/javascript" src="${contextPath}/scripts/jquery.ui.combobox.js"></script>
 
             <!-- other 3rd party libs -->
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>

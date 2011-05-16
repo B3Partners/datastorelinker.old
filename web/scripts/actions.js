@@ -190,25 +190,50 @@ function openParametersDialog(action) {
         label.append(parameter.name);
         key.append(label);
         var value = $("<td></td>");
-        var input = $("<input />").attr({
-            name: parameter.paramId // required for validation
-        });
-        if (parameter.type && parameter.type === "boolean") {
-            input.attr("type", "checkbox");
-            if (parameter.value === true || parameter.value == "true")
-                input.attr("checked", true);
+        var input;
+        if (parameter.name === "Attribuutnaam") {
+            input = $("<select />").attr({
+                name: parameter.paramId // required for validation
+            });
+            inputColumnNamesJqXhr.done(function(data) {
+                var paramValueFound = false;
+                $.each(data, function(key, value) {
+                    var option = $("<option></option>").attr("value", value);
+                    option.text(value);
+                    if (value === parameter.value) {
+                        option.attr("selected", "selected");
+                        paramValueFound = true;
+                    }
+                    input.append(option);
+                });
+                if (!paramValueFound) {
+                    _appendDefaultParameterValue(input, parameter);
+                }
+            });
+            if (!inputColumnNamesJqXhr.isResolved()) {
+                _appendDefaultParameterValue(input, parameter);
+            }
         } else {
-            input.val(parameter.value);
-            input.addClass(parameter.type);
-            input.addClass("required"); // checkbox is not required (can be false), only textbox.
-            if (parameter.name === "Attribuutnaam") {
-                
+            input = $("<input />").attr({
+                name: parameter.paramId // required for validation
+            });
+            if (parameter.type && parameter.type === "boolean") {
+                input.attr("type", "checkbox");
+                if (parameter.value === true || parameter.value == "true")
+                    input.attr("checked", true);
+            } else {
+                input.val(parameter.value);
+                input.addClass(parameter.type);
+                input.addClass("required"); // checkbox is not required (can be false), only textbox.
             }
         }
         value.append(input);
         row.append(key);
         row.append(value);
         parametersDialog.find("tbody").append(row);
+        if (parameter.name === "Attribuutnaam") {
+            input.combobox();
+        }
     });
 
     parameterForm.validate(defaultValidateOptions);
@@ -231,7 +256,7 @@ function openParametersDialog(action) {
 
             var input = $(parameterRow).find("input");
 
-            if (input.log("inputding").is(":checkbox")) {
+            if (input.is(":checkbox")) {
                 paramMetadata.value = input.is(":checked");
             } else {
                 paramMetadata.value = input.val();
@@ -249,4 +274,13 @@ function openParametersDialog(action) {
         width: 550,
         buttons: parametersDialogButtons
     }));
+}
+
+function _appendDefaultParameterValue(input, parameter) {
+    var option = $("<option></option>").attr({
+        "value": parameter.value,
+        "selected": "selected"
+    });
+    option.text(parameter.value);
+    input.append(option);
 }
