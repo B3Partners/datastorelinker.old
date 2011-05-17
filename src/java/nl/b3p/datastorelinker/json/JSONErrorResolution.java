@@ -5,7 +5,9 @@
 
 package nl.b3p.datastorelinker.json;
 
+import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
+import net.sourceforge.stripes.action.LocalizableMessage;
 
 /**
  *
@@ -20,6 +22,22 @@ public class JSONErrorResolution extends JSONResolution {
 
     public JSONErrorResolution(String message, String title) {
         super(new ErrorMessage(message, title));
+    }
+
+    public JSONErrorResolution(LocalizableMessage message) {
+        this(message.getMessage(Locale.getDefault()), "Error");
+    }
+
+    public JSONErrorResolution(LocalizableMessage message, LocalizableMessage title) {
+        this(message.getMessage(Locale.getDefault()), title.getMessage(Locale.getDefault()));
+    }
+
+    public JSONErrorResolution(LocalizableMessage message, String title) {
+        this(message.getMessage(Locale.getDefault()), title);
+    }
+
+    public JSONErrorResolution(String message, LocalizableMessage title) {
+        this(message, title.getMessage(Locale.getDefault()));
     }
 
     @Override

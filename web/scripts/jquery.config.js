@@ -114,7 +114,11 @@ defaultScrollToOptions = {
     easing: "easeOutBounce"
 };
 
+$.fx.off = true;
 formWizardConfig = {
+/*    inDuration: 1,
+    outDuration: 1,
+*/    
     historyEnabled : false,
     formPluginEnabled : true,
     validationEnabled : true,
@@ -154,5 +158,24 @@ function _calculateDialogSize(percentage, minSize, maxSize, bodySize) {
         if (size > maxSize)
             size = maxSize;
     }
+    if (size > bodySize)
+        size = bodySize;
     return size;
 }
+
+;(function($) {
+    $.fn.valign = function() {
+        return this.each(function() {
+            var height = $(this).height();
+            var parentHeight = $(this).parent().height();
+            var marginTop = Math.ceil((parentHeight - height) / 2);
+            $(this).css("margin-top", marginTop);
+        });
+    };
+    
+    $.fn.hvalign = function() {
+        return this.each(function() {
+            $(this).valign().css("text-align", "center");
+        });
+    }
+})(jQuery);

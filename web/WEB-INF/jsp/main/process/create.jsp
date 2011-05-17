@@ -9,12 +9,17 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <script type="text/javascript" class="ui-layout-ignore">
+    if (!window.layouts) {
+        window.layouts = {};
+    }
 
     inputDialogLayoutOptions = $.extend({}, defaultDialogLayoutOptions, {
         center__findNestedContent: true
     });
+    log("js");
 
     $(document).ready(function() {
+        log("docready");
         initInput();
         initOutput();
 
@@ -25,73 +30,52 @@
             "${contextPath}"
         );
         //log(getActionsList());
+        $("#createUpdateProcessForm").children("div:last").addClass("ui-layout-ignore");
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
-            //log("step_shown");
+            log("step_shown");
             formWizardStep(data);
 
             initGuiInput();
             initGuiOutput();
-
-            $("#processContainer").layout(defaultDialogLayoutOptions);
-            if (data.currentStep === "SelecteerInvoer") {
-                $("#processSteps").layout(inputDialogLayoutOptions).destroy();
-            } else {
-                $("#processSteps").layout(defaultDialogLayoutOptions).destroy();
-            }
             
+            layouts.processContainer = $("#processContainer").layout(defaultDialogLayoutOptions);
+            if (layouts.processSteps)
+                layouts.processSteps.destroy();
+        
             if (data.previousStep && data.previousStep !== data.currentStep)
                 $("#" + data.previousStep).removeClass("ui-layout-center");
             $("#" + data.currentStep).addClass("ui-layout-center");
 
+            $("#" + data.previousStep).hide();
             if (data.previousStep === "SelecteerInvoer" && data.currentStep !== "SelecteerInvoer") {
-                var inputText = "";
-                if ($("#inputTabs").tabs("option", "selected") === 0) {
-                    inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
-                } else {
-                    inputText = $("#filesListContainer input:radio:checked").val();
-                }
-                $("#inputOverviewContainer").html(inputText);
-
-                //log('data.previousStep === "SelecteerInvoer"');
-                var params = {getTypeNames: ""};
-                if ($("#inputTabs").tabs("option", "selected") === 0) {
-                    params.selectedInputId = $("#inputListContainer input:radio:checked").val();
-                } else {
-                    params.selectedFilePath = $("#filesListContainer input:radio:checked").val();
-                }
-                //log("retrieving col names...");
-                //log(params);
-                inputColumnNamesJqXhr = $.ajax({
-                    url: "${inputUrl}",
-                    data: params,
-                    dataType: "json",
-                    global: false,
-                    error: handleError
-                }).done(function(columns) {
-                    log("columns:");
-                    log(columns);
-                    $.each(columns, function(key, value) {
-                        $("#inputOverviewContainer").append(key);
-                    });
-                });
+                getColumnsNames();
+            } else if (data.previousStep === "SelecteerUitvoer") {
+            
+            } else if (data.previousStep === "Overzicht") {
+                overviewLayoutDestroy();
             }
 
+            $("#" + data.currentStep).show();
             if (data.currentStep === "SelecteerInvoer") {
-                $("#processSteps").layout(inputDialogLayoutOptions).initContent("center");
-            } else {
-                $("#processSteps").layout(defaultDialogLayoutOptions).initContent("center");
+                layouts.processSteps = $("#processSteps").layout(inputDialogLayoutOptions);
+                // overige layout init van SelecteerInvoer in tabs.show.
+            } else if (data.currentStep === "SelecteerUitvoer") {
+                layouts.processSteps = $("#processSteps").layout(defaultDialogLayoutOptions);
+            } else if (data.currentStep === "Overzicht"){
+                layouts.processSteps = $("#processSteps").layout(defaultDialogLayoutOptions);
+                overviewLayoutCreate();
+
+                var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
+                $("#outputOverviewContainer .titleContainer").html(outputText);
             }
 
             // layout plugin messes up z-indices; sets them to 1
             var topZIndexCss = { "z-index": "auto" };
             $("#processContainer, #processSteps, #inputContainer .wizardButtonsArea").css(topZIndexCss);
             $("#" + data.currentStep).css(topZIndexCss);
-
-            if (data.currentStep === "Overzicht") {
-                var outputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
-                $("#outputOverviewContainer").html(outputText);
-            }
         });
+        
+        log("na step shown bind");
 
         $("#createUpdateProcessForm").formwizard(
             // form wizard settings
@@ -157,15 +141,62 @@
                 })
             })
         );
+        
+        log("na form wiz gemaakt");
+
     });
+    
+    function getColumnsNames() {
+        var inputText = "";
+        if ($("#inputTabs").tabs("option", "selected") === 0) {
+            inputText = $("#inputListContainer .ui-state-active .ui-button-text").html();
+        } else {
+            inputText = $("#filesListContainer input:radio:checked").val();
+        }
+        $("#inputOverviewContainer .titleContainer").html(inputText);
+
+        //log('data.previousStep === "SelecteerInvoer"');
+        var params = {getTypeNames: ""};
+        if ($("#inputTabs").tabs("option", "selected") === 0) {
+            params.selectedInputId = $("#inputListContainer input:radio:checked").val();
+        } else {
+            params.selectedFilePath = $("#filesListContainer input:radio:checked").val();
+        }
+        //log("retrieving col names...");
+        //log(params);
+        inputColumnNamesJqXhr = $.ajax({
+            url: "${inputUrl}",
+            data: params,
+            dataType: "json",
+            global: false,
+            error: handleError
+        }).done(function(columns) {
+            log("columns:");
+            log(columns);
+            var colTable = $("<table>").css("width", "100%");
+            var thead = $("<thead>").append(
+                $("<td>", {text: "Attribuutnaam"}), 
+                $("<td>", {text: "Attribuuttype"})
+            ).addClass("ui-widget-header action-list-header");
+            colTable.append(thead);
+            $.each(columns, function(key, value) {
+                var tdKey = $("<td>", {text: key});
+                var tdValue = $("<td>", {text: value});
+                colTable.append($("<tr>").append(tdKey, tdValue));
+            });
+            $("#inputOverviewContainer .colsContainer").empty();
+            $("#inputOverviewContainer .colsContainer").append(colTable);
+        });
+    }
 </script>
 
-<div id="actionsListMetadata"></div>
-
 <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
+    
+    <div id="actionsListMetadata" class="ui-layout-ignore"></div>
+
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->
     <stripes:wizard-fields/>
-    <div id="processSteps" class="ui-layout-center">
+    <div id="processSteps" class="ui-layout-center" style="height: 100%;">
         <div id="<fmt:message key="process.selectInput.short"/>" class="step ui-layout-center">
             <%@include file="/WEB-INF/jsp/main/input/main.jsp" %>
         </div>
@@ -173,10 +204,7 @@
             <%@include file="/WEB-INF/jsp/main/output/main.jsp" %>
         </div>
         <div id="<fmt:message key="process.overview.short"/>" class="step submit_step">
-            <h1><fmt:message key="process.overview"/></h1>
-            <div class="ui-layout-content">
-                <%@include file="/WEB-INF/jsp/main/overview/view.jsp" %>
-            </div>
+            <%@include file="/WEB-INF/jsp/main/overview/view.jsp" %>
         </div>
     </div>
     <div class="ui-layout-south wizardButtonsArea">

@@ -197,10 +197,10 @@ function openParametersDialog(action) {
             });
             inputColumnNamesJqXhr.done(function(data) {
                 var paramValueFound = false;
-                $.each(data, function(key, value) {
-                    var option = $("<option></option>").attr("value", value);
-                    option.text(value);
-                    if (value === parameter.value) {
+                $.each(data, function(colName, dataType) {
+                    var option = $("<option></option>").attr("value", colName);
+                    option.text(colName);
+                    if (colName === parameter.value) {
                         option.attr("selected", "selected");
                         paramValueFound = true;
                     }

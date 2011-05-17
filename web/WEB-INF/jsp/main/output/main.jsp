@@ -102,6 +102,8 @@
 
             return defaultButtonClick(this);
         });
+        
+        log("output docready");
     });
 </script>
 

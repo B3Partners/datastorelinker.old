@@ -112,16 +112,16 @@ $(document).ajaxStop(function() {
 defaultCustomErrorCode = 1000;
 
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
+    log("error via ajaxError");
     $.unblockUI(unblockUIOptions);
     handleError(xhr, "", thrownError);
 });
 
 function handleError(xhr, textStatus, thrownError) {
-    /*log(event);
+    log("error");
     log(xhr);
-    log(ajaxOptions);
-    log(thrownError);*/
-    //log(xhr.status);
+    log(thrownError);
+    log(xhr.status);
 
     var errorMessage;
     if (xhr.status == defaultCustomErrorCode) {
@@ -244,8 +244,10 @@ function ajaxOpen(sendOptions) {
         container.dialog(options.dialogOptions);
     }
 
-    if (container != null)
+    if (container != null) {
+        //container.css("overflow", "auto");
         ajaxOptions.context = container[0];
+    }
 
     if (sendOptions.url)
         ajaxOptions.url = sendOptions.url;

@@ -13,27 +13,14 @@
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
-        log("actionsWorkbenchList:");
-        log(actionsWorkbenchList);
+        //log("actionsWorkbenchList:");
+        //log(actionsWorkbenchList);
         var actionsList = getActionsList();
-        log("actionsList:");
-        log(actionsList);
+        //log("actionsList:");
+        //log(actionsList);
 
         fillActionsList(actionsWorkbenchList, "#actionsWorkbenchContainer", "${contextPath}");
         fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", dragActionsPlaceholder, true);
-
-        $("#actionsMainContainer").layout(defaultLayoutOptions);
-        $("#actionsListsContainer").layout($.extend({}, defaultLayoutOptions, {
-            resizable: true,
-            east__size: 300,
-            west__size: 300
-        }));
-
-        // layout plugin messes up z-indices; sets them to 1
-        var topZIndexCss = { "z-index": "auto" };
-        $("#actionsListsContainer, #showExampleContainer").css(topZIndexCss);
-        $("#actionsListsContainer > div").css(topZIndexCss);
-        $("#actionsMainContainer .ui-layout-resizer").css(topZIndexCss);
 
         $("#actionsMainContainer .action").live("mouseenter",
             function() { $(this).addClass("action-hover"); }
@@ -87,7 +74,7 @@
             }
         });
         
-        var selectedInputTabAnchor = $("#inputTabs > ul > li.ui-tabs-selected > a");
+        /*var selectedInputTabAnchor = $("#inputTabs > ul > li.ui-tabs-selected > a");
         var selectedInputTab = "#";
         if (selectedInputTabAnchor.length > 0) {
             selectedInputTab = selectedInputTabAnchor[0].getAttribute("href"); // To make sure IE returns url just as in href attr.
@@ -122,16 +109,34 @@
                 }
                 // niet false returnen aangezien de checkbox wel op true gezet moet worden.
             });
-        }
+        }*/
+
+        layouts.actionsMainContainer = $("#actionsMainContainer").layout($.extend({}, defaultLayoutOptions, {//defaultLayoutOptions);
+        //$("#actionsListsContainer").layout($.extend({}, defaultLayoutOptions, {
+            resizable: true,
+            west__size: 300,
+            //center__size: 300,
+            east__size: 300,
+            west__findNestedContent: true,
+            east__findNestedContent: true
+        }));
+
+        // layout plugin messes up z-indices; sets them to 1
+        var topZIndexCss = { "z-index": "auto" };
+        $("#actionsMainContainer, #showExampleContainer").css(topZIndexCss);
+        $("#actionsMainContainer > div").css(topZIndexCss);
+        /*$("#actionsListsContainer, #showExampleContainer").css(topZIndexCss);
+        $("#actionsListsContainer > div").css(topZIndexCss);*/
+        $("#actionsMainContainer .ui-layout-resizer").css(topZIndexCss);
 
     });
 
 </script>
 
-<div id="actionsMainContainer" style="width: 100%; height: 100%;">
-    <div id="actionsListsContainer" class="ui-layout-center">
+<div id="actionsMainContainer" style="width: 100%; height: 100%">
+    <!--div id="actionsListsContainer" class="ui-layout-center"-->
         <div class="ui-layout-west">
-            <div id="actionsList" class="ui-widget-content ui-corner-all" style="margin-left: 10px">
+            <div id="actionsList" class="ui-widget-content ui-corner-all" style="margin-left: 10px; margin-right: 10px;">
                 <div class="ui-widget-header ui-corner-all action-list-header">Actielijst</div>
                 <div id="actionsListContainer" class="action-list ui-layout-content"></div>
             </div>
@@ -142,18 +147,18 @@
         </div>
 
         <div class="ui-layout-east">
-            <div id="actionsWorkbench" class="ui-widget-content ui-corner-all" style="margin-right: 10px">
+            <div id="actionsWorkbench" class="ui-widget-content ui-corner-all" style="margin-left: 10px; margin-right: 10px;">
                 <div class="ui-widget-header ui-corner-all action-list-header">Werkbank</div>
                 <div id="actionsWorkbenchContainer" class="action-list ui-layout-content"></div>
             </div>
         </div>
-    </div>
+    <!--/div-->
 
-    <div id="showExampleContainer" class="ui-layout-south">
+    <%--div id="showExampleContainer" class="ui-layout-south">
         <div>
             <input type="checkbox" id="exampleRecordCheckBox" name="showExampleRecord"/>
             <fmt:message key="showExampleRecord"/>
         </div>
         <div id="exampleRecordContainer" style="height: 55px"></div>
-    </div>
+    </div--%>
 </div>

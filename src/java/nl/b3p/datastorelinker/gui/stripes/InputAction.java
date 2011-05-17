@@ -7,12 +7,15 @@ package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
+import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
@@ -253,17 +256,30 @@ public class InputAction extends DefaultAction {
             }
             SimpleFeature feature = getExampleFeature(ds, tableName);
 
+            //log.debug("feature.getFeatureType().getAttributeDescriptors().size(): " + feature.getFeatureType().getAttributeDescriptors().size());
+            List<AttributeDescriptor> srcAttrDesc = feature.getFeatureType().getAttributeDescriptors();
+            List<AttributeDescriptor> attrDescs = new ArrayList<AttributeDescriptor>(srcAttrDesc.size());
+            for (AttributeDescriptor ad : srcAttrDesc) {
+                attrDescs.add(ad);
+            }
+            Collections.sort(attrDescs, new Comparator<AttributeDescriptor>() {
+                public int compare(AttributeDescriptor o1, AttributeDescriptor o2) {
+                    String o1Name = o1.getLocalName();
+                    String o2Name = o2.getLocalName();
+                    return o1Name == null ? 0 : o1Name.compareTo(o2Name);
+                }
+            });
             JSONObject colNames = new JSONObject();
-            log.debug("feature.getFeatureType().getAttributeDescriptors().size(): " + feature.getFeatureType().getAttributeDescriptors().size());
-            for (AttributeDescriptor desc : feature.getFeatureType().getAttributeDescriptors()) {
+            for (AttributeDescriptor desc : attrDescs) {
                 String col = desc.getLocalName();
                 String type = desc.getType().getBinding().getSimpleName();
-                colNames.put(col + "(" + type + ")", col);
+                colNames.put(col, type);
             }
             return new JSONResolution(colNames);
         } catch (Exception e) {
             log.error(e);
-            return new JSONErrorResolution(e.getMessage(), "Error retrieving input attribute names");
+            String message = e.getMessage() + "<p>" + new LocalizableMessage("attributeReadErrorAdvice").getMessage(Locale.getDefault()) + "</p>";
+            return new JSONErrorResolution(message, new LocalizableMessage("attributeReadError"));
         }
     }
 

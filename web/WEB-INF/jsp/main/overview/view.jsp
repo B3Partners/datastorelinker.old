@@ -36,8 +36,8 @@
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
                     title: "<fmt:message key="createActions"/>",
-                    width: Math.floor($('body').width() * .60),
-                    height: 710,//Math.floor($('body').height() * .80), // actielijst hoogte is absoluut dus we kunnen dit nog niet dynamisch maken
+                    width: calculateDialogWidth(60, 600),//Math.floor($('body').width() * .60),
+                    height: calculateDialogHeight(60, 600),//600,//710,//Math.floor($('body').height() * .80), // actielijst hoogte is absoluut dus we kunnen dit nog niet dynamisch maken
                     buttons: {
                         "<fmt:message key="finish"/>" : function() {
                             var actionsListJSON = getCreatedActionList();
@@ -47,53 +47,91 @@
                         }
                     },
                     resize: function(event, ui) {
-                        $("#actionsMainContainer").layout().resizeAll();
-                        $("#actionsListsContainer").layout().resizeAll();
+                        layouts.actionsMainContainer.resizeAll();
                     }
                 })
             });
         });
-
+        log("view docready");
     });
+    
+    function overviewLayoutCreate() {
+        layouts.overviewMainContainer = $("#overviewMainContainer").layout($.extend({}, defaultLayoutOptions, {
+            resizable: true,
+            west__size: 250,
+            east__size: 250,
+            west__findNestedContent: true,
+            east__findNestedContent: true
+        }));
+
+        layouts.overviewActionsContainer = $("#overviewActionsContainer").layout($.extend({}, defaultLayoutOptions, {
+            west__size: 50,
+            east__size: 50,
+            center__findNestedContent: true
+        }));
+
+        // layout plugin messes up z-indices; sets them to 1
+        var topZIndexCss = { "z-index": "auto" };
+        $("#overviewMainContainer > div").css(topZIndexCss);
+        $("#overviewActionsContainer > div").css(topZIndexCss);
+        $("#overviewMainContainer .ui-layout-resizer").css(topZIndexCss);
+
+        $(".actions-arrow").hvalign();
+    }
+    
+    function overviewLayoutDestroy() {
+        layouts.overviewActionsContainer.destroy();
+        layouts.overviewMainContainer.destroy();
+    }
 </script>
 
-<div>
+<h1><fmt:message key="process.overview"/></h1>
+
+<div id="overviewMainContainer" class="ui-layout-content" style="width: 100%; height: 100%">
     <%-- Relatief maken als in actions/create.jsp --%>
-    <div id="inputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 50px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
+    <div id="inputOverview" class="ui-layout-west ui-widget-content ui-corner-all" style="margin: 10px">
+        <div class="ui-widget-header ui-corner-all action-list-header">
             <fmt:message key="input"/>
         </div>
-        <div id="inputOverviewContainer" class="action-list" style="height: 300px">
+        <div id="inputOverviewContainer" class="ui-layout-content action-list">
+            <div class="titleContainer"></div>
+            <div class="colsContainer"></div>
         </div>
     </div>
 
-    <div style="width: 50px; left: 250px; position: absolute; text-align: center">
-    ->
-    </div>
-
-    <div id="actionsOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 300px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
-            <fmt:message key="actions"/>
+    <div id="overviewActionsContainer" class="ui-layout-center" style="height: 100%">
+        <div class="ui-layout-west">
+            <div class="actions-arrow">
+                ->
+            </div>
         </div>
-        <div id="actionsOverviewContainer" class="action-list clickable-list" style="height: 300px">
+        <div id="actionsOverview" class="ui-layout-center ui-widget-content ui-corner-all" style="margin: 10px">
+            <div class="ui-widget-header ui-corner-all action-list-header">
+                <fmt:message key="actions"/>
+            </div>
+            <div id="actionsOverviewContainer" class="ui-layout-content action-list clickable-list">
+            </div>
         </div>
+        <div class="ui-layout-east">
+            <div class="actions-arrow">
+                ->
+            </div>
+          </div>
     </div>
 
-    <div style="width: 50px; left: 500px; position: absolute; text-align: center">
-    ->
-    </div>
-
-    <div id="outputOverview" class="ui-widget-content ui-corner-all" style="width: 200px; left: 550px; position: absolute">
-        <div class="ui-widget-header ui-corner-all action-list-header" style="width: 184px">
+    <div id="outputOverview" class="ui-layout-east ui-widget-content ui-corner-all" style="margin: 10px">
+        <div class="ui-widget-header ui-corner-all action-list-header">
             <fmt:message key="output"/>
         </div>
-        <div id="outputOverviewContainer" class="action-list" style="height: 300px">
+        <div id="outputOverviewContainer" class="ui-layout-east action-list">
+            <div class="titleContainer"></div>
+            <div class="colsContainer"></div>
         </div>
     </div>
 
     <fmt:message var="emailTooltip" key="emailAddressProcessDoneDescription"/>
     <fmt:message var="subjectTooltip" key="subjectProcessDoneDescription"/>
-    <div style="top: 340px; position: absolute">
+    <div class="ui-layout-south">
         <table>
             <tr title="${emailTooltip}">
                 <td>

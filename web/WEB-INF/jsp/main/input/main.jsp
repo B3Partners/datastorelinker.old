@@ -11,13 +11,10 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
+        log("input main docready");
         var classesUsed = "ui-layout-content mandatory-form-input";
         var layoutContentClass = "ui-layout-content";
         //var classesUsed = "mandatory-form-input";
-
-        var tabLayout = null;
-        var inputTabsLayout = null;
-        var processStepsLayout = null;
 
         $("#inputList, #filesListContainer").css({
             /*height: "100%",
@@ -41,15 +38,15 @@
             },
             selected: selectedTab,
             show: function(event, ui) {
-                //log("tabshow");
+                log("tabshow");
                 //log(ui);
 
-                if (!!tabLayout)
-                    tabLayout.destroy();
-                if (!!inputTabsLayout)
-                    inputTabsLayout.destroy();
-                if (!!processStepsLayout)
-                    processStepsLayout.destroy();
+                if (layouts.tabs)
+                    layouts.tabs.destroy();
+                if (layouts.inputTabs)
+                    layouts.inputTabs.destroy();
+                if (layouts.processSteps)
+                    layouts.processSteps.destroy();
 
                 $("#" + ui.panel.id).addClass(layoutContentClass);
                 $("#" + ui.panel.id + " input:radio").addClass("required");
@@ -65,12 +62,12 @@
                     $("#filesListContainer").addClass(classesUsed);
                 }
 
-                processStepsLayout = $("#processSteps").layout(inputDialogLayoutOptions);
-                inputTabsLayout = $("#inputTabs").layout(inputDialogLayoutOptions);
+                layouts.processSteps = $("#processSteps").layout(inputDialogLayoutOptions);
+                layouts.inputTabs = $("#inputTabs").layout(inputDialogLayoutOptions);
                 if (ui.panel.id === "databaseTab") {
-                    tabLayout = $("#" + ui.panel.id).layout(inputDialogLayoutOptions);
+                    layouts.tabs = $("#" + ui.panel.id).layout(inputDialogLayoutOptions);
                 } else if (ui.panel.id === "fileTab") {
-                    tabLayout = createDefaultVerticalLayout($("#" + ui.panel.id));
+                    layouts.tabs = createDefaultVerticalLayout($("#" + ui.panel.id));
                 }
 
                 $("#SelecteerInvoer, .wizardButtonsArea, #inputTabs > *, #" + ui.panel.id + " > *").css("z-index", "auto");
