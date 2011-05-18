@@ -169,40 +169,30 @@ function openParametersDialog(action) {
         log("parameter");
         log(parameter);
 
-        var row = $("<tr></tr>").attr({
-            jqmetadata: JSON.stringify(parameter)
-        });
-
         var key = $("<td></td>");
-        var label = $("<label></label>");
-        label.append(parameter.name);
+        var label = $("<label></label>", {
+            text: parameter.name
+        });
         key.append(label);
-        var value = $("<td></td>");
         var input;
-        if (parameter.name === "Attribuutnaam") {
-            input = $("<select />").attr({
+        if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
+            input = $("<select />", {
                 name: parameter.paramId // required for validation
             });
-            inputColumnNamesJqXhr.done(function(data) {
-                var paramValueFound = false;
-                $.each(data, function(colName, dataType) {
-                    var option = $("<option></option>").attr("value", colName);
-                    option.text(colName);
-                    if (colName === parameter.value) {
-                        option.attr("selected", "selected");
-                        paramValueFound = true;
-                    }
-                    input.append(option);
+            if (parameter.name === I18N["keys.ATTRIBUTE_NAME"]) {
+                inputColumnNamesJqXhr.done(function(data) {
+                    addDataToSelect(data, input, parameter);/*, function(key, value) {
+                        return key + " (" + value + ")";
+                    });*/
                 });
-                if (!paramValueFound) {
+                if (!inputColumnNamesJqXhr.isResolved()) {
                     _appendDefaultParameterValue(input, parameter);
                 }
-            });
-            if (!inputColumnNamesJqXhr.isResolved()) {
-                _appendDefaultParameterValue(input, parameter);
+            } else if (parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
+                addDataToSelect(attributeTypeJavaClasses, input, parameter);
             }
         } else {
-            input = $("<input />").attr({
+            input = $("<input />", {
                 name: parameter.paramId // required for validation
             });
             if (parameter.type && parameter.type === "boolean") {
@@ -210,16 +200,23 @@ function openParametersDialog(action) {
                 if (parameter.value === true || parameter.value == "true")
                     input.attr("checked", true);
             } else {
+                input.attr("type", "text");
                 input.val(parameter.value);
                 input.addClass(parameter.type);
                 input.addClass("required"); // checkbox is not required (can be false), only textbox.
             }
         }
-        value.append(input);
-        row.append(key);
-        row.append(value);
+        var value = $("<td></td>", {
+            html: input
+        });
+        
+        var row = $("<tr></tr>")
+            .attr({
+                jqmetadata: JSON.stringify(parameter)
+            })
+            .append(key, value);
         parametersDialog.find("tbody").append(row);
-        if (parameter.name === "Attribuutnaam") {
+        if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
             input.combobox();
             input.siblings(":text").addClass("required");
         }
@@ -244,12 +241,21 @@ function openParametersDialog(action) {
             //log(paramMetadata);
 
             var input = $(parameterRow).find("input");
-
-            if (input.is(":checkbox")) {
-                paramMetadata.value = input.is(":checked");
-            } else {
-                paramMetadata.value = input.val();
-            }
+            /*var select = $(parameterRow).find("select");
+            if (select.length > 0) {
+                paramMetadata.value = select.val();
+                log("paramMetadata.value:" + paramMetadata.value);
+                if (!paramMetadata.value) {
+                    paramMetadata.value = input.val();
+                    log("replace paramMetadata.value:" + paramMetadata.value);
+                }                    
+            } else {*/
+                if (input.is(":checkbox")) {
+                    paramMetadata.value = input.is(":checked");
+                } else {
+                    paramMetadata.value = input.val();
+                }
+            //}
 
             getParameters(action).push(paramMetadata);
         });
@@ -265,11 +271,42 @@ function openParametersDialog(action) {
     }));
 }
 
-function _appendDefaultParameterValue(input, parameter) {
+function addDataToSelect(data, select, parameter, prettyTextCallback) {
+    var paramValueFound = false;
+    $.each(data, function(key, value) {
+        var option = $("<option></option>").attr("value", key);
+        option.text(prettyTextCallback ? prettyTextCallback(key, value) : key);
+        if (key === parameter.value) {
+            option.attr("selected", "selected");
+            paramValueFound = true;
+        }
+        select.append(option);
+    });
+    if (!paramValueFound) {
+        _appendDefaultParameterValue(select, parameter);
+    }
+}
+
+function _appendDefaultParameterValue(select, parameter) {
     var option = $("<option></option>").attr({
         "value": parameter.value,
         "selected": "selected"
     });
     option.text(parameter.value);
-    input.append(option);
+    select.append(option);
+}
+
+attributeTypeJavaClasses = {
+    String: {},
+    Boolean: {},
+    Integer: {},
+    Float: {},
+    Double: {},
+    Geometry: {},
+    Point: {},
+    LineString: {},
+    Polygon: {},
+    MultiPoint: {},
+    MultiLineString: {},
+    MultiPolygon: {}
 }

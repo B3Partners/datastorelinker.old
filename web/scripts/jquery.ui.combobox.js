@@ -35,12 +35,6 @@
                         self._trigger( "selected", event, {
                             item: ui.item.option
                         });
-                    },
-                    open: function(event, ui) {
-                        log("menu ui?");
-                        log(ui);
-                        log(event);
-                        ui.removeClass("ui-corner-all").addClass("ui-corner-bottom");
                     }
                 })
                 .addClass( "ui-widget" );
