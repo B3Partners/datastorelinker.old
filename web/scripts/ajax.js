@@ -112,16 +112,28 @@ $(document).ajaxStop(function() {
 defaultCustomErrorCode = 1000;
 
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
-    log("error via ajaxError");
+    /*log("error via ajaxError");
+    log(event);
+    log(ajaxOptions);*/
     $.unblockUI(unblockUIOptions);
-    handleError(xhr, "", thrownError);
+    
+    if ("abort" !== thrownError)
+        handleError(xhr, "", thrownError);
+});
+
+// for debugging purposes:
+$(document).ajaxSend(function(event, jqxhr, settings) {
+    /*log("ajaxSend");
+    log(event);
+    log(jqxhr);
+    log(settings);*/
 });
 
 function handleError(xhr, textStatus, thrownError) {
-    log("error");
+    /*log("error");
     log(xhr);
     log(thrownError);
-    log(xhr.status);
+    log(xhr.status);*/
 
     var errorMessage;
     if (xhr.status == defaultCustomErrorCode) {
@@ -131,16 +143,18 @@ function handleError(xhr, textStatus, thrownError) {
         } catch (ex) {
             errorMessage = xhr.responseText;//thrownError + event;
         }
+    } else if (thrownError == "parsererror") {
+        errorMessage = "Parsen van het request is mislukt.";
+    } else if (thrownError == "timeout") {
+        errorMessage = "Het ophalen van de pagina duurde te lang.";
+    } else if (thrownError == "abort") {
+        errorMessage = "Het request is afgebroken.";
     } else if (xhr.status == 0) {
         errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
     } else if (xhr.status == 404) {
         errorMessage = "Opgevraagde pagina niet gevonden.";
     } else if (xhr.status == 500) {
         errorMessage = "Interne server fout";//: " + xhr.responseText; // show error to user?
-    } else if (thrownError == "parsererror") {
-        errorMessage = "Parsen van het request is mislukt.";
-    } else if (thrownError == "timeout") {
-        errorMessage = "Het ophalen van de pagina duurde te lang.";
     } else {
         errorMessage = "Onbekende fout";
     }

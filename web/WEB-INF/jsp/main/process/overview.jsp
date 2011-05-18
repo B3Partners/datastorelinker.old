@@ -35,6 +35,10 @@
                     layouts.processSteps.resizeAll();
                 //$("#processContainer").layout().resizeAll();
                 //$("#processSteps").layout().resizeAll();
+            },
+            close: function(event, ui) {
+                defaultDialogClose(event, ui);
+                delete window.layouts;
             }
         });
 

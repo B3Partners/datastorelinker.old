@@ -154,7 +154,14 @@
             inputText = $("#filesListContainer input:radio:checked").val();
         }
         $("#inputOverviewContainer .titleContainer").html(inputText);
-        $("#inputOverviewContainer .colsContainer").empty();
+        $("#inputOverviewContainer .colsContainer").html('\
+            <div class="ui-widget">\
+				<div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
+					<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
+					<strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
+				</div>\
+			</div>\
+        ');
 
         //log('data.previousStep === "SelecteerInvoer"');
         var params = {getTypeNames: ""};
@@ -165,6 +172,7 @@
         }
         //log("retrieving col names...");
         //log(params);
+        //setTimeout(function() {
         inputColumnNamesJqXhr = $.ajax({
             url: "${inputUrl}",
             data: params,
@@ -177,7 +185,8 @@
                             <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span> \
                             <strong>Let op:</strong> Het wordt sterk afgeraden om door te gaan met het invoeren van procesgegevens aangezien het proces zeer waarschijnlijk niet uitgevoerd kan worden.</p>\
                         </div>\
-                    </div>');
+                    </div>\
+                ');
                 handleError(jqXHR, textStatus, errorThrown);
             }
         }).done(function(columns) {
@@ -196,6 +205,7 @@
             });
             $("#inputOverviewContainer .colsContainer").html(colTable);
         });
+        //}, 5000);
     }
 </script>
 
