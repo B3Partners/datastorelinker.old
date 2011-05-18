@@ -154,6 +154,7 @@
             inputText = $("#filesListContainer input:radio:checked").val();
         }
         $("#inputOverviewContainer .titleContainer").html(inputText);
+        $("#inputOverviewContainer .colsContainer").empty();
 
         //log('data.previousStep === "SelecteerInvoer"');
         var params = {getTypeNames: ""};
@@ -169,7 +170,16 @@
             data: params,
             dataType: "json",
             global: false,
-            error: handleError
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#inputOverviewContainer .colsContainer").html('\
+                    <div class="ui-widget" style="margin: 0 .3em">\
+                        <div style="padding: 0 .7em;" class="ui-state-error ui-corner-all"> \
+                            <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span> \
+                            <strong>Let op:</strong> Het wordt sterk afgeraden om door te gaan met het invoeren van procesgegevens aangezien het proces zeer waarschijnlijk niet uitgevoerd kan worden.</p>\
+                        </div>\
+                    </div>');
+                handleError(jqXHR, textStatus, errorThrown);
+            }
         }).done(function(columns) {
             log("columns:");
             log(columns);
@@ -184,8 +194,7 @@
                 var tdValue = $("<td>", {text: value});
                 colTable.append($("<tr>").append(tdKey, tdValue));
             });
-            $("#inputOverviewContainer .colsContainer").empty();
-            $("#inputOverviewContainer .colsContainer").append(colTable);
+            $("#inputOverviewContainer .colsContainer").html(colTable);
         });
     }
 </script>

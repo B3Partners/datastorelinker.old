@@ -77,6 +77,7 @@
         $("#overviewMainContainer .ui-layout-resizer").css(topZIndexCss);
 
         $(".actions-arrow").hvalign();
+        $("#actionsOverviewContainer .placeholder").hvalign();
     }
     
     function overviewLayoutDestroy() {

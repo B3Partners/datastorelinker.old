@@ -128,7 +128,8 @@
         /*$("#actionsListsContainer, #showExampleContainer").css(topZIndexCss);
         $("#actionsListsContainer > div").css(topZIndexCss);*/
         $("#actionsMainContainer .ui-layout-resizer").css(topZIndexCss);
-
+        
+        dragActionsPlaceholder.hvalign();
     });
 
 </script>

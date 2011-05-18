@@ -5,22 +5,10 @@
 
 var actionsPlaceholder = $("<div></div>")
     .addClass("placeholder")
-    .css({
-        top: "100px",
-        left: "10px",
-        position: "absolute",
-        "text-align": "center"
-    })
     .append($("<em></em>").html(I18N.defineActions));
 
 var dragActionsPlaceholder = $("<div></div>")
     .addClass("placeholder")
-    .css({
-        top: "200px",
-        left: "50px",
-        position: "absolute",
-        "text-align": "center"
-    })
     .append($("<em></em>").html(I18N.dragActions));
 
 // Always use this function to get to the parameters of an Action. 
@@ -80,9 +68,9 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
     //log("actionsListSelector: " + actionsListSelector);
     //log("later");
     //log(actionsListJSON);
-    if (actionsListJSON.length == 0)
-        $(actionsListSelector).html(placeholder.clone());
-    else {
+    if (actionsListJSON.length == 0) {
+        $(actionsListSelector).html(placeholder);
+    } else {
         $(actionsListSelector).html("");
         //$(actionsListSelector).empty();
     }
