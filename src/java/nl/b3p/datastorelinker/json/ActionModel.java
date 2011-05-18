@@ -14,6 +14,7 @@ import net.sf.json.JSONArray;
 public class ActionModel {
     private String type;
     private String className;
+    private String imageFilename;
     private String name;
     private String description;
     private JSONArray parameters;
@@ -27,6 +28,14 @@ public class ActionModel {
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public String getImageFilename() {
+        return imageFilename;
+    }
+
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
     }
 
     public String getName() {

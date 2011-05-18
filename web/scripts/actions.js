@@ -67,7 +67,7 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
     //log("actionsListJSON.length: " + actionsListJSON.length);
     //log("actionsListSelector: " + actionsListSelector);
     //log("later");
-    //log(actionsListJSON);
+    log(actionsListJSON);
     if (actionsListJSON.length == 0) {
         $(actionsListSelector).html(placeholder);
     } else {
@@ -80,8 +80,8 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
             return;
         var div = $("<div></div>").addClass("action ui-corner-all");
         var type = $("<div></div>").addClass("type");
-        var safeActionClassName = action.className.replace(" ", "_");
-        var imageUrl = contextPath + "/images/actions/" + safeActionClassName + "_icon.png";
+        var safeImageFilename = $.trim(action.imageFilename);//.replace(" ", "_");
+        var imageUrl = contextPath + "/images/actions/" + safeImageFilename;
         var image = $("<img />").attr("src", imageUrl);
         type.append(image);
         type.append(action.className);

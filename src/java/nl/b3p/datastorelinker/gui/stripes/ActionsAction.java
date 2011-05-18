@@ -29,7 +29,7 @@ import nl.b3p.geotools.data.linker.ActionFactory;
 @Transactional
 public class ActionsAction extends DefaultAction {
 
-    private Log log = Log.getInstance(ActionsAction.class);
+    private final static Log log = Log.getInstance(ActionsAction.class);
     
     public final static List<String> RESERVED_JS_KEYWORDS = Arrays.asList("length");
     public final static String SAFE_PREFIX = "SAFE_JS_";
@@ -98,6 +98,7 @@ public class ActionsAction extends DefaultAction {
         //model.setCssClass("ActionAttributeName");
 
         model.setClassName(res.getString(type + ".type"));
+        model.setImageFilename(res.getString(type + ".image"));
         model.setName(res.getString(type + ".desc"));
         model.setDescription(res.getString(type + ".longdesc"));
 
@@ -112,6 +113,7 @@ public class ActionsAction extends DefaultAction {
             JSONObject action = (JSONObject)actionObject;
 
             action.remove("className");
+            action.remove("imageFilename");
             action.remove("name");
             action.remove("description");
 
@@ -140,8 +142,11 @@ public class ActionsAction extends DefaultAction {
             String type = action.getString("type");
 
             action.put("className", res.getString(type + ".type"));
+            action.put("imageFilename", res.getString(type + ".image"));
             action.put("name", res.getString(type + ".desc"));
             action.put("description", res.getString(type + ".longdesc"));
+            
+            log.debug("action image filename" + res.getString(type + ".image"));
 
             JSONArray parameters = action.optJSONArray("parameters");
             if (parameters == null) {
