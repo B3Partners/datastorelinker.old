@@ -169,13 +169,16 @@ function openParametersDialog(action) {
         log("parameter");
         log(parameter);
 
-        var key = $("<td></td>");
         var label = $("<label></label>", {
             text: parameter.name
         });
-        key.append(label);
+        var key = $("<td></td>", {
+            html: label
+        });
         var input;
-        if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
+        if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
+            parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
+            parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
             input = $("<select />", {
                 name: parameter.paramId // required for validation
             });
@@ -188,7 +191,8 @@ function openParametersDialog(action) {
                 if (!inputColumnNamesJqXhr.isResolved()) {
                     _appendDefaultParameterValue(input, parameter);
                 }
-            } else if (parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
+            } else if (parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
+                       parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
                 addDataToSelect(attributeTypeJavaClasses, input, parameter);
             }
         } else {
@@ -197,11 +201,15 @@ function openParametersDialog(action) {
             });
             if (parameter.type && parameter.type === "boolean") {
                 input.attr("type", "checkbox");
-                if (parameter.value === true || parameter.value == "true")
+                if (parameter.value === true || parameter.value === "true" || parameter.value === "1")
                     input.attr("checked", true);
             } else {
-                input.attr("type", "text");
-                input.val(parameter.value);
+                if (parameter.value === "" || parameter.value === undefined || parameter.value === null) {
+                    // default value:
+                    input.val(I18N["keys." + parameter.paramId.toUpperCase() + ".default"]);
+                } else {
+                    input.val(parameter.value);
+                }
                 input.addClass(parameter.type);
                 input.addClass("required"); // checkbox is not required (can be false), only textbox.
             }
@@ -216,7 +224,9 @@ function openParametersDialog(action) {
             })
             .append(key, value);
         parametersDialog.find("tbody").append(row);
-        if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
+        if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
+            parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
+            parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
             input.combobox();
             input.siblings(":text").addClass("required");
         }
@@ -299,7 +309,9 @@ function _appendDefaultParameterValue(select, parameter) {
 attributeTypeJavaClasses = {
     String: {},
     Boolean: {},
+    Short: {},
     Integer: {},
+    Long: {},
     Float: {},
     Double: {},
     Geometry: {},

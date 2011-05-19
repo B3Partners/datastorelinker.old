@@ -130,7 +130,7 @@ public class DataStoreLinkJob implements Job {
             tryRollback(tx);
 
             setFatalException(ex);
-            log.warn(fatalException);
+            log.warn("Fatal Exception: ", fatalException);
 
             finishedStatus = new ProcessStatus(
                     ProcessStatus.Type.LAST_RUN_FATAL_ERROR,

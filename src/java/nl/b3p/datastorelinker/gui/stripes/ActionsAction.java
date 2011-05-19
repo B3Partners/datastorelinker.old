@@ -9,14 +9,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-import javax.servlet.http.HttpServletRequest;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
-import net.sourceforge.stripes.localization.DefaultLocalePicker;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.json.ActionModel;
@@ -80,15 +78,16 @@ public class ActionsAction extends DefaultAction {
         resourceBundleInit(getContext());
 
         JSONArray parameters = new JSONArray();
-        if (actionBlock.getValue() != null) {
-            for (List<String> paramList : actionBlock.getValue()) {
-                for (String paramName : paramList) {
-                    JSONObject paramInterior = new JSONObject();
-                    paramInterior.element("paramId", paramName);
-                    paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
-                    paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));
-                    parameters.add(paramInterior);
-                }
+        List<List<String>> actionBlockValue = actionBlock.getValue();
+        if (actionBlockValue != null && !actionBlockValue.isEmpty()) {
+            // only use the first constructor type:
+            List<String> paramList = actionBlockValue.get(0);
+            for (String paramName : paramList) {
+                JSONObject paramInterior = new JSONObject();
+                paramInterior.element("paramId", paramName);
+                paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
+                paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));
+                parameters.add(paramInterior);
             }
         }
 
