@@ -160,7 +160,7 @@
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
-        <param-value>DataStoreLinker process is klaar</param-value>
+        <param-value>DataStoreLinker proces is klaar</param-value>
     </context-param>
 
 
