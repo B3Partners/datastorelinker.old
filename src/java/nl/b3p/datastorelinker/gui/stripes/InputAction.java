@@ -278,8 +278,8 @@ public class InputAction extends DefaultAction {
             return new JSONResolution(colNames);
         } catch (Exception e) {
             log.error(e);
-            String message = e.getMessage() + "<p>" + new LocalizableMessage("attributeReadErrorAdvice").getMessage(Locale.getDefault()) + "</p>";
-            return new JSONErrorResolution(message, new LocalizableMessage("attributeReadError"));
+            String message = e.getMessage() + "<p>" + new LocalizableMessage("attributeReadErrorAdvice").getMessage(getContext().getLocale()) + "</p>";
+            return new JSONErrorResolution(message, new LocalizableMessage("attributeReadError"), getContext());
         }
     }
 

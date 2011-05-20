@@ -114,8 +114,9 @@ public class PeriodicalProcessAction extends DefaultAction {
 
             String jobName = "job" + uuid;
             JobDetail jobDetail = new JobDetail(jobName, DataStoreLinkJob.class);
-            jobDetail.getJobDataMap().put("processId", process.getId());//processString);
-
+            jobDetail.getJobDataMap().put("processId", process.getId());
+            jobDetail.getJobDataMap().put("locale", getContext().getLocale());
+            
             String triggerName = "trig" + uuid;
             
             String cronExpressionString = null;

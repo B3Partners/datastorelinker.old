@@ -108,9 +108,6 @@ $(document).ajaxStop(function() {
     }*/
 //});
 
-// deze code wordt serverside en clientside gebruikt voor user errors.
-defaultCustomErrorCode = 1000;
-
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
     /*log("error via ajaxError");
     log(event);
@@ -136,7 +133,7 @@ function handleError(xhr, textStatus, thrownError) {
     log(xhr.status);*/
 
     var errorMessage;
-    if (xhr.status == defaultCustomErrorCode) {
+    if (xhr.status == 500) {
         try {
             openJSONErrorDialog($.parseJSON(xhr.responseText));
             return;
@@ -153,8 +150,6 @@ function handleError(xhr, textStatus, thrownError) {
         errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
     } else if (xhr.status == 404) {
         errorMessage = "Opgevraagde pagina niet gevonden.";
-    } else if (xhr.status == 500) {
-        errorMessage = "Interne server fout";//: " + xhr.responseText; // show error to user?
     } else {
         errorMessage = "Onbekende fout";
     }
@@ -185,10 +180,6 @@ function openJSONErrorDialog(data) {
         },
         close: defaultDialogClose
     });
-}
-
-function isErrorResponse(xhr) {
-    return xhr.status == defaultCustomErrorCode;
 }
 
 defaultCheckInputPresentSelector = ".mandatory-form-input";

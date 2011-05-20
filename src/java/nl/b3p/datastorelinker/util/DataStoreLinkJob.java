@@ -93,9 +93,11 @@ public class DataStoreLinkJob implements Job {
         ProcessStatus finishedStatus = null;
         EntityTransaction tx = null;
         
+        Locale locale = Locale.getDefault();
         try {
             log.debug("Quartz started process");
             processId = jec.getJobDetail().getJobDataMap().getLong("processId");
+            locale = (Locale)jec.getJobDetail().getJobDataMap().get("locale");
 
             setProcessStatus(new ProcessStatus(ProcessStatus.Type.RUNNING));
 
@@ -134,7 +136,7 @@ public class DataStoreLinkJob implements Job {
 
             finishedStatus = new ProcessStatus(
                     ProcessStatus.Type.LAST_RUN_FATAL_ERROR,
-                    new LocalizableMessage("fatalError").getMessage(Locale.getDefault()) + ": "
+                    new LocalizableMessage("fatalError").getMessage(locale) + ": "
                         + ExceptionUtils.getRootCauseMessage(fatalException));
         } finally {
             JpaUtilServlet.closeThreadEntityManager();

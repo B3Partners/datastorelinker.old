@@ -321,7 +321,8 @@ public class ProcessAction extends DefaultAction {
 
             String generatedJobUUID = "job" + UUID.randomUUID().toString();
             JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
-            jobDetail.getJobDataMap().put("processId", process.getId());//processString);
+            jobDetail.getJobDataMap().put("processId", process.getId());
+            jobDetail.getJobDataMap().put("locale", getContext().getLocale());
             
             Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());
@@ -383,7 +384,7 @@ public class ProcessAction extends DefaultAction {
                 }
             }
         } catch(Throwable t) {
-            String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
+            String message = new LocalizableMessage("fatalError").getMessage(getContext().getLocale())
                     + ": " + ExceptionUtils.getRootCauseMessage(t);
             return new JSONResolution(new ProgressMessage(message));
         }
@@ -401,7 +402,7 @@ public class ProcessAction extends DefaultAction {
                 return new JSONResolution(new SuccessMessage(true));
             }
         } catch(Throwable t) {
-            String message = new LocalizableMessage("fatalError").getMessage(Locale.getDefault())
+            String message = new LocalizableMessage("fatalError").getMessage(getContext().getLocale())
                     + ": " + t.getMessage();
             return new JSONResolution(new SuccessMessage(false, message, ""));
         }
