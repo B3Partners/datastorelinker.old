@@ -21,18 +21,22 @@
 
             log("uploadFile");
             //log($("#createUpdateProcessForm"));
-            var oldAction = $("#createUpdateProcessForm").attr("action");
-            var oldMethod = $("#createUpdateProcessForm").attr("method");
-            var oldEncType = $("#createUpdateProcessForm").attr("enctype");
-            var oldEncoding = $("#createUpdateProcessForm").attr("encoding");
+            var oldAction = $("#createUpdateProcessForm").prop("action");
+            var oldMethod = $("#createUpdateProcessForm").prop("method");
+            var oldEncType = $("#createUpdateProcessForm").prop("enctype");
+            var oldEncoding = $("#createUpdateProcessForm").prop("encoding");
             //log("oldEncType: " + oldEncType);
 
-            $("#createUpdateProcessForm")
-                .attr("action", "${fileUrl}")
-                .attr("method", "POST")
-                .attr((this.encoding ? "encoding" : "enctype"), "multipart/form-data");
+            $("#createUpdateProcessForm").prop({
+                action: "${fileUrl}",
+                method: "POST",
+                enctype: "multipart/form-data",
+                encoding: "multipart/form-data"
+            });
 
+            //$.fn.ajaxSubmit.debug = true;
             $("#createUpdateProcessForm").ajaxSubmit({
+                dataType: "html",
                 success: function(responseText, statusText, xhr, form) {
                     //log($(responseText).text());
                     $.blockUI(blockUIOptions);
@@ -51,14 +55,15 @@
                 },
                 global: false
             });
-            $("#createUpdateProcessForm")
-                .attr("action", oldAction)
-                .attr("method", oldMethod)
-                .attr("enctype", oldEncType)
-                .attr("encoding", oldEncoding);
+            $("#createUpdateProcessForm").prop({
+                action: oldAction,
+                method: oldMethod,
+                enctype: oldEncType,
+                encoding: oldEncoding
+            });
 
-            //log("enctype: " + $("#createUpdateProcessForm").attr("enctype"));
-            //log("encoding: " + $("#createUpdateProcessForm").attr("encoding"));
+            //log("enctype: " + $("#createUpdateProcessForm").prop("enctype"));
+            //log("encoding: " + $("#createUpdateProcessForm").prop("encoding"));
 
             startFileUploadProgress();
 
