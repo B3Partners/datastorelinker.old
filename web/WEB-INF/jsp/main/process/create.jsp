@@ -193,16 +193,18 @@
             log("columns:");
             log(columns);
             var colTable = $("<table>").css("width", "100%");
-            var thead = $("<thead>").append(
+            var thead = $("<thead></thead>").append($("<tr>").append(
                 $("<td>", {text: "Attribuutnaam"}), 
                 $("<td>", {text: "Attribuuttype"})
-            ).addClass("ui-widget-header action-list-header");
+            )).addClass("ui-widget-header action-list-header");
             colTable.append(thead);
+            var tbody = $("<tbody></tbody>");
             $.each(columns, function(key, value) {
                 var tdKey = $("<td>", {text: key});
                 var tdValue = $("<td>", {text: value});
-                colTable.append($("<tr>").append(tdKey, tdValue));
+                tbody.append($("<tr>").append(tdKey, tdValue));
             });
+            colTable.append(tbody);
             $("#inputOverviewContainer .colsContainer").html(colTable);
         });
         //}, 5000);
