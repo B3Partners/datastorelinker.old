@@ -36,6 +36,14 @@ $(document).ready(function() {
     $(".ui-buttonset .ui-button").live("click", function(event) {
         $("#" + $(this).attr("for")).prop("checked", true);
     });
+    
+    $(window).resize(function() {
+        $(".ui-dialog-content:visible").each(function() {
+            var dialog = $(this).data("dialog");
+            //log(dialog.options);
+            dialog.option("position", dialog.options.position);
+        });
+    });
 
 });
 
