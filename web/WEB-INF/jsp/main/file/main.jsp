@@ -46,7 +46,10 @@
                             ajaxOpen({
                                 url: "${fileUrl}",
                                 event: "list",
-                                extraParams: [{name: "selectedFilePath", value: $(responseText).text()}],
+                                extraParams: [
+                                    {name: "selectedFilePath", value: $(responseText).text()},
+                                    {name: "adminPage", value: "${param.adminPage}"}
+                                ],
                                 containerSelector: "#filesListContainer"
                             });
                         },
@@ -99,10 +102,9 @@
             ajaxOpen({
                 url: "${fileUrl}",
                 event: "deleteCheck",
-                extraParams: [{
-                        name: "selectedFilePaths",
-                        value: JSON.stringify(filesToDelete)
-                    }],
+                extraParams: [
+                    {name: "selectedFilePaths", value: JSON.stringify(filesToDelete)}
+                ],
                 successAfterContainerFill: function(data) {
                     var dialogElem = $("<div></div>").attr("id", "createFileContainer").appendTo(document.body);
                     if (data.success) {
@@ -138,10 +140,10 @@
                                     url: "${fileUrl}",
                                     //formSelector: "#createInputForm",
                                     event: "delete",
-                                    extraParams: [{
-                                            name: "selectedFilePaths",
-                                            value: JSON.stringify(filesToDelete)
-                                        }],
+                                    extraParams: [
+                                        {name: "selectedFilePaths", value: JSON.stringify(filesToDelete)},
+                                        {name: "adminPage", value: "${param.adminPage}"}
+                                    ],
                                     containerSelector: "#filesListContainer",
                                     ajaxOptions: {global: false}, // prevent blockUI being called 3 times. Called manually.
                                     successAfterContainerFill: function() {
@@ -233,11 +235,16 @@
     <div id="fileHeader">
     </div>
     <div id="filesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
-        <%@include file="/WEB-INF/jsp/main/file/list.jsp" %>
+        <%--@include file="/WEB-INF/jsp/main/file/list.jsp" --%>
+        <jsp:include page="/WEB-INF/jsp/main/file/list.jsp">
+            <jsp:param name="adminPage" value="${param.adminPage}"/>
+        </jsp:include>
     </div>
     <div>
         <input type="file" name="uploader" id="uploader" size="40"/>
         <stripes:button id="uploadFile" name="upload" value="upload"/>
-        <stripes:button id="deleteFile" name="delete" value="delete"/>
+        <c:if test="${param.adminPage == true}">
+            <stripes:button id="deleteFile" name="delete" value="delete"/>
+        </c:if>
     </div>
 </stripes:form>

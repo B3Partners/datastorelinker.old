@@ -21,8 +21,15 @@
             selectedFilePath = "<c:out value="${actionBean.selectedFilePath}"/>";
         </c:if>
         log("selectedFilePath: " + selectedFilePath);
-
-        var activeClass = "ui-state-active";
+        
+        <c:choose>
+            <c:when test="${param.adminPage == true}">
+                var activeClass = "filetree-dummy-selected";
+            </c:when>
+            <c:otherwise>
+                var activeClass = "ui-state-active";
+            </c:otherwise>
+        </c:choose>
 
         $("#filetree").fileTree({
             script: "${fileUrl}",
@@ -33,7 +40,8 @@
             collapseEasing: "easeOutBounce",
             dragAndDrop: false,
             extraAjaxOptions: {
-                global: false
+                global: false<c:if test="${param.adminPage == true}">,
+                data: {adminPage: true}</c:if>
             },
             activeClass: activeClass,
             activateDirsOnClick: false,

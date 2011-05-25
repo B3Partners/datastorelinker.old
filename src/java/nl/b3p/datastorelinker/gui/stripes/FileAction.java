@@ -72,6 +72,7 @@ public class FileAction extends DefaultAction {
     private String expandTo;
     private String selectedFilePath;
     private String selectedFilePaths;
+    private boolean adminPage = false;
 
     public Resolution listDir() {
         log.debug("Directory requested: " + dir);
@@ -705,6 +706,14 @@ public class FileAction extends DefaultAction {
 
     public void setSelectedFilePath(String selectedFilePath) {
         this.selectedFilePath = selectedFilePath;
+    }
+
+    public boolean getAdminPage() {
+        return adminPage;
+    }
+
+    public void setAdminPage(boolean adminPage) {
+        this.adminPage = adminPage;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Comparison methods for file/dir sorting">

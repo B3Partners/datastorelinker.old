@@ -25,6 +25,9 @@
 
 <div id="fileAdmin" style="height: 100%">
     <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction" method="POST" enctype="multipart/form-data">
-        <%@include file="/WEB-INF/jsp/main/file/main.jsp" %>
+        <jsp:include page="/WEB-INF/jsp/main/file/main.jsp">
+            <jsp:param name="adminPage" value="true"/>
+        </jsp:include>
+        <%--@include file="/WEB-INF/jsp/main/file/main.jsp" --%>
     </stripes:form>
 </div>

@@ -221,3 +221,11 @@ h3 {
 .colsContainer {
     margin-top: 1em;
 }
+
+UL.jqueryFileTree A.adminPage {
+    cursor: default;
+}
+
+UL.jqueryFileTree A.adminPage:hover {
+	background: transparent;
+}

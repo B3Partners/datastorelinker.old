@@ -20,7 +20,9 @@
         <c:choose>
             <c:when test="${not empty dir.content}">
                 <li class="directory expanded">
-                    <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
+                    <c:if test="${actionBean.adminPage}">
+                        <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
+                    </c:if>
                     <input type="radio" name="selectedFilePath" value="${dir.path}" style="display: none"/>
                     <a href="#" rel="${dir.path}">
                         ${dir.name}
@@ -33,7 +35,9 @@
             </c:when>
             <c:otherwise>
                 <li class="directory collapsed">
-                    <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
+                    <c:if test="${actionBean.adminPage}">
+                        <input type="checkbox" name="${dir.path}" value="${dir.path}"/>
+                    </c:if>
                     <input type="radio" name="selectedFilePath" value="${dir.path}" style="display: none"/>
                     <a href="#" rel="${dir.path}">
                         ${dir.name}
@@ -44,9 +48,11 @@
     </c:forEach>
     <c:forEach var="file" items="${files}">
         <li class="file ext_file">
-            <input type="checkbox" name="${file.path}" value="${file.path}"/>
+            <c:if test="${actionBean.adminPage}">
+                <input type="checkbox" name="${file.path}" value="${file.path}"/>
+            </c:if>
             <input type="radio" name="selectedFilePath" value="${file.path}" class="required" style="display: none"/>
-            <a href="#" rel="${file.path}">
+            <a href="#" rel="${file.path}" class="${actionBean.adminPage == true ? 'adminPage' : ''}">
                 ${file.name}
             </a>
         </li>
