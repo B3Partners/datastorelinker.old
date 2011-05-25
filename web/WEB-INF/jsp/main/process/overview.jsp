@@ -37,8 +37,25 @@
                 //$("#processSteps").layout().resizeAll();
             },
             close: function(event, ui) {
+                if (window.layouts) {
+                    //log(window.layouts);
+                    // volgorde is belangrijk! van binnen naar buiten destroyen
+                    layouts.tabs.destroy();
+                    layouts.tabs = null;
+                    //log("layouts.tabs.destroy();ed");
+                    layouts.inputTabs.destroy();
+                    layouts.inputTabs = null;
+                    //log("layouts.inputTabs.destroy();ed");
+                    layouts.processSteps.destroy();
+                    layouts.processSteps = null;
+                    //log("layouts.processSteps.destroy();ed");
+                    layouts.processContainer.destroy();
+                    layouts.processContainer = null;
+                    //log("layouts.processContainer.destroy();ed");
+                    //delete layouts;
+                    log("delete window.layouts; done");
+                }
                 defaultDialogClose(event, ui);
-                delete window.layouts;
             }
         });
 
