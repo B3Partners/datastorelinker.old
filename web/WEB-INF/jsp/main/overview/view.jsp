@@ -36,8 +36,8 @@
                 openInDialog: true,
                 dialogOptions: $.extend({}, defaultDialogOptions, {
                     title: "<fmt:message key="createActions"/>",
-                    width: calculateDialogWidth(60, 600),//Math.floor($('body').width() * .60),
-                    height: calculateDialogHeight(60, 600),//600,//710,//Math.floor($('body').height() * .80), // actielijst hoogte is absoluut dus we kunnen dit nog niet dynamisch maken
+                    width: calculateDialogWidth(60, 600, 800),
+                    height: calculateDialogHeight(60, 600, 800),
                     buttons: {
                         "<fmt:message key="finish"/>" : function() {
                             var actionsListJSON = getCreatedActionList();
@@ -56,17 +56,19 @@
     });
     
     function overviewLayoutCreate() {
+        var dialogWidth = $("#processContainer").width();
+        
         layouts.overviewMainContainer = $("#overviewMainContainer").layout($.extend({}, defaultLayoutOptions, {
             resizable: true,
-            west__size: 250,
-            east__size: 250,
+            west__size: Math.floor(dialogWidth * 0.3),
+            east__size: Math.floor(dialogWidth * 0.3),
             west__findNestedContent: true,
             east__findNestedContent: true
         }));
 
         layouts.overviewActionsContainer = $("#overviewActionsContainer").layout($.extend({}, defaultLayoutOptions, {
-            west__size: 50,
-            east__size: 50,
+            west__size: Math.floor((dialogWidth * 0.4) / 8),
+            east__size: Math.floor((dialogWidth * 0.4) / 8),
             center__findNestedContent: true
         }));
 

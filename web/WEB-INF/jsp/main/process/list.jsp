@@ -10,6 +10,7 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
+        selectFirstRadioInputIfPresentAndNoneSelected($("#processesList input:radio"));
         $("#processesList").buttonset();
         $("#processesList img[title]").qtip({
             content: false,
@@ -34,6 +35,7 @@
             }
         });
     });
+    
 </script>
 
 <div id="processesList">

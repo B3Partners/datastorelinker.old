@@ -9,6 +9,7 @@ function initInput() {
 }
 
 function initGuiInput() {
+    selectFirstRadioInputIfPresentAndNoneSelected($("#inputList input:radio"));
     $("#inputList").buttonset();
 }
 
@@ -18,6 +19,7 @@ function initOutput() {
 }
 
 function initGuiOutput() {
+    selectFirstRadioInputIfPresentAndNoneSelected($("#outputList input:radio"));
     $("#outputList").buttonset();
 }
 
@@ -55,3 +57,10 @@ function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {
         return layout;
     }
 }
+
+function selectFirstRadioInputIfPresentAndNoneSelected($radios) {
+    if ($radios.length > 0 && $radios.filter(":has(:checked)").length === 0) {
+        $radios.first().prop("checked", true);
+    }
+}
+

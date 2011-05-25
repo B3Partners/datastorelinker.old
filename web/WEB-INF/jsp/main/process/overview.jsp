@@ -10,25 +10,12 @@
 
 
 <script type="text/javascript" class="ui-layout-ignore">
-    $(document).ready(function() {
-        $("#processForm").validate(defaultRadioValidateOptions);
-
-        $("#createProcess, #updateProcess, #deleteProcess").button();
-        $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
-        $("#exportToXml").button();
-
-        $("#processOverviewContainer").layout($.extend({}, defaultLayoutOptions, {
-            /*north__size: 50,
-            north__minSize: 50,*/
-            south__size: 75,
-            south__minSize: 75
-        }));
-
-        var newUpdateProcessCommonDialogOptions = $.extend({}, defaultDialogOptions, {
-            width: calculateDialogWidth(70, 600),
-            height: calculateDialogHeight(70, 525), //525,//calculateDialogWidth(65, 400),// overzicht is nog niet dynamisch qua hoogte
+    function recalculateNewUpdateProcessCommonDialogOptions() {
+        return $.extend({}, defaultDialogOptions, {
+            width: calculateDialogWidth(70, 600, 1200),
+            height: calculateDialogHeight(70, 525),
             resize: function(event, ui) {
-                log("proces dilag resize");
+                log("proces dialog resize");
                 if (layouts && layouts.processContainer)
                     layouts.processContainer.resizeAll();
                 if (layouts && layouts.processSteps)
@@ -58,6 +45,21 @@
                 defaultDialogClose(event, ui);
             }
         });
+    }
+    
+    $(document).ready(function() {
+        $("#processForm").validate(defaultRadioValidateOptions);
+
+        $("#createProcess, #updateProcess, #deleteProcess").button();
+        $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
+        $("#exportToXml").button();
+
+        $("#processOverviewContainer").layout($.extend({}, defaultLayoutOptions, {
+            /*north__size: 50,
+            north__minSize: 50,*/
+            south__size: 75,
+            south__minSize: 75
+        }));
 
         $("#createProcess").click(function() {
             // TODO: wacht op een volgende versie van jquery UI waar http://dev.jqueryui.com/ticket/5295
@@ -71,7 +73,7 @@
                 event: "create",
                 containerId: "processContainer",
                 openInDialog: true,
-                dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
+                dialogOptions: $.extend({}, recalculateNewUpdateProcessCommonDialogOptions(), {
                     title: I18N.newProcess
                 })
             });
@@ -85,7 +87,7 @@
                 event: "update",
                 containerId: "processContainer",
                 openInDialog: true,
-                dialogOptions: $.extend({}, newUpdateProcessCommonDialogOptions, {
+                dialogOptions: $.extend({}, recalculateNewUpdateProcessCommonDialogOptions(), {
                     title: I18N.editProcess
                 })
             });

@@ -10,6 +10,7 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
+        selectFirstRadioInputIfPresentAndNoneSelected($("#tablesList input:radio"));
         $("#tablesList").buttonset();
     });
 </script>

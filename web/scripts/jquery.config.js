@@ -158,8 +158,9 @@ function _calculateDialogSize(percentage, minSize, maxSize, bodySize) {
         if (size > maxSize)
             size = maxSize;
     }
-    if (size > bodySize)
+    if (size > bodySize) {
         size = bodySize;
+    }
     return size;
 }
 

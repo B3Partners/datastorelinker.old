@@ -11,10 +11,10 @@
 
 
 <script type="text/javascript" class="ui-layout-ignore">
-    $(document).ready(function() {
-        var newUpdateInputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
-            width: Math.floor($('body').width() * .65),
-            height: Math.floor($('body').height() * .60),
+    function recalculateNewUpdateInputCommonDialogOptions() {
+        return $.extend({}, defaultDialogOptions, {
+            width: calculateDialogWidth(65, 500, 800),
+            height: calculateDialogHeight(60, 400),
             resize: function(event, ui) {
                 $("#inputContainer").layout().resizeAll();
                 if ($("#inputSteps").length != 0) // it exists
@@ -25,14 +25,16 @@
                 defaultDialogClose(event, ui);
             }
         });
-
+    }
+    
+    $(document).ready(function() {
         $("#createInputDB").click(function() {
             ajaxOpen({
                 url: "${inputUrl}",
                 event: "createDatabaseInput",
                 containerId: "inputContainer",
                 openInDialog: true,
-                dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
+                dialogOptions: $.extend({}, recalculateNewUpdateInputCommonDialogOptions(), {
                     title: I18N.newDatabaseInput
                 })
             });
@@ -47,7 +49,7 @@
                 event: "update",
                 containerId: "inputContainer",
                 openInDialog: true,
-                dialogOptions: $.extend({}, newUpdateInputCommonDialogOptions, {
+                dialogOptions: $.extend({}, recalculateNewUpdateInputCommonDialogOptions(), {
                     title: I18N.editInput
                 })
             });

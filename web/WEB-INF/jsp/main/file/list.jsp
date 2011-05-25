@@ -65,6 +65,14 @@
                         );
                     }
                 }
+                var $lis = $("#filetree li.file");
+                if ($lis.length > 0) {
+                    var $radios = $lis.find("input:radio");
+                    if ($radios.filter(":has(:checked)").length === 0) {
+                        $radios.first().prop("checked", true);
+                        $radios.first().siblings("a").first().addClass(activeClass);
+                    }
+                }
             }
         });
     }

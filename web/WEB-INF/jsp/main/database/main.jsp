@@ -10,6 +10,18 @@
 
 
 <script type="text/javascript" class="ui-layout-ignore">
+    function recalculateNewUpdateDBCommonDialogOptions() {
+        return $.extend({}, defaultDialogOptions, {
+            width: calculateDialogWidth(70, 500, 700),
+            //height: 600,
+            buttons: {
+                "<fmt:message key="finish"/>" : function() {
+                    testConnection(connectionSuccessInputDBAjaxOpenOptions);
+                }
+            }
+        });
+    }
+    
     connectionSuccessInputDBAjaxOpenOptions = {
         formSelector: ".form-container .ui-accordion-content-active form",
         event: "createComplete",
@@ -20,23 +32,13 @@
     }
 
     $(document).ready(function() {
-        var newUpdateDBCommonDialogOptions = $.extend({}, defaultDialogOptions, {
-            width: 700,
-            //height: 600,
-            buttons: {
-                "<fmt:message key="finish"/>" : function() {
-                    testConnection(connectionSuccessInputDBAjaxOpenOptions);
-                }
-            }
-        });
-
         $("#createDB").click(function() {
             ajaxOpen({
                 url: "${databaseUrl}",
                 event: "create",
                 containerId: "dbContainer",
                 openInDialog: true,
-                dialogOptions: $.extend({}, newUpdateDBCommonDialogOptions, {
+                dialogOptions: $.extend({}, recalculateNewUpdateDBCommonDialogOptions(), {
                     title: "<fmt:message key="newDatabase"/>"
                 })
             });
@@ -51,7 +53,7 @@
                 event: "update",
                 containerId: "dbContainer",
                 openInDialog: true,
-                dialogOptions: $.extend({}, newUpdateDBCommonDialogOptions, {
+                dialogOptions: $.extend({}, recalculateNewUpdateDBCommonDialogOptions(), {
                     title: "<fmt:message key="editDatabase"/>"
                 })
             });
