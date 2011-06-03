@@ -59,7 +59,7 @@ function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {
 }
 
 function selectFirstRadioInputIfPresentAndNoneSelected($radios) {
-    if ($radios.length > 0 && $radios.filter(":has(:checked)").length === 0) {
+    if ($radios.length > 0 && $radios.filter(":checked").length === 0) {
         $radios.first().prop("checked", true);
     }
 }
