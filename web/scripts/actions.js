@@ -323,5 +323,11 @@ attributeTypeJavaClasses = {
     "java.lang.String": {},
     "java.lang.Boolean": {},
     "java.lang.Integer": {},
-    "java.lang.Float": {}
+    "java.lang.Float": {},
+    "com.vividsolutions.jts.geom.Polygon": {},
+    "com.vividsolutions.jts.geom.MultiPolygon": {},
+    "com.vividsolutions.jts.geom.Point": {},
+    "com.vividsolutions.jts.geom.MultiPoint": {},
+    "com.vividsolutions.jts.geom.LineString": {},
+    "com.vividsolutions.jts.geom.MultiLineString": {}
 }
