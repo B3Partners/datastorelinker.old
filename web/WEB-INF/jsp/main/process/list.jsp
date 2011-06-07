@@ -67,6 +67,11 @@
                              title="<fmt:message key="process.scheduled"/>"
                              alt="process.scheduled" />
                     </c:if>
+                    <c:if test="${process.drop == false}">
+                        <img src="<stripes:url value="/images/plus.png"/>"
+                             title="<fmt:message key="process.append"/>"
+                             alt="process.append" />
+                    </c:if>
                     <c:choose>
                         <c:when test="${process.processStatus.processStatusType == 'RUNNING'}">
                             <img src="<stripes:url value="/images/spinner.gif"/>"

@@ -143,8 +143,7 @@
             event: "executePeriodicallyComplete",
             containerSelector: "#processesListContainer",
             successAfterContainerFill: function(data, textStatus, xhr) {
-                if (xhr.status == 500)
-                    $("#processContainer").dialog("close");
+                $("#processContainer").dialog("close");
             }
         });
     }
