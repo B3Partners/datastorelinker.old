@@ -79,14 +79,19 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
         if (!action)
             return;
         var div = $("<div></div>").addClass("action ui-corner-all");
-        var type = $("<div></div>").addClass("type");
+        var type = $("<div></div>").addClass("type ui-corner-top");
         var safeImageFilename = $.trim(action.imageFilename);//.replace(" ", "_");
         var imageUrl = contextPath + "/images/actions/" + safeImageFilename;
         var image = $("<img />").attr("src", imageUrl);
         type.append(image);
         type.append(action.className);
-        var name = $("<div></div>").addClass("name");
+        var name = $("<div></div>").addClass("name ui-corner-bottom");
         name.html(action.name);
+        var exampleParamValue = getExampleParamValue(action);
+        name.append($("<span></span>", {
+            "class": "value",
+            text: exampleParamValue
+        }));
         div.append(type);
         div.append(name);
         div.attr("title", action.description);
@@ -102,6 +107,10 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
 
         $(actionsListSelector).append(div);
     });
+}
+
+function getExampleParamValue(action) {
+    return action.parameters.length === 0 ? "" : action.parameters[0].value;
 }
 
 function addButtons(div) {
@@ -147,6 +156,8 @@ function addParametersButton(div) {
         parametersButton.button();
         parametersButton.click(function() {
             openParametersDialog(action);
+            $(this).closest(".action-list").find(".action").removeClass("action-active");
+            $(this).closest(".action").addClass("action-active");
         });
         div.find(".type").prepend(parametersButton); // prepend moet voor IE7 en IE9
     }
@@ -270,6 +281,8 @@ function openParametersDialog(action) {
             getParameters(action).push(paramMetadata);
         });
         //log(getParameters(action));
+        
+        $("#actionsListContainer").find(".action-active .value").text(getExampleParamValue(action));
 
         parametersDialog.dialog("close");
     }
@@ -307,18 +320,8 @@ function _appendDefaultParameterValue(select, parameter) {
 }
 
 attributeTypeJavaClasses = {
-    String: {},
-    Boolean: {},
-    Short: {},
-    Integer: {},
-    Long: {},
-    Float: {},
-    Double: {},
-    Geometry: {},
-    Point: {},
-    LineString: {},
-    Polygon: {},
-    MultiPoint: {},
-    MultiLineString: {},
-    MultiPolygon: {}
+    "java.lang.String": {},
+    "java.lang.Boolean": {},
+    "java.lang.Integer": {},
+    "java.lang.Float": {}
 }

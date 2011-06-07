@@ -13,7 +13,8 @@
     <properties>
       <property name="hibernate.connection.username" value="postgres"/>
       <property name="hibernate.connection.password" value="***REMOVED***"/>
-      <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/>
+      <!--property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/-->
+      <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker_test"/>
       <!--property name="hibernate.connection.username" value="dsl"/>
       <property name="hibernate.connection.password" value="dsl"/>
       <property name="hibernate.connection.url" value="jdbc:postgresql://x5.b3p.nl:5432/datastorelinker"/-->
@@ -21,6 +22,7 @@
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
 
       <!--property name="hibernate.dialect" value="org.hibernatespatial.postgis.PostgisDialect"/-->
+      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
       <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
 
       <property name="hibernate.c3p0.initial_size" value="0"/>

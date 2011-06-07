@@ -50,6 +50,12 @@
     padding: 3px;
 }
 
+.action .value {
+    color: black;
+    font-weight: bold;
+    margin-left: 1em;
+}
+
 .action .ui-button {
     margin: 0;
     padding: 0;
@@ -61,6 +67,10 @@
     cursor: move;
     background: white;
     border: 1px solid #fed204;
+}
+
+.action-active {
+    border: 1px solid red;
 }
 
 /*.action-active {
