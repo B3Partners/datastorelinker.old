@@ -189,11 +189,19 @@ function openParametersDialog(action) {
         var input;
         if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
             parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS1"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS2"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"] ||
             parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
             input = $("<select />", {
                 name: parameter.paramId // required for validation
             });
-            if (parameter.name === I18N["keys.ATTRIBUTE_NAME"]) {
+            if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] ||
+                parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS1"] ||
+                parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS2"] ||
+                parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
+                parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"]) {
                 inputColumnNamesJqXhr.done(function(data) {
                     addDataToSelect(data, input, parameter);/*, function(key, value) {
                         return key + " (" + value + ")";
@@ -240,6 +248,13 @@ function openParametersDialog(action) {
             parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
             input.combobox();
             input.siblings(":text").addClass("required");
+        }
+
+        if (parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS1"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS2"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"] ) {
+            input.combobox();
         }
     });
 

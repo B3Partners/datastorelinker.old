@@ -1,5 +1,11 @@
 package nl.b3p.test;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.io.ParseException;
+import com.vividsolutions.jts.io.WKTReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,8 +16,12 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 /**
  *
@@ -42,6 +52,45 @@ public class AddressToPoint {
         }
     }
 
+    private static Point convertWktToRdsPoint(String wkt) {
+        Point p = null;
+
+        try {
+            Geometry sourceGeometry = createGeomFromWKTString(wkt);
+
+            if (sourceGeometry != null) {
+                CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
+                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:28992");
+
+                MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
+
+                if (transform != null) {
+                    Geometry targetGeometry = JTS.transform(sourceGeometry, transform);
+
+                    if (targetGeometry != null) {
+                        targetGeometry.setSRID(4326);
+                        p = targetGeometry.getCentroid();
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            System.out.println("Fout tijdens conversie wkt naar latlon: " + ex);
+        }
+
+        return p;
+    }
+
+    public static Geometry createGeomFromWKTString(String wktstring) throws Exception {
+        WKTReader wktreader = new WKTReader(new GeometryFactory(new PrecisionModel(), 28992));
+        try {
+            return wktreader.read(wktstring);
+        } catch (ParseException ex) {
+            throw new Exception(ex);
+        }
+
+    }
+
     public static void main(String[] args) {
 
         // Voorbeel verzoek
@@ -64,7 +113,28 @@ public class AddressToPoint {
             Double x = (Double) json.getJSONArray("Placemark").getJSONObject(0).getJSONObject("Point").getJSONArray("coordinates").get(0);
             Double y = (Double) json.getJSONArray("Placemark").getJSONObject(0).getJSONObject("Point").getJSONArray("coordinates").get(1);
 
-            System.out.println("lat=" +x + " lng=" +y);
+            /* Lat is in nederland groter dan lon. Ongeveer Lon 4 en Lat 52 */
+            try {
+                Double lat = x;
+                Double lon = y;
+
+                if (x > y) {
+                    lat = x;
+                    lon = y;
+                } else {
+                    lat = y;
+                    lon = x;
+                }
+
+                Point p1 = convertWktToRdsPoint("POINT("+lat+" " +lon+")");
+
+                if (p1 != null) {
+                    System.out.println(p1.toText());
+                }
+
+            } catch (Exception ex) {
+                Logger.getLogger(AddressToPoint.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
         } catch (IOException ex) {
             Logger.getLogger(AddressToPoint.class.getName()).log(Level.SEVERE, null, ex);
