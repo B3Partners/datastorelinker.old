@@ -68,7 +68,8 @@ public class ProcessAction extends DefaultAction {
     private List<Inout> outputs;
     private Long selectedOutputId;
 
-    private Boolean drop;
+    private boolean drop;
+    private boolean append;
 
     private String actionsList;
     private String jobUUID;
@@ -166,6 +167,7 @@ public class ProcessAction extends DefaultAction {
         process.setOutput(output);
         process.setActionsString(getActionsListJsonToXmlString());
         process.setDrop(drop);
+        process.setAppend(append);
         
         Mail mail = null;
         if (process.getMail() == null)
@@ -241,6 +243,7 @@ public class ProcessAction extends DefaultAction {
         selectedOutputId = process.getOutput().getId();
         actionsList = getActionsListXmlToJsonString(process);
         drop = process.getDrop();
+        append = process.getAppend();
         emailAddress = process.getMail().getToEmailAddress();
         subject = process.getMail().getSubject();
 
@@ -508,11 +511,19 @@ public class ProcessAction extends DefaultAction {
         this.jobUUID = jobUUID;
     }
 
-    public Boolean getDrop() {
+    public boolean isAppend() {
+        return append;
+    }
+
+    public void setAppend(boolean append) {
+        this.append = append;
+    }
+
+    public boolean isDrop() {
         return drop;
     }
 
-    public void setDrop(Boolean drop) {
+    public void setDrop(boolean drop) {
         this.drop = drop;
     }
 

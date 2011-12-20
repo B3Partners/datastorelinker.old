@@ -67,7 +67,7 @@
                              title="<fmt:message key="process.scheduled"/>"
                              alt="process.scheduled" />
                     </c:if>
-                    <c:if test="${process.drop == false}">
+                    <c:if test="${process.append}">
                         <img src="<stripes:url value="/images/plus.png"/>"
                              title="<fmt:message key="process.append"/>"
                              alt="process.append" />

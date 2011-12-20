@@ -11,13 +11,16 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
-        $("#radioNoDrop").prop("checked", false);
-        $("#radioDrop").prop("checked", true);
-        <c:if test="${not empty actionBean.drop and actionBean.drop == false}">
-            $("#radioDrop").prop("checked", false);
-            $("#radioNoDrop").prop("checked", true);
-        </c:if>
+        $("#drop").prop("checked", ${actionBean.drop ? 'true' : 'false'});
+        $("#append").prop("checked", ${actionBean.append ? 'true' : 'false'});
 
+        $("#drop").change(function() {
+            var drop = !!$("#drop").attr("checked");
+            $("#append").attr("disabled", drop);
+            if(drop) {
+                $("#append").attr("checked", false);
+            }
+        });
         connectionSuccessOutputDBAjaxOpenOptions = {
             url: "${outputUrl}",
             formSelector: ".form-container .ui-accordion-content-active form",
@@ -123,12 +126,12 @@
         <c:if test="${empty actionBean.admin or actionBean.admin == false}">
             <div style="margin-top: 1em">
                 <div>
-                    <input type="radio" name="drop" id="radioDrop" value="true" checked="checked"/>
-                    <stripes:label name="outputDrop" for="radioDrop"/>
+                    <input type="checkbox" name="drop" id="drop"/>
+                    <stripes:label name="table.drop" for="drop"/>
                 </div>
                 <div>
-                    <input type="radio" name="drop" id="radioNoDrop" value="false"/>
-                    <stripes:label name="outputNoDrop" for="radioNoDrop"/>
+                    <input type="checkbox" name="append" id="append" />
+                    <stripes:label name="table.append" for="append"/>
                 </div>
             </div>
         </c:if>
