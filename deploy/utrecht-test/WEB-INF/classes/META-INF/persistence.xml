@@ -9,15 +9,15 @@
     <class>nl.b3p.datastorelinker.entity.Mail</class>
     <class>nl.b3p.datastorelinker.entity.Schedule</class>
     <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
-    
+
     <properties>
       <property name="hibernate.connection.username" value="dsl"/>
       <property name="hibernate.connection.password" value="publicatie01"/>
-      <property name="hibernate.connection.url" value="jdbc:oracle:thin:@dbt01:1521:geopubt"/>
+      <property name="hibernate.connection.url" value="jdbc:oracle:thin:@lin19:1521:geopt"/>
       <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
       <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
       <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
-      
+
       <!--property name="hibernate.dialect" value="org.hibernatespatial.postgis.PostgisDialect"/-->
       <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
 
