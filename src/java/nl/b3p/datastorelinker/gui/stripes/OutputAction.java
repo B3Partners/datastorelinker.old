@@ -31,6 +31,7 @@ public class OutputAction extends DatabaseAction {
 
     // dummy variable (not used but necessary; bit of a hack)
     private Boolean drop;
+    private Boolean append;
 
     @Override
     protected String getAdminJsp() {
@@ -137,4 +138,11 @@ public class OutputAction extends DatabaseAction {
         this.drop = drop;
     }
 
+    public Boolean getAppend() {
+        return append;
+    }
+
+    public void setAppend(Boolean append) {
+        this.append = append;
+    }
 }
