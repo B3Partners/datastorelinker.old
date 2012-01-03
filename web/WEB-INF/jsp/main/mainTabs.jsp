@@ -65,6 +65,12 @@
                     <fmt:message key="menu.admin.output"/>
                 </stripes:link>
             </li>
+            
+            <li>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction" title="tabAuth">
+                    <fmt:message key="menu.admin.auth.org"/>
+                </stripes:link>
+            </li>
         </ul>
         <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
             <div id="tabHome" style="height: 100%"></div><!-- class="ui-tabs-hide" : optional class for tabs to prevent Flash of Unstyled Content -->
@@ -72,6 +78,7 @@
             <div id="tabOutput" style="height: 100%"></div>
             <div id="tabDatabase" style="height: 100%"></div>
             <div id="tabFile" style="height: 100%"></div>
+            <div id="tabAuth" style="height: 100%"></div>
         </div>
                         
     </stripes:layout-component>

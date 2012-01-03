@@ -13,3 +13,4 @@
 <stripes:url var="fileUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.FileAction"/>
 <stripes:url var="actionsUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ActionsAction"/>
 <stripes:url var="periodicalProcessUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction"/>
+<stripes:url var="authUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction"/>

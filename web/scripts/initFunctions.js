@@ -13,6 +13,11 @@ function initGuiInput() {
     $("#inputList").buttonset();
 }
 
+function initOrgs() {
+    $("#createOrganization, #updateOrganization, #deleteOrganization").button();
+    initGuiInput();
+}
+
 function initOutput() {
     $("#createOutput, #updateOutput, #deleteOutput").button();
     initGuiOutput();
