@@ -10,6 +10,7 @@
         <class>nl.b3p.datastorelinker.entity.Schedule</class>
         <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
         <class>nl.b3p.datastorelinker.entity.Organization</class>
+        <class>nl.b3p.datastorelinker.entity.Users</class>
     
         <properties>
             <property name="hibernate.connection.username" value="postgres"/>

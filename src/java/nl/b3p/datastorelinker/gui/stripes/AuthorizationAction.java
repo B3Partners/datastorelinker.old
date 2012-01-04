@@ -7,8 +7,11 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
+import nl.b3p.commons.services.FormUtils;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Organization;
+import nl.b3p.datastorelinker.entity.Users;
+import nl.b3p.ogc.utils.KBCrypter;
 import org.hibernate.Session;
 
 /**
@@ -18,31 +21,68 @@ import org.hibernate.Session;
 @Transactional
 public class AuthorizationAction extends DefaultAction {
     private final static Log log = Log.getInstance(AuthorizationAction.class);
-
-    /* vars voor formwards */
+    
+    /* vars voor organisatie form */
+    private final static String ADMIN_ORG_JSP = "/WEB-INF/jsp/management/authOrgAdmin.jsp";
     private final static String LIST_ORGS_JSP = "/WEB-INF/jsp/main/auth/orgs/list.jsp";
-    private final static String CREATE_ORG_JSP = "/WEB-INF/jsp/main/auth/orgs/create.jsp";
-    private final static String ADMIN_JSP = "/WEB-INF/jsp/management/authAdmin.jsp";
+    private final static String CREATE_ORG_JSP = "/WEB-INF/jsp/main/auth/orgs/create.jsp";    
 
-    /* vars voor crud */
+    /* vars voor organisatie crud */
     private List<Organization> orgs;
-    private Long selectedOrgId;    
+    private Integer selectedOrgId;    
     private Organization selectedOrg;
     
-    /* vars voor forms */
-    private String name;
-    private String upload_path;           
+    /* vars voor organisatie forms */
+    private String orgName;    
+    private String orgUploadPath;  
+    
+    /* vars voor users form */
+    private final static String ADMIN_USERS_JSP = "/WEB-INF/jsp/management/authUsersAdmin.jsp";
+    private final static String LIST_USERS_JSP = "/WEB-INF/jsp/main/auth/users/list.jsp";
+    private final static String CREATE_USER_JSP = "/WEB-INF/jsp/main/auth/users/create.jsp"; 
+    
+    /* vars voor users crud */
+    private List<Users> userList;
+    private Integer selectedUserId;    
+    private Users selectedUser;
+    
+    /* vars voor users forms */
+    private String userName;    
+    private String userPassword;
+    private String userPasswordAgain;
+    private Boolean userIsAdmin = false;
+    private Integer userOrgId;
 
     @DefaultHandler
-    public Resolution admin() {
+    public Resolution admin_org() {
         list_orgs();
-        return new ForwardResolution(ADMIN_JSP);
+        return new ForwardResolution(ADMIN_ORG_JSP);
     }
-
+    
+    public Resolution admin_users() {
+        list_users();
+        return new ForwardResolution(ADMIN_USERS_JSP);
+    }
+    
     public Resolution list_orgs() {
         orgs = getOrganizations();
 
         return new ForwardResolution(LIST_ORGS_JSP);
+    }
+    
+    public Resolution list_users() {
+        userList = getUsers();
+
+        return new ForwardResolution(LIST_USERS_JSP);
+    }
+    
+    public static List<Users> getUsers() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session sess = (Session)em.getDelegate();
+
+        List users = sess.createQuery("from Users order by name").list();
+        
+        return users;
     }
     
     public static List<Organization> getOrganizations() {
@@ -58,9 +98,22 @@ public class AuthorizationAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session sess = (Session)em.getDelegate();
 
-        sess.delete(sess.get(Organization.class, selectedOrgId));
+        Organization org = (Organization)sess.get(Organization.class, selectedOrgId);
+        sess.delete(org);
 
         return list_orgs();
+    }
+    
+    public Resolution deleteUser() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session sess = (Session)em.getDelegate();
+
+        if (selectedUserId != null) {
+            Users user = (Users)sess.get(Users.class, selectedUserId);
+            sess.delete(user);
+        }
+
+        return list_users();
     }
 
     public Resolution updateOrganization() {
@@ -73,6 +126,19 @@ public class AuthorizationAction extends DefaultAction {
         }
 
         return new ForwardResolution(CREATE_ORG_JSP);
+    }
+    
+    public Resolution updateUser() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session sess = (Session)em.getDelegate();
+
+        if (selectedUserId != null) {
+            selectedUser = (Users)sess.get(Users.class, selectedUserId);
+        }
+        
+        orgs = getOrganizations();
+
+        return new ForwardResolution(CREATE_USER_JSP);
     }
 
     public Resolution createOrganization() {
@@ -95,16 +161,76 @@ public class AuthorizationAction extends DefaultAction {
         } 
 
         /* Fill and save org */
-        org.setName(name);
-        org.setUploadPath(upload_path);
+        org.setName(orgName);
+        org.setUploadPath(orgUploadPath);
         
         if (selectedOrgId == null) {
-            selectedOrgId = (Long)sess.save(org);
+            selectedOrgId = (Integer)sess.save(org);
         } else {
             sess.update(org);
         }
 
         return list_orgs();
+    }
+    
+    public Resolution createUser() {
+        /* Lijstje organisaties klaarzetten */
+        orgs = getOrganizations();
+        
+        return new ForwardResolution(CREATE_USER_JSP);
+    }
+    
+    public Resolution createUserComplete() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session sess = (Session)em.getDelegate();
+
+        if (selectedUserId != null) {
+            selectedUser = (Users)sess.get(Users.class, selectedUserId);
+        }  
+
+        Users user = null;
+        if (selectedUser == null) {
+            user = new Users();
+        } else {
+            user = selectedUser;
+        } 
+        
+        Organization org = null;
+        if (userOrgId != null) {
+            org = (Organization)sess.get(Organization.class, userOrgId);
+        }
+        
+        if (org != null) {            
+            user.setOrganization(org);
+        }
+        
+        user.setName(userName);
+        
+        if (userPassword != null && userPassword.equals(userPasswordAgain)) {
+            user.setPassword(encryptUserPassword(userPassword));
+        }    
+        
+        user.setIsAdmin(userIsAdmin);                  
+        
+        if (selectedUserId == null) {
+            selectedUserId = (Integer)sess.save(user);
+        } else {
+            sess.update(user);
+        }
+
+        return list_users();
+    }
+    
+    private String encryptUserPassword(String password) {
+        String encpw = null;
+        
+        try {
+            encpw = KBCrypter.encryptText(FormUtils.nullIfEmpty(password));
+        } catch (Exception ex) {
+            log.debug("Fout tijdens encrypten van wachtwoord.");
+        }
+        
+        return encpw;
     }
 
     public List<Organization> getOrgs() {
@@ -115,11 +241,11 @@ public class AuthorizationAction extends DefaultAction {
         this.orgs = orgs;
     }
 
-    public Long getSelectedOrgId() {
+    public Integer getSelectedOrgId() {
         return selectedOrgId;
     }
 
-    public void setSelectedOrgId(Long selectedOrgId) {
+    public void setSelectedOrgId(Integer selectedOrgId) {
         this.selectedOrgId = selectedOrgId;
     }
 
@@ -131,19 +257,83 @@ public class AuthorizationAction extends DefaultAction {
         this.selectedOrg = selectedOrg;
     }
 
-    public String getName() {
-        return name;
+    public String getOrgName() {
+        return orgName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
     }
 
-    public String getUpload_path() {
-        return upload_path;
+    public String getOrgUploadPath() {
+        return orgUploadPath;
     }
 
-    public void setUpload_path(String upload_path) {
-        this.upload_path = upload_path;
+    public void setOrgUploadPath(String orgUploadPath) {
+        this.orgUploadPath = orgUploadPath;
+    }
+
+    public Users getSelectedUser() {
+        return selectedUser;
+    }
+
+    public void setSelectedUser(Users selectedUser) {
+        this.selectedUser = selectedUser;
+    }
+
+    public Integer getSelectedUserId() {
+        return selectedUserId;
+    }
+
+    public void setSelectedUserId(Integer selectedUserId) {
+        this.selectedUserId = selectedUserId;
+    }
+
+    public Boolean getUserIsAdmin() {
+        return userIsAdmin;
+    }
+
+    public void setUserIsAdmin(Boolean userIsAdmin) {
+        this.userIsAdmin = userIsAdmin;
+    }
+
+    public List<Users> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(List<Users> userList) {
+        this.userList = userList;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPassword() {
+        return userPassword;
+    }
+
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
+    }
+
+    public String getUserPasswordAgain() {
+        return userPasswordAgain;
+    }
+
+    public void setUserPasswordAgain(String userPasswordAgain) {
+        this.userPasswordAgain = userPasswordAgain;
+    }
+
+    public Integer getUserOrgId() {
+        return userOrgId;
+    }
+
+    public void setUserOrgId(Integer userOrgId) {
+        this.userOrgId = userOrgId;
     }
 }

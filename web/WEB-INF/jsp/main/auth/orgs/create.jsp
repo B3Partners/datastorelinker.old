@@ -6,33 +6,32 @@
     $(document).ready(function() {
         <c:choose>
             <c:when test="${not empty actionBean.selectedOrg}">
-                $("#name").val("<c:out value="${actionBean.selectedOrg.name}"/>");
-                $("#upload_path").val("<c:out value="${actionBean.selectedOrg.uploadPath}"/>");
+                $("#orgName").val("<c:out value="${actionBean.selectedOrg.name}"/>");
+                $("#orgUploadPath").val("<c:out value="${actionBean.selectedOrg.uploadPath}"/>");
             </c:when>
             <c:otherwise>
-                $("#name").val("");
-                $("#upload_path").val("");
+                $("#orgName").val("");
+                $("#orgUploadPath").val("");
             </c:otherwise>
         </c:choose>
-
-        $("#orgForm").validate(defaultValidateOptions);
     });
 </script>
 
-<stripes:form id="orgForm" beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction">
+<stripes:form id="orgForm" action="#">
     <c:if test="${not empty actionBean.selectedOrgId}">
         <stripes:hidden name="selectedOrgId" value="${actionBean.selectedOrgId}"/>
     </c:if>
-    <stripes:wizard-fields/>
     <table>
         <tbody>
             <tr>
-                <td>Naam</td>
-                <td><stripes:text id="name" name="name" class="required"/></td>
+                <td>* Naam</td>
+                <td><stripes:text id="orgName" name="orgName" class="required"/></td>
+                <td><div id="msgOrgName" class="verplichteInvoer"/></td>
             </tr>
             <tr>
-                <td>Upload path</td>
-                <td><stripes:text id="upload_path" name="upload_path" class="required"/></td>
+                <td>* Upload path</td>
+                <td><stripes:text id="orgUploadPath" name="orgUploadPath" class="required"/></td>
+                <td><div id="msgUploadPath" class="verplichteInvoer" /></td>
             </tr>            
         </tbody>
     </table>

@@ -242,3 +242,7 @@ UL.jqueryFileTree A.adminPage {
 UL.jqueryFileTree A.adminPage:hover {
 	background: transparent;
 }
+
+.verplichteInvoer {
+    color: red;
+}

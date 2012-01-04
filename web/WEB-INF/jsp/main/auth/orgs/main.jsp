@@ -4,23 +4,47 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <script type="text/javascript" class="ui-layout-ignore">
-    $(document).ready(function() {        
+    $(document).ready(function() {
+        /* TODO: Zelf maar even simpel validate iets gemaakt. 
+         * @Validate via Stripes geeft wel melding maar op
+         * ongewenste pagina. validate via jquery ???? 
+        */
+        function validateForm() {
+            $("#msgOrgName").html("");
+            $("#msgUploadPath").html("");
+
+            if ($("#orgName").val() == "") {
+                $("#msgOrgName").html("Naam is verplicht.");
+                return false;
+            }
+            if ($("#orgUploadPath").val() == "") {
+                $("#msgUploadPath").html("Upload path is verplicht.");
+                return false;
+            }
+            
+            return true;
+        }
+        
         /* Event wordt aangeroepen in back-end als form is ingevuld */
-        var newOrgDialogOptions = $.extend({}, defaultDialogOptions, {
+        var newOrgDialogOptions = $.extend({}, defaultDialogOptions, {            
             width: 550,
             //height: 400,
             buttons: {
                 "<fmt:message key="finish"/>" : function() {                    
+                    if (!validateForm()) {
+                        return;
+                    }
+                    
                     ajaxOpen({
                         url: "${authUrl}",
                         event: "createOrganizationComplete",
                         extraParams: [
-                            {name: "name", value: $("#name").val()},
-                            {name: "upload_path", value: $("#upload_path").val()}
+                            {name: "orgName", value: $("#orgName").val()},
+                            {name: "orgUploadPath", value: $("#orgUploadPath").val()}
                         ],
                         containerSelector: "#orgListContainer",
                         successAfterContainerFill: function(data, textStatus, xhr) {
-                            $("#outputContainer").dialog("close");
+                            $("#orgContainer").dialog("close");
                         }                    
                     });
                 }
@@ -32,7 +56,11 @@
             width: 550,
             //height: 400,
             buttons: {
-                "<fmt:message key="finish"/>" : function() {             
+                "<fmt:message key="finish"/>" : function() {  
+                    if (!validateForm()) {
+                        return;
+                    }
+                    
                     var selectedOrgId = $("#orgListContainer :radio:checked").val();
                     
                     ajaxOpen({
@@ -40,12 +68,12 @@
                         event: "createOrganizationComplete",
                         extraParams: [
                             {name: "selectedOrgId", value: selectedOrgId},
-                            {name: "name", value: $("#name").val()},
-                            {name: "upload_path", value: $("#upload_path").val()}
+                            {name: "orgName", value: $("#orgName").val()},
+                            {name: "orgUploadPath", value: $("#orgUploadPath").val()}
                         ],
                         containerSelector: "#orgListContainer",
                         successAfterContainerFill: function(data, textStatus, xhr) {
-                            $("#outputContainer").dialog("close");
+                            $("#orgContainer").dialog("close");
                         }                    
                     });
                 }
@@ -53,11 +81,11 @@
         });
 
         /* Als er op nieuw geklikt wordt */
-        $("#createOrganization").click(function() {
+        $("#createOrganization").click(function() {            
             ajaxOpen({
                 url: "${authUrl}",
                 event: "createOrganization",
-                containerId: "outputContainer",
+                containerId: "orgContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, newOrgDialogOptions, {
                     title: "<fmt:message key="newAuthOrg"/>"
@@ -71,10 +99,14 @@
         $("#updateOrganization").click(function() {
             var selectedOrgId = $("#orgListContainer :radio:checked").val();
             
+            if (!selectedOrgId) {
+                return;
+            }
+            
             ajaxOpen({
                 url: "${authUrl}",
                 event: "updateOrganization",
-                containerId: "outputContainer",
+                containerId: "orgContainer",
                 extraParams: [
                     {name: "selectedOrgId", value: selectedOrgId}
                 ],
@@ -89,12 +121,15 @@
         
         /* Als er op verwijder geklikt wordt */
         $("#deleteOrganization").click(function() {
-            if (!isFormValidAndContainsInput("#createUpdateOrganizationForm"))
-                return defaultButtonClick(this);
+            var selectedOrgId = $("#orgListContainer :radio:checked").val();
+                        
+            if (!selectedOrgId) {
+                return;
+            }
+                        
+            $("<div><fmt:message key="deleteAuthOrgAreYouSure"/></div>").attr("id", "orgContainer").appendTo($(document.body));
 
-            $("<div><fmt:message key="deleteAuthOrgAreYouSure"/></div>").attr("id", "outputContainer").appendTo($(document.body));
-
-            $("#outputContainer").dialog($.extend({}, defaultDialogOptions, {
+            $("#orgContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "<fmt:message key="deleteAuthOrg"/>",
                 buttons: {
                     "<fmt:message key="no"/>": function() {
@@ -103,16 +138,18 @@
                     "<fmt:message key="yes"/>": function() {
                         ajaxOpen({
                             url: "${authUrl}",
-                            formSelector: "#createUpdateOrganizationForm",
                             event: "deleteOrganization",
                             containerSelector: "#orgListContainer",
+                            extraParams: [
+                                {name: "selectedOrgId", value: selectedOrgId}
+                            ],
                             successAfterContainerFill: function() {
                                 ajaxOpen({
                                     url: "${authUrl}",
                                     event: "list_orgs",
                                     containerSelector: "#orgListContainer",
                                     successAfterContainerFill: function() {
-                                        $("#outputContainer").dialog("close");
+                                        $("#orgContainer").dialog("close");
                                     }
                                 });
                             }
@@ -124,7 +161,6 @@
             return defaultButtonClick(this);
         });
         
-        log("output docready");
     });
 </script>
 

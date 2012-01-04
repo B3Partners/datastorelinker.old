@@ -67,8 +67,14 @@
             </li>
             
             <li>
-                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction" title="tabAuth">
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction" title="tabAuth" event="admin_org">
                     <fmt:message key="menu.admin.auth.org"/>
+                </stripes:link>
+            </li>
+            
+            <li>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction" title="tabUsers" event="admin_users">
+                    <fmt:message key="menu.admin.auth.users"/>
                 </stripes:link>
             </li>
         </ul>
@@ -79,6 +85,7 @@
             <div id="tabDatabase" style="height: 100%"></div>
             <div id="tabFile" style="height: 100%"></div>
             <div id="tabAuth" style="height: 100%"></div>
+            <div id="tabUsers" style="height: 100%"></div>
         </div>
                         
     </stripes:layout-component>
