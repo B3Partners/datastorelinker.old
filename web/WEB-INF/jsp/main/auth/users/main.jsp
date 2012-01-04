@@ -29,6 +29,10 @@
                 $("#msgUserPassword").html("Wachtwoorden komen niet overeen.");
                 return false;
             }
+            if ($("#userName").val() == "beheerder") {
+                $("#msgUserName").html("Naam is gereserveerd.");
+                return false;
+            }
             
             return true;
         }
@@ -44,6 +48,10 @@
             
             if ($("#userPassword").val() != $("#userPasswordAgain").val()) {
                 $("#msgUserPassword").html("Wachtwoorden komen niet overeen.");
+                return false;
+            }
+            if ($("#userName").val() == "beheerder") {
+                $("#msgUserName").html("Naam is gereserveerd.");
                 return false;
             }
             

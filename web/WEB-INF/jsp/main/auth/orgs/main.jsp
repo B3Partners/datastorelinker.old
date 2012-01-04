@@ -21,6 +21,10 @@
                 $("#msgUploadPath").html("Upload path is verplicht.");
                 return false;
             }
+            if ($("#orgName").val() == "Beheerders") {
+                $("#msgOrgName").html("Naam is gereserveerd.");
+                return false;
+            }
             
             return true;
         }

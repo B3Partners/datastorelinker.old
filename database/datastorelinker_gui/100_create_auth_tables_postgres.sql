@@ -1,3 +1,4 @@
+-- create tables
 create table organization (
 	id integer not null,
 	name varchar(255) not null,
@@ -20,3 +21,8 @@ create table organization_users (
 	CONSTRAINT fk_users_id FOREIGN KEY (users_id) REFERENCES users (id), 
 	CONSTRAINT fk_organization_id FOREIGN KEY (organization_id) REFERENCES organization (id) 
 );
+
+-- insert default beheerder // beheerder account
+insert into organization(id, name, upload_path) values (1, 'Beheerders', '/');
+insert into users(id, name, password, is_admin) values (1, 'beheerder', '1ZkPjF0ZNpQOXRr0TImwog%3D%3D', true);
+insert into organization_users(organization_id, users_id) values (1, 1);

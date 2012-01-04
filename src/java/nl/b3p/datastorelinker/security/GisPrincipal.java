@@ -23,19 +23,14 @@
 package nl.b3p.datastorelinker.security;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import nl.b3p.wms.capabilities.Layer;
 import nl.b3p.wms.capabilities.Roles;
 import nl.b3p.wms.capabilities.ServiceProvider;
-import nl.b3p.wms.capabilities.Style;
-import nl.b3p.wms.capabilities.StyleDomainResource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.securityfilter.filter.SecurityRequestWrapper;
@@ -135,8 +130,8 @@ public class GisPrincipal implements Principal {
             // user is using different code, so invalidate session and login again
             HttpSession session = request.getSession();
             session.invalidate();
-            String url = GisSecurityRealm.createCapabilitiesURL(code);
-            gp = GisSecurityRealm.authenticateHttp(url, ConfigServlet.ANONYMOUS_USER, null, code);
+            //String url = GisSecurityRealm.createCapabilitiesURL(code);
+            //gp = GisSecurityRealm.authenticateHttp(url, ConfigServlet.ANONYMOUS_USER, null, code);
         }
 
         // log in found principal

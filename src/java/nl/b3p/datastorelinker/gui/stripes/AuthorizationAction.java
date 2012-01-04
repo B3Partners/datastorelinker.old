@@ -22,6 +22,10 @@ import org.hibernate.Session;
 public class AuthorizationAction extends DefaultAction {
     private final static Log log = Log.getInstance(AuthorizationAction.class);
     
+    /* Check om beheerder account niet te kunnen verwijderen */
+    private static final String CHECK_ORG_BEHEERDERS = "Beheerders";
+    private static final String CHECK_USER_BEHEERDER = "beheerder";
+    
     /* vars voor organisatie form */
     private final static String ADMIN_ORG_JSP = "/WEB-INF/jsp/management/authOrgAdmin.jsp";
     private final static String LIST_ORGS_JSP = "/WEB-INF/jsp/main/auth/orgs/list.jsp";
@@ -99,6 +103,11 @@ public class AuthorizationAction extends DefaultAction {
         Session sess = (Session)em.getDelegate();
 
         Organization org = (Organization)sess.get(Organization.class, selectedOrgId);
+        
+        if (org.getName() != null && org.getName().equals(CHECK_ORG_BEHEERDERS)) {
+            return list_orgs();
+        }
+        
         sess.delete(org);
 
         return list_orgs();
@@ -110,6 +119,11 @@ public class AuthorizationAction extends DefaultAction {
 
         if (selectedUserId != null) {
             Users user = (Users)sess.get(Users.class, selectedUserId);
+            
+            if (user.getName() != null && user.getName().equals(CHECK_USER_BEHEERDER)) {
+                return list_users();
+            }
+            
             sess.delete(user);
         }
 
@@ -193,7 +207,7 @@ public class AuthorizationAction extends DefaultAction {
             user = new Users();
         } else {
             user = selectedUser;
-        } 
+        }
         
         Organization org = null;
         if (userOrgId != null) {
@@ -204,7 +218,7 @@ public class AuthorizationAction extends DefaultAction {
             user.setOrganization(org);
         }
         
-        user.setName(userName);
+        user.setName(userName);        
         
         if (userPassword != null && userPassword.equals(userPasswordAgain)) {
             user.setPassword(encryptUserPassword(userPassword));
