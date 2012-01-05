@@ -64,7 +64,15 @@ public class GisSecurityRealm implements FlexibleRealmInterface, ExternalAuthent
 
     public boolean isUserInRole(Principal principal, String rolename) {        
         if (principal instanceof UserPrincipal) {
-            return true;
+            UserPrincipal user = (UserPrincipal) principal;
+            
+            if (user.getUserIsAdmin()) {
+                return true;
+            }
+            
+            if (!user.getUserIsAdmin() && rolename.equals("gebruiker")) {
+                return true;
+            }
         }
         
         return false;

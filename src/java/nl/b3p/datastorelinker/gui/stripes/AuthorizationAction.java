@@ -218,6 +218,11 @@ public class AuthorizationAction extends DefaultAction {
             user.setOrganization(org);
         }
         
+        /* Als iemand de beheerder naam probeert te wijzigen */
+        if (user.getName() != null && user.getName().equals("beheerder")) {
+            userName = "beheerder";
+        }
+        
         user.setName(userName);        
         
         if (userPassword != null && userPassword.equals(userPasswordAgain)) {

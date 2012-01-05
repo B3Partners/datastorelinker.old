@@ -66,6 +66,7 @@
                 </stripes:link>
             </li>
             
+            <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
             <li>
                 <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction" title="tabAuth" event="admin_org">
                     <fmt:message key="menu.admin.auth.org"/>
@@ -77,6 +78,7 @@
                     <fmt:message key="menu.admin.auth.users"/>
                 </stripes:link>
             </li>
+            </c:if>
         </ul>
         <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
             <div id="tabHome" style="height: 100%"></div><!-- class="ui-tabs-hide" : optional class for tabs to prevent Flash of Unstyled Content -->

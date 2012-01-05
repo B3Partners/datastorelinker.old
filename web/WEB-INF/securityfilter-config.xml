@@ -30,7 +30,6 @@
         </web-resource-collection>
     </security-constraint>
 
-
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>images</web-resource-name>
@@ -38,17 +37,73 @@
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
-
+    
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>all</web-resource-name>
+            <web-resource-name>Home</web-resource-name>
             <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>beheerder</role-name>
+            <role-name>gebruiker</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Database</web-resource-name>
+            <url-pattern>/Database*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>beheerder</role-name>
+            <role-name>gebruiker</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Input</web-resource-name>
+            <url-pattern>/Input*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>beheerder</role-name>
+            <role-name>gebruiker</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>File</web-resource-name>
+            <url-pattern>/File*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>beheerder</role-name>
+            <role-name>gebruiker</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Output</web-resource-name>
+            <url-pattern>/Output*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>beheerder</role-name>
+            <role-name>gebruiker</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
+    <!-- Alleen voor beheerders -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Authorization</web-resource-name>
+            <url-pattern>/Authorization*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>beheerder</role-name>
         </auth-constraint>
     </security-constraint>
-
+    
     <login-config>
         <auth-method>FORM</auth-method>
         <form-login-config>
