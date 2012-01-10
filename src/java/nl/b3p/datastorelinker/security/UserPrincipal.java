@@ -14,6 +14,7 @@ public class UserPrincipal implements Principal {
     
     private static final Log log = LogFactory.getLog(UserPrincipal.class);
     
+    private Integer userId;
     private String userName;
     private Boolean userIsAdmin;
     private Integer userOrganizationId;
@@ -25,6 +26,14 @@ public class UserPrincipal implements Principal {
         this.userName = userName;
         this.userIsAdmin = userIsAdmin;
         this.userOrganizationId = userOrganizationId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
     public Boolean getUserIsAdmin() {

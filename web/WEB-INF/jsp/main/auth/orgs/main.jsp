@@ -11,14 +11,9 @@
         */
         function validateForm() {
             $("#msgOrgName").html("");
-            $("#msgUploadPath").html("");
 
             if ($("#orgName").val() == "") {
                 $("#msgOrgName").html("Naam is verplicht.");
-                return false;
-            }
-            if ($("#orgUploadPath").val() == "") {
-                $("#msgUploadPath").html("Upload path is verplicht.");
                 return false;
             }
             if ($("#orgName").val() == "Beheerders") {
@@ -43,8 +38,7 @@
                         url: "${authUrl}",
                         event: "createOrganizationComplete",
                         extraParams: [
-                            {name: "orgName", value: $("#orgName").val()},
-                            {name: "orgUploadPath", value: $("#orgUploadPath").val()}
+                            {name: "orgName", value: $("#orgName").val()}
                         ],
                         containerSelector: "#orgListContainer",
                         successAfterContainerFill: function(data, textStatus, xhr) {
@@ -72,8 +66,7 @@
                         event: "createOrganizationComplete",
                         extraParams: [
                             {name: "selectedOrgId", value: selectedOrgId},
-                            {name: "orgName", value: $("#orgName").val()},
-                            {name: "orgUploadPath", value: $("#orgUploadPath").val()}
+                            {name: "orgName", value: $("#orgName").val()}
                         ],
                         containerSelector: "#orgListContainer",
                         successAfterContainerFill: function(data, textStatus, xhr) {

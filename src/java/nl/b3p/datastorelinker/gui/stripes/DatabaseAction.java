@@ -4,32 +4,29 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.DontValidate;
 import net.sourceforge.stripes.action.ForwardResolution;
-import net.sourceforge.stripes.action.LocalizableMessage;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
+import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.json.SuccessMessage;
 import nl.b3p.datastorelinker.json.JSONErrorResolution;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import org.geotools.data.DataStore;
-import org.geotools.jdbc.JDBCDataStore;
 import org.hibernate.Session;
 
 /**
  *
- * @author Erik van de Pol
+ * @author Boy de Wit
  */
 @Transactional
 public class DatabaseAction extends DefaultAction {
@@ -86,10 +83,19 @@ public class DatabaseAction extends DefaultAction {
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
-
-        databases = session.getNamedQuery("Database.find")
-                .setParameter("typeInout", Database.TypeInout.INPUT)
+        
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            databases = session.createQuery("from Database where inout_type = :type")
+                .setParameter("type", Inout.TYPE_INPUT)
                 .list();
+        } else {
+            databases = session.createQuery("from Database where inout_type = :type"
+                    + " and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
+        }
 
         Collections.sort(databases, new NameableComparer());
 
@@ -127,6 +133,9 @@ public class DatabaseAction extends DefaultAction {
 
         Database database = getDatabase(false);
         database.setTypeInout(typeInout);
+        
+        database.setOrganizationId(getUserOrganiztionId());
+        database.setUserId(getUserId());
 
         // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
         if (selectedDatabaseId == null) {

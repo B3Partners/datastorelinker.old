@@ -20,7 +20,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Before;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -35,6 +34,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.entity.Organization;
 import nl.b3p.datastorelinker.json.ArraySuccessMessage;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
@@ -90,7 +90,7 @@ public class FileAction extends DefaultAction {
 
             directory = getFileFromPPFileName(dir);
         } else {
-            directory = getUploadDirectoryIOFile();
+            directory = getOrganizationUploadDir();
         }
 
         if (ALWAYS_EXPAND_DIRS) {
@@ -465,7 +465,7 @@ public class FileAction extends DefaultAction {
             log.debug("Filedata: " + filedata.getFileName());
 
             try {
-                File dirFile = new File(getUploadDirectory());
+                File dirFile = getOrganizationUploadDir();
                 if (!dirFile.exists()) {
                     dirFile.mkdirs();
                 }
@@ -473,7 +473,7 @@ public class FileAction extends DefaultAction {
                 if (isZipFile(filedata.getFileName())) {
                     File tempFile = File.createTempFile(filedata.getFileName() + ".", null);
                     filedata.save(tempFile);
-                    File zipDir = new File(getUploadDirectory(), getZipName(filedata.getFileName()));
+                    File zipDir = new File(getOrganizationUploadString(), getZipName(filedata.getFileName()));
 
                     extractZip(tempFile, zipDir);
                 } else {
@@ -600,7 +600,7 @@ public class FileAction extends DefaultAction {
 
     public Resolution check() {
         if (uploaderStatus != null) {
-            File dirFile = new File(getUploadDirectory());
+            File dirFile = getOrganizationUploadDir();
             if (!dirFile.exists()) {
                 dirFile.mkdir();
             }
@@ -621,7 +621,7 @@ public class FileAction extends DefaultAction {
             if (tempFile.exists()) {
                 uploaderStatus.setErrtype("exists");
             }
-            if (isZipFile(tempFile) && zipFileToDirFile(tempFile, new File(getUploadDirectory())).exists()) {
+            if (isZipFile(tempFile) && zipFileToDirFile(tempFile, new File(getOrganizationUploadString())).exists()) {
                 uploaderStatus.setErrtype("exists");
             } else {
                 uploaderStatus.setErrtype("none");
@@ -714,6 +714,45 @@ public class FileAction extends DefaultAction {
 
     public void setAdminPage(boolean adminPage) {
         this.adminPage = adminPage;
+    }
+    
+    public File getOrganizationUploadDir() {        
+        if (isUserAdmin()) {
+            return new File(getContext().getServletContext().getInitParameter("uploadDirectory"));
+        }
+        
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session) em.getDelegate();
+        
+        Organization org = (Organization)session.createQuery("from Organization where id = :id")
+                .setParameter("id", getUserOrganiztionId())
+                .uniqueResult();
+        
+        if (org != null) {
+            return new File(getContext().getServletContext().getInitParameter("uploadDirectory") + File.separator + org.getUploadPath());
+        }
+        
+        return null;
+    }
+    
+    public String getOrganizationUploadString() {  
+        String uploadPath = null;
+        if (isUserAdmin()) {
+            return getContext().getServletContext().getInitParameter("uploadDirectory");
+        }
+        
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session) em.getDelegate();
+        
+        Organization org = (Organization)session.createQuery("from Organization where id = :id")
+                .setParameter("id", getUserOrganiztionId())
+                .uniqueResult();
+        
+        if (org != null) {
+            uploadPath = getContext().getServletContext().getInitParameter("uploadDirectory") + File.separator + org.getUploadPath();
+        }
+        
+        return uploadPath;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Comparison methods for file/dir sorting">

@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -74,22 +73,43 @@ public class InputAction extends DefaultAction {
     }
 
     public Resolution list() {
-        inputs = findDBInputs();
-
-        log.debug(inputs);
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            inputs = session.createQuery("from Inout where input_output_type = :type"
+                + " and input_output_datatype = :datatype")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("datatype", Inout.TYPE_DATABASE)
+                .list();
+        } else {
+            inputs = session.createQuery("from Inout where input_output_type = :type"
+                + " and input_output_datatype = :datatype and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("datatype", Inout.TYPE_DATABASE)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
+        }
+        
+        Collections.sort(inputs, new NameableComparer());
 
         return new ForwardResolution(LIST_JSP);
     }
-
+    
     public static List<Inout> findDBInputs() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
-
-        List<Inout> list = session.getNamedQuery("Inout.findAllOfDataType")
-                .setParameter("typeName", Inout.Type.INPUT)
-                .setParameter("datatypeName", Inout.Datatype.DATABASE)
-                .list();
+        
+        List<Inout> list = session.createQuery("from Inout where input_output_type = :type"
+            + " and input_output_datatype = :datatype")
+            .setParameter("type", Inout.TYPE_INPUT)
+            .setParameter("datatype", Inout.TYPE_DATABASE)
+            .list();
+        
+        
         Collections.sort(list, new NameableComparer());
+        
         return list;
     }
 
@@ -154,48 +174,15 @@ public class InputAction extends DefaultAction {
         dbInput.setDatatype(Inout.Datatype.DATABASE);
         dbInput.setDatabase(selectedDatabase);
         dbInput.setTableName(selectedTable);
+        
+        dbInput.setOrganizationId(getUserOrganiztionId());
+        dbInput.setUserId(getUserId());
 
         if (selectedInputId == null)
             selectedInputId = (Long)session.save(dbInput);
 
         return list();
     }
-
-    /*public Resolution createFileInputComplete() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-
-        File selectedFile = (File)session.get(nl.b3p.datastorelinker.entity.File.class, selectedFileId);
-
-        Inout fileInput = null;
-        if (selectedInputId == null)
-            fileInput = new Inout();
-        else
-            fileInput = (Inout)session.get(Inout.class, selectedInputId);
-
-        fileInput.setType(Inout.Type.INPUT);
-        fileInput.setDatatype(Inout.Datatype.FILE);
-        fileInput.setFile(selectedFile);
-        fileInput.setTableName(selectedTable);
-
-        FileAction fileAction = new FileAction();
-        fileAction.setContext(getContext());
-        String name;
-        try {
-            name = fileAction.getFileNameRelativeToUploadDirPP(selectedFile);
-        } catch (IOException ex) {
-            log.error(ex);
-            name = selectedFile.getName();
-        }
-        if (selectedTable != null && !selectedTable.equals(""))
-            name += " (" + selectedTable + ")";
-        fileInput.setName(name);
-
-        if (selectedInputId == null)
-            selectedInputId = (Long)session.save(fileInput);
-
-        return list();
-    }*/
 
     public Resolution createTablesList() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();

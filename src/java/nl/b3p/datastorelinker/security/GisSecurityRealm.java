@@ -50,6 +50,7 @@ public class GisSecurityRealm implements FlexibleRealmInterface, ExternalAuthent
         
         if (user != null) {
             UserPrincipal up = new UserPrincipal();
+            up.setUserId(user.getId());
             up.setUserName(user.getName());
             up.setUserIsAdmin(user.getIsAdmin());
             up.setUserOrganizationId(user.getOrganization().getId()); 

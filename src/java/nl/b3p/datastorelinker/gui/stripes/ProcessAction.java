@@ -6,7 +6,6 @@ package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 import javax.persistence.EntityManager;
 import net.sf.json.JSON;
@@ -86,9 +85,16 @@ public class ProcessAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        // moet even wat hulp krijgen om die order by's goed te krijgen
-        // (te maken met de dot-notation voor joins die niet werkt zoals ik denk dat ie werkt.).
-        processes = session.createQuery("from Process order by name").list();
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            processes = session.createQuery("from Process order by name").list();
+        } else {
+            processes = session.createQuery("from Process where organization_id = :org_id"
+                    + " order by name")
+                    .setParameter("org_id", getUserOrganiztionId())
+                    .list();
+        }
+        
         Collections.sort(processes, new NameableComparer());
 
         //session.getTransaction().commit();
@@ -136,6 +142,10 @@ public class ProcessAction extends DefaultAction {
                 input.setDatatype(Inout.Datatype.FILE);
                 input.setFile(fullPath);
                 input.setName(selectedFilePath);
+                
+                input.setOrganizationId(getUserOrganiztionId());
+                input.setUserId(getUserId());
+                
                 session.save(input);
             }
         }
@@ -163,8 +173,16 @@ public class ProcessAction extends DefaultAction {
             }
         }
         
+        /* add organizationid and userid */
+        process.setOrganizationId(getUserOrganiztionId());
+        process.setUserId(getUserId());
+        
+        output.setOrganizationId(getUserOrganiztionId());
+        output.setUserId(getUserId());
+        
         process.setInput(input);
         process.setOutput(output);
+        
         process.setActionsString(getActionsListJsonToXmlString());
         process.setDrop(drop);
         process.setAppend(append);

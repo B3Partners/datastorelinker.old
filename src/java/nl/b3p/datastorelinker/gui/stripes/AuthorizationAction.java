@@ -1,5 +1,6 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.io.File;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -176,7 +177,15 @@ public class AuthorizationAction extends DefaultAction {
 
         /* Fill and save org */
         org.setName(orgName);
-        org.setUploadPath(orgUploadPath);
+        
+        /* upload folder aanmaken voor organisatie */ 
+        String uploadFolder = orgName.replace(" ", "_").toLowerCase();        
+        File file = new File(getUploadPath() + File.separator + uploadFolder);
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        
+        org.setUploadPath(uploadFolder);
         
         if (selectedOrgId == null) {
             selectedOrgId = (Integer)sess.save(org);

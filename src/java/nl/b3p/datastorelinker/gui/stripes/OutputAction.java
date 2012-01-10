@@ -50,7 +50,23 @@ public class OutputAction extends DatabaseAction {
 
     @Override
     public Resolution list() {
-        outputs = findOutputs();
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            outputs = session.createQuery("from Inout where input_output_type = :type")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .list();
+        } else {
+            outputs = session.createQuery("from Inout where input_output_type = :type"
+                + " and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
+        }
+        
+        Collections.sort(outputs, new NameableComparer());
 
         return new ForwardResolution(getListJsp());
     }
@@ -62,6 +78,7 @@ public class OutputAction extends DatabaseAction {
         List<Inout> list = session.getNamedQuery("Inout.find")
                 .setParameter("typeName", Inout.Type.OUTPUT)
                 .list();
+        
         Collections.sort(list, new NameableComparer());
         return list;
     }
@@ -107,6 +124,9 @@ public class OutputAction extends DatabaseAction {
         output.setDatatype(Inout.Datatype.DATABASE);
         output.setDatabase(database);
         // no tablename needed.
+        
+        output.setOrganizationId(getUserOrganiztionId());
+        output.setUserId(getUserId());
 
         if (selectedOutputId == null)
             selectedOutputId = (Long)session.save(output);
