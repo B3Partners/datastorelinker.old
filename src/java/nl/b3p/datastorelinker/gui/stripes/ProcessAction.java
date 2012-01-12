@@ -4,6 +4,7 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -108,9 +109,9 @@ public class ProcessAction extends DefaultAction {
         return new ForwardResolution(JSP);
     }
 
-    public Resolution create() {
-        inputs = InputAction.findDBInputs();
-        outputs = OutputAction.findOutputs();
+    public Resolution create() {        
+        inputs = findInputs();
+        outputs = findOutputs();
 
         if (actionsList == null)
             actionsList = new JSONArray().toString();
@@ -576,5 +577,55 @@ public class ProcessAction extends DefaultAction {
     public void setSelectedFilePath(String selectedFilePath) {
         this.selectedFilePath = selectedFilePath;
     }
+    
+    public List<Inout> findInputs() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        
+        List<Inout> list = new ArrayList();
+        
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            list = session.createQuery("from Inout where input_output_type = :type"
+                + " and input_output_datatype = :datatype")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("datatype", Inout.TYPE_DATABASE)
+                .list();
+        } else {
+            list = session.createQuery("from Inout where input_output_type = :type"
+                + " and input_output_datatype = :datatype and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("datatype", Inout.TYPE_DATABASE)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
+        }
+        
+        Collections.sort(list, new NameableComparer());
+        
+        return list;
+    }
+    
+    public List<Inout> findOutputs() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        
+        List<Inout> list = new ArrayList();
 
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            list = session.createQuery("from Inout where input_output_type = :type")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .list();
+        } else {
+            list = session.createQuery("from Inout where input_output_type = :type"
+                + " and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
+        }
+        
+        Collections.sort(list, new NameableComparer());
+        
+        return list;
+    }
 }

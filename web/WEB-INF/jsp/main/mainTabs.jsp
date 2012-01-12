@@ -61,8 +61,13 @@
                 </stripes:link>
             </li>
             <li>
-                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputAction" title="tabOutput">
-                    <fmt:message key="menu.admin.output"/>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseOutputAction" title="tabDatabaseOutput">
+                    <fmt:message key="menu.admin.database.output"/>
+                </stripes:link>
+            </li>
+            <li>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputActionNew" title="tabTableOutput">
+                    <fmt:message key="menu.admin.table.output"/>
                 </stripes:link>
             </li>
             
@@ -83,7 +88,8 @@
         <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
             <div id="tabHome" style="height: 100%"></div><!-- class="ui-tabs-hide" : optional class for tabs to prevent Flash of Unstyled Content -->
             <div id="tabInput" style="height: 100%"></div>
-            <div id="tabOutput" style="height: 100%"></div>
+            <div id="tabDatabaseOutput" style="height: 100%"></div>
+            <div id="tabTableOutput" style="height: 100%"></div>
             <div id="tabDatabase" style="height: 100%"></div>
             <div id="tabFile" style="height: 100%"></div>
             <div id="tabAuth" style="height: 100%"></div>

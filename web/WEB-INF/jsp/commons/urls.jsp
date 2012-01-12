@@ -1,9 +1,3 @@
-<%-- 
-    Document   : urls
-    Created on : 3-aug-2010, 20:16:22
-    Author     : Erik van de Pol
---%>
-
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
 <stripes:url var="processUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction"/>
@@ -14,3 +8,5 @@
 <stripes:url var="actionsUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.ActionsAction"/>
 <stripes:url var="periodicalProcessUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.PeriodicalProcessAction"/>
 <stripes:url var="authUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction"/>
+<stripes:url var="databaseOutUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseOutputAction"/>
+<stripes:url var="outputNewUrl" beanclass="nl.b3p.datastorelinker.gui.stripes.OutputActionNew"/>

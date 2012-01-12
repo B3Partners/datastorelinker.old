@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.Collections;
@@ -20,7 +15,7 @@ import org.hibernate.Session;
 
 /**
  *
- * @author Erik van de Pol
+ * @author Boy de Wit
  */
 @Transactional
 public class OutputAction extends DatabaseAction {

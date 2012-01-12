@@ -35,15 +35,15 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @author Boy de Wit
  */
 @Transactional
-public class InputAction extends DefaultAction {
-    private final static Log log = Log.getInstance(InputAction.class);
+public class OutputActionNew extends DatabaseOutputAction {
+    private final static Log log = Log.getInstance(OutputActionNew.class);
 
-    private final static String LIST_JSP = "/WEB-INF/jsp/main/input/database/list.jsp";
-    private final static String TABLE_LIST_JSP = "/WEB-INF/jsp/main/input/table/list.jsp";
-    private final static String CREATE_DATABASE_JSP = "/WEB-INF/jsp/main/input/database/create.jsp";
-    private final static String CREATE_FILE_JSP = "/WEB-INF/jsp/main/input/file/create.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/output_new/database/list.jsp";
+    private final static String TABLE_LIST_JSP = "/WEB-INF/jsp/main/output_new/table/list.jsp";
+    private final static String CREATE_DATABASE_JSP = "/WEB-INF/jsp/main/output_new/database/create.jsp";
+    private final static String CREATE_FILE_JSP = "/WEB-INF/jsp/main/output_new/file/create.jsp";
     private final static String EXAMPLE_RECORD_JSP = "/WEB-INF/jsp/main/actions/exampleRecord.jsp";
-    private final static String ADMIN_JSP = "/WEB-INF/jsp/management/inputAdmin.jsp";
+    private final static String ADMIN_JSP = "/WEB-INF/jsp/management/outputAdminNew.jsp";
 
     private List<Inout> inputs;
     private Long selectedInputId;
@@ -62,27 +62,26 @@ public class InputAction extends DefaultAction {
     private List<Object> recordValues;
 
     @DefaultHandler
+    @Override
     public Resolution admin() {
         list();
         return new ForwardResolution(ADMIN_JSP);
     }
 
+    @Override
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
         
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
-            inputs = session.createQuery("from Inout where input_output_type = :type"
-                + " and input_output_datatype = :datatype")
-                .setParameter("type", Inout.TYPE_INPUT)
-                .setParameter("datatype", Inout.TYPE_DATABASE)
+            inputs = session.createQuery("from Inout where input_output_type = :type")
+                .setParameter("type", Inout.TYPE_OUTPUT)
                 .list();
         } else {
             inputs = session.createQuery("from Inout where input_output_type = :type"
-                + " and input_output_datatype = :datatype and organization_id = :orgid")
-                .setParameter("type", Inout.TYPE_INPUT)
-                .setParameter("datatype", Inout.TYPE_DATABASE)
+                + " and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_OUTPUT)
                 .setParameter("orgid", getUserOrganiztionId())
                 .list();
         }
@@ -92,6 +91,7 @@ public class InputAction extends DefaultAction {
         return new ForwardResolution(LIST_JSP);
     }
 
+    @Override
     public Resolution delete() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -101,6 +101,7 @@ public class InputAction extends DefaultAction {
         return list();
     }
 
+    @Override
     public Resolution update() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -125,16 +126,16 @@ public class InputAction extends DefaultAction {
     public Resolution createDatabaseInput() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
-        
+
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
             databases = session.createQuery("from Database where inout_type = :type")
-                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("type", Inout.TYPE_OUTPUT)
                 .list();
         } else {
             databases = session.createQuery("from Database where inout_type = :type"
                     + " and organization_id = :orgid")
-                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("type", Inout.TYPE_OUTPUT)
                 .setParameter("orgid", getUserOrganiztionId())
                 .list();
         }
@@ -160,7 +161,7 @@ public class InputAction extends DefaultAction {
         else
             dbInput = (Inout)session.get(Inout.class, selectedInputId);
 
-        dbInput.setType(Inout.Type.INPUT);
+        dbInput.setType(Inout.Type.OUTPUT);
         dbInput.setDatatype(Inout.Datatype.DATABASE);
         dbInput.setDatabase(selectedDatabase);
         dbInput.setTableName(selectedTable);
@@ -323,18 +324,22 @@ public class InputAction extends DefaultAction {
         this.inputs = inputs;
     }
 
+    @Override
     public List<Database> getDatabases() {
         return databases;
     }
 
+    @Override
     public void setDatabases(List<Database> databases) {
         this.databases = databases;
     }
 
+    @Override
     public Long getSelectedDatabaseId() {
         return selectedDatabaseId;
     }
 
+    @Override
     public void setSelectedDatabaseId(Long selectedDatabaseId) {
         this.selectedDatabaseId = selectedDatabaseId;
     }

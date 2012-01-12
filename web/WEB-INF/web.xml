@@ -157,7 +157,7 @@
     </context-param>
     <context-param>
         <param-name>defaultToEmailAddress</param-name>
-        <param-value>erikvandepol@b3partners.nl</param-value>
+        <param-value>boy@b3p.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
