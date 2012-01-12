@@ -28,7 +28,7 @@
                 containerId: "inputContainer",
                 openInDialog: true,
                 dialogOptions: $.extend({}, recalculateNewUpdateInputCommonDialogOptions(), {
-                    title: I18N.newDatabaseInput
+                    title: I18N.newDatabaseOutput
                 })
             });
 

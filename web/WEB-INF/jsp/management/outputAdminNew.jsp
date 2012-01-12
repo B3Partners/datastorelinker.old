@@ -7,7 +7,7 @@
     $(document).ready(function() {
         initInput();
 
-        $("#databaseInputHeader").html("<h1><fmt:message key="process.selectDatabaseInput"/></h1>");
+        $("#databaseInputHeader").html("<h1><fmt:message key="process.selectDatabaseOutput"/></h1>");
 
         createDefaultVerticalLayout($("#inputAdmin"), $.extend({}, defaultLayoutOptions, {
             south__size: 50,
