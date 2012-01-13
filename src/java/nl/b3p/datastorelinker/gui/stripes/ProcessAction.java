@@ -448,6 +448,54 @@ public class ProcessAction extends DefaultAction {
             return new DefaultErrorResolution(ex.getLocalizedMessage());
         }
     }
+    
+    public List<Inout> findInputs() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        
+        List<Inout> list = new ArrayList();
+        
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            list = session.createQuery("from Inout where input_output_type = :type"
+                + " and input_output_datatype = :datatype")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("datatype", Inout.TYPE_DATABASE)
+                .list();
+        } else {
+            list = session.createQuery("from Inout where input_output_type = :type"
+                + " and input_output_datatype = :datatype and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_INPUT)
+                .setParameter("datatype", Inout.TYPE_DATABASE)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
+        }
+        
+        Collections.sort(list, new NameableComparer());
+        
+        return list;
+    }
+    
+    public List<Inout> findOutputs() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+        
+        List<Inout> list = new ArrayList();
+
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            list = session.createQuery("from Inout where input_output_type = :type")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .list();
+        } else {            
+            Organization org = (Organization)session.get(Organization.class, getUserOrganiztionId());
+            list = org.getOutputs();
+        }
+        
+        Collections.sort(list, new NameableComparer());
+        
+        return list;
+    }
 
     //TODO: test: is output DB PostGIS (itt alleen Postgres)? merk je nu bij run als het goed is.
 
@@ -577,60 +625,5 @@ public class ProcessAction extends DefaultAction {
 
     public void setSelectedFilePath(String selectedFilePath) {
         this.selectedFilePath = selectedFilePath;
-    }
-    
-    public List<Inout> findInputs() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-        
-        List<Inout> list = new ArrayList();
-        
-        /* show all to beheerder but organization only for plain users */
-        if (isUserAdmin()) {
-            list = session.createQuery("from Inout where input_output_type = :type"
-                + " and input_output_datatype = :datatype")
-                .setParameter("type", Inout.TYPE_INPUT)
-                .setParameter("datatype", Inout.TYPE_DATABASE)
-                .list();
-        } else {
-            list = session.createQuery("from Inout where input_output_type = :type"
-                + " and input_output_datatype = :datatype and organization_id = :orgid")
-                .setParameter("type", Inout.TYPE_INPUT)
-                .setParameter("datatype", Inout.TYPE_DATABASE)
-                .setParameter("orgid", getUserOrganiztionId())
-                .list();
-        }
-        
-        Collections.sort(list, new NameableComparer());
-        
-        return list;
-    }
-    
-    public List<Inout> findOutputs() {
-        EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
-        
-        List<Inout> list = new ArrayList();
-
-        /* show all to beheerder but organization only for plain users */
-        if (isUserAdmin()) {
-            list = session.createQuery("from Inout where input_output_type = :type")
-                .setParameter("type", Inout.TYPE_OUTPUT)
-                .list();
-        } else {
-            /*
-            list = session.createQuery("from Inout where input_output_type = :type"
-                + " and organization_id = :orgid")
-                .setParameter("type", Inout.TYPE_OUTPUT)
-                .setParameter("orgid", getUserOrganiztionId())
-                .list();
-            */
-            Organization org = (Organization)session.get(Organization.class, getUserOrganiztionId());
-            list = org.getOutputs();
-        }
-        
-        Collections.sort(list, new NameableComparer());
-        
-        return list;
     }
 }
