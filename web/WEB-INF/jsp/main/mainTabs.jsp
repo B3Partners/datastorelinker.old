@@ -60,6 +60,7 @@
                     <fmt:message key="menu.admin.file"/>
                 </stripes:link>
             </li>
+            <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
             <li>
                 <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseOutputAction" title="tabDatabaseOutput">
                     <fmt:message key="menu.admin.database.output"/>
@@ -70,8 +71,6 @@
                     <fmt:message key="menu.admin.table.output"/>
                 </stripes:link>
             </li>
-            
-            <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
             <li>
                 <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.AuthorizationAction" title="tabAuth" event="admin_org">
                     <fmt:message key="menu.admin.auth.org"/>

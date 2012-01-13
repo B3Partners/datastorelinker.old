@@ -24,6 +24,7 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.Mail;
+import nl.b3p.datastorelinker.entity.Organization;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
@@ -617,11 +618,15 @@ public class ProcessAction extends DefaultAction {
                 .setParameter("type", Inout.TYPE_OUTPUT)
                 .list();
         } else {
+            /*
             list = session.createQuery("from Inout where input_output_type = :type"
                 + " and organization_id = :orgid")
                 .setParameter("type", Inout.TYPE_OUTPUT)
                 .setParameter("orgid", getUserOrganiztionId())
                 .list();
+            */
+            Organization org = (Organization)session.get(Organization.class, getUserOrganiztionId());
+            list = org.getOutputs();
         }
         
         Collections.sort(list, new NameableComparer());
