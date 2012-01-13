@@ -74,6 +74,13 @@
                 <h1><fmt:message key="inputDB.selectTable"/></h1>
                 <div><fmt:message key="inputDB.tablesFitAsInput"/></div>
             </div>
+                <p>
+                    <stripes:select name="selectedTemplateOutput">
+                        <stripes:option value="USE_TABLE">Gebruik tabel</stripes:option>
+                        <stripes:option value="AS_TEMPLATE">Gebruik als template</stripes:option>
+                        <stripes:option value="NO_TABLE">Geen tabel</stripes:option>
+                    </stripes:select>
+                </p>
             <div id="tablesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
             </div>
         </div>

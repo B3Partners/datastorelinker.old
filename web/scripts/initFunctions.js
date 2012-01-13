@@ -18,6 +18,11 @@ function initOrgs() {
     initGuiInput();
 }
 
+function initOutputRights() {
+    $("#createOutputRights, #updateOutputRights, #deleteOutputRights").button();
+    initGuiInput();
+}
+
 function initUsers() {
     $("#createUser, #updateUser, #deleteUser").button();
     initGuiInput();

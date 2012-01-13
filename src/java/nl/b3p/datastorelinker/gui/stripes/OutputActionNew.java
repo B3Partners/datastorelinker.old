@@ -60,6 +60,8 @@ public class OutputActionNew extends DatabaseOutputAction {
 
     private List<String> columnNames;
     private List<Object> recordValues;
+    
+    private String selectedTemplateOutput;
 
     @DefaultHandler
     @Override
@@ -108,6 +110,7 @@ public class OutputActionNew extends DatabaseOutputAction {
 
         Inout input = (Inout)session.get(Inout.class, selectedInputId);
         selectedTable = input.getTableName();
+        selectedTemplateOutput = input.getTemplateOutput();
 
         switch(input.getDatatype()) {
             case DATABASE:
@@ -168,6 +171,10 @@ public class OutputActionNew extends DatabaseOutputAction {
         
         dbInput.setOrganizationId(getUserOrganiztionId());
         dbInput.setUserId(getUserId());
+        
+        if (selectedTemplateOutput != null) {
+            dbInput.setTemplateOutput(selectedTemplateOutput);
+        }
 
         if (selectedInputId == null)
             selectedInputId = (Long)session.save(dbInput);
@@ -182,8 +189,10 @@ public class OutputActionNew extends DatabaseOutputAction {
         if (selectedInputId != null) {
             Inout input = (Inout)session.get(Inout.class, selectedInputId);
             // only prefill selected table if we have saved this db with the input we are editing
-            if (selectedDatabaseId.equals(input.getDatabase().getId()))
+            if (selectedDatabaseId.equals(input.getDatabase().getId())) {
+                selectedTemplateOutput = input.getTemplateOutput();
                 selectedTable = input.getTableName();
+            }              
         }
 
         Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
@@ -192,7 +201,6 @@ public class OutputActionNew extends DatabaseOutputAction {
             DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toGeotoolsDataStoreParametersMap());
 
             if (dataTypeList != null) {
-
                 tables = dataTypeList.getGood();
                 failedTables = dataTypeList.getBad();
 
@@ -404,4 +412,11 @@ public class OutputActionNew extends DatabaseOutputAction {
         this.recordValues = recordValues;
     }
 
+    public String getSelectedTemplateOutput() {
+        return selectedTemplateOutput;
+    }
+
+    public void setSelectedTemplateOutput(String selectedTemplateOutput) {
+        this.selectedTemplateOutput = selectedTemplateOutput;
+    }
 }
