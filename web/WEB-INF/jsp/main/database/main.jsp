@@ -62,11 +62,12 @@
         })
 
         $("#deleteDB").click(function() {
-            if (!isFormValidAndContainsInput("#createInputForm"))
+            if (!isFormValidAndContainsInput("#createInputForm")) {
                 return defaultButtonClick(this);
+            }                
 
             $("<div><fmt:message key="deleteDatabaseAreYouSure"/></div>").attr("id", "dbContainer").appendTo($(document.body));
-
+            
             $("#dbContainer").dialog($.extend({}, defaultDialogOptions, {
                 title: "<fmt:message key="deleteDatabase"/>",
                 width: 350,
@@ -109,10 +110,8 @@
 
             return defaultButtonClick(this);
         });
-
     });
 </script>
-
 
 <stripes:form partial="true" action="#">
     <div>

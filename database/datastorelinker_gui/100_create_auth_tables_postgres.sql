@@ -6,7 +6,7 @@ create table organization (
 	primary key (id)
 );
 
-create table users(
+create table users (
 	id integer not null,
 	name varchar(255) not null,
 	password varchar(255) not null,
@@ -49,5 +49,5 @@ alter table database_inout add column user_id integer;
 -- update all existing to beheerder organization and user
 update process set organization_id = 1, user_id = 1;
 update input_output set organization_id = 1, user_id = 1;
-update input_output set template_output = 'USE_TABLE';
+update input_output set template_output = 'NO_TABLE';
 update database_inout set organization_id = 1, user_id = 1;

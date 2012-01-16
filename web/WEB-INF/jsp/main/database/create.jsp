@@ -1,12 +1,6 @@
-<%-- 
-    Document   : newDatabase
-    Created on : 3-mei-2010, 18:08:19
-    Author     : Erik van de Pol
---%>
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {

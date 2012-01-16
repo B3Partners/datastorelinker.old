@@ -88,16 +88,20 @@
             </li>
             </c:if>
         </ul>
+        
         <div id="tabsTarget" class="ui-layout-content" style="height: 100%">
             <div id="tabHome" style="height: 100%"></div><!-- class="ui-tabs-hide" : optional class for tabs to prevent Flash of Unstyled Content -->
-            <div id="tabInput" style="height: 100%"></div>
-            <div id="tabDatabaseOutput" style="height: 100%"></div>
-            <div id="tabTableOutput" style="height: 100%"></div>
             <div id="tabDatabase" style="height: 100%"></div>
+            <div id="tabInput" style="height: 100%"></div>
             <div id="tabFile" style="height: 100%"></div>
-            <div id="tabAuth" style="height: 100%"></div>
-            <div id="tabUsers" style="height: 100%"></div>
-            <div id="tabOutputRights" style="height: 100%"></div>
+            
+            <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
+                <div id="tabDatabaseOutput" style="height: 100%"></div>
+                <div id="tabTableOutput" style="height: 100%"></div>
+                <div id="tabAuth" style="height: 100%"></div>
+                <div id="tabUsers" style="height: 100%"></div>
+                <div id="tabOutputRights" style="height: 100%"></div>
+            </c:if>
         </div>
                         
     </stripes:layout-component>
