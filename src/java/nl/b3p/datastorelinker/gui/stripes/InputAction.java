@@ -96,7 +96,9 @@ public class InputAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(Inout.class, selectedInputId));
+        if (selectedInputId != null && selectedInputId > 0) {
+            session.delete(session.get(Inout.class, selectedInputId));
+        }
 
         return list();
     }

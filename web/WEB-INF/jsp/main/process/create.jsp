@@ -231,7 +231,7 @@
         
         params.selectedOutputId = $("#outputListContainer input:radio:checked").val();
         
-        inputColumnNamesJqXhr = $.ajax({
+        outputColumnNamesJqXhr = $.ajax({
             url: "${outputNewUrl}",
             data: params,
             dataType: "json",
@@ -241,7 +241,7 @@
                     <div class="ui-widget" style="margin: 0 .3em">\
                         <div style="padding: 0 .7em;" class="ui-state-error ui-corner-all"> \
                             <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span> \
-                            <strong>Let op:</strong> Het wordt sterk afgeraden om door te gaan met het invoeren van procesgegevens aangezien het proces zeer waarschijnlijk niet uitgevoerd kan worden.</p>\
+                            Geen uitvoertabel gekozen. Er wordt afhankelijk van de gekozen actieblokken een nieuwe tabel aangemaakt in de database.</p>\
                         </div>\
                     </div>\
                 ');

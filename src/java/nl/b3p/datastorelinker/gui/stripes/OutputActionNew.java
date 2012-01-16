@@ -42,7 +42,7 @@ public class OutputActionNew extends DatabaseOutputAction {
     private final static String TABLE_LIST_JSP = "/WEB-INF/jsp/main/output_new/table/list.jsp";
     private final static String CREATE_DATABASE_JSP = "/WEB-INF/jsp/main/output_new/database/create.jsp";
     private final static String CREATE_FILE_JSP = "/WEB-INF/jsp/main/output_new/file/create.jsp";
-    private final static String EXAMPLE_RECORD_JSP = "/WEB-INF/jsp/main/actions/exampleRecord.jsp";
+    private final static String EXAMPLE_RECORD_JSP = "/WEB-INF/jsp/main/actions/exampleOutputRecord.jsp";
     private final static String ADMIN_JSP = "/WEB-INF/jsp/management/outputAdminNew.jsp";
 
     private List<Inout> inputs;
@@ -58,8 +58,8 @@ public class OutputActionNew extends DatabaseOutputAction {
     private List<String> failedTables;
     private String selectedTable;
 
-    private List<String> columnNames;
-    private List<Object> recordValues;
+    private List<String> outputColumnNames;
+    private List<Object> outputRecordValues;
     
     private String selectedTemplateOutput;
 
@@ -225,6 +225,13 @@ public class OutputActionNew extends DatabaseOutputAction {
             
             if (selectedOutputId != null) {
                 input = (Inout)session.get(Inout.class, selectedOutputId);
+                String template_output = input.getTemplateOutput();
+                
+                if (template_output != null && template_output.equals(Inout.TEMPLATE_OUTPUT_NO_TABLE)) {
+                    //String message = "<p>Geen uitvoertabel gekozen. Er wordt afhankelijk van de gekozen actieblokken een nieuwe tabel aangemaakt in de database.</p>";
+                    //return new JSONErrorResolution(message, new LocalizableMessage("noOutputTable"), getContext());            
+                    //throw new Exception("Geen uitvoertabel gekozen.");
+                }
             }
 
             DataStore ds = null;
@@ -285,13 +292,13 @@ public class OutputActionNew extends DatabaseOutputAction {
             }
             SimpleFeature feature = getExampleFeature(ds, tableName);
 
-            columnNames = new ArrayList<String>();
+            outputColumnNames = new ArrayList<String>();
             for (AttributeDescriptor desc : feature.getFeatureType().getAttributeDescriptors()) {
                 String col = desc.getLocalName();
                 String type = desc.getType().getBinding().getSimpleName();
-                columnNames.add(col + "(" + type + ")");
+                outputColumnNames.add(col + "(" + type + ")");
             }
-            recordValues = feature.getAttributes();
+            outputRecordValues = feature.getAttributes();
         } catch (Exception e) {
             log.error(e);
             return new DefaultErrorResolution(e.getMessage());
@@ -393,20 +400,20 @@ public class OutputActionNew extends DatabaseOutputAction {
         return getContext().getServletContext().getInitParameter("uploadDirectory");
     }
 
-    public List<String> getColumnNames() {
-        return columnNames;
+    public List<String> getOutputColumnNames() {
+        return outputColumnNames;
     }
 
-    public void setColumnNames(List<String> columnNames) {
-        this.columnNames = columnNames;
+    public void setOutputColumnNames(List<String> outputColumnNames) {
+        this.outputColumnNames = outputColumnNames;
     }
 
-    public List<Object> getRecordValues() {
-        return recordValues;
+    public List<Object> getOutputRecordValues() {
+        return outputRecordValues;
     }
 
-    public void setRecordValues(List<Object> recordValues) {
-        this.recordValues = recordValues;
+    public void setOutputRecordValues(List<Object> outputRecordValues) {
+        this.outputRecordValues = outputRecordValues;
     }
 
     public String getSelectedTemplateOutput() {

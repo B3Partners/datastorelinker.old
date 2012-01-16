@@ -1,8 +1,3 @@
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 var actionsPlaceholder = $("<div></div>")
     .addClass("placeholder")
     .append($("<em></em>").html(I18N.defineActions));
@@ -203,9 +198,7 @@ function openParametersDialog(action) {
                 parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
                 parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"]) {
                 inputColumnNamesJqXhr.done(function(data) {
-                    addDataToSelect(data, input, parameter);/*, function(key, value) {
-                        return key + " (" + value + ")";
-                    });*/
+                    addDataToSelect(data, input, parameter);
                 });
                 if (!inputColumnNamesJqXhr.isResolved()) {
                     _appendDefaultParameterValue(input, parameter);
