@@ -23,7 +23,7 @@
 
         $("#inputListContainer").addClass(classesUsed);
         
-        $("#inputTabs").tabs({
+        $("#outputTabs").tabs({
             /*fx: {
                 opacity: "toggle"
             },*/
@@ -37,8 +37,8 @@
 
                 if (layouts.tabs)
                     layouts.tabs.destroy();
-                if (layouts.inputTabs)
-                    layouts.inputTabs.destroy();
+                if (layouts.outputTabs)
+                    layouts.outputTabs.destroy();
                 if (layouts.processSteps)
                     layouts.processSteps.destroy();
 
@@ -57,14 +57,14 @@
                 }
 
                 layouts.processSteps = $("#processSteps").layout(inputDialogLayoutOptions);
-                layouts.inputTabs = $("#inputTabs").layout(inputDialogLayoutOptions);
+                layouts.outputTabs = $("#outputTabs").layout(inputDialogLayoutOptions);
                 if (ui.panel.id === "databaseTab") {
                     layouts.tabs = $("#" + ui.panel.id).layout(inputDialogLayoutOptions);
                 } else if (ui.panel.id === "fileTab") {
                     layouts.tabs = createDefaultVerticalLayout($("#" + ui.panel.id));
                 }
 
-                $("#SelecteerInvoer, .wizardButtonsArea, #inputTabs > *, #" + ui.panel.id + " > *").css("z-index", "auto");
+                $("#SelecteerInvoer, .wizardButtonsArea, #outputTabs > *, #" + ui.panel.id + " > *").css("z-index", "auto");
             }
         });
 
@@ -76,7 +76,7 @@
     <div>
         <h1><fmt:message key="process.selectInput"/></h1>
     </div>
-    <div id="inputTabs" class="ui-layout-content">
+    <div id="outputTabs" class="ui-layout-content">
         <ul class="ui-layout-north">
             <li>
                 <a href="#databaseTab"><fmt:message key="process.databaseInput"/></a>

@@ -46,7 +46,7 @@ public class OutputActionNew extends DatabaseOutputAction {
     private final static String ADMIN_JSP = "/WEB-INF/jsp/management/outputAdminNew.jsp";
 
     private List<Inout> inputs;
-    private Long selectedInputId;
+    private Long selectedOutputId;
 
     private List<Database> databases;
     private Long selectedDatabaseId;
@@ -98,7 +98,7 @@ public class OutputActionNew extends DatabaseOutputAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        session.delete(session.get(Inout.class, selectedInputId));
+        session.delete(session.get(Inout.class, selectedOutputId));
 
         return list();
     }
@@ -108,7 +108,7 @@ public class OutputActionNew extends DatabaseOutputAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Inout input = (Inout)session.get(Inout.class, selectedInputId);
+        Inout input = (Inout)session.get(Inout.class, selectedOutputId);
         selectedTable = input.getTableName();
         selectedTemplateOutput = input.getTemplateOutput();
 
@@ -159,10 +159,10 @@ public class OutputActionNew extends DatabaseOutputAction {
         Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
 
         Inout dbInput = null;
-        if (selectedInputId == null)
+        if (selectedOutputId == null)
             dbInput = new Inout();
         else
-            dbInput = (Inout)session.get(Inout.class, selectedInputId);
+            dbInput = (Inout)session.get(Inout.class, selectedOutputId);
 
         dbInput.setType(Inout.Type.OUTPUT);
         dbInput.setDatatype(Inout.Datatype.DATABASE);
@@ -176,8 +176,8 @@ public class OutputActionNew extends DatabaseOutputAction {
             dbInput.setTemplateOutput(selectedTemplateOutput);
         }
 
-        if (selectedInputId == null)
-            selectedInputId = (Long)session.save(dbInput);
+        if (selectedOutputId == null)
+            selectedOutputId = (Long)session.save(dbInput);
 
         return list();
     }
@@ -186,8 +186,8 @@ public class OutputActionNew extends DatabaseOutputAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        if (selectedInputId != null) {
-            Inout input = (Inout)session.get(Inout.class, selectedInputId);
+        if (selectedOutputId != null) {
+            Inout input = (Inout)session.get(Inout.class, selectedOutputId);
             // only prefill selected table if we have saved this db with the input we are editing
             if (selectedDatabaseId.equals(input.getDatabase().getId())) {
                 selectedTemplateOutput = input.getTemplateOutput();
@@ -222,12 +222,9 @@ public class OutputActionNew extends DatabaseOutputAction {
 
         try {
             Inout input = null;
-            if (selectedFilePath == null) {
-                input = (Inout)session.get(Inout.class, selectedInputId);
-            } else {
-                String fullPath = FileAction.getFileNameFromPPFileName(selectedFilePath, getContext());
-                input = new Inout();
-                input.setFile(fullPath);
+            
+            if (selectedOutputId != null) {
+                input = (Inout)session.get(Inout.class, selectedOutputId);
             }
 
             DataStore ds = null;
@@ -273,7 +270,7 @@ public class OutputActionNew extends DatabaseOutputAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
-        Inout input = (Inout)session.get(Inout.class, selectedInputId);
+        Inout input = (Inout)session.get(Inout.class, selectedOutputId);
 
         try {
             DataStore ds = null;
@@ -360,12 +357,12 @@ public class OutputActionNew extends DatabaseOutputAction {
         this.selectedFilePath = selectedFilePath;
     }
 
-    public Long getSelectedInputId() {
-        return selectedInputId;
+    public Long getSelectedOutputId() {
+        return selectedOutputId;
     }
 
-    public void setSelectedInputId(Long selectedInputId) {
-        this.selectedInputId = selectedInputId;
+    public void setSelectedOutputId(Long selectedOutputId) {
+        this.selectedOutputId = selectedOutputId;
     }
 
     public List<String> getTables() {

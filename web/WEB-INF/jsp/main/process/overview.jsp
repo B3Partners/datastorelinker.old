@@ -32,6 +32,7 @@
                     //log("layouts.tabs.destroy();ed");
                     layouts.inputTabs.destroy();
                     layouts.inputTabs = null;
+                    
                     //log("layouts.inputTabs.destroy();ed");
                     layouts.processSteps.destroy();
                     layouts.processSteps = null;

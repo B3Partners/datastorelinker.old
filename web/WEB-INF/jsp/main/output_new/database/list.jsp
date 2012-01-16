@@ -12,8 +12,8 @@
     <stripes:form partial="true" action="/">
         <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
             <c:choose>
-                <c:when test="${not empty actionBean.selectedInputId and input.id == actionBean.selectedInputId}">
-                    <input type="radio" id="input${status.index}" name="selectedInputId" value="${input.id}" class="required" checked="checked"/>
+                <c:when test="${not empty actionBean.selectedOutputId and input.id == actionBean.selectedOutputId}">
+                    <input type="radio" id="input${status.index}" name="selectedOutputId" value="${input.id}" class="required" checked="checked"/>
                     <script type="text/javascript" class="ui-layout-ignore">
                         $(document).ready(function() {
                             $("#inputList").parent().scrollTo(
@@ -25,7 +25,7 @@
                     </script>
                 </c:when>
                 <c:otherwise>
-                    <input type="radio" id="input${status.index}" name="selectedInputId" value="${input.id}" class="required"/>
+                    <input type="radio" id="input${status.index}" name="selectedOutputId" value="${input.id}" class="required"/>
                 </c:otherwise>
             </c:choose>
             <stripes:label for="input${status.index}">

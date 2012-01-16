@@ -49,8 +49,8 @@
             $("#" + data.previousStep).hide();
             if (data.previousStep === "SelecteerInvoer" && data.currentStep !== "SelecteerInvoer") {
                 getColumnsNames();
-            } else if (data.previousStep === "SelecteerUitvoer") {
-            
+            } else if (data.previousStep === "SelecteerUitvoer" && data.currentStep !== "SelecteerUitvoer") {
+                getColumnsNamesOutput();
             } else if (data.previousStep === "Overzicht") {
                 overviewLayoutDestroy();
             }
@@ -88,6 +88,7 @@
                             $("#createUpdateProcessForm input[name='selectedFilePath']").prop("checked", false);
                         } else {
                             $("#createUpdateProcessForm input[name='selectedInputId']").prop("checked", false);
+                            //$("#createUpdateProcessForm input[name='selectedOutputId']").prop("checked", false);
                         }
 
                         ajaxOpen({
@@ -208,6 +209,62 @@
             $("#inputOverviewContainer .colsContainer").html(colTable);
         });
         //}, 5000);
+    }
+    
+    function getColumnsNamesOutput() {
+        var inputText = "";
+        
+        inputText = $("#outputListContainer .ui-state-active .ui-button-text").html();        
+        
+        $("#outputOverviewContainer .titleContainer").html(inputText);
+        $("#outputOverviewContainer .colsContainer").html('\
+            <div class="ui-widget">\
+				<div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
+					<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
+					<strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
+				</div>\
+			</div>\
+        ');
+
+        //log('data.previousStep === "SelecteerInvoer"');
+        var params = {getTypeNames: ""};        
+        
+        params.selectedOutputId = $("#outputListContainer input:radio:checked").val();
+        
+        inputColumnNamesJqXhr = $.ajax({
+            url: "${outputNewUrl}",
+            data: params,
+            dataType: "json",
+            global: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#outputOverviewContainer .colsContainer").html('\
+                    <div class="ui-widget" style="margin: 0 .3em">\
+                        <div style="padding: 0 .7em;" class="ui-state-error ui-corner-all"> \
+                            <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span> \
+                            <strong>Let op:</strong> Het wordt sterk afgeraden om door te gaan met het invoeren van procesgegevens aangezien het proces zeer waarschijnlijk niet uitgevoerd kan worden.</p>\
+                        </div>\
+                    </div>\
+                ');
+                handleError(jqXHR, textStatus, errorThrown);
+            }
+        }).done(function(columns) {
+            log("columns:");
+            log(columns);
+            var colTable = $("<table>").css("width", "100%");
+            var thead = $("<thead></thead>").append($("<tr>").append(
+                $("<td>", {text: "Attribuutnaam"}), 
+                $("<td>", {text: "Attribuuttype"})
+            )).addClass("ui-widget-header action-list-header");
+            colTable.append(thead);
+            var tbody = $("<tbody></tbody>");
+            $.each(columns, function(key, value) {
+                var tdKey = $("<td>", {text: key});
+                var tdValue = $("<td>", {text: value});
+                tbody.append($("<tr>").append(tdKey, tdValue));
+            });
+            colTable.append(tbody);
+            $("#outputOverviewContainer .colsContainer").html(colTable);
+        });
     }
 </script>
 
