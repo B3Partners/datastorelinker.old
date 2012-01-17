@@ -181,17 +181,25 @@ function openParametersDialog(action) {
         var key = $("<td></td>", {
             html: label
         });
-        var input;
+        var input;        
+                
         if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
             parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS1"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS2"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"] ||
-            parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
+            parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"] ||
+            isMappingParam(parameter)) {
+            
+            if (isMappingParam(parameter)) {
+                parameter.paramId = parameter.paramId.replace("mapping.","");
+            }
+            
             input = $("<select />", {
                 name: parameter.paramId // required for validation
             });
+            
             if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] ||
                 parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS1"] ||
                 parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS2"] ||
@@ -206,7 +214,17 @@ function openParametersDialog(action) {
             } else if (parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
                        parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
                 addDataToSelect(attributeTypeJavaClasses, input, parameter);
-            }
+                
+            /* Controleren of mapping. String in name voorkomt. Zo ja dan
+               dropdowns maken voor uitvoer velden */
+            } else if (isMappingParam(parameter)) {                
+                outputColumnNamesJqXhr.done(function(data) {
+                    addDataToSelect(data, input, parameter);
+                });
+                if (!outputColumnNamesJqXhr.isResolved()) {
+                    _appendDefaultParameterValue(input, parameter);
+                }
+            }            
         } else {
             input = $("<input />", {
                 name: parameter.paramId // required for validation
@@ -246,7 +264,12 @@ function openParametersDialog(action) {
         if (parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS1"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS2"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
-            parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"] ) {
+            parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"]) {
+            
+            input.combobox();
+        }
+        
+        if (isMappingParam(parameter)) {
             input.combobox();
         }
     });
@@ -325,6 +348,14 @@ function _appendDefaultParameterValue(select, parameter) {
     });
     option.text(parameter.value);
     select.append(option);
+}
+
+function isMappingParam(parameter) { 
+    if (parameter.mapped) {
+        return true;
+    }        
+    
+    return false;
 }
 
 attributeTypeJavaClasses = {

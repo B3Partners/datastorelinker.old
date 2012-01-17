@@ -8,8 +8,10 @@ package nl.b3p.datastorelinker.gui.stripes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -40,6 +42,8 @@ public class ActionsAction extends DefaultAction {
     private String actionsWorkbenchList;
     private String actionsList;
     private Long selectedProcessId;
+    
+    private static String[] inputColumns;
 
     private static void resourceBundleInit(ActionBeanContext context) {
         //DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
@@ -62,8 +66,11 @@ public class ActionsAction extends DefaultAction {
 
     private String createActionsWorkbenchList() {
         JSONArray workbenchList = new JSONArray();
-
-        Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks();
+        
+        /* Ophalen List van invoerkolommen zodat het Mappen naar uitvoer block
+         * aangemaakt kan worden. Alleen bij uitvoer template optie 1 en 2. Bij optie 3 moet
+         * de gebruiker zelf zijn tabel samenstellen mbv blokken */
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks(inputColumns);
 
         for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
             ActionModel model = createAction(actionBlock);
@@ -83,10 +90,28 @@ public class ActionsAction extends DefaultAction {
             // only use the first constructor type:
             List<String> paramList = actionBlockValue.get(0);
             for (String paramName : paramList) {
-                JSONObject paramInterior = new JSONObject();
-                paramInterior.element("paramId", paramName);
-                paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
-                paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));
+                JSONObject paramInterior = new JSONObject();                
+                
+                if (paramName.contains("mapping.")) {
+                    paramInterior.element("paramId", paramName.replaceAll("mapping.", ""));
+                } else {
+                    paramInterior.element("paramId", paramName);
+                }
+                
+                if (paramName.contains("mapping.")) {
+                    paramName = paramName.replaceAll("mapping.", "");
+                    
+                    paramInterior.element("name", paramName);
+                    paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("mapped", "true");
+                }
+                
+                /* TODO: Kijken of deze manier van parameters met een resource anders kan? */
+                try {
+                    paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
+                    paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));                   
+                } catch (MissingResourceException mre) {}                
+                
                 parameters.add(paramInterior);
             }
         }
@@ -170,8 +195,25 @@ public class ActionsAction extends DefaultAction {
         resourceBundleInit(context);
         
         String nameResourceKey = "keys." + parameter.getString("paramId").toUpperCase();
-        parameter.put("name", res.getString(nameResourceKey));
-        parameter.put("type", res.getString(nameResourceKey + ".type"));
+        
+        String mapped = null;
+        try {
+            mapped = parameter.getString("mapped");
+        } catch(JSONException jsonEx) {}
+        
+        /* TODO: Kijken of deze manier van parameters met een resource anders kan? */
+        if (nameResourceKey.contains("mapping.") || mapped != null) {
+            nameResourceKey = nameResourceKey.replaceAll("keys.", "");
+            
+            parameter.put("name", nameResourceKey);
+            parameter.put("type", nameResourceKey + ".type");
+            parameter.put("mapped", "true");
+        }       
+        
+        try {
+            parameter.put("name", res.getString(nameResourceKey));
+            parameter.put("type", res.getString(nameResourceKey + ".type"));
+        } catch (MissingResourceException mre) {}                
     }
 
     public static void addExpandableProperty(JSONArray actionsListJSONArray) {
@@ -219,4 +261,11 @@ public class ActionsAction extends DefaultAction {
         this.actionsList = actionsList;
     }
 
+    public static String[] getInputColumns() {
+        return inputColumns;
+    }
+
+    public static void setInputColumns(String[] inputColumns) {
+        ActionsAction.inputColumns = inputColumns;
+    }
 }

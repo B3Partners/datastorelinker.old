@@ -248,12 +248,29 @@ public class InputAction extends DefaultAction {
                     return o1Name == null ? 0 : o1Name.compareTo(o2Name);
                 }
             });
+            
+            /* Kolommen ook klaarzetten voor Actieblokken action zodat
+             * uitvoer mappen blok opgebouwd kan worden */
+            String[] inputColumns = null;
+            int i = 0;
+            if (attrDescs != null && attrDescs.size() > 0) {
+                inputColumns = new String[attrDescs.size()];
+            }            
+            
             JSONObject colNames = new JSONObject();
             for (AttributeDescriptor desc : attrDescs) {
                 String col = desc.getLocalName();
                 String type = desc.getType().getBinding().getSimpleName();
                 colNames.put(col, type);
+                inputColumns[i] = "mapping." + col;
+                
+                i++;
             }
+            
+            if (inputColumns != null) {
+                ActionsAction.setInputColumns(inputColumns);
+            }
+            
             return new JSONResolution(colNames);
         } catch (Exception e) {
             log.error(e);
