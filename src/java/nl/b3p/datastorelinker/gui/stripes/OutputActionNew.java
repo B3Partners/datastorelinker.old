@@ -259,12 +259,30 @@ public class OutputActionNew extends DatabaseOutputAction {
                     return o1Name == null ? 0 : o1Name.compareTo(o2Name);
                 }
             });
+            
+            /* Kolommen ook klaarzetten voor Actieblokken action zodat
+             * uitvoer mappen blok opgebouwd kan worden */
+            String[] outputColumns = null;
+            int i = 0;
+            if (attrDescs != null && attrDescs.size() > 0) {
+                outputColumns = new String[attrDescs.size()];
+            }  
+            
             JSONObject colNames = new JSONObject();
             for (AttributeDescriptor desc : attrDescs) {
                 String col = desc.getLocalName();
                 String type = desc.getType().getBinding().getSimpleName();
                 colNames.put(col, type);
+                
+                outputColumns[i] = "outputmapping." + col;
+                
+                i++;
             }
+            
+            if (outputColumns != null) {
+                ActionsAction.setOutputColumns(outputColumns);
+            }
+            
             return new JSONResolution(colNames);
         } catch (Exception e) {
             log.error(e);

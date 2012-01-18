@@ -158,6 +158,8 @@ function addParametersButton(div) {
     }
 }
 
+var validateInputMappedFields = true;
+
 function openParametersDialog(action) {
     //log(getParameters(action));
 
@@ -181,7 +183,12 @@ function openParametersDialog(action) {
         var key = $("<td></td>", {
             html: label
         });
-        var input;        
+        var input;      
+        
+        if (isInputMappingParam(parameter)) {
+            validateInputMappedFields = false;
+            //parameter.paramId = parameter.paramId.replace("inputmapping.","");
+        }
                 
         if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
             parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
@@ -190,10 +197,10 @@ function openParametersDialog(action) {
             parameter.name === I18N["keys.ATTRIBUTE_NAME_ADDRESS3"] ||
             parameter.name === I18N["keys.ATTRIBUTE_NAME_CITY"] ||
             parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"] ||
-            isMappingParam(parameter)) {
+            isOutputMappingParam(parameter)) {
             
-            if (isMappingParam(parameter)) {
-                parameter.paramId = parameter.paramId.replace("mapping.","");
+            if (isOutputMappingParam(parameter)) {
+                parameter.paramId = parameter.paramId.replace("outputmapping.","");
             }
             
             input = $("<select />", {
@@ -214,17 +221,15 @@ function openParametersDialog(action) {
             } else if (parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
                        parameter.name === I18N["keys.NEW_ATTRIBUTE_CLASS"]) {
                 addDataToSelect(attributeTypeJavaClasses, input, parameter);
-                
-            /* Controleren of mapping. String in name voorkomt. Zo ja dan
-               dropdowns maken voor uitvoer velden */
-            } else if (isMappingParam(parameter)) {                
-                outputColumnNamesJqXhr.done(function(data) {
+            
+            } else if (isOutputMappingParam(parameter)) {                
+                inputColumnNamesJqXhr.done(function(data) {
                     addDataToSelect(data, input, parameter);
                 });
-                if (!outputColumnNamesJqXhr.isResolved()) {
+                if (!inputColumnNamesJqXhr.isResolved()) {
                     _appendDefaultParameterValue(input, parameter);
                 }
-            }            
+            }
         } else {
             input = $("<input />", {
                 name: parameter.paramId // required for validation
@@ -269,20 +274,25 @@ function openParametersDialog(action) {
             input.combobox();
         }
         
-        if (isMappingParam(parameter)) {
+        if (isOutputMappingParam(parameter)) {
             input.combobox();
         }
     });
 
-    parameterForm.validate(defaultValidateOptions);
+    if (validateInputMappedFields)
+        parameterForm.validate(defaultValidateOptions);
 
     parametersDialogButtons = {};
     parametersDialogButtons[I18N.cancel] = function(event, ui) {
         parametersDialog.dialog("close");
     }
     parametersDialogButtons[I18N.ok] = function(event, ui) {
-        if (!$("#parameterForm").valid())
-            return;
+        
+        if (validateInputMappedFields) {
+            if (!$("#parameterForm").valid()) {
+                return;
+            }
+        }
 
         setParameters(action, []);
         //log(getParameters(action));
@@ -350,8 +360,16 @@ function _appendDefaultParameterValue(select, parameter) {
     select.append(option);
 }
 
-function isMappingParam(parameter) { 
-    if (parameter.mapped) {
+function isInputMappingParam(parameter) { 
+    if (parameter.inputmapping) {
+        return true;
+    }        
+    
+    return false;
+}
+
+function isOutputMappingParam(parameter) { 
+    if (parameter.outputmapping) {
         return true;
     }        
     

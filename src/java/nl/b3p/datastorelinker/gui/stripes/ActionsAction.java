@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.util.Arrays;
@@ -24,7 +19,7 @@ import nl.b3p.geotools.data.linker.ActionFactory;
 
 /**
  *
- * @author Erik van de Pol
+ * @author Boy de Wit
  */
 @Transactional
 public class ActionsAction extends DefaultAction {
@@ -44,6 +39,7 @@ public class ActionsAction extends DefaultAction {
     private Long selectedProcessId;
     
     private static String[] inputColumns;
+    private static String[] outputColumns;
 
     private static void resourceBundleInit(ActionBeanContext context) {
         //DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
@@ -70,7 +66,7 @@ public class ActionsAction extends DefaultAction {
         /* Ophalen List van invoerkolommen zodat het Mappen naar uitvoer block
          * aangemaakt kan worden. Alleen bij uitvoer template optie 1 en 2. Bij optie 3 moet
          * de gebruiker zelf zijn tabel samenstellen mbv blokken */
-        Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks(inputColumns);
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks(inputColumns, outputColumns);
 
         for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
             ActionModel model = createAction(actionBlock);
@@ -92,18 +88,28 @@ public class ActionsAction extends DefaultAction {
             for (String paramName : paramList) {
                 JSONObject paramInterior = new JSONObject();                
                 
-                if (paramName.contains("mapping.")) {
-                    paramInterior.element("paramId", paramName.replaceAll("mapping.", ""));
+                if (paramName.contains("inputmapping.")) {
+                    paramInterior.element("paramId", paramName.replaceAll("inputmapping.", ""));
+                } else if (paramName.contains("outputmapping.")) {
+                    paramInterior.element("paramId", paramName.replaceAll("outputmapping.", ""));
                 } else {
                     paramInterior.element("paramId", paramName);
                 }
                 
-                if (paramName.contains("mapping.")) {
-                    paramName = paramName.replaceAll("mapping.", "");
+                if (paramName.contains("inputmapping.")) {
+                    paramName = paramName.replaceAll("inputmapping.", "");
                     
                     paramInterior.element("name", paramName);
                     paramInterior.element("type", paramName + ".type");
-                    paramInterior.element("mapped", "true");
+                    paramInterior.element("inputmapping", "true");
+                }
+                
+                if (paramName.contains("outputmapping.")) {
+                    paramName = paramName.replaceAll("outputmapping.", "");
+                    
+                    paramInterior.element("name", paramName);
+                    paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("outputmapping", "true");
                 }
                 
                 /* TODO: Kijken of deze manier van parameters met een resource anders kan? */
@@ -196,19 +202,32 @@ public class ActionsAction extends DefaultAction {
         
         String nameResourceKey = "keys." + parameter.getString("paramId").toUpperCase();
         
-        String mapped = null;
+        String inputMapped = null;
         try {
-            mapped = parameter.getString("mapped");
+            inputMapped = parameter.getString("inputmapping");
+        } catch(JSONException jsonEx) {}
+        
+        String outputMapped = null;
+        try {
+            outputMapped = parameter.getString("outputmapping");
         } catch(JSONException jsonEx) {}
         
         /* TODO: Kijken of deze manier van parameters met een resource anders kan? */
-        if (nameResourceKey.contains("mapping.") || mapped != null) {
+        if (nameResourceKey.contains("inputmapping.") || inputMapped != null) {
             nameResourceKey = nameResourceKey.replaceAll("keys.", "");
             
             parameter.put("name", nameResourceKey);
             parameter.put("type", nameResourceKey + ".type");
-            parameter.put("mapped", "true");
-        }       
+            parameter.put("inputmapping", "true");
+        }   
+        
+        if (nameResourceKey.contains("outputmapping.") || outputMapped != null) {
+            nameResourceKey = nameResourceKey.replaceAll("keys.", "");
+            
+            parameter.put("name", nameResourceKey);
+            parameter.put("type", nameResourceKey + ".type");
+            parameter.put("outputmapping", "true");
+        }  
         
         try {
             parameter.put("name", res.getString(nameResourceKey));
@@ -267,5 +286,13 @@ public class ActionsAction extends DefaultAction {
 
     public static void setInputColumns(String[] inputColumns) {
         ActionsAction.inputColumns = inputColumns;
+    }
+
+    public static String[] getOutputColumns() {
+        return outputColumns;
+    }
+
+    public static void setOutputColumns(String[] outputColumns) {
+        ActionsAction.outputColumns = outputColumns;
     }
 }

@@ -262,7 +262,7 @@ public class InputAction extends DefaultAction {
                 String col = desc.getLocalName();
                 String type = desc.getType().getBinding().getSimpleName();
                 colNames.put(col, type);
-                inputColumns[i] = "mapping." + col;
+                inputColumns[i] = "inputmapping." + col;
                 
                 i++;
             }
