@@ -233,6 +233,10 @@ public class OutputActionNew extends DatabaseOutputAction {
                     //throw new Exception("Geen uitvoertabel gekozen.");
                 }
             }
+            
+            if (input.getTemplateOutput() != null) {
+                ActionsAction.setTemplateOutputType(input.getTemplateOutput());
+            }
 
             DataStore ds = null;
             String tableName = null;

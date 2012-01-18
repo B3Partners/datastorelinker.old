@@ -40,6 +40,7 @@ public class ActionsAction extends DefaultAction {
     
     private static String[] inputColumns;
     private static String[] outputColumns;
+    private static String templateOutputType;
 
     private static void resourceBundleInit(ActionBeanContext context) {
         //DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
@@ -66,7 +67,7 @@ public class ActionsAction extends DefaultAction {
         /* Ophalen List van invoerkolommen zodat het Mappen naar uitvoer block
          * aangemaakt kan worden. Alleen bij uitvoer template optie 1 en 2. Bij optie 3 moet
          * de gebruiker zelf zijn tabel samenstellen mbv blokken */
-        Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks(inputColumns, outputColumns);
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.getSupportedActionBlocks(inputColumns, outputColumns, templateOutputType);
 
         for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
             ActionModel model = createAction(actionBlock);
@@ -294,5 +295,13 @@ public class ActionsAction extends DefaultAction {
 
     public static void setOutputColumns(String[] outputColumns) {
         ActionsAction.outputColumns = outputColumns;
+    }
+
+    public static String getTemplateOutputType() {
+        return templateOutputType;
+    }
+
+    public static void setTemplateOutputType(String templateOutputType) {
+        ActionsAction.templateOutputType = templateOutputType;
     }
 }
