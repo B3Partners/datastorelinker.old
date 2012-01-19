@@ -16,23 +16,24 @@
     inputDialogLayoutOptions = $.extend({}, defaultDialogLayoutOptions, {
         center__findNestedContent: true
     });
-    log("js");
+    //log("js");
 
     $(document).ready(function() {
-        log("docready");
+        //log("docready");
         initInput();
         initOutput();
 
-        $("#createProcessBackButton, #createProcessNextButton").button();
-
+        $("#createProcessBackButton, #createProcessNextButton").button();        
+        
         initActionsList(
             <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
             "${contextPath}"
         );
+            
         //log(getActionsList());
         $("#createUpdateProcessForm").children("div:last").addClass("ui-layout-ignore");
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
-            log("step_shown");
+            //log("step_shown");
             formWizardStep(data);
 
             initGuiInput();
@@ -51,6 +52,7 @@
                 getColumnsNames();
             } else if (data.previousStep === "SelecteerUitvoer" && data.currentStep !== "SelecteerUitvoer") {
                 getColumnsNamesOutput();
+                
             } else if (data.previousStep === "Overzicht") {
                 overviewLayoutDestroy();
             }
@@ -75,7 +77,7 @@
             $("#" + data.currentStep).css(topZIndexCss);
         });
         
-        log("na step shown bind");
+        //log("na step shown bind");
 
         $("#createUpdateProcessForm").formwizard(
             // form wizard settings
@@ -142,10 +144,21 @@
                 })
             })
         );
-        
-        log("na form wiz gemaakt");
 
     });
+    
+    function getDefaultActionBlocks() {        
+        var params = {createDefaultActionBlocks: ""};
+        
+        blokken = $.ajax({
+            url: "${processUrl}",
+            data: params,
+            dataType: "json",
+            global: false
+        }).done(function(columns) {            
+            initActionsList(columns, "${contextPath}");
+        });
+    }
     
     function getColumnsNames() {
         var inputText = "";
@@ -264,6 +277,11 @@
             });
             colTable.append(tbody);
             $("#outputOverviewContainer .colsContainer").html(colTable);
+            
+            /* Default blokken ophalen indien lijst nog leeg is */
+            <c:if test="${actionBean.actionsList == '[]'}">
+                getDefaultActionBlocks();
+            </c:if>
         });
     }
 </script>

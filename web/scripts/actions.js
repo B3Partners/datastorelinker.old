@@ -16,7 +16,6 @@ function setParameters(action, parameters) {
 }
 
 function initActionsList(actionsList, contextPath) {
-    //log(actionsList);
     setActionsList(actionsList);
     fillActionsList(actionsList, "#actionsOverviewContainer", contextPath, actionsPlaceholder);
 }
@@ -25,9 +24,7 @@ function initActionsList(actionsList, contextPath) {
  * Slaat de actions op in de proces dialog.
  */
 function setActionsList(actionsList) {
-    //log("setting actionsList in dom metadata:");
     var actionsListObject = {"actionsList": actionsList};
-    //log(actionsListObject);
     $("#actionsListMetadata").data("actionsList", actionsListObject);
 }
 
@@ -35,39 +32,30 @@ function setActionsList(actionsList) {
  * Returned de actions opgeslagen in de proces dialog.
  */
 function getActionsList() {
-    //log("getting actionsList from dom metadata:");
     var metadata = $("#actionsListMetadata").data("actionsList");
-    //log(metadata);
-    if (!metadata || !metadata.actionsList)
+    if (!metadata || !metadata.actionsList) {
         return [];
-    else
+    } else {
         return metadata.actionsList;
+    }
 }
 
 /**
  * returned de acties die net gecreëerd zijn in de actions dialog.
  */
 function getCreatedActionList() {
-    //log("getActionList");
     var actionList = [];
     $("#actionsListContainer").children(":not(.placeholder)").each(function(index, actionDiv) {
         actionList.push($(actionDiv).metadata());
-        //actionList.push($(actionDiv).data("action"));
     })
-    //log(actionList);
     return actionList;
 }
 
 function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, mustAddButtons) {
-    //log("actionsListJSON.length: " + actionsListJSON.length);
-    //log("actionsListSelector: " + actionsListSelector);
-    //log("later");
-    log(actionsListJSON);
     if (actionsListJSON.length == 0) {
         $(actionsListSelector).html(placeholder);
     } else {
         $(actionsListSelector).html("");
-        //$(actionsListSelector).empty();
     }
 
     $.each(actionsListJSON, function(index, action) {
@@ -93,8 +81,6 @@ function fillActionsList(actionsListJSON, actionsListSelector, contextPath, plac
 
         //div.data("action", action);
         div.attr("jqmetadata", JSON.stringify(action));
-        
-        //log(div.attr("jqmetadata"));
 
         if (mustAddButtons) {
             addButtons(div);
@@ -133,16 +119,12 @@ function addRemoveButton(div) {
 
 function addParametersButton(div) {
     var action = div.metadata();
-    //var action = div.data("action");
-    //log(action);
     var hasParameters = false;
+    
     if (getParameters(action)) {
-        log("hasparams");
-        log(getParameters(action));
         $.each(getParameters(action), function() {hasParameters = true;});
     }
-
-    //log(hasParameters);
+    
     if (hasParameters) {
         var parametersButton = $("<input />").attr({
             type: "button",
@@ -161,9 +143,8 @@ function addParametersButton(div) {
 var validateInputMappedFields = true;
 
 function openParametersDialog(action) {
-    //log(getParameters(action));
-
     var parametersDialog = $("<div></div>");
+    
     parametersDialog.append($("<div></div>").append(action.description));
     parametersDialog.append($("<br />"));
     var parameterForm = $("<form></form>").attr({
@@ -173,21 +154,19 @@ function openParametersDialog(action) {
     parameterForm.append($("<table><tbody></tbody></table>"));
     parametersDialog.append(parameterForm);
 
-    $.each(getParameters(action), function(index, parameter) {
-        log("parameter");
-        log(parameter);
-
+    $.each(getParameters(action), function(index, parameter) {        
         var label = $("<label></label>", {
             text: parameter.name
         });
+        
         var key = $("<td></td>", {
             html: label
         });
+        
         var input;      
         
         if (isInputMappingParam(parameter)) {
             validateInputMappedFields = false;
-            //parameter.paramId = parameter.paramId.replace("inputmapping.","");
         }
                 
         if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
@@ -249,15 +228,31 @@ function openParametersDialog(action) {
                 input.addClass("required"); // checkbox is not required (can be false), only textbox.
             }
         }
+        
+        var pijltje = $("<td></td>", {
+            html: ""
+        });
+        
+        if (isInputMappingParam(parameter) || isOutputMappingParam(parameter)) {
+            pijltje = $("<td></td>", {
+                html: "<label>-></label>"
+            });
+        }
+        
         var value = $("<td></td>", {
             html: input
         });
         
-        var row = $("<tr></tr>")
-            .attr({
-                jqmetadata: JSON.stringify(parameter)
-            })
-            .append(key, value);
+        var row;
+        
+        if (isOutputMappingParam(parameter)) {
+            row = $("<tr></tr>").attr({jqmetadata: JSON.stringify(parameter)})
+            .append(value, pijltje, key);
+        } else {
+            row = $("<tr></tr>").attr({jqmetadata: JSON.stringify(parameter)})
+            .append(key, pijltje, value);
+        }
+        
         parametersDialog.find("tbody").append(row);
         if (parameter.name === I18N["keys.ATTRIBUTE_NAME"] || 
             parameter.name === I18N["keys.ATTRIBUTE_CLASS"] ||
@@ -295,33 +290,20 @@ function openParametersDialog(action) {
         }
 
         setParameters(action, []);
-        //log(getParameters(action));
 
         parametersDialog.find("tr").each(function(index, parameterRow) {
             var paramMetadata = $(parameterRow).metadata();
-            //log("paramMetadata");
-            //log(paramMetadata);
 
             var input = $(parameterRow).find("input");
-            /*var select = $(parameterRow).find("select");
-            if (select.length > 0) {
-                paramMetadata.value = select.val();
-                log("paramMetadata.value:" + paramMetadata.value);
-                if (!paramMetadata.value) {
-                    paramMetadata.value = input.val();
-                    log("replace paramMetadata.value:" + paramMetadata.value);
-                }                    
-            } else {*/
-                if (input.is(":checkbox")) {
-                    paramMetadata.value = input.is(":checked");
-                } else {
-                    paramMetadata.value = input.val();
-                }
-            //}
+            
+            if (input.is(":checkbox")) {
+                paramMetadata.value = input.is(":checked");
+            } else {
+                paramMetadata.value = input.val();
+            }            
 
             getParameters(action).push(paramMetadata);
         });
-        //log(getParameters(action));
         
         $("#actionsListContainer").find(".action-active .value").text(getExampleParamValue(action));
 

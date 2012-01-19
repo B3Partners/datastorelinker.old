@@ -114,8 +114,9 @@ public class ProcessAction extends DefaultAction {
         inputs = findInputs();
         outputs = findOutputs();
 
-        if (actionsList == null)
+        if (actionsList == null) {
             actionsList = new JSONArray().toString();
+        }
 
         if (emailAddress == null)
             emailAddress = getContext().getServletContext().getInitParameter("defaultToEmailAddress");
@@ -124,6 +125,22 @@ public class ProcessAction extends DefaultAction {
             subject = getContext().getServletContext().getInitParameter("defaultSubject");
 
         return new ForwardResolution(CREATE_JSP);
+    }    
+    
+    /* Deze methode wordt in /main/process/create.jsp aangeroepen. Back-end geeft
+     * een JSONArray terug van een aantal actieblokken die je daar via de methode 
+     * getDefaultActionBlocks() kunt opgeven. Let op: Als je mapping blokken opgeeft 
+     * moet hiervoor eerst invoer/uitvoer kolommen klaargezet zijn. Deze kolommen
+     * zijn nodig voor sommige constructors van actie blokken.
+     */
+    public Resolution createDefaultActionBlocks() {
+        JSONArray obj = null;
+        
+        if (actionsList == null) {         
+            obj = ActionsAction.createDefaultActionList(getContext());
+        }
+        
+        return new JSONResolution(obj);
     }
 
     public Resolution createComplete() {
@@ -218,34 +235,24 @@ public class ProcessAction extends DefaultAction {
     }
 
     private String getActionsListJsonToXmlString() {
-        if (actionsList == null || actionsList.trim().equals(""))
+        if (actionsList == null || actionsList.trim().equals("")) {
             actionsList = new JSONArray().toString();
+        }         
 
         JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        //log.debug("beforeRemove: " + actionsListJSONArray);
+        
         ActionsAction.removeViewData(actionsListJSONArray);
-        //log.debug("afterRemove: " + actionsListJSONArray);
         ActionsAction.addExpandableProperty(actionsListJSONArray);
-        //log.debug("afterExpandableProp: " + actionsListJSONArray);
 
         JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
         
         XMLSerializer xmlSerializer = new XMLSerializer();
         xmlSerializer.setArrayName("actions");
         xmlSerializer.setElementName("action");
-        // dit doet allemaal niets!
-        //xmlSerializer.setSkipNamespaces(false);
-        //xmlSerializer.addNamespace("dsl", "http://www.b3partners.nl/schemas/dsl");
-        //xmlSerializer.setNamespace("dsl", "http://www.b3partners.nl/schemas/dsl");
-        //xmlSerializer.setNamespace("dsl", "http://www.b3partners.nl/schemas/dsl", "actions");
-        xmlSerializer.setExpandableProperties(new String[] {
-            "parameter"
-        });
+        xmlSerializer.setExpandableProperties(new String[] {"parameter"});
         xmlSerializer.setTypeHintsEnabled(false);
 
         String actionsListXml = xmlSerializer.write(actionsListJSON);
-        //log.debug(actionsListXml);
-        //log.debug("actionsList: " + actionsList);
 
         return actionsListXml;
     }

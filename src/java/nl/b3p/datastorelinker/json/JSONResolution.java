@@ -6,6 +6,7 @@
 package nl.b3p.datastorelinker.json;
 
 import javax.servlet.http.HttpServletResponse;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.StreamingResolution;
 import net.sourceforge.stripes.util.Log;
@@ -32,8 +33,13 @@ public class JSONResolution extends StreamingResolution {
     }
 
     @Override
-    public void stream(HttpServletResponse response) throws Exception {
-        //log.debug(JSONObject.fromObject(object).toString());
-        response.getOutputStream().print(JSONObject.fromObject(object).toString());
+    public void stream(HttpServletResponse response) throws Exception {    
+        
+        if (object instanceof JSONObject)
+            response.getOutputStream().print(JSONObject.fromObject(object).toString());
+        else if (object instanceof JSONArray)
+            response.getOutputStream().print(JSONArray.fromObject(object).toString());
+        else
+            response.getOutputStream().print(JSONObject.fromObject(object).toString());
     }
 }

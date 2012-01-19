@@ -11,23 +11,8 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
 
-    $(document).ready(function() {
-        /*$("#inputOverview, #outputOverview, #actionsOverview").hover(
-            function() { $(this).addClass("overview-hover"); },
-            function() { $(this).removeClass("overview-hover"); }
-        );
-
-        $("#inputOverview").click(function() {
-            $("#createUpdateProcessForm").data("formwizard").show("SelecteerInvoer");
-        });
-        
-        $("#outputOverview").click(function() {
-            $("#createUpdateProcessForm").data("formwizard").show("SelecteerUitvoer");
-        });*/
-
+    $(document).ready(function() {            
         $("#actionsOverview").click(function() {
-            //log("currentActionsList:");
-            //log(currentActionsList);
             ajaxOpen({
                 url: "${actionsUrl}",
                 formSelector: "#createUpdateProcessForm",
@@ -50,9 +35,8 @@
                         layouts.actionsMainContainer.resizeAll();
                     }
                 })
-            });
+            });            
         });
-        log("view docready");
     });
     
     function overviewLayoutCreate() {

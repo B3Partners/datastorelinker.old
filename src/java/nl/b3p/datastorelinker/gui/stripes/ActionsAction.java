@@ -16,6 +16,7 @@ import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.json.ActionModel;
 import nl.b3p.geotools.data.linker.ActionFactory;
+import nl.b3p.geotools.data.linker.ActionList;
 
 /**
  *
@@ -56,7 +57,6 @@ public class ActionsAction extends DefaultAction {
 
     public Resolution create() {
         actionsWorkbenchList = createActionsWorkbenchList();
-        //log.debug(actionsWorkbenchList);
 
         return new ForwardResolution(CREATE_JSP);
     }
@@ -76,6 +76,89 @@ public class ActionsAction extends DefaultAction {
         }
         
         return workbenchList.toString();
+    }
+    
+    public static JSONArray createDefaultActionList(ActionBeanContext context) {
+        if (res == null) {
+            res = ResourceBundle.getBundle("StripesResources", context.getLocale());
+        }
+        
+        JSONArray workbenchList = new JSONArray();
+        
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.getDefaultActionBlocks(inputColumns, outputColumns, templateOutputType);
+
+        for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
+            ActionModel model = createDefaultAction(actionBlock);
+            
+            /* TODO: Parameters klaarzetten voor blokken */
+            
+            JSONObject action = JSONObject.fromObject(model);
+            workbenchList.add(action);
+        }
+        
+        return workbenchList;
+    }
+    
+    private static ActionModel createDefaultAction(Map.Entry<String, List<List<String>>> actionBlock) {      
+        JSONArray parameters = new JSONArray();
+        List<List<String>> actionBlockValue = actionBlock.getValue();
+        if (actionBlockValue != null && !actionBlockValue.isEmpty()) {
+            // only use the first constructor type:
+            List<String> paramList = actionBlockValue.get(0);
+            for (String paramName : paramList) {
+                JSONObject paramInterior = new JSONObject();                
+                
+                if (paramName.contains("inputmapping.")) {
+                    paramInterior.element("paramId", paramName.replaceAll("inputmapping.", ""));
+                } else if (paramName.contains("outputmapping.")) {
+                    paramInterior.element("paramId", paramName.replaceAll("outputmapping.", ""));
+                } else {
+                    paramInterior.element("paramId", paramName);
+                }
+                
+                if (paramName.contains("inputmapping.")) {
+                    paramName = paramName.replaceAll("inputmapping.", "");
+                    
+                    paramInterior.element("name", paramName);
+                    paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("inputmapping", "true");
+                }
+                
+                if (paramName.contains("outputmapping.")) {
+                    paramName = paramName.replaceAll("outputmapping.", "");
+                    
+                    paramInterior.element("name", paramName);
+                    paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("outputmapping", "true");
+                }               
+                        
+                /* TODO: Kijken of deze manier van parameters met een resource anders kan? */
+                try {
+                    if (res != null) {
+                        paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
+                        paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));                   
+                    }
+                } catch (MissingResourceException mre) {}                
+                
+                parameters.add(paramInterior);
+            }
+        }
+
+        ActionModel model = new ActionModel();
+        String type = actionBlock.getKey();
+        model.setType(type);
+        //model.setCssClass("ActionAttributeName");
+
+        if (res != null) {
+            model.setClassName(res.getString(type + ".type"));
+            model.setImageFilename(res.getString(type + ".image"));
+            model.setName(res.getString(type + ".desc"));
+            model.setDescription(res.getString(type + ".longdesc"));
+        }        
+
+        model.setParameters(parameters);
+
+        return model;
     }
 
     private ActionModel createAction(Map.Entry<String, List<List<String>>> actionBlock) {
