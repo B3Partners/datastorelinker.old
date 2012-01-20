@@ -14,9 +14,9 @@ import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
 import nl.b3p.commons.stripes.Transactional;
+import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.json.ActionModel;
 import nl.b3p.geotools.data.linker.ActionFactory;
-import nl.b3p.geotools.data.linker.ActionList;
 
 /**
  *
@@ -42,6 +42,8 @@ public class ActionsAction extends DefaultAction {
     private static String[] inputColumns;
     private static String[] outputColumns;
     private static String templateOutputType;
+    
+    private static String outputTablename;
 
     private static void resourceBundleInit(ActionBeanContext context) {
         //DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
@@ -85,7 +87,48 @@ public class ActionsAction extends DefaultAction {
         
         JSONArray workbenchList = new JSONArray();
         
-        Map<String, List<List<String>>> actionBlocks = ActionFactory.getDefaultActionBlocks(inputColumns, outputColumns, templateOutputType);
+        if (templateOutputType != null && templateOutputType.equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
+            workbenchList = getDefaultUseTableActionBlocks(context);
+        }
+        
+        if (templateOutputType != null && templateOutputType.equals(Inout.TEMPLATE_OUTPUT_AS_TEMPLATE)) {
+            workbenchList = getDefaultUseAsTemplateActionBlocks(context);
+        }
+        
+        if (templateOutputType != null && templateOutputType.equals(Inout.TEMPLATE_OUTPUT_NO_TABLE)) {
+            workbenchList = getDefaultNoTableActionBlocks(context);
+        }
+        
+        return workbenchList;
+    }
+    
+    private static JSONArray getDefaultUseTableActionBlocks(ActionBeanContext context) {
+        JSONArray workbenchList = new JSONArray();
+        
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.createDefaultUseTableActionBlocks(outputColumns);
+
+        for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
+            ActionModel model = createDefaultAction(actionBlock);
+            
+            JSONObject action = JSONObject.fromObject(model);
+            
+            /* TODO: Parameters klaarzetten voor blokken */
+            JSONArray parameters = action.optJSONArray("parameters");
+            for (Object parameterObject : parameters) {
+                JSONObject parameter = (JSONObject)parameterObject;
+                addParameterViewData(parameter, context);
+            }
+            
+            workbenchList.add(action);
+        }  
+        
+        return workbenchList;
+    }
+    
+    private static JSONArray getDefaultUseAsTemplateActionBlocks(ActionBeanContext context) {
+        JSONArray workbenchList = new JSONArray();
+        
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.createDefaultUseAsTemplateActionBlocks(outputColumns);
 
         for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
             ActionModel model = createDefaultAction(actionBlock);
@@ -94,7 +137,24 @@ public class ActionsAction extends DefaultAction {
             
             JSONObject action = JSONObject.fromObject(model);
             workbenchList.add(action);
-        }
+        }  
+        
+        return workbenchList;
+    }
+    
+    private static JSONArray getDefaultNoTableActionBlocks(ActionBeanContext context) {
+        JSONArray workbenchList = new JSONArray();
+        
+        Map<String, List<List<String>>> actionBlocks = ActionFactory.createDefaultNoTableActionBlocks(inputColumns);
+
+        for (Map.Entry<String, List<List<String>>> actionBlock : actionBlocks.entrySet()) {
+            ActionModel model = createDefaultAction(actionBlock);
+            
+            /* TODO: Parameters klaarzetten voor blokken */
+            
+            JSONObject action = JSONObject.fromObject(model);
+            workbenchList.add(action);
+        }  
         
         return workbenchList;
     }
@@ -106,8 +166,20 @@ public class ActionsAction extends DefaultAction {
             // only use the first constructor type:
             List<String> paramList = actionBlockValue.get(0);
             for (String paramName : paramList) {
-                JSONObject paramInterior = new JSONObject();                
+                JSONObject paramInterior = new JSONObject();  
                 
+                if (templateOutputType != null && templateOutputType.equals(Inout.TEMPLATE_OUTPUT_USE_TABLE) &&
+                    outputTablename != null && paramName.equals("new_typename")) { 
+                    
+                    paramInterior.element("value", outputTablename);
+                }
+                
+                if (templateOutputType != null && templateOutputType.equals(Inout.TEMPLATE_OUTPUT_USE_TABLE) &&
+                        outputTablename != null && paramName.equals("append")) {  
+                    
+                    paramInterior.element("value", "false");
+                }
+        
                 if (paramName.contains("inputmapping.")) {
                     paramInterior.element("paramId", paramName.replaceAll("inputmapping.", ""));
                 } else if (paramName.contains("outputmapping.")) {
@@ -170,7 +242,7 @@ public class ActionsAction extends DefaultAction {
             // only use the first constructor type:
             List<String> paramList = actionBlockValue.get(0);
             for (String paramName : paramList) {
-                JSONObject paramInterior = new JSONObject();                
+                JSONObject paramInterior = new JSONObject(); 
                 
                 if (paramName.contains("inputmapping.")) {
                     paramInterior.element("paramId", paramName.replaceAll("inputmapping.", ""));
@@ -281,6 +353,9 @@ public class ActionsAction extends DefaultAction {
         }
     }
 
+    /* TODO: Eventueel hier logica inbouwen om alvast wat parameter values
+     * te zetten. parameter.put("value", "");
+     */
     private static void addParameterViewData(JSONObject parameter, ActionBeanContext context) {
         resourceBundleInit(context);
         
@@ -303,7 +378,7 @@ public class ActionsAction extends DefaultAction {
             parameter.put("name", nameResourceKey);
             parameter.put("type", nameResourceKey + ".type");
             parameter.put("inputmapping", "true");
-        }   
+        }
         
         if (nameResourceKey.contains("outputmapping.") || outputMapped != null) {
             nameResourceKey = nameResourceKey.replaceAll("keys.", "");
@@ -386,5 +461,13 @@ public class ActionsAction extends DefaultAction {
 
     public static void setTemplateOutputType(String templateOutputType) {
         ActionsAction.templateOutputType = templateOutputType;
+    }
+
+    public static String getOutputTablename() {
+        return outputTablename;
+    }
+
+    public static void setOutputTablename(String outputTablename) {
+        ActionsAction.outputTablename = outputTablename;
     }
 }

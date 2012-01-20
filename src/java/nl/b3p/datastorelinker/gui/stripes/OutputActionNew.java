@@ -236,6 +236,11 @@ public class OutputActionNew extends DatabaseOutputAction {
             
             if (input.getTemplateOutput() != null) {
                 ActionsAction.setTemplateOutputType(input.getTemplateOutput());
+                
+                /* Tabelnaam alvast voorinvullen voor Tabel hernoemen blok */
+                if (input.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
+                    ActionsAction.setOutputTablename(input.getTableName());                    
+                }
             }
 
             DataStore ds = null;

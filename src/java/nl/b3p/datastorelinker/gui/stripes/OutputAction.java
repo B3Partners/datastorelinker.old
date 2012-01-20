@@ -3,6 +3,7 @@ package nl.b3p.datastorelinker.gui.stripes;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
+import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
 import net.sourceforge.stripes.util.Log;
@@ -10,6 +11,7 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import org.hibernate.Session;
 
@@ -27,6 +29,8 @@ public class OutputAction extends DatabaseAction {
     // dummy variable (not used but necessary; bit of a hack)
     private Boolean drop;
     private Boolean append;
+    
+    private String checkOutputId;
 
     @Override
     protected String getAdminJsp() {
@@ -76,6 +80,27 @@ public class OutputAction extends DatabaseAction {
         
         Collections.sort(list, new NameableComparer());
         return list;
+    }
+    
+    public Resolution checkOutputIsUseTableTemplate() {
+        JSONObject obj = null;        
+        String outputType = null;
+        
+        if (checkOutputId != null) { 
+            EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            Session session = (Session)em.getDelegate();
+
+            Inout output = (Inout)session.get(Inout.class, new Long(checkOutputId));
+            
+            if (output != null) {
+                outputType = output.getTemplateOutput();
+            }
+        }
+        
+        obj = new JSONObject();
+        obj.put("type", outputType);
+        
+        return new JSONResolution(obj);
     }
 
     @Override
@@ -159,5 +184,13 @@ public class OutputAction extends DatabaseAction {
 
     public void setAppend(Boolean append) {
         this.append = append;
+    }
+
+    public String getCheckOutputId() {
+        return checkOutputId;
+    }
+
+    public void setCheckOutputId(String checkOutputId) {
+        this.checkOutputId = checkOutputId;
     }
 }

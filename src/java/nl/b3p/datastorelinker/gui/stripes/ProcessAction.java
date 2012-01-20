@@ -206,6 +206,12 @@ public class ProcessAction extends DefaultAction {
         process.setDrop(drop);
         process.setAppend(append);
         
+        /* Indien output type USE TABLE dan niet droppen en append aanzetten */
+        if (output.getTemplateOutput() != null && output.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
+            process.setDrop(false);
+            process.setAppend(true);
+        }
+        
         Mail mail = null;
         if (process.getMail() == null)
             mail = new Mail();

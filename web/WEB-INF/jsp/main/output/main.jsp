@@ -1,13 +1,7 @@
-<%-- 
-    Document   : main
-    Created on : 4-aug-2010, 13:32:02
-    Author     : Erik van de Pol
---%>
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
@@ -20,6 +14,7 @@
             if(drop) {
                 $("#append").attr("checked", false);
             }
+            
         });
         connectionSuccessOutputDBAjaxOpenOptions = {
             url: "${outputUrl}",
@@ -106,7 +101,6 @@
             return defaultButtonClick(this);
         });
         
-        log("output docready");
     });
 </script>
 
