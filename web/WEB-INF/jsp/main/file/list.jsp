@@ -20,7 +20,6 @@
         <c:if test="${not empty actionBean.selectedFilePath}">
             selectedFilePath = "<c:out value="${actionBean.selectedFilePath}"/>";
         </c:if>
-        log("selectedFilePath: " + selectedFilePath);
         
         <c:choose>
             <c:when test="${param.adminPage == true}">
@@ -51,9 +50,8 @@
             },
             readyCallback: function(root) {
                 if (selectedFilePath != null && !selectedFileFound) {
-                    //log(root);
                     var selectedFile = root.find("input:radio[value='" + selectedFilePath + "']");
-                    log(selectedFile);
+                    
                     if (selectedFile.length > 0) {
                         selectedFileFound = true;
                         selectedFile.prop("checked", true);

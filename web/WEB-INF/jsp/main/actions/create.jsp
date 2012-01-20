@@ -13,11 +13,7 @@
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         var actionsWorkbenchList = ${actionBean.actionsWorkbenchList};
-        //log("actionsWorkbenchList:");
-        //log(actionsWorkbenchList);
         var actionsList = getActionsList();
-        //log("actionsList:");
-        //log(actionsList);
 
         fillActionsList(actionsWorkbenchList, "#actionsWorkbenchContainer", "${contextPath}");
         fillActionsList(actionsList, "#actionsListContainer", "${contextPath}", dragActionsPlaceholder, true);
@@ -51,7 +47,6 @@
             /*accept: ".blaat",*/
             /*greedy: true,*/
             drop: function(event, ui) {
-                //log("drop");
                 // is called twice when draggable is connected to sortable.
                 // prevent it with an ugly hack:
                 if (!alcDropAlreadyCalled) {
@@ -73,43 +68,6 @@
                 $(this).removeClass("ui-state-highlight");
             }
         });
-        
-        /*var selectedInputTabAnchor = $("#inputTabs > ul > li.ui-tabs-selected > a");
-        var selectedInputTab = "#";
-        if (selectedInputTabAnchor.length > 0) {
-            selectedInputTab = selectedInputTabAnchor[0].getAttribute("href"); // To make sure IE returns url just as in href attr.
-        }
-
-        log("selectedInputTab: " + selectedInputTab);
-        if (selectedInputTab === "#fileTab") {
-            $("#showExampleContainer").hide();
-        } else {
-            $("#exampleRecordCheckBox").click(function() {
-                if ($(this).is(":checked")) {
-                    if ($("#exampleRecordContainer").html() == "") {
-                        // formwiz zet gehide wizardpages uit. dus zelf opzoeken:
-                        var inputId = $("#inputListContainer input:checked").val();
-                        ajaxOpen({
-                            url: "${inputUrl}",
-                            event: "getExampleRecord",
-                            extraParams: [{
-                                name: "selectedInputId",
-                                value: inputId
-                            }],
-                            containerSelector: "#exampleRecordContainer",
-                            successAfterContainerFill: function() {
-                                $("#actionsMainContainer").layout(defaultLayoutOptions).resizeAll();//initContent("south");
-                            }
-                        });
-                    } else {
-                        $("#exampleRecordContainer").show(500);
-                    }
-                } else {
-                    $("#exampleRecordContainer").hide(500);
-                }
-                // niet false returnen aangezien de checkbox wel op true gezet moet worden.
-            });
-        }*/
 
         layouts.actionsMainContainer = $("#actionsMainContainer").layout($.extend({}, defaultLayoutOptions, {//defaultLayoutOptions);
         //$("#actionsListsContainer").layout($.extend({}, defaultLayoutOptions, {

@@ -15,10 +15,6 @@
                     select: function(event, ui) {
                         // voorkomt het dubbel voorkomen van id's en dus fouten.
                         $("#tabsTarget").children().empty();
-
-                        /*log(ui.panel);
-                        $("#tabs").data("currentTabTitle", $(ui.panel).attr("title"));
-                        $(ui.panel).removeAttr("title");*/
                     },
                     /*fx: {
                         opacity: "toggle"

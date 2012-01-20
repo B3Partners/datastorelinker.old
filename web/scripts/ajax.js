@@ -48,70 +48,7 @@ $(document).ajaxStop(function() {
     $.unblockUI(unblockUIOptions);
 });
 
-//$(document).ajaxSuccess(function(event, xhr, ajaxOptions) {
-    /*log("ajax success");
-    log(event);
-    log(xhr);
-    log(ajaxOptions);
-    log(xhr);
-    log(xhr.getAllResponseHeaders());
-    log(xhr.getResponseHeader("Content-Type"));
-    log(xhr.status);*/
-
-    /*var contentType = xhr.getResponseHeader("Content-Type");
-    log(contentType);
-    if (!contentType || contentType !== "text/html") { // to be future-proof we should xhtml types etc. (we might want to change our content type in the future)
-        return;
-    }*/
-
-    //$("<div>test</div>").dialog();
-    //
-    // Session timeout solution:
-    //
-    // Current solution is ugly. Also a bit for the user, but it works.
-    // TODO: prevent fallthrough to normal success function?
-    // get and store normal success handler?
-    //log(xhr.responseXML);
-    //log(xhr.responseText);
-    /*var response = $(".login", xhr.responseXML);
-    var response2 = $(".login", xhr.responseText);
-    if (response.length > 0 || response2.length > 0) { // || xhr.status == 302
-        log("relogin screen");
-        log(response);
-        log(window.location);
-        window.location = webappRoot;*/
-        // our session has timed out. we got a login screen
-
-        // prevent regular success function from being called (does not seem to work)
-        //xhr.abort();
-        //ajaxOptions.success = $.noop;
-
-        // show login screen in dialog:
-        /*$("<div></div>").attr("id", "loginDialog").appendTo(document.body);
-        $("#loginDialog").append(I18N.loginTimeout);
-        $("#loginDialog").append(response);
-        $("#loginDialog form").submit(function() {
-            $("#loginDialog").dialog("close");
-        });
-        log($("#loginDialog"));
-        $("#loginDialog").dialog($.extend({}, defaultDialogOptions, {
-            title: I18N.login
-        }));
-
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        event.stopPropagation();*/
-        //return false;
-    /*} else {
-        //log("normal screen");
-        //return true;
-    }*/
-//});
-
 $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
-    /*log("error via ajaxError");
-    log(event);
-    log(ajaxOptions);*/
     $.unblockUI(unblockUIOptions);
     
     if ("abort" !== thrownError)
@@ -120,18 +57,9 @@ $(document).ajaxError(function(event, xhr, ajaxOptions, thrownError) {
 
 // for debugging purposes:
 $(document).ajaxSend(function(event, jqxhr, settings) {
-    /*log("ajaxSend");
-    log(event);
-    log(jqxhr);
-    log(settings);*/
 });
 
 function handleError(xhr, textStatus, thrownError) {
-    /*log("error");
-    log(xhr);
-    log(thrownError);
-    log(xhr.status);*/
-
     var errorMessage;
     if (xhr.status == 500) {
         try {
@@ -217,9 +145,6 @@ function ajaxOpen(sendOptions) {
             options.successAfterContainerFill(data, textStatus, xhr, container);
         }
     };
-
-    //log(options);
-    //log(ajaxOptions);
 
     if (options.formSelector) {
         var form = $(options.formSelector);

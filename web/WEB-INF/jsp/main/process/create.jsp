@@ -16,7 +16,6 @@
     inputDialogLayoutOptions = $.extend({}, defaultDialogLayoutOptions, {
         center__findNestedContent: true
     });
-    //log("js");
 
     $(document).ready(function() {
         //log("docready");
@@ -30,10 +29,8 @@
             "${contextPath}"
         );
             
-        //log(getActionsList());
         $("#createUpdateProcessForm").children("div:last").addClass("ui-layout-ignore");
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
-            //log("step_shown");
             formWizardStep(data);
 
             initGuiInput();
@@ -51,8 +48,7 @@
             if (data.previousStep === "SelecteerInvoer" && data.currentStep !== "SelecteerInvoer") {
                 getColumnsNames();
             } else if (data.previousStep === "SelecteerUitvoer" && data.currentStep !== "SelecteerUitvoer") {
-                getColumnsNamesOutput();
-                
+                getColumnsNamesOutput();                
             } else if (data.previousStep === "Overzicht") {
                 overviewLayoutDestroy();
             }
@@ -76,8 +72,6 @@
             $("#processContainer, #processSteps, #inputContainer .wizardButtonsArea").css(topZIndexCss);
             $("#" + data.currentStep).css(topZIndexCss);
         });
-        
-        //log("na step shown bind");
 
         $("#createUpdateProcessForm").formwizard(
             // form wizard settings
@@ -176,16 +170,14 @@
 				</div>\
 			</div>\
         ');
-
-        //log('data.previousStep === "SelecteerInvoer"');
+                    
         var params = {getTypeNames: ""};
         if ($("#inputTabs").tabs("option", "selected") === 0) {
             params.selectedInputId = $("#inputListContainer input:radio:checked").val();
         } else {
             params.selectedFilePath = $("#filesListContainer input:radio:checked").val();
         }
-        //log("retrieving col names...");
-        //log(params);
+        
         //setTimeout(function() {
         inputColumnNamesJqXhr = $.ajax({
             url: "${inputUrl}",
@@ -204,8 +196,6 @@
                 handleError(jqXHR, textStatus, errorThrown);
             }
         }).done(function(columns) {
-            log("columns:");
-            log(columns);
             var colTable = $("<table>").css("width", "100%");
             var thead = $("<thead></thead>").append($("<tr>").append(
                 $("<td>", {text: "Attribuutnaam"}), 
@@ -238,8 +228,7 @@
 				</div>\
 			</div>\
         ');
-
-        //log('data.previousStep === "SelecteerInvoer"');
+                    
         var params = {getTypeNames: ""};        
         
         params.selectedOutputId = $("#outputListContainer input:radio:checked").val();
@@ -261,8 +250,6 @@
                 handleError(jqXHR, textStatus, errorThrown);
             }
         }).done(function(columns) {
-            log("columns:");
-            log(columns);
             var colTable = $("<table>").css("width", "100%");
             var thead = $("<thead></thead>").append($("<tr>").append(
                 $("<td>", {text: "Attribuutnaam"}), 

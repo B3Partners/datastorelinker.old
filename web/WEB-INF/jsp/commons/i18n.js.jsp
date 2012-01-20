@@ -34,5 +34,3 @@ I18N.monthsOfTheYear = {
     11: "<fmt:message key="november"/>",
     12: "<fmt:message key="december"/>"
 };
-
-//log(I18N);

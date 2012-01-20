@@ -15,33 +15,25 @@
             width: calculateDialogWidth(70, 600, 1200),
             height: calculateDialogHeight(70, 525),
             resize: function(event, ui) {
-                log("proces dialog resize");
                 if (layouts && layouts.processContainer)
                     layouts.processContainer.resizeAll();
                 if (layouts && layouts.processSteps)
                     layouts.processSteps.resizeAll();
-                //$("#processContainer").layout().resizeAll();
-                //$("#processSteps").layout().resizeAll();
             },
             close: function(event, ui) {
                 if (window.layouts) {
-                    //log(window.layouts);
                     // volgorde is belangrijk! van binnen naar buiten destroyen
                     layouts.tabs.destroy();
                     layouts.tabs = null;
-                    //log("layouts.tabs.destroy();ed");
+                    
                     layouts.inputTabs.destroy();
                     layouts.inputTabs = null;
                     
-                    //log("layouts.inputTabs.destroy();ed");
                     layouts.processSteps.destroy();
                     layouts.processSteps = null;
-                    //log("layouts.processSteps.destroy();ed");
+                    
                     layouts.processContainer.destroy();
                     layouts.processContainer = null;
-                    //log("layouts.processContainer.destroy();ed");
-                    //delete layouts;
-                    log("delete window.layouts; done");
                 }
                 defaultDialogClose(event, ui);
             }
@@ -154,16 +146,11 @@
                     height: 300,
                     buttons: {
                         "<fmt:message key="cancel"/>": function() {
-                            log("execute cancel");
                             $(this).dialog("close");
                         }
                     },
                     close: function(event, ui) {
-                        log("execute close");
-                        log(event);
-                        log(ui);
                         if ($("#processContainer").data("isStopped")) {
-                            log("execute close iscanceled");
                             defaultDialogClose(event, ui);
                         } else {
                             var jobUUID = $("#processContainer").data("jobUUID");
@@ -306,7 +293,6 @@
                 } else {
                     $("#progressbar").progressbar("value", data.progress);
                     if (data.progress >= 100) {
-                        //log("Process finished");
                         stopProcess(data.message);
                     }
                 }
@@ -322,7 +308,6 @@
         $("#processContainer").data("isStopped", true);
         $("#processContainer").dialog("option", "buttons", {
             "<fmt:message key="finish"/>": function() {
-                log("execute finish");
                 $(this).dialog("close");
             }
         });

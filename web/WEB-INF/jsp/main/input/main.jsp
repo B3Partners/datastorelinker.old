@@ -11,10 +11,8 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
-        log("input main docready");
         var classesUsed = "ui-layout-content mandatory-form-input";
         var layoutContentClass = "ui-layout-content";
-        //var classesUsed = "mandatory-form-input";
 
         $("#inputList, #filesListContainer").css({
             /*height: "100%",
@@ -34,13 +32,9 @@
                 opacity: "toggle"
             },*/
             select: function(event, ui) {
-                //log("tabselect");
             },
             selected: selectedTab,
             show: function(event, ui) {
-                log("tabshow");
-                //log(ui);
-
                 if (layouts.tabs)
                     layouts.tabs.destroy();
                 if (layouts.inputTabs)

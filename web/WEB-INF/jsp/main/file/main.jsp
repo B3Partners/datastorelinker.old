@@ -18,14 +18,11 @@
             if (!$("#uploader").val()) {
                 return defaultButtonClick(this);
             }
-
-            log("uploadFile");
-            //log($("#createUpdateProcessForm"));
+            
             var oldAction = $("#createUpdateProcessForm").prop("action");
             var oldMethod = $("#createUpdateProcessForm").prop("method");
             var oldEncType = $("#createUpdateProcessForm").prop("enctype");
             var oldEncoding = $("#createUpdateProcessForm").prop("encoding");
-            //log("oldEncType: " + oldEncType);
 
             $("#createUpdateProcessForm").prop({
                 action: "${fileUrl}",
@@ -38,7 +35,6 @@
             $("#createUpdateProcessForm").ajaxSubmit({
                 dataType: "html",
                 success: function(responseText, statusText, xhr, form) {
-                    //log($(responseText).text());
                     $.blockUI(blockUIOptions);
                     // allow server to finish its stuff, then update all statuses:
                     setTimeout(
@@ -65,19 +61,15 @@
                 encoding: oldEncoding
             });
 
-            //log("enctype: " + $("#createUpdateProcessForm").prop("enctype"));
-            //log("encoding: " + $("#createUpdateProcessForm").prop("encoding"));
-
             startFileUploadProgress();
 
             return defaultButtonClick(this);
         });
 
         $("#deleteFile").click(function() {
-            if (!containsInput("#filesListContainer"))
+            if (!containsInput("#filesListContainer")) {
                 return defaultButtonClick(this);
-            /*if (!isFormValidAndContainsInput("#createInputForm"))
-                return defaultButtonClick(this);*/
+            }   
 
             if ($("#filetree input:checkbox:checked").length == 0) {
                 $("<div></div").html(I18N.deleteFileFail).dialog($.extend({}, defaultDialogOptions, {
@@ -215,7 +207,6 @@
                 } else {
                     $("#progressbar").progressbar("value", data.progress);
                     if (data.progress >= 100) {
-                        //log("Process finished");
                         stopFileUploadProgress();
                     } else {
                         setTimeout(refreshFileUploadProgress, 1000);

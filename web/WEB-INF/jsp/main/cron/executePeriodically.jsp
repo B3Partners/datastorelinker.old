@@ -117,8 +117,6 @@
                     $("#cronAccordion").accordion("activate", "#advancedCron");
                 </c:when>
                 <c:otherwise>
-                    //$("#cronAccordion").accordion("activate", "#simpleCron"); // == default
-                    //log($("#cronEachAccordion :hidden[name='cronType'][value='${actionBean.cronType}']"));
                     $("#cronEachAccordion").accordion("activate",
                         $("#cronEachAccordion :hidden[name='cronType'][value='${actionBean.cronType}']").parent().parent().prev());
                 </c:otherwise>
@@ -134,9 +132,6 @@
         } else {
             form = cronDiv.next("div").find("form")[0];
         }
-
-        //log("submitting form:");
-        //log(form);
         
         ajaxOpen({
             formSelector: form,

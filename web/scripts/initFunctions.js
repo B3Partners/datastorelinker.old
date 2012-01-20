@@ -60,8 +60,7 @@ function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {
     
     if (children.length != 3) {
         alert("Number of children for vertical layout must be 3. It is " + children.length + ". Element: " + jqElem);
-        log(jqElem);
-        log(children);
+        
         return false;
     } else {
         children.removeClass("ui-layout-content ui-layout-north ui-layout-center ui-layout-south ui-layout-west ui-layout-east");
