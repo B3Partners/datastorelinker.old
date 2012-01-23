@@ -3,6 +3,8 @@ package nl.b3p.datastorelinker.gui.stripes;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -12,6 +14,7 @@ import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.Organization;
+import nl.b3p.datastorelinker.json.JSONResolution;
 import org.hibernate.Session;
 
 /**
@@ -70,6 +73,32 @@ public class OutputRightsAction extends DefaultAction {
 
         return new ForwardResolution(CREATE_RIGHTS_JSP);
     }
+    
+    public Resolution fillSelectedOrganizationIds() {
+        JSONArray jsonArray = null;
+        
+        if (selectedOutputId != null) { 
+            jsonArray = new JSONArray();
+            
+            EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            Session session = (Session)em.getDelegate();
+
+            Inout output = (Inout)session.get(Inout.class, new Long(selectedOutputId));
+            
+            if (output != null) {
+                List<Organization> lijst = output.getOrganizations();
+                
+                for (Organization org : lijst) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", org.getId());
+                    
+                    jsonArray.add(obj);
+                }
+            }
+        }
+        
+        return new JSONResolution(jsonArray);
+    }
 
     public Resolution createOutputRights() {
         return new ForwardResolution(CREATE_RIGHTS_JSP);
@@ -89,11 +118,16 @@ public class OutputRightsAction extends DefaultAction {
             String[] ids = organizationIds.trim().split(",");
             
             for (String id : ids) {
-                Organization org = (Organization)sess.get(Organization.class, new Integer(id));
-                list.add(org);
+                if (id != null && !id.equals("")) {
+                    Organization org = (Organization)sess.get(Organization.class, new Integer(id));
+                    list.add(org);
+                }
             }
             
             selectedOutput.setOrganizations(list);
+            sess.save(selectedOutput);
+        } else {
+            selectedOutput.setOrganizations(null);
             sess.save(selectedOutput);
         }
 
