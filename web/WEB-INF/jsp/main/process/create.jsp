@@ -249,21 +249,35 @@
                 ');
                 handleError(jqXHR, textStatus, errorThrown);
             }
-        }).done(function(columns) {
-            var colTable = $("<table>").css("width", "100%");
-            var thead = $("<thead></thead>").append($("<tr>").append(
-                $("<td>", {text: "Attribuutnaam"}), 
-                $("<td>", {text: "Attribuuttype"})
-            )).addClass("ui-widget-header action-list-header");
-            colTable.append(thead);
-            var tbody = $("<tbody></tbody>");
-            $.each(columns, function(key, value) {
-                var tdKey = $("<td>", {text: key});
-                var tdValue = $("<td>", {text: value});
-                tbody.append($("<tr>").append(tdKey, tdValue));
-            });
-            colTable.append(tbody);
-            $("#outputOverviewContainer .colsContainer").html(colTable);
+        }).done(function(columns) {  
+            /* backend geeft null indien uitvoertemplate NO_TABLE is */
+            if (columns) {
+                var colTable = $("<table>").css("width", "100%");
+                var thead = $("<thead></thead>").append($("<tr>").append(
+                    $("<td>", {text: "Attribuutnaam"}), 
+                    $("<td>", {text: "Attribuuttype"})
+                )).addClass("ui-widget-header action-list-header");
+                colTable.append(thead);
+                var tbody = $("<tbody></tbody>");
+
+                /* backend geeft null indien uitvoertemplate NO_TABLE is */
+                if (columns) {
+                    $.each(columns, function(key, value) {
+                        var tdKey = $("<td>", {text: key});
+                        var tdValue = $("<td>", {text: value});
+                        tbody.append($("<tr>").append(tdKey, tdValue));
+                    });
+                }            
+
+                colTable.append(tbody);
+                $("#outputOverviewContainer .colsContainer").html(colTable);
+            } else {
+                $("#outputOverviewContainer .titleContainer").html("Uitvoertabel opgeven");
+                
+                var html = "<p>Er is bij deze uitvoer nog geen tabel aangegeven. Gebruik\n\
+de actieblokken om zelf de tabel- en kolomnamen op te geven.</p>";
+                $("#outputOverviewContainer .colsContainer").html(html);
+            }
             
             /* Default blokken ophalen indien lijst nog leeg is */
             <c:if test="${actionBean.actionsList == '[]'}">

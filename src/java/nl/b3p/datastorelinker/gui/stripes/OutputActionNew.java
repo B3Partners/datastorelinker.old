@@ -225,20 +225,18 @@ public class OutputActionNew extends DatabaseOutputAction {
             
             if (selectedOutputId != null) {
                 input = (Inout)session.get(Inout.class, selectedOutputId);
-                String template_output = input.getTemplateOutput();
                 
-                if (template_output != null && template_output.equals(Inout.TEMPLATE_OUTPUT_NO_TABLE)) {
-                    //String message = "<p>Geen uitvoertabel gekozen. Er wordt afhankelijk van de gekozen actieblokken een nieuwe tabel aangemaakt in de database.</p>";
-                    //return new JSONErrorResolution(message, new LocalizableMessage("noOutputTable"), getContext());            
-                    //throw new Exception("Geen uitvoertabel gekozen.");
+                if (input.getTemplateOutput() != null) {
+                    ActionsAction.setTemplateOutputType(input.getTemplateOutput());
                 }
-            }
-            
-            if (input.getTemplateOutput() != null) {
-                ActionsAction.setTemplateOutputType(input.getTemplateOutput());
+                
+                /* Bij uitvoertype NO_TABLE dan verders niet teruggeven */
+                if (input.getTemplateOutput() != null && input.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_NO_TABLE)) {
+                    return null;
+                }
                 
                 /* Tabelnaam alvast voorinvullen voor Tabel hernoemen blok */
-                if (input.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
+                if (input.getTemplateOutput() != null && input.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
                     ActionsAction.setOutputTablename(input.getTableName());                    
                 }
             }
