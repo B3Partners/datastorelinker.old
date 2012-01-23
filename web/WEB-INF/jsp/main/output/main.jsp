@@ -112,11 +112,15 @@
         <%@include file="/WEB-INF/jsp/main/output/list.jsp" %>
     </div>
     <div class="crudButtonsArea">
-        <div>
-            <stripes:button id="createOutput" name="create"/>
-            <stripes:button id="updateOutput" name="update"/>
-            <stripes:button id="deleteOutput" name="delete"/>
-        </div>
+        <!-- Gewone gebruiker mag niet tijdens proces een uitvoer beheren -->
+        <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
+            <div>
+                <stripes:button id="createOutput" name="create"/>
+                <stripes:button id="updateOutput" name="update"/>
+                <stripes:button id="deleteOutput" name="delete"/>
+            </div>
+        </c:if>        
+        
         <c:if test="${empty actionBean.admin or actionBean.admin == false}">
             <div style="margin-top: 1em">
                 <div>
