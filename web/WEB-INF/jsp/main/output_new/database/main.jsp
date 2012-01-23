@@ -66,14 +66,14 @@
                     "<fmt:message key="yes"/>": function() {
                         $.blockUI(blockUIOptions);
                         ajaxOpen({
-                            url: "${inputUrl}",
+                            url: "${outputNewUrl}",
                             formSelector: "#createUpdateProcessForm",
                             event: "delete",
                             containerSelector: "#inputListContainer",
                             ajaxOptions: {global: false}, // prevent blockUI being called 2 times. Called manually.
                             successAfterContainerFill: function() {
                                 ajaxOpen({
-                                    url: "${processUrl}",
+                                    url: "${outputNewUrl}",
                                     event: "list",
                                     containerSelector: "#processesListContainer",
                                     ajaxOptions: {global: false},
