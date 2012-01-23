@@ -249,10 +249,11 @@
                 ');
                 handleError(jqXHR, textStatus, errorThrown);
             }
-        }).done(function(columns) {  
+        }).done(function(columns) {            
             /* backend geeft null indien uitvoertemplate NO_TABLE is */
             if (columns) {
                 var colTable = $("<table>").css("width", "100%");
+                
                 var thead = $("<thead></thead>").append($("<tr>").append(
                     $("<td>", {text: "Attribuutnaam"}), 
                     $("<td>", {text: "Attribuuttype"})
@@ -270,6 +271,7 @@
                 }            
 
                 colTable.append(tbody);
+                
                 $("#outputOverviewContainer .colsContainer").html(colTable);
             } else {
                 $("#outputOverviewContainer .titleContainer").html("Uitvoertabel opgeven");

@@ -219,7 +219,9 @@ public class OutputActionNew extends DatabaseOutputAction {
         log.debug("getTypeNames");
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
-
+        
+        DataStore ds = null;
+        
         try {
             Inout input = null;
             
@@ -240,8 +242,7 @@ public class OutputActionNew extends DatabaseOutputAction {
                     ActionsAction.setOutputTablename(input.getTableName());                    
                 }
             }
-
-            DataStore ds = null;
+            
             String tableName = null;
             if (input.getDatabase() != null) {
                 ds = DataStoreLinker.openDataStore(input.getDatabase());
@@ -294,7 +295,12 @@ public class OutputActionNew extends DatabaseOutputAction {
         } catch (Exception e) {
             log.error(e);
             String message = e.getMessage() + "<p>" + new LocalizableMessage("attributeReadErrorAdvice").getMessage(getContext().getLocale()) + "</p>";
+            
             return new JSONErrorResolution(message, new LocalizableMessage("attributeReadError"), getContext());
+        } finally {
+            if (ds != null) {
+                ds.dispose();
+            }
         }
     }
 
@@ -303,9 +309,11 @@ public class OutputActionNew extends DatabaseOutputAction {
         Session session = (Session)em.getDelegate();
 
         Inout input = (Inout)session.get(Inout.class, selectedOutputId);
-
+        
+        DataStore ds = null;
+        
         try {
-            DataStore ds = null;
+            
             String tableName = null;
             if (input.getDatabase() != null) {
                 ds = DataStoreLinker.openDataStore(input.getDatabase());
@@ -326,8 +334,14 @@ public class OutputActionNew extends DatabaseOutputAction {
             outputRecordValues = feature.getAttributes();
         } catch (Exception e) {
             log.error(e);
+            
             return new DefaultErrorResolution(e.getMessage());
+        } finally {
+            if (ds != null) {
+                ds.dispose();
+            }
         }
+        
         return new ForwardResolution(EXAMPLE_RECORD_JSP);
     }
 

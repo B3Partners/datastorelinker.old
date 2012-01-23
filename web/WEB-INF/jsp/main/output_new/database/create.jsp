@@ -71,16 +71,24 @@
         </div>
         <div id="<fmt:message key="inputDB.selectTable.short"/>" class="step submitstep">
             <div>
-                <h1><fmt:message key="inputDB.selectTable"/></h1>
-                <div><fmt:message key="inputDB.tablesFitAsInput"/></div>
-            </div>
+                <h1><fmt:message key="output.db.selectTable"/></h1>
+                
                 <p>
-                    <stripes:select name="selectedTemplateOutput">
-                        <stripes:option value="USE_TABLE">Gebruik tabel</stripes:option>
-                        <stripes:option value="AS_TEMPLATE">Gebruik als template</stripes:option>
-                        <stripes:option value="NO_TABLE">Geen tabel</stripes:option>
+                    Selecteer voor deze uitvoer een type en een tabel. Indien u als
+                    type kiest voor 'Geen tabel gebruiken' hoeft u geen tabel in de
+                    lijst te selecteren.
+                </p>
+                <p>
+                Type: <stripes:select name="selectedTemplateOutput">
+                        <stripes:option value="USE_TABLE">1) Gebruik als echte tabel</stripes:option>
+                        <stripes:option value="AS_TEMPLATE">2) Gebruik als template voor nieuwe tabel</stripes:option>
+                        <stripes:option value="NO_TABLE">3) Geen tabel gebruiken. Wordt bepaald door proces</stripes:option>
                     </stripes:select>
                 </p>
+                
+                <!-- <div><fmt:message key="output.tablesFitAsInput"/></div> -->
+            </div>
+                
             <div id="tablesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
             </div>
         </div>

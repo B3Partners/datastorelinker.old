@@ -179,6 +179,10 @@ public class ActionsAction extends DefaultAction {
                     
                     paramInterior.element("value", "false");
                 }
+                
+                if (paramName.contains("srs")) {
+                    paramInterior.element("value", "EPSG:28992");
+                }
         
                 if (paramName.contains("inputmapping.")) {
                     paramInterior.element("paramId", paramName.replaceAll("inputmapping.", ""));

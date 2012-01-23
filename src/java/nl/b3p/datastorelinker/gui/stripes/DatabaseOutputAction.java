@@ -195,29 +195,7 @@ public class DatabaseOutputAction extends DefaultAction {
 
             // Oracle DataStore will only only complain about invalid user/pw if we use the next line:
             String[] typeNames = dataStore.getTypeNames();
-
-            /*if (dbType == Database.Type.ORACLE) {
-                // Oracle DataStore will only only fail on a non-existent schema if we use the next block:
-                JDBCDataStore jdbcDataStore = (JDBCDataStore)dataStore;
-                Connection con = jdbcDataStore.getDataSource().getConnection();
-                con.setAutoCommit(true);
-
-                PreparedStatement ps = con.prepareStatement("SELECT ? FROM dba_users");
-                ps.setString(1, schema);
-                LocalizableMessage message = null;
-                try {
-                    boolean result = ps.execute();
-                    if (!result) {
-                        message = new LocalizableMessage("database.schemafail");
-                    }
-                } catch(Exception e) {
-                    message = new LocalizableMessage("database.schemafail");
-                }
-
-                if (message != null) {
-                    throw new Exception(message.getMessage(getContext().getLocale()));
-                }
-            }*/
+            
         } catch (Exception e) {
             log.debug("db connection error", e);
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
