@@ -15,7 +15,7 @@
         <properties>
             <!-- Oracle -->
             <property name="hibernate.connection.username" value="datastorelinker"/>
-            <property name="hibernate.connection.password" value="datastorelinker"/>
+            <property name="hibernate.connection.password" value="xs2datastore"/>
             <property name="hibernate.connection.url" value="jdbc:oracle:thin:@lin033:1521:tgis"/>
             <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
