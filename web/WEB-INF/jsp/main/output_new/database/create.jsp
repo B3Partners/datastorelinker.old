@@ -89,7 +89,7 @@
                 <!-- <div><fmt:message key="output.tablesFitAsInput"/></div> -->
             </div>
                 
-            <div id="tablesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
+            <div id="tablesListContainer" class="ui-layout-content radioList ui-widget-content ui-corner-all">
             </div>
         </div>
     </div>
