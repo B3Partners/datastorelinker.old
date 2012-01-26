@@ -24,6 +24,7 @@ import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.geotools.data.DataStore;
+import org.geotools.data.FeatureSource;
 import org.geotools.feature.FeatureCollection;
 import org.hibernate.Session;
 import org.opengis.feature.simple.SimpleFeature;
@@ -252,11 +253,13 @@ public class OutputActionNew extends DatabaseOutputAction {
             } else {
                 throw new Exception("unsupported input type.");
             }
-            SimpleFeature feature = getExampleFeature(ds, tableName);
 
-            //log.debug("feature.getFeatureType().getAttributeDescriptors().size(): " + feature.getFeatureType().getAttributeDescriptors().size());
-            List<AttributeDescriptor> srcAttrDesc = feature.getFeatureType().getAttributeDescriptors();
+            FeatureSource<SimpleFeatureType, SimpleFeature> source =
+                ds.getFeatureSource(tableName);
+        
+            List<AttributeDescriptor> srcAttrDesc = source.getSchema().getAttributeDescriptors();                        
             List<AttributeDescriptor> attrDescs = new ArrayList<AttributeDescriptor>(srcAttrDesc.size());
+            
             for (AttributeDescriptor ad : srcAttrDesc) {
                 attrDescs.add(ad);
             }
@@ -323,15 +326,19 @@ public class OutputActionNew extends DatabaseOutputAction {
             } else {
                 throw new Exception("unsupported input type.");
             }
-            SimpleFeature feature = getExampleFeature(ds, tableName);
+            
+            FeatureSource<SimpleFeatureType, SimpleFeature> source =
+                ds.getFeatureSource(tableName);
+        
+            List<AttributeDescriptor> kolommen = source.getSchema().getAttributeDescriptors();
 
             outputColumnNames = new ArrayList<String>();
-            for (AttributeDescriptor desc : feature.getFeatureType().getAttributeDescriptors()) {
+            for (AttributeDescriptor desc : kolommen) {
                 String col = desc.getLocalName();
                 String type = desc.getType().getBinding().getSimpleName();
                 outputColumnNames.add(col + "(" + type + ")");
             }
-            outputRecordValues = feature.getAttributes();
+            outputRecordValues = new ArrayList<Object>(); //feature.getAttributes();
         } catch (Exception e) {
             log.error(e);
             
@@ -346,12 +353,11 @@ public class OutputActionNew extends DatabaseOutputAction {
     }
 
     private SimpleFeature getExampleFeature(DataStore ds, String tableName) throws Exception {
-        //log.debug((Object[])ds.getTypeNames());
         if (tableName == null) {
             if (ds.getTypeNames().length == 0)
                 throw new IllegalArgumentException("no typeNames");
             tableName = ds.getTypeNames()[0];
-        }
+        }               
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> fc =
                 ds.getFeatureSource(tableName).getFeatures();
