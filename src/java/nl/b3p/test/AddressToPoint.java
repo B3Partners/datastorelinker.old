@@ -30,7 +30,7 @@ import org.opengis.referencing.operation.MathTransform;
 public class AddressToPoint {
 
     private static String googleBaseUrl = "http://maps.google.nl/maps/geo?q=";
-
+    //private static String googleBaseUrl = "http://bag42.nl/api/v0/geocode/json?maxitems=1&address=";
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;

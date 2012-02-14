@@ -69,6 +69,11 @@
 
             // layout plugin messes up z-indices; sets them to 1
             var topZIndexCss = { "z-index": "auto" };
+            // z-index auto disabled input fields in IE7
+            if($.browser.msie && $.browser.version <= 7) {
+                topZIndexCss = { "z-index": "2100" };
+            }
+            
             $("#processContainer, #processSteps, #inputContainer .wizardButtonsArea").css(topZIndexCss);
             $("#" + data.currentStep).css(topZIndexCss);
         });
