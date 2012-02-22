@@ -14,7 +14,7 @@
     $(document).ready(function() {
         initFile();
 
-        $("#uploadFile").click(function() {
+        $("#uploadFile").click(function() {              
             if (!$("#uploader").val()) {
                 return defaultButtonClick(this);
             }
@@ -164,9 +164,16 @@
                     }));
                 }
             });
+            
+            
 
             return defaultButtonClick(this);
         });
+        
+        /* Bladeren button z-index fix voor IE7 */
+        if($.browser.msie && $.browser.version <= 7) {            
+            $("#uploader").css("z-index", "2100");
+        }
     });
     
     function startFileUploadProgress() {
@@ -226,14 +233,13 @@
     <div id="fileHeader">
     </div>
     <div id="filesListContainer" class="mandatory-form-input ui-layout-content radioList ui-widget-content ui-corner-all">
-        <%--@include file="/WEB-INF/jsp/main/file/list.jsp" --%>
         <jsp:include page="/WEB-INF/jsp/main/file/list.jsp">
             <jsp:param name="adminPage" value="${param.adminPage}"/>
         </jsp:include>
     </div>
-    <div>
+    <div id="uploadButtons">
         <input type="file" name="uploader" id="uploader" size="40"/>
-        <stripes:button id="uploadFile" name="upload" value="upload"/>
+        <stripes:button id="uploadFile" name="upload" value="upload" />
         <c:if test="${param.adminPage == true}">
             <stripes:button id="deleteFile" name="delete" value="delete"/>
         </c:if>

@@ -47,7 +47,7 @@ function initDatabaseOutput() {
 }
 
 function initFile() {
-    //$("#uploadFile, #deleteFile, #uploader").button();
+    $("#uploadFile, #deleteFile, #uploader").button();
 }
 
 function createDefaultVerticalLayout(jqElem, extraLayoutOptions) {
