@@ -8,7 +8,7 @@
     });
 </script>
 
-<div id="inputList">
+<div id="inputList">    
     <stripes:form partial="true" action="/">
         <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
             <c:choose>
@@ -30,6 +30,19 @@
             </c:choose>
             <stripes:label for="input${status.index}">
                 <c:out value="${input.name}"/>
+                
+                <c:if test="${input.templateOutput == 'USE_TABLE'}" >
+                    | Type 1: Gebruik echte tabel
+                </c:if> 
+                
+                <c:if test="${input.templateOutput == 'AS_TEMPLATE'}" >
+                    | Type 2: Gebruik als template
+                </c:if>
+                    
+                <c:if test="${input.templateOutput == 'NO_TABLE'}" >
+                    | Type 3: Geen tabel
+                </c:if>
+                    
             </stripes:label>
         </c:forEach>
     </stripes:form>
