@@ -122,6 +122,14 @@
     <fmt:message var="subjectTooltip" key="subjectProcessDoneDescription"/>
     <div class="ui-layout-south">
         <table>
+            <tr>
+                <td>
+                    <stripes:label for="processName" name="processName"/>
+                </td>
+                <td>
+                    <stripes:text id="processName" name="processName" size="50" class="required"/>
+                </td>
+            </tr>
             <tr title="${emailTooltip}">
                 <td>
                     <stripes:label for="emailAddress" name="emailAddressProcessDone"/>
@@ -136,6 +144,14 @@
                 </td>
                 <td>
                     <stripes:text id="subject" name="subject" size="50" class="required"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <stripes:label for="processRemark" name="processRemark"/>
+                </td>
+                <td>
+                    <stripes:textarea id="processRemark" name="processRemark" />
                 </td>
             </tr>
         </table>

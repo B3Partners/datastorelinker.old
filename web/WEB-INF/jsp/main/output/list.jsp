@@ -32,9 +32,12 @@
             global: false
         }).done(function(type) {
             if (type.type == "USE_TABLE") {
+                $("#drop").prop("disabled", true);
                 $("#append").prop("checked", true);
+                $("#drop").prop("checked", false);
             } else {
                 $("#append").prop("checked", false);
+                $("#drop").prop("disabled", false);
             }  
         });
     }

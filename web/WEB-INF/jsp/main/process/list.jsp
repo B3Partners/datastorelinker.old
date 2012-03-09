@@ -7,7 +7,6 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
-
 <script type="text/javascript" class="ui-layout-ignore">
     $(document).ready(function() {
         selectFirstRadioInputIfPresentAndNoneSelected($("#processesList input:radio"));
@@ -41,7 +40,6 @@
 <div id="processesList">
     <stripes:form partial="true" action="/">
         <c:forEach var="process" items="${actionBean.processes}" varStatus="status">
-
             <c:choose>
                 <c:when test="${not empty actionBean.selectedProcessId and process.id == actionBean.selectedProcessId}">
                     <input type="radio" id="process${process.id}" name="selectedProcessId" value="${process.id}" class="required" checked="checked"/>
@@ -60,7 +58,7 @@
                 </c:otherwise>
             </c:choose>
 
-            <stripes:label for="process${process.id}">
+            <stripes:label for="process${process.id}" title="${process.remarks}">
                 <span class="process-status-image">
                     <c:if test="${not empty process.schedule}">
                         <img src="<stripes:url value="/images/clock_48.gif"/>"
@@ -100,7 +98,7 @@
                         </c:when>
                     </c:choose>
                 </span>
-                <c:out value="${process.name}"/>
+                <c:out value="${process.name}"/> | <c:out value="${process.userName}"/>
             </stripes:label>
 
             <%-- Add schedule icon if this process is scheduled >

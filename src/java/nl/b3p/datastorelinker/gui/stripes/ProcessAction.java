@@ -26,6 +26,7 @@ import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.Mail;
 import nl.b3p.datastorelinker.entity.Organization;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
+import nl.b3p.datastorelinker.entity.Users;
 import nl.b3p.datastorelinker.json.JSONResolution;
 import nl.b3p.datastorelinker.json.ProgressMessage;
 import nl.b3p.datastorelinker.json.SuccessMessage;
@@ -77,6 +78,8 @@ public class ProcessAction extends DefaultAction {
 
     private String emailAddress;
     private String subject;
+    private String processName;
+    private String processRemark;
 
     private String selectedFilePath;
 
@@ -97,9 +100,17 @@ public class ProcessAction extends DefaultAction {
                     .list();
         }
         
+        /* Gebruikernaam en opmerking zetten voor in overzicht */
+        for (nl.b3p.datastorelinker.entity.Process process : processes) {            
+            Users user = (Users) session.createQuery("from Users where id = :userid")
+                    .setParameter("userid", process.getUserId()).uniqueResult();
+            
+            if (user != null) {
+                process.setUserName(user.getName());
+            }
+        }
+        
         Collections.sort(processes, new NameableComparer());
-
-        //session.getTransaction().commit();
 
         return new ForwardResolution(LIST_JSP);
     }
@@ -234,6 +245,9 @@ public class ProcessAction extends DefaultAction {
             process.setProcessStatus(processStatus);
         }
         
+        process.setName(processName);
+        process.setRemarks(processRemark);
+        
         if (selectedProcessId == null)
             selectedProcessId = (Long)session.save(process);
 
@@ -279,6 +293,8 @@ public class ProcessAction extends DefaultAction {
         append = process.getAppend();
         emailAddress = process.getMail().getToEmailAddress();
         subject = process.getMail().getSubject();
+        processName = process.getName();
+        processRemark = process.getRemarks();
 
         return create();
     }
@@ -638,5 +654,21 @@ public class ProcessAction extends DefaultAction {
 
     public void setSelectedFilePath(String selectedFilePath) {
         this.selectedFilePath = selectedFilePath;
+    }
+
+    public String getProcessName() {
+        return processName;
+    }
+
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
+
+    public String getProcessRemark() {
+        return processRemark;
+    }
+
+    public void setProcessRemark(String processRemark) {
+        this.processRemark = processRemark;
     }
 }
