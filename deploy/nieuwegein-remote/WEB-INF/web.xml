@@ -90,7 +90,7 @@
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
         <init-param>
             <param-name>kburl</param-name>
-            <param-value>http://gng-ap749:8084/kaartenbalie/services/</param-value>
+            <param-value>http://gng-ap749:8090/kaartenbalie/services/</param-value>
         </init-param>
         <init-param>
             <param-name>anonymous_user</param-name>
