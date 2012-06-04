@@ -85,6 +85,25 @@
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
+    
+    <servlet>
+        <servlet-name>PublishProcessServlet</servlet-name>
+        <servlet-class>nl.b3p.datastorelinker.services.PublishProcessServlet</servlet-class>
+        <init-param>
+            <param-name>outputDatabase</param-name>
+            <param-value>gisdata_extern</param-value>
+        </init-param>    
+        <init-param>
+            <param-name>uploadFolder</param-name>
+            <param-value>c:\uploadedFiles\webservice\</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>    
+    <servlet-mapping>
+        <servlet-name>PublishProcessServlet</servlet-name>
+        <url-pattern>/publish/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet>
         <servlet-name>securityconfig</servlet-name>
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
@@ -110,7 +129,7 @@
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
     <session-config>
         <session-timeout>600</session-timeout>
     </session-config>

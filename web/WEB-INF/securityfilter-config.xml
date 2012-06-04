@@ -5,7 +5,15 @@
     "http://www.securityfilter.org/dtd/securityfilter-config_2_0.dtd">
 
 <securityfilter-config>
-
+    
+    <!-- Publish service door iedereen aan te roepen -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Publish</web-resource-name>
+            <url-pattern>/publish/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>styles</web-resource-name>
