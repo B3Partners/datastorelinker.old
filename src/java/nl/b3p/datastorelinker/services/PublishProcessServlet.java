@@ -169,7 +169,22 @@ public class PublishProcessServlet extends HttpServlet {
         output.setDatatype(Inout.Datatype.DATABASE);
         output.setTableName(identifier);
         output.setType(Inout.Type.OUTPUT);
-        output.setDatabase(new Database(494L)); // TODO: Aanpassen of ergens op kunnen vragen!
+        
+        
+        /* TODO: Via beheer ergens kunnen instellen en via service naam
+         * kunnen opvragen */
+        
+        /* Ophalen webservice uitvoer db */
+        Database db = null;
+        db = (Database) session.createQuery("from Database where webservice_db = :web")
+                .setParameter("web", true).uniqueResult();
+        
+        if (db != null && db.getId() != null) {
+            output.setDatabase(db);
+        } else {
+            log.error("Fout tijdens verbinden naar webservice uitvoer database.");
+        }
+        
         output.setOrganizationId(1);
         output.setUserId(1);
         output.setTemplateOutput(Inout.TEMPLATE_OUTPUT_NO_TABLE);
