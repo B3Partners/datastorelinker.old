@@ -24,7 +24,11 @@ public class SchedulerUtils {
     public static Scheduler getScheduler(ServletContext context) throws SchedulerException {
         StdSchedulerFactory factory = (StdSchedulerFactory)
                 context.getAttribute(QuartzInitializerListener.QUARTZ_FACTORY_KEY);
-
+        
+        if (factory == null) {
+            return getScheduler(context);
+        }
+        
         return factory.getScheduler();
     }
 
