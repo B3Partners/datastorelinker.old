@@ -1,13 +1,13 @@
 -- create tables
 create table organization (
-	id integer not null,
+	id serial,
 	name varchar(255) not null,
 	upload_path varchar(255) not null,
 	primary key (id)
 );
 
 create table users (
-	id integer not null,
+	id serial,
 	name varchar(255) not null,
 	password varchar(255) not null,
 	is_admin boolean not null DEFAULT false,

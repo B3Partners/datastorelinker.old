@@ -14,9 +14,9 @@
     
         <properties>
 			<!-- Postgres -->
-            <property name="hibernate.connection.username" value="dsl"/>
-            <property name="hibernate.connection.password" value="tbk64o.s"/>
-            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/>      
+            <property name="hibernate.connection.username" value="demo"/>
+            <property name="hibernate.connection.password" value="za6uQ7ku"/>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/demo-datastorelinker"/>      
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
