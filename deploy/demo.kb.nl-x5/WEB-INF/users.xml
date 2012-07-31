@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Webapp-users>
     <role rolename="beheerder"/>
-    <role rolename="demogebruiker"/>
     <user username="beheerder" password="***REMOVED***" roles="beheerder"/>
-    <user username="demo" password="7y30I3UP5h" roles="demogebruiker"/>
 </Webapp-users>

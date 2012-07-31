@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
-    version="2.4">
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <filter>
         <display-name>Stripes Filter</display-name>
         <filter-name>StripesFilter</filter-name>
@@ -88,12 +85,31 @@
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
+    
+    <servlet>
+        <servlet-name>PublishProcessServlet</servlet-name>
+        <servlet-class>nl.b3p.datastorelinker.services.PublishProcessServlet</servlet-class>
+        <init-param>
+            <param-name>outputDatabase</param-name>
+            <param-value>demo_gisdata_extern</param-value>
+        </init-param>    
+        <init-param>
+            <param-name>uploadFolder</param-name>
+            <param-value>/srv/datastorelinker/demo/etl/webservice/</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>    
+    <servlet-mapping>
+        <servlet-name>PublishProcessServlet</servlet-name>
+        <url-pattern>/publish/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet>
         <servlet-name>securityconfig</servlet-name>
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
         <init-param>
             <param-name>kburl</param-name>
-            <param-value>http://www.kaartenbalie.nl/kaartenbalie/services/</param-value>
+            <param-value>http://demo.kaartenbalie.nl/kaartenbalie/services/</param-value>
         </init-param>
         <init-param>
             <param-name>anonymous_user</param-name>
@@ -113,7 +129,7 @@
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
     <session-config>
         <session-timeout>600</session-timeout>
     </session-config>
@@ -148,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>/srv/datastorelinker/etl/</param-value>
+        <param-value>/srv/datastorelinker/demo/etl/</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
@@ -160,7 +176,7 @@
     </context-param>
     <context-param>
         <param-name>defaultToEmailAddress</param-name>
-        <param-value>info@b3p.nl</param-value>
+        <param-value>boy@b3p.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
