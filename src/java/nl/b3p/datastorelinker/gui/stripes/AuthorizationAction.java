@@ -1,6 +1,7 @@
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.io.File;
+import java.security.Principal;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
@@ -12,6 +13,7 @@ import nl.b3p.commons.services.FormUtils;
 import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Organization;
 import nl.b3p.datastorelinker.entity.Users;
+import nl.b3p.datastorelinker.security.UserPrincipal;
 import nl.b3p.ogc.utils.KBCrypter;
 import org.hibernate.Session;
 
@@ -119,6 +121,15 @@ public class AuthorizationAction extends DefaultAction {
         /* Cannot remove default beheerder user */
         if (selectedUserId != null && selectedUserId == 1) {
             return list_orgs();
+        }
+        
+        /* User can not remove himself */
+        Principal principal = getContext().getRequest().getUserPrincipal();
+        if (principal != null && principal instanceof UserPrincipal) {
+            UserPrincipal user = (UserPrincipal) principal;
+            if(user.getUserId().equals(selectedUserId)){
+                return list_orgs();
+            }
         }
         
         if (selectedUserId != null) {
