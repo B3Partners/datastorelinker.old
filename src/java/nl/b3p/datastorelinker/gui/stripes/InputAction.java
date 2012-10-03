@@ -167,8 +167,12 @@ public class InputAction extends DefaultAction {
         dbInput.setDatabase(selectedDatabase);
         dbInput.setTableName(selectedTable);
         
-        dbInput.setOrganizationId(getUserOrganiztionId());
-        dbInput.setUserId(getUserId());
+        /* add organizationid and userid if the dbInput is new. 
+         * Else the user that made the dbInput will stay the owner */
+        if(dbInput.getUserId() == null && dbInput.getOrganizationId() == null){
+            dbInput.setOrganizationId(getUserOrganiztionId());
+            dbInput.setUserId(getUserId());
+        }
 
         if (selectedInputId == null)
             selectedInputId = (Long)session.save(dbInput);

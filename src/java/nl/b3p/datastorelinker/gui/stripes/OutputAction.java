@@ -145,8 +145,12 @@ public class OutputAction extends DatabaseAction {
         output.setDatabase(database);
         // no tablename needed.
         
-        output.setOrganizationId(getUserOrganiztionId());
-        output.setUserId(getUserId());
+        /* add organizationid and userid if the output is new. 
+         * Else the user that made the output will stay the owner */
+        if(output.getUserId() == null && output.getOrganizationId() == null){
+            output.setOrganizationId(getUserOrganiztionId());
+            output.setUserId(getUserId());
+        }
 
         if (selectedOutputId == null)
             selectedOutputId = (Long)session.save(output);

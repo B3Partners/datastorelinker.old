@@ -134,8 +134,12 @@ public class DatabaseAction extends DefaultAction {
         Database database = getDatabase(false);
         database.setTypeInout(typeInout);
         
-        database.setOrganizationId(getUserOrganiztionId());
-        database.setUserId(getUserId());
+        /* add organizationid and userid if the database is new. 
+         * Else the user that made the database will stay the owner */
+        if(database.getUserId() == null && database.getOrganizationId() == null){
+            database.setOrganizationId(getUserOrganiztionId());
+            database.setUserId(getUserId());
+        }
 
         // TODO: wat als DB met ongeveer zelfde inhoud al aanwezig is? waarschuwing? Custom naamgeving issue eerst oplossen hiervoor
         if (selectedDatabaseId == null) {

@@ -203,9 +203,12 @@ public class ProcessAction extends DefaultAction {
             }
         }
         
-        /* add organizationid and userid */
-        process.setOrganizationId(getUserOrganiztionId());
-        process.setUserId(getUserId());
+        /* add organizationid and userid if the process is new. 
+         * Else the user that made the process will stay the owner */
+        if(process.getUserId() == null && process.getOrganizationId() == null){
+            process.setOrganizationId(getUserOrganiztionId());
+            process.setUserId(getUserId()); 
+        }
         
         output.setOrganizationId(getUserOrganiztionId());
         output.setUserId(getUserId());
@@ -217,11 +220,11 @@ public class ProcessAction extends DefaultAction {
         process.setDrop(drop);
         process.setAppend(append);
         
-        /* Indien output type USE TABLE dan niet droppen en append aanzetten */
-        if (output.getTemplateOutput() != null && output.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
+        /* Indien output type USE TABLE dan niet droppen en append aanzetten (speciaal voor limburg) */
+        /*if (output.getTemplateOutput() != null && output.getTemplateOutput().equals(Inout.TEMPLATE_OUTPUT_USE_TABLE)) {
             process.setDrop(false);
             process.setAppend(true);
-        }
+        }*/
         
         Mail mail = null;
         if (process.getMail() == null)
