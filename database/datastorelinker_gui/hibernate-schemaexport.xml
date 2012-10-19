@@ -1,0 +1,38 @@
+<project name="hibernate-schemaexport" default="schemaexport" basedir=".">
+
+	<dirname property="destdir" file="${ant.file.hibernate-schemaexport}"/>
+
+	<property name="outputfile" value="schema-export.sql"/>
+
+	<target name="schemaexport" depends="compile">
+	<taskdef name="hibernatetool"
+	classname="org.hibernate.tool.ant.HibernateToolTask"
+	classpath="${javac.classpath}">
+	</taskdef>
+
+	<hibernatetool destdir="${destdir}">
+	<classpath path="build/classes"/>
+
+	<jpaconfiguration/>
+
+	<hbm2ddl
+	export="false"
+	drop="false"
+	create="true"
+	outputfilename="${outputfile}"
+	format="true"/>
+	</hibernatetool>
+
+	<!-- handigheidje zodat schema niet met verkeerder user wordt aangemaakt -->
+	<!-- de username voor het script staat ook in persistence.xml -->
+	<!--replaceregexp
+	file="${destdir}/${outputfile}"
+	match="^(.*)$"
+	replace="set session authorization openwion;\1"
+	flags="m"
+	/-->
+
+	<fixcrlf srcDir="${destdir}" includes="${outputfile}"/>
+	</target>
+</project>
+
