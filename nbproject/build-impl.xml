@@ -888,9 +888,6 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
-        <ant antfile="${project.geotools_shapefile_patch}/build.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
         <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
@@ -927,9 +924,6 @@ exists or setup the property manually. For example like this:
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
-            <property name="deploy.on.save" value="false"/>
-        </ant>
-        <ant antfile="${project.geotools_shapefile_patch}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="jar">
@@ -1089,14 +1083,8 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.DataStoreLinkerEntities.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-datastorelinker.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.JTS.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsShpRenderer.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsShp.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsCommon.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsOgc.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsPostgis.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsOracle.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${libs.GeotoolsJdbc.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.JSON-lib.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.GeotoolsFull.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Quartz1.8.x.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-csv.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${reference.b3p-gt2-dxf.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
@@ -1110,7 +1098,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.b3p-commons-gis.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.Castor.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.JAXB.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
-        <copyfiles files="${reference.geotools_shapefile_patch.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -1125,14 +1112,8 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.DataStoreLinkerEntities.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-datastorelinker.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.JTS.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsShpRenderer.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsShp.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsCommon.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsOgc.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsPostgis.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsOracle.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${libs.GeotoolsJdbc.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.JSON-lib.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${libs.GeotoolsFull.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Quartz1.8.x.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-csv.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${reference.b3p-gt2-dxf.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
@@ -1146,7 +1127,6 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.b3p-commons-gis.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.Castor.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.JAXB.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
-        <copyfiles files="${reference.geotools_shapefile_patch.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -1552,7 +1532,6 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="clean"/>
-        <ant antfile="${project.geotools_shapefile_patch}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="clean"/>
     </target>
     <target depends="init" name="do-clean">
