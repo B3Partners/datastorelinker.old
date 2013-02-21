@@ -1,0 +1,100 @@
+/* 
+    Document   : actions
+    Created on : 16-jun-2010, 16:23:49
+    Author     : Erik van de Pol
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+.action-list-header {
+    margin: 3px;
+    /*margin-top: 0px;*/
+    margin-bottom: 0px;
+    padding: 4px;
+}
+
+.action-list {
+    height: /*100%;*/500px;
+    max-height: 500px;
+    /*overflow-x:hidden;
+    overflow-y:auto;*/
+    overflow: auto;
+    margin: 0;
+    position: relative; /* to prevent IE <= 7 bug */
+}
+
+.action {
+    /*list-style-type: none;
+    display: list-item;*/
+    /*text-align: left;*/
+    /*background: #eeeeee;
+    color: black;*/
+    border: 1px solid #196299;
+    margin: 3px;
+}
+
+.action .type {
+    background: #196299;
+    color: #fed204;
+    padding: 6px 3px 6px 3px;
+}
+
+.action .name {
+    background: #fed204;
+    color: #196299;
+    padding: 3px;
+}
+
+.action .value {
+    color: black;
+    font-weight: bold;
+    margin-left: 1em;
+}
+
+.action .ui-button {
+    margin: 0;
+    padding: 0;
+    float: right;
+    height: 20px;
+}
+
+.action-hover {
+    cursor: move;
+    background: white;
+    border: 1px solid #fed204;
+}
+
+.action-active {
+    border: 1px solid red;
+}
+
+/*.action-active {
+    background: #fed204;
+}*/
+
+.action-dropped {
+    /*display: list-item;
+    list-style-type: decimal;*/
+}
+
+.action-table-header {
+    max-width: 20em;
+    overflow: hidden;
+}
+
+.action-table-definition {
+    max-width: 20em;
+    max-height: 1em; /* werkt niet */
+    vertical-align: text-top;
+    overflow: hidden;
+}
+
+/*#parameterForm input[type=text] {
+    width: 150px;
+}*/
+
