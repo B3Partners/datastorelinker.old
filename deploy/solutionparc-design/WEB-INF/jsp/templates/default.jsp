@@ -10,7 +10,10 @@
 <stripes:layout-definition>
 
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-    <html>
+    <!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="nl"> <![endif]-->
+    <!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="nl"> <![endif]-->
+    <!--[if IE 8]> <html class="lt-ie9" lang="nl"> <![endif]-->
+    <!--[if gt IE 8]><!--> <html lang="nl"> <!--<![endif]-->
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <meta http-equiv="Expires" content="-1" />
