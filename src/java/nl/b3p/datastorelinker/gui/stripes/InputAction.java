@@ -226,6 +226,8 @@ public class InputAction extends DefaultAction {
                 String fullPath = FileAction.getFileNameFromPPFileName(selectedFilePath, getContext());
                 input = new Inout();
                 input.setFile(fullPath);
+                
+                ActionsAction.setExternalFileName(fullPath);
             }
             
             String tableName = null;

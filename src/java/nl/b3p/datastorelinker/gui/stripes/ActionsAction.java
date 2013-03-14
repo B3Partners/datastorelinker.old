@@ -44,6 +44,7 @@ public class ActionsAction extends DefaultAction {
     private static String templateOutputType;
     
     private static String outputTablename;
+    private static String externalFileName;
 
     private static void resourceBundleInit(ActionBeanContext context) {
         //DefaultLocalePicker defaultLocalePicker = new DefaultLocalePicker();
@@ -247,6 +248,18 @@ public class ActionsAction extends DefaultAction {
             List<String> paramList = actionBlockValue.get(0);
             for (String paramName : paramList) {
                 JSONObject paramInterior = new JSONObject(); 
+                
+                /* Externe bestandsnaam met dezelfde naam als dxf al voor 
+                 * invullen */
+                if (paramName.equals("attribute_name_other_file_name")) {
+                    String param = "";
+                    if (externalFileName != null) {                        
+                        String fName = externalFileName.substring(0, externalFileName.lastIndexOf('.'));
+                        param = fName + ".xls";                      
+                    }
+                    
+                    paramInterior.element("value", param);
+                }
                 
                 if (paramName.contains("inputmapping.")) {
                     paramInterior.element("paramId", paramName.replaceAll("inputmapping.", ""));
@@ -473,5 +486,13 @@ public class ActionsAction extends DefaultAction {
 
     public static void setOutputTablename(String outputTablename) {
         ActionsAction.outputTablename = outputTablename;
+    }
+
+    public static String getExternalFileName() {
+        return externalFileName;
+    }
+
+    public static void setExternalFileName(String externalFileName) {
+        ActionsAction.externalFileName = externalFileName;
     }
 }
