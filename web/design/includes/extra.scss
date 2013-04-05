@@ -1,0 +1,5 @@
+@import "fonts";
+.menulink, .activemenulink, a.menulink:hover, a.activemenulink:hover {
+    @include border-bottom-radius(6px);
+    border-right: 1px solid $basefont-color;
+}

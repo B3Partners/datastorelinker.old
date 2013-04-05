@@ -1,73 +1,132 @@
 /* Compass settings */
 $legacy-support-for-ie8: true;
 /* Font settings */
-$basefont-family: arial, sans-serif;
-$basefont-size: 11px;
-$basefont-line-height: 1.125em;
+$basefont-color: #000000; // Default font kleur
+$basefont-family: arial, sans-serif; // Defaut font (vooral gebruikt voor homepagina / menu)
+$basefont-family-viewer: arial, sans-serif; // Default font voor de viewer
+$basefont-family-content: arial, sans-serif; // Default font voor configuratie schermen
+$basefont-size: 11px; // Basis font grootte
+$basefont-weight: 300; // Basis font-weight
+$basefont-line-height: 1.125em; // Basis line-height
+$h1-font-weight: normal; // Font-weight voor h1 tags
+$h1-font-color: $basefont-color; // Font kleur voor h1 tag
+$h-font-family: 'aniversregular', $basefont-family; // H font family
 $h-line-height: 1em;
-$h-font-family: 'aniversregular', $basefont-family;
-$h-font-weight: normal;
-$h1-font-size: 2em;
-$h2-font-size: 1.6em;
-$h3-font-size: 1.2em;
+$h-font-weight: normal; // Font weight voor h tags
+$h1-font-size: 2em; // Font size voor h1 tags
+$h2-font-size: 1.6em; // Font size voor h2 tags
+$h3-font-size: 1.2em; // Font size voor h3 tags
 $menufont-weight: 400;
 $menufont-family: 'Open Sans', $basefont-family;
 $menufont-size: 14px;
 $menufont-decoration: none;
 /* Size settings */
-$header-height: 95px;
-$content-width: 100%;
-$footer-height: 20px;
+$header-height: 95px; // Hoogte van de header
+$viewer-header-height: 50px; // Hoogte van de header van de viewer
+$content-width: 100%; // Breedte van het content gedeelte
+$viewer-header-width: 100%; // Breedte van het content gedeelte van de viewer
+$footer-height: 20px; // Hoogte van de footer
 $west-width: 50px;
 $east-width: 50px;
-$menu-float: right;
-$menu-margin-top: 0px;
-$menulink-height: 22px;
-$menulink-padding: 9px 12px 0px 12px;
+$menu-float: right; // Plaats van het menu
+$menu-margin-top: 0px; // Afstand van de bovenkant van het scherm tot de bovenkant van het menu
+$menulink-height: 22px; // Menu knoppen hoogte
+$menulink-padding: 9px 12px 0px 12px; // Menu knoppen padding
 /* Images */
-$background-image: url(../images/solutionparc-design/background.png);
-$header-background-image: url("../images/solutionparc-design/backgroundlogo.png");
-$header-image: url(../images/solutionparc-design/logo.png);
-$footer-background-image: none;
-$footer-image: none;
-/* Image settings */
-$background-image-repeat: repeat-x;
-$header-image-position: 50px 18px;
-$header-image-repeat: no-repeat;
+$background-image: url(../images/solutionparc-design/background.png); // Body achtergrond
+$header-background-image: url(../images/solutionparc-design/backgroundlogo.png); // Header achtergrond afbeelding (repeated)
 $header-background-image-position: right 11px;
+$header-image-repeat: no-repeat;
 $header-background-image-repeat: no-repeat;
+$header-image: url(../images/solutionparc-design/logo.png); // Header afbeelding (1x, bijvoorbeeld logo)
+$viewer-header-background-image: none; // Header afbeelding voor viewer
+$viewer-header-background-image-repeat: no-repeat; // Instelling voor background-repeat voor header afbeelding (van viewer, repeated)
+$viewer-header-background-image-position: left center; // Instelling voor positie van header afbeelding (van viewer, repeated)
+$viewer-header-image-position: left 18px; // Instelling voor positie van header afbeelding (van viewer, 1x bijv. logo)
+$viewer-header-image: url(../images/solutionparc-design/logo_viewer.png); // Header afbeelding voor viewer (1x, bijvoorbeeld logo)
+$header-image-small: url(../images/solutionparc-design/logo_small.png); // Verschillende groottes van de header afbeelding (1x, bijvoorbeeld logo, gebruikt voor responsive design)
+$header-image-tiny: url(../images/solutionparc-design/logo_tiny.png); // Verschillende groottes van de header afbeelding (1x, bijvoorbeeld logo, gebruikt voor responsive design)
+$wrapper-image: url(../images/solutionparc-design/backgroundlogo.png); // Achtergrond afbeelding van content wrapper (komt over body background afbeelding heen)
+$infobalk-image: none; // Achtergrond van de infobalk (linker kant)
+$tabvak-image: url(../images/solutionparc-design/tabvak_bg.png); // Achtergrond afbeelding voor het tabvak (van de viewer)
+$footer-background-image: none; // Achtergrond afbeelding footer (repeated)
+$footer-image: none; // Achtergrond afbeelding footer (1x, bijv logo)
 $footer-image-repeat: no-repeat;
 $footer-background-image-repeat: no-repeat;
-/* Colors */
-$basefont-color: #000000;
-$background-color: #e9e9e9;
-$basecolor1: $basefont-color;
-$basecolor2: #b4b4b4;
-$input-border-color: $basefont-color;
-$light-bgcolor: #FBFBFB;
+/* Image settings */
+$background-image-repeat: repeat-x; // Instelling voor herhalen van (body) achtergrond afbeelding
+$header-image-position: 50px 18px; // Instelling voor plaatsing header afbeelding (1x logo)
+$wrapper-image-position: center 11px; // Instelling voor plaatsing achtergrond afbeelding van content wrapper
+$wrapper-image-repeat: no-repeat; // Instelling voor herhalen van achtergrond afbeelding van content wrapper
 // Solution parc colors
-$solparc-orange: #F9811E;
-$solparc-yellow: #E4D335;
-$solparc-green: #96CA2D;
-$solparc-blue: #00BDFF;
+$solparc-orange: #F9811E; // Enkele default kleuren voor SolutionParc
+$solparc-yellow: #E4D335; // Enkele default kleuren voor SolutionParc
+$solparc-green: #96CA2D; // Enkele default kleuren voor SolutionParc
+$solparc-blue: #00BDFF; // Enkele default kleuren voor SolutionParc
+/* Colors */
+$background-color: #e9e9e9; // Achtergrond kleur
+$basecolor1: $basefont-color; // Basis kleur, wordt op enkele plekken gebruikt als tekstkleur
+$basecolor2: #b4b4b4; // Basis kleur 2
+$link-color: $basecolor1; // Kleur van links
+$infobalk-background: $basefont-color; // Achtergrond kleur van infobalk
+$infobalk-color: $basecolor2; // Kleur van tekst op infobalk
+$infobalk-actions-color: $basecolor1; // Kleur van links, rechts, op de infobalk
+$popup-background-color: #b4b4b4; // Kleur voor achtergrond & randen van popup
+$basecolor3: #f3f3f3; // Basis kleur 3, wordt op een aantal plekken gebruikt als achtergrond kleur voor tekstvlakken / oneven rijen in een tabel
+$input-border-color: $basefont-color; // Kleur van rand van inlog inputs
+$loginbutton-border-color: $basefont-color; // Kleur van rand van inlogknop
+$button-border-color: $solparc-orange; // Kleur van rand van verschillende knoppen
+$button-hover-border-color: shade($solparc-orange, 20); // Kleur van rand van verschillende knoppen bij hover
+$tabvak-background-color: #eeeeee; // Achtergrond kleur van tabvak (viewer)
+$tabvak-color: $basefont-color; // Tekstkleur van teksten in het tabvak (viewer)
+$tabvak-tab-color: $tabvak-color; // Tekstkleur van tabs van het tabvak (viewer)
+$tabvak-tab-color-active: $tabvak-color; // Tekstkleur van actieve tab van het tabvak (viewer)
+/* Config tabs */
+$label-bgcolor: tint($solparc-orange, 80); // Achtergrond kleur van tabs in gisviewer config (de tabs aan de zijkant van enkele menus)
+$label-active-bgcolor: $solparc-orange; // Achtergrond kleur van actieve tabs in gisviewer config
+$sublabel-bgcolor: tint($solparc-blue, 80); // Achtergrond kleur van subtabs in gisviewer config
+$sublabel-active-bgcolor: $solparc-blue; // Achtergrond kleur van actieve subtabs in gisviewer config
+$label-color: $basefont-color; // Tekst kleur van tabs in gisviewer config (de tabs aan de zijkant van enkele menus)
+$label-active-color: #FFFFFF; // Tekst kleur van actieve tabs in gisviewer config
+$sublabel-color: #000000; // Tekst kleur van subtabs in gisviewer config
+$sublabel-active-color: $basefont-color; // Tekst kleur van actieve subtabs in gisviewer config
+$label-border-color: $basefont-color; // Kleur van border van tabs in gisviewer config
 /* Menu colors */
-$menu-border-color: none;
-$menu-text-color: #FFFFFF;
-$menu-background-color: #7e7e7e;
-$menu-background-color-even: #696768;
+$menu-border-color: none; // Kleur van rand van menuitems
+$menu-text-color: #FFFFFF; // Kleur van tekst van menuitems
+$menu-background-color: #7e7e7e; // Kleur van achtergrond van menuitems
+$activemenu-border-color: none; // Kleur van rand van actieve menuitems en bij hover
+$activemenu-text-color: $basecolor2; // Kleur van tekst van actieve menuitems en bij hover
+$activemenu-background-color: $basefont-color; // Kleur van achtergrond van actieve menuitems en bij hover
+$menu-hovertext-color: $solparc-blue; // Hoverkleur van menulinks
+$submenu-top: 32px; // Submenu top ( = menuheight + paddingtop + paddingbottom menu)
+$submenu-background-color: #7E7E7E; // Achtergrondkleur van het dropdownmenu
+$submenu-text-color: #FFFFFF; // Tekstkleur submenu
+$submenu-border: 0px none; // Border rondom submenu
+$submenu-rounderborder: true; // Boolean for rounder borders on submenu
+$submenu-arrow-img: url(../images/solutionparc-design/menuarrow.png);
+/* Kaartenbalie tabs */
+$tab-background-color: $menu-background-color; // Tabs op bijv. accounting page
+$tab-text-color: $menu-text-color; // Tabs op bijv. accounting page
+$tab-hoverbackground-color: $activemenu-background-color; // Tabs op bijv. accounting page
+$tab-hovertext-color: $solparc-blue; // Tabs op bijv. accounting page
+$tab-border-color: $menu-background-color; // Border van tabcontent op bijv. accounting page
+/* Panelcontrols */
+$panelcontrol-icon-leftright: url(../images/icons/panel_leftright_white.png); // Plaatje voor open/dichtklappen van panelen bij de viewer
+$panelcontrol-icon-bottom: url(../images/icons/panel_updown_white.png); // Plaatje voor open/dichtklappen van panelen bij de viewer
 /* Acknowledge messages */
-$message_acknowledge_border: #357EBF;
-$message_acknowledge_background: #E0E1FF;
-$message_acknowledge_icon: url(../images/icons/information.png);
+$message_acknowledge_border: #357EBF; // Kleur van rand van bevestigings meldingen
+$message_acknowledge_background: #E0E1FF; // Kleur van achtergrond van bevestigings meldingen
+$message_acknowledge_icon: url(/gisviewer/images/icons/information.png); // Icoontje bij bevestigings meldingen
 /* Error messages */
-$message_error_border: #FF0000;
-$message_error_background: #FFF5F5;
-$message_error_icon: url(../images/icons/error.gif);
+$message_error_border: #FF0000; // Kleur van rand van fout meldingen
+$message_error_background: #FFF5F5; // Kleur van achtergrond van fout meldingen
+$message_error_icon: url(/gisviewer/images/icons/error.gif); // Icoontje bij fout meldingen
 
 /* JQUERY UI STYLING */
 // Headers
 $jqui-header-border: 1px solid transparent;
-$jqui-header-bgcolor: $solparc-green;
+$jqui-header-bgcolor: #d9d9d9;
 $jqui-header-color: White;
 // Content
 $jqui-content-border: 1px solid $solparc-orange;
@@ -75,7 +134,7 @@ $jqui-content-bgcolor: White;
 $jqui-content-color: $basefont-color;
 // Default state
 $jqui-default-border: 1px solid $solparc-orange;
-$jqui-default-bgcolor: $light-bgcolor;
+$jqui-default-bgcolor: #FBFBFB;
 $jqui-default-color: $basefont-color;
 // Hover state
 $jqui-hover-border: 1px solid $solparc-orange;

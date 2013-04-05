@@ -17,7 +17,8 @@
     });
 </script>
 
-<div class="ui-widget-content ui-corner-all">
+<div>
+    <h1>Inloggen</h1>
     <form action="j_security_check" method="POST">
         <table>
             <tr>
