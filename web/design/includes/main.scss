@@ -58,11 +58,10 @@ h3 {
     #topmenu {
         float: $menu-float;
         margin-top: $menu-margin-top;
-        margin-right: 10px;
+        margin-right: $east-width;
     }
 
     a.menulink {
-        @include border-bottom-radius(6px);
         @include menuitem($menu-border-color, $menu-text-color);
         display: block;
         padding: $menulink-padding;
@@ -74,6 +73,16 @@ h3 {
         font-size: $menufont-size;
         text-decoration: $menufont-decoration;
     }
+}
+
+.west {
+    background-image: $west-background-image;
+    background-repeat: repeat-y;
+}
+
+.east {
+    background-image: $east-background-image;
+    background-repeat: repeat-y;
 }
 
 .ui-layout-north {
@@ -92,14 +101,6 @@ h3 {
 
 .ui-layout-south {
     height: $footer-height;
-}
-
-#centerWrapper {
-    @include border-radius(8px);
-    @include box-shadow(0 0 4px 2px #e5e5e5);
-    .lt-ie9 & {
-        border: 1px solid #e5e5e5;
-    }
 }
 
 #content {
@@ -133,13 +134,13 @@ h3 {
 }
 
 #footer_tekst_links {
-    margin-top: 3px;
+    margin-top: $footer-text-margin;
     float: left;
     margin-left: $west-width;
 }
 
 #footer_tekst_rechts {
-    margin-top: 3px;
+    margin-top: $footer-text-margin;
     float: right;
     margin-right: $east-width;
 }
