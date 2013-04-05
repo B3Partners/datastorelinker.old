@@ -1,0 +1,47 @@
+/* @mixin message($border-color, $background-color, $icon) {
+	border: 1px solid $border-color;
+    width: 550px;
+    padding: 12px;
+    padding-left: 30px;
+    margin: 10px;
+    margin-left: 0px;
+    color: #000000;
+    background-color: $background-color;
+    background-image: $icon;
+    background-repeat: no-repeat;
+    background-position: 10px 11px;
+}
+
+@mixin center-textleft {
+	height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+*/
+@mixin menuitem($border-color, $color) {
+    border-bottom: 0px none $border-color;
+    border-left: 1px solid $border-color;
+    border-top: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+    color: $color;
+}
+/*
+@mixin heading($font-size) {
+    font-size: $font-size;
+    font-weight: bold;
+    text-decoration: none;
+    font-style: normal;
+    margin-bottom: 0px;
+    margin-top: 15px;
+}
+
+@mixin tablecell($text-align) {
+    font-size: 8pt;
+    text-align: $text-align;
+    height: 20px;
+    margin: 0px;
+    padding: 0px;
+    border: 0px none White;
+}
+*/

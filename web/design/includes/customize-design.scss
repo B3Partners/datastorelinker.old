@@ -1,0 +1,94 @@
+/* Compass settings */
+$legacy-support-for-ie8: true;
+/* Font settings */
+$basefont-family: arial, sans-serif;
+$basefont-size: 11px;
+$basefont-line-height: 1.125em;
+$h-line-height: 1em;
+$h-font-family: 'aniversregular', $basefont-family;
+$h-font-weight: normal;
+$h1-font-size: 2em;
+$h2-font-size: 1.6em;
+$h3-font-size: 1.2em;
+$menufont-weight: 400;
+$menufont-family: 'Open Sans', $basefont-family;
+$menufont-size: 14px;
+$menufont-decoration: none;
+/* Size settings */
+$header-height: 95px;
+$content-width: 100%;
+$footer-height: 20px;
+$west-width: 50px;
+$east-width: 50px;
+$menu-float: right;
+$menu-margin-top: 0px;
+$menulink-height: 22px;
+$menulink-padding: 9px 12px 0px 12px;
+/* Images */
+$background-image: url(../images/solutionparc-design/background.png);
+$header-background-image: url("../images/solutionparc-design/backgroundlogo.png");
+$header-image: url(../images/solutionparc-design/logo.png);
+$footer-background-image: none;
+$footer-image: none;
+/* Image settings */
+$background-image-repeat: repeat-x;
+$header-image-position: 50px 18px;
+$header-image-repeat: no-repeat;
+$header-background-image-position: right 11px;
+$header-background-image-repeat: no-repeat;
+$footer-image-repeat: no-repeat;
+$footer-background-image-repeat: no-repeat;
+/* Colors */
+$basefont-color: #000000;
+$background-color: #e9e9e9;
+$basecolor1: $basefont-color;
+$basecolor2: #b4b4b4;
+$input-border-color: $basefont-color;
+$light-bgcolor: #FBFBFB;
+// Solution parc colors
+$solparc-orange: #F9811E;
+$solparc-yellow: #E4D335;
+$solparc-green: #96CA2D;
+$solparc-blue: #00BDFF;
+/* Menu colors */
+$menu-border-color: none;
+$menu-text-color: #FFFFFF;
+$menu-background-color: #7e7e7e;
+$menu-background-color-even: #696768;
+/* Acknowledge messages */
+$message_acknowledge_border: #357EBF;
+$message_acknowledge_background: #E0E1FF;
+$message_acknowledge_icon: url(../images/icons/information.png);
+/* Error messages */
+$message_error_border: #FF0000;
+$message_error_background: #FFF5F5;
+$message_error_icon: url(../images/icons/error.gif);
+
+/* JQUERY UI STYLING */
+// Headers
+$jqui-header-border: 1px solid transparent;
+$jqui-header-bgcolor: $solparc-green;
+$jqui-header-color: White;
+// Content
+$jqui-content-border: 1px solid $solparc-orange;
+$jqui-content-bgcolor: White;
+$jqui-content-color: $basefont-color;
+// Default state
+$jqui-default-border: 1px solid $solparc-orange;
+$jqui-default-bgcolor: $light-bgcolor;
+$jqui-default-color: $basefont-color;
+// Hover state
+$jqui-hover-border: 1px solid $solparc-orange;
+$jqui-hover-background: White;
+$jqui-hover-color: $solparc-orange;
+// Active state
+$jqui-active-border: 1px solid $solparc-orange;
+$jqui-active-bgcolor: $solparc-orange;
+$jqui-active-color: White;
+// Highlight state (used as background for info-alerts and current day in calendars)
+$jqui-highlight-border: 1px solid Black;
+$jqui-highlight-bgcolor: #7e7e7e;
+$jqui-highlight-color: $basefont-color;
+// Icon paths
+$jqui-icons-default: url(images/ui-icons_000000_256x240.png);
+$jqui-icons-hover: url(images/ui-icons_000000_256x240.png);

@@ -10,12 +10,12 @@
 
 
 <div class="ui-layout-content header">
-    <div class="login-info-block">
-        <div class="logged-in-as">
+    <div id="topmenu" class="login-info-block">
+        <a class="menulink logged-in-as">
             <fmt:message key="loggedInAs"/>
             ${pageContext.request.remoteUser}
-        </div>
-        <stripes:link href="/logout.jsp" class="logout-link">Uitloggen</stripes:link>
+        </a>
+        <stripes:link href="/logout.jsp" class="menulink logout-link">Uitloggen</stripes:link>
     </div>
-    <img src="<stripes:url value="${contextPath}/images/datastorelinkerlogo.png"/>" alt="DataStoreLinker Logo" style="margin-left: 50px;" />
+    <div class="header_logo"></div>
 </div>

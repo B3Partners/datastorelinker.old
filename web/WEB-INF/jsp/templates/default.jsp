@@ -10,7 +10,10 @@
 <stripes:layout-definition>
 
     <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-    <html>
+    <!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="nl"> <![endif]-->
+    <!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="nl"> <![endif]-->
+    <!--[if IE 8]> <html class="lt-ie9" lang="nl"> <![endif]-->
+    <!--[if gt IE 8]><!--> <html lang="nl"> <!--<![endif]-->
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <meta http-equiv="Expires" content="-1" />
@@ -18,12 +21,9 @@
 
             <title>${pageTitle}</title>
 
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/jquery-ui-1.8.11.custom.css" />
+            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/datastorelinker_main.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.ui-uploader/styles/jquery-ui-upload.css" />
             <link rel="stylesheet" type="text/css" href="${contextPath}/scripts/jquery.filetree/jquery.filetree.css" />
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.css" />
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/wizard.css" />
-            <link rel="stylesheet" type="text/css" href="${contextPath}/styles/actions.css" />
 
             <!-- 3rd party libs: -->
             <!-- jQuery (UI) and plugins -->
@@ -79,21 +79,20 @@
 
             <script type="text/javascript" class="ui-layout-ignore">
                 $(document).ready(function() {
-                    
                 });
 
                 function layoutMain() {
-                    var mainTabsLayout = $("body").layout($.extend({}, defaultLayoutOptions, {
-                        west__size: 50,
-                        east__size: 50,
-                        north__size: 50,
-                        south__size: 50,
+                    var mainTabsLayout = $("#wrapperclass").layout($.extend({}, defaultLayoutOptions, {
+                        west__size: parseInt($('.ui-layout-west').css('width'), 10),
+                        east__size: parseInt($('.ui-layout-east').css('width'), 10),
+                        north__size: parseInt($('.ui-layout-north').css('height'), 10),
+                        south__size: parseInt($('.ui-layout-south').css('height'), 10),
                         spacing_open: 0,
                         spacing_close: 0
                     }));
                     createDefaultVerticalLayout($("#centerWrapper"), {
-                        north__size: 5,
-                        south__size: 5,
+                        north__size: 0,
+                        south__size: 0,
                         spacing_open: 0,
                         spacing_close: 0
                     });
@@ -103,38 +102,39 @@
 
         </head>
         <body>
-            <div class="ui-layout-north">
-                <stripes:layout-component name="header">
-                    <jsp:include page="/WEB-INF/jsp/commons/header.jsp"/>
-                </stripes:layout-component>
-            </div>
-
-            <div class="ui-layout-west">
-                <stripes:layout-component name="west">
-                    <jsp:include page="/WEB-INF/jsp/commons/west.jsp"/>
-                </stripes:layout-component>
-            </div>
-
-            <div class="ui-layout-east">
-                <stripes:layout-component name="east">
-                    <jsp:include page="/WEB-INF/jsp/commons/east.jsp"/>
-                </stripes:layout-component>
-            </div>
-
-            <div class="ui-layout-south">
-                <stripes:layout-component name="footer">
-                    <jsp:include page="/WEB-INF/jsp/commons/footer.jsp"/>
-                </stripes:layout-component>
-            </div>
-
-            <div id="centerWrapper" class="ui-layout-center" style="height: 100%">
-                <div>&nbsp;</div>
-                <div id="content">
-                    <stripes:layout-component name="content"/>
+            <div id="wrapperclass">
+                <div class="ui-layout-north">
+                    <stripes:layout-component name="header">
+                        <jsp:include page="/WEB-INF/jsp/commons/header.jsp"/>
+                    </stripes:layout-component>
                 </div>
-                <div>&nbsp;</div>
-            </div>
 
+                <div class="ui-layout-west">
+                    <stripes:layout-component name="west">
+                        <jsp:include page="/WEB-INF/jsp/commons/west.jsp"/>
+                    </stripes:layout-component>
+                </div>
+
+                <div class="ui-layout-east">
+                    <stripes:layout-component name="east">
+                        <jsp:include page="/WEB-INF/jsp/commons/east.jsp"/>
+                    </stripes:layout-component>
+                </div>
+
+                <div class="ui-layout-south">
+                    <stripes:layout-component name="footer">
+                        <jsp:include page="/WEB-INF/jsp/commons/footer.jsp"/>
+                    </stripes:layout-component>
+                </div>
+
+                <div id="centerWrapper" class="ui-layout-center" style="height: 100%">
+                    <div>&nbsp;</div>
+                    <div id="content">
+                        <stripes:layout-component name="content"/>
+                    </div>
+                    <div>&nbsp;</div>
+                </div>
+            </div>
         </body>
     </html>
 
