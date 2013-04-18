@@ -84,6 +84,8 @@ $tabvak-background-color: #eeeeee; // Achtergrond kleur van tabvak (viewer)
 $tabvak-color: $basefont-color; // Tekstkleur van teksten in het tabvak (viewer)
 $tabvak-tab-color: $tabvak-color; // Tekstkleur van tabs van het tabvak (viewer)
 $tabvak-tab-color-active: $tabvak-color; // Tekstkleur van actieve tab van het tabvak (viewer)
+$actions-background-color: $solparc-orange; // Achtergrondkleur van bovenste deel en tekstkleur van onderste deel van actieblokken
+$actions-color: #FFFFFF; // Tekstkleur bovenste deel en achtergrond kleur onderste deel van actieblokken
 /* Config tabs */
 $label-bgcolor: tint($solparc-orange, 80); // Achtergrond kleur van tabs in gisviewer config (de tabs aan de zijkant van enkele menus)
 $label-active-bgcolor: $solparc-orange; // Achtergrond kleur van actieve tabs in gisviewer config
