@@ -26,6 +26,7 @@
     overflow: auto;
     margin: 0;
     position: relative; /* to prevent IE <= 7 bug */
+    width: auto;
 }
 
 .action {
@@ -34,19 +35,19 @@
     /*text-align: left;*/
     /*background: #eeeeee;
     color: black;*/
-    border: 1px solid #196299;
+    border: 1px solid $actions-background-color;
     margin: 3px;
 }
 
 .action .type {
-    background: #196299;
-    color: #fed204;
+    background: $actions-background-color;
+    color: $actions-color;
     padding: 6px 3px 6px 3px;
 }
 
 .action .name {
-    background: #fed204;
-    color: #196299;
+    background: $actions-color;
+    color: $actions-background-color;
     padding: 3px;
 }
 
@@ -66,7 +67,7 @@
 .action-hover {
     cursor: move;
     background: white;
-    border: 1px solid #fed204;
+    border: 1px solid $actions-color;
 }
 
 .action-active {
@@ -74,7 +75,7 @@
 }
 
 /*.action-active {
-    background: #fed204;
+    background: $actions-color;
 }*/
 
 .action-dropped {
