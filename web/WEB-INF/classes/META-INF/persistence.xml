@@ -12,26 +12,26 @@
         <class>nl.b3p.datastorelinker.entity.Organization</class>
         <class>nl.b3p.datastorelinker.entity.Users</class>
     
-        <properties>            
-            <!-- Postgres -->
-            <property name="hibernate.connection.username" value="postgres"/>
-            <property name="hibernate.connection.password" value="***REMOVED***"/>
+        <properties>     
+            <!-- Postgres 
+            <property name="hibernate.connection.username" value="datastorelinker"/>
+            <property name="hibernate.connection.password" value="datastorelinker"/>
             <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/>
       
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            -->
             
-            
-            <!-- Oracle 
+            <!-- Oracle -->
             <property name="hibernate.connection.username" value="dsl2"/>
             <property name="hibernate.connection.password" value="dsl2"/>
             <property name="hibernate.connection.url" value="jdbc:oracle:thin:@b3p-demoserver:1521:orcl"/>
             <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
-            -->
+            
             
             <!-- Settings -->
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>       
@@ -40,7 +40,7 @@
             <property name="hibernate.c3p0.min_size" value="0"/>
             <property name="hibernate.c3p0.timeout" value="60"/>
             <property name="hibernate.c3p0.idle_test_period" value="100"/>
-            <property name="hibernate.show_sql" value="false"/>            
+            <property name="hibernate.show_sql" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>
