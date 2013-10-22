@@ -47,12 +47,13 @@ function getCreatedActionList() {
     var actionList = [];
     $("#actionsListContainer").children(":not(.placeholder)").each(function(index, actionDiv) {
         actionList.push($(actionDiv).metadata());
-    })
+    });
+    
     return actionList;
 }
 
 function fillActionsList(actionsListJSON, actionsListSelector, contextPath, placeholder, mustAddButtons) {
-    if (actionsListJSON.length == 0) {
+    if (actionsListJSON.length === 0) {
         $(actionsListSelector).html(placeholder);
     } else {
         $(actionsListSelector).html("");
@@ -280,7 +281,8 @@ function openParametersDialog(action) {
     parametersDialogButtons = {};
     parametersDialogButtons[I18N.cancel] = function(event, ui) {
         parametersDialog.dialog("close");
-    }
+    };
+    
     parametersDialogButtons[I18N.ok] = function(event, ui) {
         
         if (validateInputMappedFields) {
@@ -308,7 +310,7 @@ function openParametersDialog(action) {
         $("#actionsListContainer").find(".action-active .value").text(getExampleParamValue(action));
 
         parametersDialog.dialog("close");
-    }
+    };
 
     parametersDialog.dialog($.extend({}, defaultDialogOptions, {
         title: I18N.editParameters,
@@ -363,10 +365,11 @@ attributeTypeJavaClasses = {
     "java.lang.Boolean": {},
     "java.lang.Integer": {},
     "java.lang.Float": {},
+    "java.util.Date": {},
     "com.vividsolutions.jts.geom.Polygon": {},
     "com.vividsolutions.jts.geom.MultiPolygon": {},
     "com.vividsolutions.jts.geom.Point": {},
     "com.vividsolutions.jts.geom.MultiPoint": {},
     "com.vividsolutions.jts.geom.LineString": {},
     "com.vividsolutions.jts.geom.MultiLineString": {}
-}
+};
