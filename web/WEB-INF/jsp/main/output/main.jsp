@@ -11,11 +11,11 @@
         $("#drop").change(function() {
             var drop = !!$("#drop").attr("checked");
             $("#append").attr("disabled", drop);
-            if(drop) {
+            if (drop) {
                 $("#append").attr("checked", false);
             }
-            
-        });
+        });      
+
         connectionSuccessOutputDBAjaxOpenOptions = {
             url: "${outputUrl}",
             formSelector: ".form-container .ui-accordion-content-active form",
@@ -25,12 +25,12 @@
                 $("#outputContainer").dialog("close");
             }
         }
-        
+
         var newUpdateOutputCommonDialogOptions = $.extend({}, defaultDialogOptions, {
             width: 550,
             //height: 400,
             buttons: {
-                "<fmt:message key="finish"/>" : function() {
+                "<fmt:message key="finish"/>": function() {
                     testConnection(connectionSuccessOutputDBAjaxOpenOptions);
                 }
             }
@@ -100,7 +100,7 @@
 
             return defaultButtonClick(this);
         });
-        
+
     });
 </script>
 
@@ -120,7 +120,7 @@
                 <stripes:button id="deleteOutput" name="delete"/>
             </div>
         </c:if>        
-        
+
         <c:if test="${empty actionBean.admin or actionBean.admin == false}">
             <div style="margin-top: 1em">
                 <div>

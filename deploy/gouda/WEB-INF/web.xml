@@ -141,7 +141,7 @@
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
-        <param-value>smtp.gouda.nl</param-value>
+        <param-value>mail.b3partners.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultFromEmailAddress</param-name>
