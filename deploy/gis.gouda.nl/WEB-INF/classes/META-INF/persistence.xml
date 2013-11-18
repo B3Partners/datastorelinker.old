@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+    <persistence-unit name="DataStoreLinkerGuiPU">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+
+        <class>nl.b3p.datastorelinker.entity.Process</class>
+        <class>nl.b3p.datastorelinker.entity.Inout</class>
+        <class>nl.b3p.datastorelinker.entity.Database</class>
+        <class>nl.b3p.datastorelinker.entity.Mail</class>
+        <class>nl.b3p.datastorelinker.entity.Schedule</class>
+        <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
+        <class>nl.b3p.datastorelinker.entity.Organization</class>
+        <class>nl.b3p.datastorelinker.entity.Users</class>
+    
+        <properties>
+            <!-- Oracle -->
+            <property name="hibernate.connection.username" value="geodata"/>
+            <property name="hibernate.connection.password" value="pw4geodata"/>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@geo.oradb.gouda.lok:1521:geo"/>
+            <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+            
+            <!-- Settings -->
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>       
+            <property name="hibernate.c3p0.initial_size" value="0"/>
+            <property name="hibernate.c3p0.max_size" value="50"/>
+            <property name="hibernate.c3p0.min_size" value="0"/>
+            <property name="hibernate.c3p0.timeout" value="60"/>
+            <property name="hibernate.c3p0.idle_test_period" value="100"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>
