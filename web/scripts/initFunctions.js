@@ -46,6 +46,10 @@ function initDatabaseOutput() {
     $("#createDB, #updateDB, #deleteDB").button();
 }
 
+function initServicesOutput() {
+    $("#publish").button();
+}
+
 function initFile() {
     $("#uploadFile, #deleteFile, #uploader").button();
 }

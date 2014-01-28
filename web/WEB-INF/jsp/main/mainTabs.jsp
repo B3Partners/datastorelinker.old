@@ -82,6 +82,11 @@
                     <fmt:message key="menu.admin.output.rights"/>
                 </stripes:link>
             </li>
+            <li>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputServicesAction" title="tabOutputServices">
+                    <fmt:message key="menu.admin.output.services"/>
+                </stripes:link>
+            </li>
             </c:if>
         </ul>
         
@@ -97,6 +102,7 @@
                 <div id="tabAuth" style="height: 100%"></div>
                 <div id="tabUsers" style="height: 100%"></div>
                 <div id="tabOutputRights" style="height: 100%"></div>
+                <div id="tabOutputServices" style="height: 100%"></div>
             </c:if>
         </div>
                         
