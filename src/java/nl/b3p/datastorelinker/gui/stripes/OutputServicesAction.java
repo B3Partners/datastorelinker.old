@@ -36,6 +36,7 @@ public class OutputServicesAction extends DefaultAction {
 
     private final static String MAIN_JSP = "/WEB-INF/jsp/management/outputServicesAdmin.jsp";
     private final static String PUBLISH_JSP = "/WEB-INF/jsp/main/output_services/publish.jsp";
+    private final static String LIST_JSP = "/WEB-INF/jsp/main/output_services/list.jsp";
     
     private List<Database> databases;
     private Long selectedDatabaseId;
@@ -50,7 +51,13 @@ public class OutputServicesAction extends DefaultAction {
         
         return new ForwardResolution(PUBLISH_JSP);
     }
-
+    
+    
+    public Resolution createComplete(){
+        list();
+        return new ForwardResolution(LIST_JSP);
+    }
+    
     public void list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();

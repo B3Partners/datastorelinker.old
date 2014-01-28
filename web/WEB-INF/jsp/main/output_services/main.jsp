@@ -4,47 +4,47 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <script type="text/javascript" class="ui-layout-ignore">
-    console.log("tad");
-    function recalculateNewUpdateDBCommonDialogOptions() {
-        return $.extend({}, defaultDialogOptions, {
-            width: calculateDialogWidth(70, 500, 700),
-            //height: 600,
+
+/* Event wordt aangeroepen in back-end als form is ingevuld */
+        var nieuwServiceOptions = $.extend({}, defaultDialogOptions, {            
+            width: 550,
+            //height: 400,
             buttons: {
-                "<fmt:message key="finish"/>" : function() {
-                    testConnection(connectionSuccessInputDBAjaxOpenOptions);
+                "<fmt:message key="finish"/>": function() {
+                   /* if (!validateForm()) {
+                        return;
+                    }
+*/
+                    ajaxOpen({
+                        url: "${outputServicesUrl}",
+                        event: "createComplete",
+                        extraParams: [],
+                        containerSelector: "#databasesListContainer",
+                        successAfterContainerFill: function(data, textStatus, xhr) {
+                            $("#publishDialogContainer").dialog("close");
+                        }
+                    });
                 }
             }
         });
-    }
-    
-    connectionSuccessInputDBAjaxOpenOptions = {
-        formSelector: ".form-container .ui-accordion-content-active form",
-        event: "createComplete",
-        containerSelector: "#databasesListContainer",
-        successAfterContainerFill: function(data, textStatus, xhr) {
-            $("#dbContainer").dialog("close");
-            console.log("succesaftercontainerfille");
-        }
-    };
-
+        
     $(document).ready(function() {
-    console.log("document ready");
         $("#publish").click(function() {
-            console.log("sdf");
-            ajaxOpen({
+           
+         ajaxOpen({
                 url: "${outputServicesUrl}",
                 event: "publish",
-                containerId: "dbContainer",
-                openInDialog: true,
-                dialogOptions: $.extend({}, recalculateNewUpdateDBCommonDialogOptions(), {
-                    title: "<fmt:message key="publishOutput"/>"
-                })
+                containerId: "publishDialogContainer",
+                    openInDialog: true,
+                    dialogOptions: $.extend({}, nieuwServiceOptions, {
+                        title: "<fmt:message key="publishOutput"/>"
+                    })
+                });
+
+                return defaultButtonClick(this);
+
             });
-
-          //  return defaultButtonClick(this);
-        })
-
-    });
+        });
 </script>
 
 
