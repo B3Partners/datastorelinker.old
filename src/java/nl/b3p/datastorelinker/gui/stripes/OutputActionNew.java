@@ -3,7 +3,6 @@ package nl.b3p.datastorelinker.gui.stripes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONObject;
@@ -25,7 +24,8 @@ import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.geotools.data.DataStore;
 import org.geotools.data.FeatureSource;
-import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.hibernate.Session;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -359,10 +359,9 @@ public class OutputActionNew extends DatabaseOutputAction {
             tableName = ds.getTypeNames()[0];
         }               
 
-        FeatureCollection<SimpleFeatureType, SimpleFeature> fc =
-                ds.getFeatureSource(tableName).getFeatures();
+        DefaultFeatureCollection fc = (DefaultFeatureCollection)ds.getFeatureSource(tableName).getFeatures();
 
-        Iterator<SimpleFeature> iterator = fc.iterator();
+        FeatureIterator<SimpleFeature> iterator = (FeatureIterator)fc.iterator();
         try {
             if (iterator.hasNext())
                 return iterator.next();

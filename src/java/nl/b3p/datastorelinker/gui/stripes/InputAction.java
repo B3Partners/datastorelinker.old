@@ -25,6 +25,7 @@ import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.geotools.data.DataStore;
 import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureIterator;
 import org.hibernate.Session;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -340,12 +341,12 @@ public class InputAction extends DefaultAction {
         FeatureCollection<SimpleFeatureType, SimpleFeature> fc =
                 ds.getFeatureSource(tableName).getFeatures();
 
-        Iterator<SimpleFeature> iterator = fc.iterator();
+        FeatureIterator iterator = fc.features();
         try {
             if (iterator.hasNext())
-                return iterator.next();
+                return (SimpleFeature)iterator.next();
         } finally {
-            fc.close(iterator);
+            //fc.close(iterator);
         }
 
         throw new Exception("Geen features gevonden.");
