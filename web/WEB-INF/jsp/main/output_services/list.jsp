@@ -11,14 +11,14 @@
 
 <div id="databasesList">
     <stripes:form partial="true" action="/">
-        <c:forEach var="database" items="${actionBean.databases}" varStatus="status">
+        <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
             <c:choose>
-                <c:when test="${not empty actionBean.selectedDatabaseId and database.id == actionBean.selectedDatabaseId}">
-                    <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" class="required" checked="checked" />
+                <c:when test="${not empty actionBean.selectedDatabaseId and input.id == actionBean.selectedDatabaseId}">
+                    <input type="radio" id="input{status.index}" name="selectedDatabaseId" value="${input.id}" class="required" checked="checked" />
                     <script type="text/javascript" class="ui-layout-ignore">
                         $(document).ready(function() {
                             $("#databasesList").parent().scrollTo(
-                                $("#database${status.index}"),
+                                $("#input{status.index}"),
                                 defaultScrollToDuration,
                                 defaultScrollToOptions
                             );
@@ -26,11 +26,11 @@
                     </script>
                 </c:when>
                 <c:otherwise>
-                    <input type="radio" id="database${status.index}" name="selectedDatabaseId" value="${database.id}" class="required"/>
+                    <input type="radio" id="input${status.index}" name="selectedDatabaseId" value="${input.id}" class="required"/>
                 </c:otherwise>
             </c:choose>
-            <stripes:label for="database${status.index}">
-                <c:out value="${database.name}"/>
+            <stripes:label for="input${status.index}">
+                <c:out value="${input.name}"/>
             </stripes:label>
         </c:forEach>
     </stripes:form>

@@ -18,7 +18,10 @@
                     ajaxOpen({
                         url: "${outputServicesUrl}",
                         event: "createComplete",
-                        extraParams: [],
+                        extraParams: [
+                    
+                            {name: "publisherType", value: $("#publisherType").val()}
+                        ],
                         containerSelector: "#databasesListContainer",
                         successAfterContainerFill: function(data, textStatus, xhr) {
                             $("#publishDialogContainer").dialog("close");

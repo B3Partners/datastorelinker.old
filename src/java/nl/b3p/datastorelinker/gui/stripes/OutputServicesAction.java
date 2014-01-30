@@ -22,9 +22,13 @@ import javax.persistence.EntityManager;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.validation.Validate;
 import nl.b3p.commons.jpa.JpaUtilServlet;
+import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
+import nl.b3p.datastorelinker.publish.GeoserverPublisher;
+import nl.b3p.datastorelinker.publish.Publisher;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import org.hibernate.Session;
 
@@ -32,14 +36,18 @@ import org.hibernate.Session;
  *
  * @author Meine Toonen
  */
+@Transactional
 public class OutputServicesAction extends DefaultAction {
 
     private final static String MAIN_JSP = "/WEB-INF/jsp/management/outputServicesAdmin.jsp";
     private final static String PUBLISH_JSP = "/WEB-INF/jsp/main/output_services/publish.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/output_services/list.jsp";
     
-    private List<Database> databases;
+    private List<Inout> inputs;
     private Long selectedDatabaseId;
+    
+    @Validate
+    private String publisherType;
 
     @DefaultHandler
     public Resolution view() {
@@ -54,6 +62,15 @@ public class OutputServicesAction extends DefaultAction {
     
     
     public Resolution createComplete(){
+        Publisher publisher = null;
+        if(publisherType.equals(Publisher.PUBLISHER_TYPE_GEOSERVER)){
+            publisher = new GeoserverPublisher();
+        }else {
+            throw new IllegalArgumentException("Publisher type not yet implemented");
+        }
+        
+        publisher.publishDb(MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP);
+        
         list();
         return new ForwardResolution(LIST_JSP);
     }
@@ -62,29 +79,31 @@ public class OutputServicesAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
+       
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
-            databases = session.createQuery("from Database where inout_type = :type")
-                    .setParameter("type", Inout.TYPE_OUTPUT)
-                    .list();
+            inputs = session.createQuery("from Inout where input_output_type = :type")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .list();
         } else {
-            databases = session.createQuery("from Database where inout_type = :type"
-                    + " and organization_id = :orgid")
-                    .setParameter("type", Inout.TYPE_OUTPUT)
-                    .setParameter("orgid", getUserOrganiztionId())
-                    .list();
+            inputs = session.createQuery("from Inout where input_output_type = :type"
+                + " and organization_id = :orgid")
+                .setParameter("type", Inout.TYPE_OUTPUT)
+                .setParameter("orgid", getUserOrganiztionId())
+                .list();
         }
+        
+        Collections.sort(inputs, new NameableComparer());
 
-        Collections.sort(databases, new NameableComparer());
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters">
-    public List<Database> getDatabases() {
-        return databases;
+    public List<Inout> getInputs() {
+        return inputs;
     }
 
-    public void setDatabases(List<Database> databases) {
-        this.databases = databases;
+    public void setInputs(List<Inout> inputs) {
+        this.inputs = inputs;
     }
 
     public Long getSelectedDatabaseId() {
@@ -95,5 +114,14 @@ public class OutputServicesAction extends DefaultAction {
         this.selectedDatabaseId = selectedDatabaseId;
     }
 
+    public String getPublisherType() {
+        return publisherType;
+    }
+
+    public void setPublisherType(String publisherType) {
+        this.publisherType = publisherType;
+    }
+
     //</editor-fold>
+
 }
