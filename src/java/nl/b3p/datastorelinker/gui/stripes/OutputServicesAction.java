@@ -31,6 +31,7 @@ import nl.b3p.datastorelinker.publish.GeoserverPublisher;
 import nl.b3p.datastorelinker.publish.Publisher;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import org.hibernate.Session;
+import org.stripesstuff.stripersist.Stripersist;
 
 /**
  *
@@ -44,7 +45,13 @@ public class OutputServicesAction extends DefaultAction {
     private final static String LIST_JSP = "/WEB-INF/jsp/main/output_services/list.jsp";
     
     private List<Inout> inputs;
+    
     private Long selectedDatabaseId;
+    
+    private String url;
+    private String style;
+    private String serviceUser;
+    private String servicePassword;
     
     @Validate
     private String publisherType;
@@ -68,10 +75,12 @@ public class OutputServicesAction extends DefaultAction {
         }else {
             throw new IllegalArgumentException("Publisher type not yet implemented");
         }
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Inout inout = em.find(Inout.class, selectedDatabaseId);
         
-        publisher.publishDb(MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP, MAIN_JSP);
+        publisher.publishDb(url,serviceUser, servicePassword, inout.getDatabase().getHost(), inout.getDatabase().getUsername(), inout.getDatabase().getPassword(), inout.getDatabase().getSchema(), inout.getDatabase().getDatabaseName(), inout.getTableName(), style);
         
-        list();
+        list(); 
         return new ForwardResolution(LIST_JSP);
     }
     
@@ -120,6 +129,38 @@ public class OutputServicesAction extends DefaultAction {
 
     public void setPublisherType(String publisherType) {
         this.publisherType = publisherType;
+    }
+
+    public String getServiceUser() {
+        return serviceUser;
+    }
+
+    public void setServiceUser(String serviceUser) {
+        this.serviceUser = serviceUser;
+    }
+
+    public String getServicePassword() {
+        return servicePassword;
+    }
+
+    public void setServicePassword(String servicePassword) {
+        this.servicePassword = servicePassword;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getStyle() {
+        return style;
+    }
+
+    public void setStyle(String style) {
+        this.style = style;
     }
 
     //</editor-fold>
