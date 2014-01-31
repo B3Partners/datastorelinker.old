@@ -95,7 +95,7 @@
         </init-param>    
         <init-param>
             <param-name>uploadFolder</param-name>
-            <param-value>c:\uploadedFiles\webservice\</param-value>
+            <param-value>/mnt/data/gisdata/dsl</param-value>
         </init-param>
         <load-on-startup>4</load-on-startup>
     </servlet>    
@@ -164,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>c:\uploadedFiles</param-value>
+        <param-value>/mnt/data/gisdata/dsl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
@@ -181,5 +181,22 @@
     <context-param>
         <param-name>defaultSubject</param-name>
         <param-value>DataStoreLinker proces is klaar</param-value>
+    </context-param>
+    
+    <context-param>
+        <param-name>geoserverUrl</param-name>
+        <param-value>http://localhost:8084/geoserver</param-value>
+    </context-param>
+    <context-param>
+        <param-name>geoserverUser</param-name>
+        <param-value>admin</param-value>
+    </context-param>
+    <context-param>
+        <param-name>geoserverPassword</param-name>
+        <param-value>***REMOVED***</param-value>
+    </context-param>
+    <context-param>
+        <param-name>geoserverWorkspace</param-name>
+        <param-value>vru</param-value>
     </context-param>
 </web-app>

@@ -17,6 +17,8 @@
 
 package nl.b3p.datastorelinker.publish;
 
+import javax.servlet.ServletContext;
+
 /**
  *
  * @author Meine Toonen
@@ -25,6 +27,6 @@ public interface Publisher {
     public static final String PUBLISHER_TYPE_GEOSERVER = "GEOSERVER";
     public static final String PUBLISHER_TYPE_MAPSERVER = "MAPSERVER";
     
-    boolean publishDb(String url,  String username, String password, String host, String dbUser, String dbPass,String schema,String database, String table, String style);
+    boolean publishDb(String url,  String username, String password, String host, String dbUser, String dbPass,String schema,String database, String table, String workspace,String style, ServletContext context);
     
 }

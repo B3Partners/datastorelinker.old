@@ -16,9 +16,11 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
+import static it.geosolutions.geoserver.rest.GeoServerRESTPublisher.UploadMethod.url;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.ServletContext;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
@@ -31,7 +33,6 @@ import nl.b3p.datastorelinker.publish.GeoserverPublisher;
 import nl.b3p.datastorelinker.publish.Publisher;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import org.hibernate.Session;
-import org.stripesstuff.stripersist.Stripersist;
 
 /**
  *
@@ -47,11 +48,6 @@ public class OutputServicesAction extends DefaultAction {
     private List<Inout> inputs;
     
     private Long selectedDatabaseId;
-    
-    private String url;
-    private String style;
-    private String serviceUser;
-    private String servicePassword;
     
     @Validate
     private String publisherType;
@@ -77,8 +73,11 @@ public class OutputServicesAction extends DefaultAction {
         }
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Inout inout = em.find(Inout.class, selectedDatabaseId);
+        ServletContext c = getContext().getServletContext();
         
-        publisher.publishDb(url,serviceUser, servicePassword, inout.getDatabase().getHost(), inout.getDatabase().getUsername(), inout.getDatabase().getPassword(), inout.getDatabase().getSchema(), inout.getDatabase().getDatabaseName(), inout.getTableName(), style);
+        Database database = inout.getDatabase();
+        publisher.publishDb(c.getInitParameter("geoserverUrl"),c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"), database.getHost(), database.getUsername(), database.getPassword(), 
+                database.getSchema(), database.getDatabaseName(), inout.getTableName(),c.getInitParameter("geoserverWorkspace"), "polygon", c);
         
         list(); 
         return new ForwardResolution(LIST_JSP);
@@ -129,38 +128,6 @@ public class OutputServicesAction extends DefaultAction {
 
     public void setPublisherType(String publisherType) {
         this.publisherType = publisherType;
-    }
-
-    public String getServiceUser() {
-        return serviceUser;
-    }
-
-    public void setServiceUser(String serviceUser) {
-        this.serviceUser = serviceUser;
-    }
-
-    public String getServicePassword() {
-        return servicePassword;
-    }
-
-    public void setServicePassword(String servicePassword) {
-        this.servicePassword = servicePassword;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getStyle() {
-        return style;
-    }
-
-    public void setStyle(String style) {
-        this.style = style;
     }
 
     //</editor-fold>
