@@ -16,6 +16,7 @@
         </tbody>
     </table>
     <div id="tablesList">
+        <td><div id="msgTables" class="verplichteInvoer"/></td>
         <c:forEach var="table" items="${actionBean.tables}" varStatus="status">
             <input type="checkbox" id="table${status.index}" name="selectedTable" value="${table}" class="required"/>
             <stripes:label for="table${status.index}">

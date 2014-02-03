@@ -4,23 +4,33 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <script type="text/javascript" class="ui-layout-ignore">
 
-function getId() {
-    var ids = new Array();
-    $.each($("input[name = selectedTable]:checked"), function(index, val) {
-        ids.push(val.value);
-    });
-    return ids.toString();
-}
-/* Event wordt aangeroepen in back-end als form is ingevuld */
+    function getId() {
+        var ids = new Array();
+        $.each($("input[name = selectedTable]:checked"), function(index, val) {
+            ids.push(val.value);
+        });
+        return ids.toString();
+    }
+    
+    function validateForm(){
+        $("#msgTables").html("");
+        if(getId() === ""){
+            $("#msgTables").html("Selecteer minstens één tabel.");
+            return false;
+        }else{
+            return true;
+        }
+    }
+        /* Event wordt aangeroepen in back-end als form is ingevuld */
     var nieuwServiceOptions = $.extend({}, defaultDialogOptions, {
         width: 550,
         formSelector: ".form-container .ui-accordion-content-active form",
         buttons: {
             "<fmt:message key="finish"/>": function() {
-                /* if (!validateForm()) {
-                 return;
-                 }
-                 */
+                if (!validateForm()) {
+                    return;
+                }
+
                 ajaxOpen({
                     url: "${outputServicesUrl}",
                     event: "createComplete",
