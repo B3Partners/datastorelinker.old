@@ -16,7 +16,6 @@
  */
 package nl.b3p.datastorelinker.gui.stripes;
 
-import static it.geosolutions.geoserver.rest.GeoServerRESTPublisher.UploadMethod.url;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -32,7 +31,6 @@ import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.publish.GeoserverPublisher;
 import nl.b3p.datastorelinker.publish.Publisher;
-import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;

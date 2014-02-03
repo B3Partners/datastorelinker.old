@@ -15,7 +15,6 @@ function getId() {
     var nieuwServiceOptions = $.extend({}, defaultDialogOptions, {
         width: 550,
         formSelector: ".form-container .ui-accordion-content-active form",
-        //height: 400,
         buttons: {
             "<fmt:message key="finish"/>": function() {
                 /* if (!validateForm()) {
