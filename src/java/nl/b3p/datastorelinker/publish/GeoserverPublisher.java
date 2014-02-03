@@ -87,4 +87,25 @@ public class GeoserverPublisher implements Publisher {
         boolean succeeded = pub.publishDb("http://localhost:8084/geoserver/", "admin", "***REMOVED***", "localhost", "flamingo", "24in0Ubg", "public", "test", "gemeentes","vru", "polygon",null);
     }
 
+    public boolean publishDB(String url, String username, String password, String host, String dbUser, String dbPass, String schema, String database, String[] tables, String workspace, String style, ServletContext context) {
+        try {
+            GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
+            boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
+            boolean createdStore = createDatastore(host, dbUser, dbPass, schema, database, workspace, manager);
+            boolean published = true;
+            for (String table : tables) {
+                published = publishLayer(table, style, database, workspace, manager) && published;
+
+            }
+            return published;
+
+        } catch (MalformedURLException ex) {
+            log.error("Failed to initialize restapi: ", ex);
+            return false;
+        } catch (URISyntaxException ex) {
+            log.error("Failed to initialize restapi: ", ex);
+        }
+        return false;
+    }
+
 }
