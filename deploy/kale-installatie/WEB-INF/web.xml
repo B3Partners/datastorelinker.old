@@ -164,4 +164,20 @@
         <param-name>defaultSubject</param-name>
         <param-value>DataStoreLinker proces is klaar</param-value>
     </context-param>
+    <context-param>
+        <param-name>geoserverUrl</param-name>
+        <param-value>GEOSERVERURL</param-value>
+    </context-param>
+    <context-param>
+        <param-name>geoserverUser</param-name>
+        <param-value>GEOSERVERWACHTWOORD</param-value>
+    </context-param>
+    <context-param>
+        <param-name>geoserverPassword</param-name>
+        <param-value>WACHTWOORD</param-value>
+    </context-param>
+    <context-param>
+        <param-name>geoserverWorkspace</param-name>
+        <param-value>WORKSPACENAAM</param-value>
+    </context-param>
 </web-app>
