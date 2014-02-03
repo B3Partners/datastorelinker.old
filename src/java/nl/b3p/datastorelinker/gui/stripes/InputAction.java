@@ -3,7 +3,6 @@ package nl.b3p.datastorelinker.gui.stripes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import javax.persistence.EntityManager;
 import net.sf.json.JSONObject;
@@ -240,10 +239,22 @@ public class InputAction extends DefaultAction {
             } else {
                 throw new Exception("unsupported input type.");
             }
-            SimpleFeature feature = getExampleFeature(ds, tableName);
-
-            //log.debug("feature.getFeatureType().getAttributeDescriptors().size(): " + feature.getFeatureType().getAttributeDescriptors().size());
-            List<AttributeDescriptor> srcAttrDesc = feature.getFeatureType().getAttributeDescriptors();
+            
+            SimpleFeature feature = null;
+            
+            try {
+                feature = getExampleFeature(ds, tableName);
+            } catch (Exception fEx) {                
+            }
+            
+            /* Fix for reading from input table with no records */
+            List<AttributeDescriptor> srcAttrDesc = new ArrayList(); 
+            if (feature != null) {
+                srcAttrDesc = feature.getFeatureType().getAttributeDescriptors();
+            } else {
+                srcAttrDesc = ds.getFeatureSource(tableName).getSchema().getAttributeDescriptors();
+            }            
+            
             List<AttributeDescriptor> attrDescs = new ArrayList<AttributeDescriptor>(srcAttrDesc.size());
             for (AttributeDescriptor ad : srcAttrDesc) {
                 attrDescs.add(ad);
@@ -282,6 +293,7 @@ public class InputAction extends DefaultAction {
         } catch (Exception e) {
             log.error(e);
             String message = e.getMessage() + "<p>" + new LocalizableMessage("attributeReadErrorAdvice").getMessage(getContext().getLocale()) + "</p>";
+            
             return new JSONErrorResolution(message, new LocalizableMessage("attributeReadError"), getContext());
         } finally {
             if (ds != null) {
