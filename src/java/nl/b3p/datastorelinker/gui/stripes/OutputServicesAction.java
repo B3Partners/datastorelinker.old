@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.util.Log;
 import net.sourceforge.stripes.validation.Validate;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
@@ -31,7 +32,10 @@ import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.publish.GeoserverPublisher;
 import nl.b3p.datastorelinker.publish.Publisher;
+import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.NameableComparer;
+import nl.b3p.geotools.data.linker.util.DataStoreUtil;
+import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.hibernate.Session;
 
 /**
@@ -41,11 +45,16 @@ import org.hibernate.Session;
 @Transactional
 public class OutputServicesAction extends DefaultAction {
 
+    private final static Log log = Log.getInstance(OutputServicesAction.class);
     private final static String MAIN_JSP = "/WEB-INF/jsp/management/outputServicesAdmin.jsp";
     private final static String PUBLISH_JSP = "/WEB-INF/jsp/main/output_services/publish.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/output_services/list.jsp";
     
-    private List<Inout> inputs;
+    private List<Database> databases;
+    
+    private List<String> tables;
+    
+    private String selectedTables;
     
     private Long selectedDatabaseId;
     
@@ -59,7 +68,25 @@ public class OutputServicesAction extends DefaultAction {
     }
     
     public Resolution publish(){
-        
+          EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+
+        Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
+
+        try {
+            DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toGeotoolsDataStoreParametersMap());
+
+            if (dataTypeList != null) {
+                tables = dataTypeList.getGood();
+
+            } else {
+                throw new Exception("Error getting datatypes from DataStore.");
+            }
+        } catch(Exception e) {
+            String tablesError = "Fout bij ophalen tabellen. ";
+            log.error(tablesError + e.getMessage());
+        }
         return new ForwardResolution(PUBLISH_JSP);
     }
     
@@ -72,13 +99,15 @@ public class OutputServicesAction extends DefaultAction {
             throw new IllegalArgumentException("Publisher type not yet implemented");
         }
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Inout inout = em.find(Inout.class, selectedDatabaseId);
+        Database database = em.find(Database.class, selectedDatabaseId);
         ServletContext c = getContext().getServletContext();
         
-        Database database = inout.getDatabase();
-        publisher.publishDb(c.getInitParameter("geoserverUrl"),c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"), database.getHost(), database.getUsername(), database.getPassword(), 
-                database.getSchema(), database.getDatabaseName(), inout.getTableName(),c.getInitParameter("geoserverWorkspace"), "polygon", c);
+        if(selectedTables != null){
+            String[] tablesToPublish = selectedTables.split(",");
         
+            publisher.publishDB(c.getInitParameter("geoserverUrl"),c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"), database.getHost(), database.getUsername(), database.getPassword(), 
+                database.getSchema(), database.getDatabaseName(), tablesToPublish,c.getInitParameter("geoserverWorkspace"), "polygon", c);
+        }
         list(); 
         return new ForwardResolution(LIST_JSP);
     }
@@ -88,30 +117,32 @@ public class OutputServicesAction extends DefaultAction {
         Session session = (Session) em.getDelegate();
 
        
+        
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
-            inputs = session.createQuery("from Inout where input_output_type = :type")
+            databases = session.createQuery("from Database where inout_type = :type")
                 .setParameter("type", Inout.TYPE_OUTPUT)
                 .list();
         } else {
-            inputs = session.createQuery("from Inout where input_output_type = :type"
-                + " and organization_id = :orgid")
+            databases = session.createQuery("from Database where inout_type = :type"
+                    + " and organization_id = :orgid")
                 .setParameter("type", Inout.TYPE_OUTPUT)
                 .setParameter("orgid", getUserOrganiztionId())
                 .list();
         }
-        
-        Collections.sort(inputs, new NameableComparer());
+
+        Collections.sort(databases, new NameableComparer());
 
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters">
-    public List<Inout> getInputs() {
-        return inputs;
+
+    public List<Database> getDatabases() {
+        return databases;
     }
 
-    public void setInputs(List<Inout> inputs) {
-        this.inputs = inputs;
+    public void setDatabases(List<Database> databases) {
+        this.databases = databases;
     }
 
     public Long getSelectedDatabaseId() {
@@ -130,6 +161,21 @@ public class OutputServicesAction extends DefaultAction {
         this.publisherType = publisherType;
     }
 
+    public List<String> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<String> tables) {
+        this.tables = tables;
+    }
+    
+    public String getSelectedTables() {
+        return selectedTables;
+    }
+
+    public void setSelectedTables(String selectedTables) {
+        this.selectedTables = selectedTables;
+    }
     //</editor-fold>
 
 }

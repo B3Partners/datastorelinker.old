@@ -11,7 +11,7 @@
 
 <div id="databasesList">
     <stripes:form partial="true" action="/">
-        <c:forEach var="input" items="${actionBean.inputs}" varStatus="status">
+        <c:forEach var="input" items="${actionBean.databases}" varStatus="status">
             <c:choose>
                 <c:when test="${not empty actionBean.selectedDatabaseId and input.id == actionBean.selectedDatabaseId}">
                     <input type="radio" id="input${status.index}" name="selectedDatabaseId" value="${input.id}" class="required" checked="checked" />

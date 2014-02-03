@@ -2,61 +2,64 @@
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-
 <script type="text/javascript" class="ui-layout-ignore">
 
+function getId() {
+    var ids = new Array();
+    $.each($("input[name = selectedTable]:checked"), function(index, val) {
+        ids.push(val.value);
+    });
+    return ids.toString();
+}
 /* Event wordt aangeroepen in back-end als form is ingevuld */
-        var nieuwServiceOptions = $.extend({}, defaultDialogOptions, {            
-            width: 550,
-            formSelector: ".form-container .ui-accordion-content-active form",
-            //height: 400,
-            buttons: {
-                "<fmt:message key="finish"/>": function() {
-                   /* if (!validateForm()) {
-                        return;
+    var nieuwServiceOptions = $.extend({}, defaultDialogOptions, {
+        width: 550,
+        formSelector: ".form-container .ui-accordion-content-active form",
+        //height: 400,
+        buttons: {
+            "<fmt:message key="finish"/>": function() {
+                /* if (!validateForm()) {
+                 return;
+                 }
+                 */
+                ajaxOpen({
+                    url: "${outputServicesUrl}",
+                    event: "createComplete",
+                    extraParams: [
+                        {name: "selectedTables", value: getId()},
+                        {name: "selectedDatabaseId", value: $("#selectedDatabaseId").val()},
+                        {name: "publisherType", value: $("#publisherType").val()}
+                    ],
+                    containerSelector: "#databasesListContainer",
+                    successAfterContainerFill: function(data, textStatus, xhr) {
+                        $("#publishDialogContainer").dialog("close");
                     }
-*/
-                    ajaxOpen({
-                        url: "${outputServicesUrl}",
-                        event: "createComplete",
-                        extraParams: [
-                            {name: "serviceUser", value: $("#serviceUser").val()},
-                            {name: "servicePassword", value: $("#servicePassword").val()},
-                            {name: "url", value: $("#url").val()},
-                            {name: "style", value: $("#style").val()},
-                            {name: "selectedDatabaseId", value: $("#selectedDatabaseId").val()},
-                            {name: "publisherType", value: $("#publisherType").val()}
-                        ],
-                        containerSelector: "#databasesListContainer",
-                        successAfterContainerFill: function(data, textStatus, xhr) {
-                            $("#publishDialogContainer").dialog("close");
-                        }
-                    });
-                }
+                });
             }
-        });
-        
+        }
+    });
+
     $(document).ready(function() {
         $("#publish").click(function() {
-           var database = $("#createInputForm .ui-state-active").prevAll("input").first()
-         ajaxOpen({
+            var database = $("#createInputForm .ui-state-active").prevAll("input").first();
+            ajaxOpen({
                 url: "${outputServicesUrl}",
                 event: "publish",
                 containerId: "publishDialogContainer",
                 extraParams: [{
-                         name: "selectedDatabaseId",
+                        name: "selectedDatabaseId",
                         value: database.val()}
-                    ],
+                ],
                 openInDialog: true,
                 dialogOptions: $.extend({}, nieuwServiceOptions, {
-                title: "<fmt:message key="publishOutput"/>"
-                                })
-                });
-
-                return defaultButtonClick(this);
-
+                    title: "<fmt:message key="publishOutput"/>"
+                })
             });
+
+            return defaultButtonClick(this);
+
         });
+    });
 </script>
 
 
