@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package nl.b3p.datastorelinker.gui.stripes;
 
 import java.text.ParseException;
@@ -18,7 +13,6 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Schedule;
 import nl.b3p.datastorelinker.util.DataStoreLinkJob;
 import nl.b3p.datastorelinker.util.DefaultErrorResolution;
-import nl.b3p.datastorelinker.util.MarshalUtils;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
@@ -34,11 +28,10 @@ import org.quartz.Trigger;
  */
 @Transactional
 public class PeriodicalProcessAction extends DefaultAction {
-    private final static Log log = Log.getInstance(PeriodicalProcessAction.class);
 
+    private final static Log log = Log.getInstance(PeriodicalProcessAction.class);
     protected final static String EXECUTE_PERIODICALLY_JSP = "/WEB-INF/jsp/main/cron/executePeriodically.jsp";
     protected final static String LIST_JSP = "/WEB-INF/jsp/main/process/list.jsp";
-
     // cron expression sequence:
     protected final static int SECONDS = 0;
     protected final static int MINUTES = 1;
@@ -47,33 +40,25 @@ public class PeriodicalProcessAction extends DefaultAction {
     protected final static int MONTH = 4;
     protected final static int DAY_OF_WEEK = 5;
     protected final static int YEAR = 6;
-
     // parsed time string sequence:
     protected final static int PARSE_HOURS = 0;
     protected final static int PARSE_MINUTES = 1;
-
     protected Long selectedProcessId;
-
     protected Schedule.Type cronType;
     protected Date fromDate;
-
     protected Integer onMinute;
     protected String onTime;
     protected Integer onDayOfTheWeek;
     protected Integer onDayOfTheMonth;
     protected Integer onMonth;
-    
-    //protected Boolean onLastDayOfTheMonth;
-
     // advanced
     protected String cronExpression;
 
     public Resolution executePeriodically() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
-        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
-                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
 
         Schedule schedule = process.getSchedule();
 
@@ -82,8 +67,9 @@ public class PeriodicalProcessAction extends DefaultAction {
             cronExpression = schedule.getCronExpression();
             fromDate = schedule.getFromDate();
 
-            if (cronType != Schedule.Type.ADVANCED)
+            if (cronType != Schedule.Type.ADVANCED) {
                 decodeCronExpression(cronExpression);
+            }
         }
 
         return new ForwardResolution(EXECUTE_PERIODICALLY_JSP);
@@ -93,40 +79,40 @@ public class PeriodicalProcessAction extends DefaultAction {
         log.debug("Periodically executing process with id: " + selectedProcessId);
 
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
-        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
-                session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
-
-        Schedule schedule = null;
-        if (process.getSchedule() != null)
-            schedule = process.getSchedule();
-        else
-            schedule = new Schedule();
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
+     
+        /* Delete existing schedule and quartz triggers first.
+         * Otherwise when editing, the schedule is deleted
+         * but corresponding triggers remain. */
+        if (process.getSchedule() != null) {
+            cancelExecutePeriodically();            
+        }
+        
+        Schedule schedule = new Schedule();
         schedule.setFromDate(fromDate);
         schedule.setScheduleType(cronType);
 
         try {
-            //String processString = MarshalUtils.marshalProcess(process);
-            //log.debug(processString);
-
             String uuid = UUID.randomUUID().toString();
 
             String jobName = "job" + uuid;
             JobDetail jobDetail = new JobDetail(jobName, DataStoreLinkJob.class);
             jobDetail.getJobDataMap().put("processId", process.getId());
             jobDetail.getJobDataMap().put("locale", getContext().getLocale());
-            
+
             String triggerName = "trig" + uuid;
-            
+
             String cronExpressionString = null;
             if (cronType == Schedule.Type.ADVANCED) {
                 if (cronExpression != null) // advanced option
+                {
                     cronExpressionString = cronExpression;
-                else 
+                } else {
                     throw new Exception("Expected advanced cron expression; not found.");
-            }
-            else {
+                }
+            } else {
                 cronExpressionString = createCronExpression();
             }
 
@@ -142,34 +128,34 @@ public class PeriodicalProcessAction extends DefaultAction {
             // Eigen schedule bijhouden:
             schedule.setCronExpression(cronExpressionString);
             schedule.setJobName(jobName);
-            if (process.getSchedule() == null)
+            if (process.getSchedule() == null) {
                 session.save(schedule);
+            }
             process.setSchedule(schedule);
 
             return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
-        } catch(ParseException pe) {
+        } catch (ParseException pe) {
             return new DefaultErrorResolution(
-                    "Verkeerde of niet ondersteunde Cron expressie: " +
-                    pe.getLocalizedMessage() +
-                    "\n\nBekijk de Cron expressie handleiding voor uitleg over Cron expressies.");
-        } catch(Exception e) {
+                    "Verkeerde of niet ondersteunde Cron expressie: "
+                    + pe.getLocalizedMessage()
+                    + "\n\nBekijk de Cron expressie handleiding voor uitleg over Cron expressies.");
+        } catch (Exception e) {
             log.error(e);
             return new DefaultErrorResolution(e.getLocalizedMessage());
         }
     }
-    
+
     public Resolution cancelExecutePeriodically() {
         cancelExecutePeriodicallyImpl(selectedProcessId, getContext().getServletContext());
-        
+
         return new ForwardResolution(nl.b3p.datastorelinker.gui.stripes.ProcessAction.class, "list");
     }
 
     public void cancelExecutePeriodicallyImpl(Long processId, ServletContext servletContext) {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
+        Session session = (Session) em.getDelegate();
 
-        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process)
-                session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
+        nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
 
         Schedule schedule = process.getSchedule();
         if (schedule != null) {
@@ -192,38 +178,31 @@ public class PeriodicalProcessAction extends DefaultAction {
     protected void decodeCronExpression(String cronExpressionToDecode) {
         String[] cronArray = cronExpressionToDecode.split(" ");
 
-        /*if (!cronArray[MONTH].equals("*"))
-            cronType = 5;//"year";
-        else if (!cronArray[DAY_OF_MONTH].equals("*") && !cronArray[DAY_OF_MONTH].equals("?"))
-            cronType = 4;//"month";
-        else if (!cronArray[DAY_OF_WEEK].equals("*") && !cronArray[DAY_OF_WEEK].equals("?"))
-            cronType = 3;//"week";
-        else if (!cronArray[HOURS].equals("*"))
-            cronType = 2;//"day";
-        else
-            cronType = 1;//"hour";*/
-
         try {
-            if (cronType == Schedule.Type.YEAR)
+            if (cronType == Schedule.Type.YEAR) {
                 onMonth = Integer.valueOf(cronArray[MONTH]);
+            }
             if (cronType == Schedule.Type.YEAR || cronType == Schedule.Type.MONTH) {
                 try {
                     onDayOfTheMonth = Integer.valueOf(cronArray[DAY_OF_MONTH]);
-                } catch(NumberFormatException nfe) { onDayOfTheMonth = null; } // last day of the month
+                } catch (NumberFormatException nfe) {
+                    onDayOfTheMonth = null;
+                } // last day of the month
             }
-            if (cronType == Schedule.Type.WEEK)
+            if (cronType == Schedule.Type.WEEK) {
                 onDayOfTheWeek = Integer.valueOf(cronArray[DAY_OF_WEEK]);
+            }
 
             Integer minutes = Integer.valueOf(cronArray[MINUTES]);
-            if (cronType == Schedule.Type.HOUR)
+            if (cronType == Schedule.Type.HOUR) {
                 onMinute = minutes;
-            else {
+            } else {
                 Integer hours = Integer.valueOf(cronArray[HOURS]);
                 String minutesStr = minutes < 10 ? "0" + minutes : minutes.toString();
                 String hoursStr = hours < 10 ? "0" + hours : hours.toString();
                 onTime = hoursStr + ":" + minutesStr;
             }
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             log.error("Error decoding cron expression from dsl DB.", nfe);
         }
     }
@@ -239,8 +218,9 @@ public class PeriodicalProcessAction extends DefaultAction {
         cronArgs[DAY_OF_WEEK] = "?";
         cronArgs[YEAR] = "*";
 
-        if (onMinute != null)
+        if (onMinute != null) {
             cronArgs[MINUTES] = onMinute;
+        }
 
         int[] parsedTime = parseTime();
         if (parsedTime != null) {
@@ -256,8 +236,9 @@ public class PeriodicalProcessAction extends DefaultAction {
             cronArgs[DAY_OF_MONTH] = "L"; // last day of the month
         }
 
-        if (onMonth != null)
+        if (onMonth != null) {
             cronArgs[MONTH] = onMonth;
+        }
 
         if (onDayOfTheWeek != null) {
             cronArgs[DAY_OF_WEEK] = onDayOfTheWeek;
@@ -271,8 +252,9 @@ public class PeriodicalProcessAction extends DefaultAction {
     }
 
     protected int[] parseTime() {
-        if (onTime == null || onTime.length() != 5)
+        if (onTime == null || onTime.length() != 5) {
             return null;
+        }
 
         int[] parsedTime = new int[2];
 
@@ -280,7 +262,7 @@ public class PeriodicalProcessAction extends DefaultAction {
         try {
             parsedTime[PARSE_HOURS] = Integer.parseInt(splitTime[PARSE_HOURS]);
             parsedTime[PARSE_MINUTES] = Integer.parseInt(splitTime[PARSE_MINUTES]);
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             log.error("Ongeldige tijd geprobeerd te parsen. Tijd: " + onTime != null ? onTime : "null", nfe);
             return null;
         }
@@ -315,15 +297,7 @@ public class PeriodicalProcessAction extends DefaultAction {
     public void setOnDayOfTheWeek(Integer onDayOfTheWeek) {
         this.onDayOfTheWeek = onDayOfTheWeek;
     }
-
-    /*public Boolean getOnLastDayOfTheMonth() {
-        return onLastDayOfTheMonth;
-    }
-
-    public void setOnLastDayOfTheMonth(Boolean onLastDayOfTheMonth) {
-        this.onLastDayOfTheMonth = onLastDayOfTheMonth;
-    }*/
-
+    
     public Integer getOnMinute() {
         return onMinute;
     }
@@ -371,5 +345,4 @@ public class PeriodicalProcessAction extends DefaultAction {
     public void setCronType(Schedule.Type cronType) {
         this.cronType = cronType;
     }
-
 }
