@@ -23,7 +23,9 @@ import javax.servlet.ServletContext;
 import net.sourceforge.stripes.action.DefaultHandler;
 import net.sourceforge.stripes.action.ForwardResolution;
 import net.sourceforge.stripes.action.Resolution;
+import net.sourceforge.stripes.action.SimpleMessage;
 import net.sourceforge.stripes.util.Log;
+import net.sourceforge.stripes.validation.SimpleError;
 import net.sourceforge.stripes.validation.Validate;
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.commons.stripes.Transactional;
@@ -98,13 +100,21 @@ public class OutputServicesAction extends DefaultAction {
         }
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Database database = em.find(Database.class, selectedDatabaseId);
-        ServletContext c = getContext().getServletContext();
-        
-        if(selectedTables != null){
-            String[] tablesToPublish = selectedTables.split(",");
-        
-            publisher.publishDB(c.getInitParameter("geoserverUrl"),c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"), database.getHost(), database.getUsername(), database.getPassword(), 
-                database.getSchema(), database.getDatabaseName(), tablesToPublish,c.getInitParameter("geoserverWorkspace"), "polygon", c);
+        if(database.getType() == Database.Type.POSTGIS){
+            ServletContext c = getContext().getServletContext();
+
+            if(selectedTables != null){
+                String[] tablesToPublish = selectedTables.split(",");
+
+                boolean published = publisher.publishDB(c.getInitParameter("geoserverUrl"),c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"), database.getHost(), database.getUsername(), database.getPassword(), 
+                    database.getSchema(), database.getDatabaseName(), tablesToPublish,c.getInitParameter("geoserverWorkspace"), "polygon", c);
+                if(!published){
+                    getContext().getValidationErrors().add("Fout", new SimpleError("Laag is niet gepubliceerd"));
+                }
+            }
+            getContext().getMessages().add(new SimpleMessage("Gelukt"));//
+        }else{
+            getContext().getValidationErrors().add("Databasetype", new SimpleError("Database mag alleen van type postgis zijn"));
         }
         list(); 
         return new ForwardResolution(LIST_JSP);
@@ -114,17 +124,18 @@ public class OutputServicesAction extends DefaultAction {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-       
         
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
-            databases = session.createQuery("from Database where inout_type = :type")
-                .setParameter("type", Inout.TYPE_OUTPUT)
+            databases = session.createQuery("from Database where inout_type = :inouttype and type = :dbtype")
+                .setParameter("inouttype", Inout.TYPE_OUTPUT)
+                .setParameter("dbtype",Database.Type.POSTGIS)
                 .list();
         } else {
             databases = session.createQuery("from Database where inout_type = :type"
-                    + " and organization_id = :orgid")
+                    + " and organization_id = :orgid and type = :dbtype")
                 .setParameter("type", Inout.TYPE_OUTPUT)
+                .setParameter("dbtype",Database.Type.POSTGIS)
                 .setParameter("orgid", getUserOrganiztionId())
                 .list();
         }

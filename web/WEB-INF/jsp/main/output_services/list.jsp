@@ -9,6 +9,28 @@
     });
 </script>
 
+<c:choose>
+    <c:when test="${not empty actionBean.context.validationErrors}">
+        <script>
+            var msg = "";
+            <stripes:errors>
+                msg += "<stripes:individual-error/> <br/>";
+            </stripes:errors>
+            openSimpleErrorDialog(msg);
+        </script>
+    </c:when>
+    <c:when test="${not empty actionBean.context.messages}">
+
+        <script>
+            var msg = {
+                title: "${actionBean.context.messages[0].getMessage()}",
+                message: "Laag/lagen zijn gepubliceerd!"
+            };
+            openJSONErrorDialog(msg);
+        </script>
+    </c:when>
+</c:choose>
+
 <div id="databasesList">
     <stripes:form partial="true" action="/">
         <c:forEach var="database" items="${actionBean.databases}" varStatus="status">
