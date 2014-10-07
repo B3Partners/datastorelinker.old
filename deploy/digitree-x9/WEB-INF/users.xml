@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Webapp-users>
-    <role rolename="beheerder"/>
-    <user username="digitree" password="michiel" roles="beheerder"/>
-</Webapp-users>
