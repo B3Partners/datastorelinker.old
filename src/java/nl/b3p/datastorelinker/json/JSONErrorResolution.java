@@ -9,7 +9,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletResponse;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.LocalizableMessage;
-import org.apache.commons.httpclient.HttpStatus;
 
 /**
  *
@@ -43,7 +42,7 @@ public class JSONErrorResolution extends JSONResolution {
 
     @Override
     public void stream(HttpServletResponse response) throws Exception {
-        response.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(500);
         super.stream(response);
     }
 
