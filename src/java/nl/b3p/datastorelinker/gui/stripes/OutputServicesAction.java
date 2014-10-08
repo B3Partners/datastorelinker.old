@@ -32,6 +32,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.publish.GeoserverPublisher;
+import nl.b3p.datastorelinker.publish.MapserverPublisher;
 import nl.b3p.datastorelinker.publish.Publisher;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
@@ -49,30 +50,26 @@ public class OutputServicesAction extends DefaultAction {
     private final static String MAIN_JSP = "/WEB-INF/jsp/management/outputServicesAdmin.jsp";
     private final static String PUBLISH_JSP = "/WEB-INF/jsp/main/output_services/publish.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/output_services/list.jsp";
-    
     private List<Database> databases;
-    
     private List<String> tables;
-    
     private String selectedTables;
-    
     private Long selectedDatabaseId;
-    
     @Validate
     private String publisherType;
+    
+    private String namePublisher;
 
     @DefaultHandler
     public Resolution view() {
         list();
         return new ForwardResolution(MAIN_JSP);
     }
-    
-    public Resolution publish(){
-          EntityManager em = JpaUtilServlet.getThreadEntityManager();
-        Session session = (Session)em.getDelegate();
 
+    public Resolution publish() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session) em.getDelegate();
 
-        Database selectedDatabase = (Database)session.get(Database.class, selectedDatabaseId);
+        Database selectedDatabase = (Database) session.get(Database.class, selectedDatabaseId);
 
         try {
             DataTypeList dataTypeList = DataStoreUtil.getDataTypeList(selectedDatabase.toGeotoolsDataStoreParametersMap());
@@ -83,61 +80,82 @@ public class OutputServicesAction extends DefaultAction {
             } else {
                 throw new Exception("Error getting datatypes from DataStore.");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             String tablesError = "Fout bij ophalen tabellen. ";
             log.error(tablesError + e.getMessage());
         }
         return new ForwardResolution(PUBLISH_JSP);
     }
-    
-    
-    public Resolution createComplete(){
+
+    public Resolution createComplete() {
         Publisher publisher = null;
-        if(publisherType.equals(Publisher.PUBLISHER_TYPE_GEOSERVER)){
+        if (publisherType.equals(Publisher.PUBLISHER_TYPE_GEOSERVER)) {
             publisher = new GeoserverPublisher();
-        }else {
+        } else if (publisherType.equals(Publisher.PUBLISHER_TYPE_MAPSERVER)) {
+            publisher = new MapserverPublisher();
+        } else {
             throw new IllegalArgumentException("Publisher type not yet implemented");
         }
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Database database = em.find(Database.class, selectedDatabaseId);
-        if(database.getType() == Database.Type.POSTGIS){
+
+        if (database.getType() == Database.Type.POSTGIS || database.getType() == Database.Type.ORACLE) {
             ServletContext c = getContext().getServletContext();
 
-            if(selectedTables != null){
+            if (selectedTables != null) {
                 String[] tablesToPublish = selectedTables.split(",");
 
-                boolean published = publisher.publishDB(c.getInitParameter("geoserverUrl"),c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"), database.getHost(), database.getUsername(), database.getPassword(), 
-                    database.getSchema(), database.getDatabaseName(), tablesToPublish,c.getInitParameter("geoserverWorkspace"), "polygon", c);
-                if(!published){
-                    getContext().getValidationErrors().add("Fout", new SimpleError("Laag is niet gepubliceerd"));
+                boolean published = false;
+                if (publisherType.equals(Publisher.PUBLISHER_TYPE_GEOSERVER)) {
+                    published = publisher.publishDB(c.getInitParameter("geoserverUrl"), c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"),
+                            database.getType(), database.getHost(), database.getPort(), database.getUsername(), database.getPassword(),
+                            database.getSchema(), database.getDatabaseName(), tablesToPublish, c.getInitParameter("geoserverWorkspace"), "polygon", c);
+
+                }
+
+                if (publisherType.equals(Publisher.PUBLISHER_TYPE_MAPSERVER)) {
+                    
+                    MapserverPublisher pub = (MapserverPublisher)publisher;
+                    pub.setServiceName(namePublisher);
+                    
+                    published = pub.publishDB(null, null, null,
+                            database.getType(), database.getHost(), database.getPort(),
+                            database.getUsername(), database.getPassword(),
+                            database.getSchema(), database.getDatabaseName(),
+                            tablesToPublish, null, null, c);
+                }
+
+                if (!published) {
+                    getContext().getValidationErrors().add("Fout", new SimpleError("Service is niet gepubliceerd."));
                 }
             }
             getContext().getMessages().add(new SimpleMessage("Gelukt"));//
-        }else{
-            getContext().getValidationErrors().add("Databasetype", new SimpleError("Database mag alleen van type postgis zijn"));
+        } else if (database.getType() == Database.Type.ORACLE) {
+            getContext().getValidationErrors().add("Databasetype", new SimpleError("Database mag alleen van type postgis of oracle zijn."));
         }
-        list(); 
+
+        list();
+
         return new ForwardResolution(LIST_JSP);
     }
-    
+
     public void list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
 
-        
+
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
-            databases = session.createQuery("from Database where inout_type = :inouttype and type = :dbtype")
-                .setParameter("inouttype", Inout.TYPE_OUTPUT)
-                .setParameter("dbtype",Database.Type.POSTGIS)
-                .list();
+            databases = session.createQuery("from Database where inout_type = :inouttype")
+                    .setParameter("inouttype", Inout.TYPE_OUTPUT)
+                    .list();
         } else {
             databases = session.createQuery("from Database where inout_type = :type"
-                    + " and organization_id = :orgid and type = :dbtype")
-                .setParameter("type", Inout.TYPE_OUTPUT)
-                .setParameter("dbtype",Database.Type.POSTGIS)
-                .setParameter("orgid", getUserOrganiztionId())
-                .list();
+                    + " and organization_id = :orgid")
+                    .setParameter("type", Inout.TYPE_OUTPUT)
+                    .setParameter("orgid", getUserOrganiztionId())
+                    .list();
         }
 
         Collections.sort(databases, new NameableComparer());
@@ -145,7 +163,6 @@ public class OutputServicesAction extends DefaultAction {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters and setters">
-
     public List<Database> getDatabases() {
         return databases;
     }
@@ -177,14 +194,21 @@ public class OutputServicesAction extends DefaultAction {
     public void setTables(List<String> tables) {
         this.tables = tables;
     }
-    
+
     public String getSelectedTables() {
         return selectedTables;
     }
 
     public void setSelectedTables(String selectedTables) {
         this.selectedTables = selectedTables;
-    }
+    } 
     //</editor-fold>
 
+    public String getNamePublisher() {
+        return namePublisher;
+    }
+
+    public void setNamePublisher(String namePublisher) {
+        this.namePublisher = namePublisher;
+    }
 }

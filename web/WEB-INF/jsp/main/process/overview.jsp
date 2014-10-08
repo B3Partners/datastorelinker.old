@@ -43,7 +43,7 @@
     $(document).ready(function() {
         $("#processForm").validate(defaultRadioValidateOptions);
 
-        $("#createProcess, #updateProcess, #deleteProcess").button();
+        $("#createProcess, #updateProcess, #deleteProcess, #processDiagram").button();
         $("#executeProcess, #executeProcessPeriodically, #cancelExecuteProcessPeriodically").button();
         $("#exportToXml").button();
 
@@ -274,6 +274,10 @@
 			
             return defaultButtonClick(this);
         });
+        
+        $("#processDiagram").click(function() {
+            window.open("${processUrl}?processDiagram=true");
+        });
     });
 
     function updateProgressbar() {
@@ -350,6 +354,7 @@
                 <stripes:button id="createProcess" name="create"/>
                 <stripes:button id="updateProcess" name="update"/>
                 <stripes:button id="deleteProcess" name="delete"/>
+                <stripes:button  id="processDiagram" name="processDiagram" style="float:right;"/>
             </div>
             <div style="margin-top: 5px">
                 <!--

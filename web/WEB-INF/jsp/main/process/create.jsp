@@ -22,24 +22,24 @@
         initInput();
         initOutput();
 
-        $("#createProcessBackButton, #createProcessNextButton").button();        
-        
+        $("#createProcessBackButton, #createProcessNextButton").button();
+
         initActionsList(
-            <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
-            "${contextPath}"
-        );
-            
+    <c:out value="${actionBean.actionsList}" escapeXml="false"/>,
+                "${contextPath}"
+                );
+
         $("#createUpdateProcessForm").children("div:last").addClass("ui-layout-ignore");
         $("#createUpdateProcessForm").bind("step_shown", function(event, data) {
             formWizardStep(data);
 
             initGuiInput();
             initGuiOutput();
-            
+
             layouts.processContainer = $("#processContainer").layout(defaultDialogLayoutOptions);
             if (layouts.processSteps)
                 layouts.processSteps.destroy();
-        
+
             if (data.previousStep && data.previousStep !== data.currentStep)
                 $("#" + data.previousStep).removeClass("ui-layout-center");
             $("#" + data.currentStep).addClass("ui-layout-center");
@@ -48,7 +48,7 @@
             if (data.previousStep === "SelecteerInvoer" && data.currentStep !== "SelecteerInvoer") {
                 getColumnsNames();
             } else if (data.previousStep === "SelecteerUitvoer" && data.currentStep !== "SelecteerUitvoer") {
-                getColumnsNamesOutput();                
+                getColumnsNamesOutput();
             } else if (data.previousStep === "Overzicht") {
                 overviewLayoutDestroy();
             }
@@ -59,7 +59,7 @@
                 // overige layout init van SelecteerInvoer in tabs.show.
             } else if (data.currentStep === "SelecteerUitvoer") {
                 layouts.processSteps = $("#processSteps").layout(defaultDialogLayoutOptions);
-            } else if (data.currentStep === "Overzicht"){
+            } else if (data.currentStep === "Overzicht") {
                 layouts.processSteps = $("#processSteps").layout(defaultDialogLayoutOptions);
                 overviewLayoutCreate();
 
@@ -68,97 +68,102 @@
             }
 
             // layout plugin messes up z-indices; sets them to 1
-            var topZIndexCss = { "z-index": "auto" };
+            var topZIndexCss = {"z-index": "auto"};
             // z-index auto disabled input fields in IE7
-            if($.browser.msie && $.browser.version <= 7) {
-                topZIndexCss = { "z-index": "2100" };
+            if ($.browser.msie && $.browser.version <= 7) {
+                topZIndexCss = {"z-index": "2100"};
             }
-            
+
             $("#processContainer, #processSteps, #inputContainer .wizardButtonsArea").css(topZIndexCss);
             $("#" + data.currentStep).css(topZIndexCss);
         });
 
         $("#createUpdateProcessForm").formwizard(
-            // form wizard settings
-            $.extend({}, formWizardConfig, {
-                formOptions: {
-                    beforeSend: function() {
-                        var actionsListJson = JSON.stringify(getActionsList());
+                // form wizard settings
+                $.extend({}, formWizardConfig, {
+                    formOptions: {
+                        beforeSend: function() {
+                            var actionsListJson = JSON.stringify(getActionsList());
 
-                        if ($("#inputTabs").tabs("option", "selected") === 0) {
-                            $("#createUpdateProcessForm input[name='selectedFilePath']").prop("checked", false);
-                        } else {
-                            $("#createUpdateProcessForm input[name='selectedInputId']").prop("checked", false);
-                            //$("#createUpdateProcessForm input[name='selectedOutputId']").prop("checked", false);
-                        }
-
-                        ajaxOpen({
-                            formSelector: "#createUpdateProcessForm",
-                            event: "createComplete",
-                            containerSelector: "#processesListContainer",
-                            extraParams: [{
-                                name: "actionsList",
-                                value: actionsListJson
-                            }],
-                            successAfterContainerFill: function() {
-                                $("#processContainer").dialog("close");
+                            // 0 = tabelinvoer, 1 = bestandsinvoer
+                            if ($("#inputTabs").tabs("option", "selected") === 0) {                                
+                                if ($("#createUpdateProcessForm input[name='selectedFilePath']").length > 0) {                                    
+                                    $("#createUpdateProcessForm input[name='selectedFilePath']").prop("checked", false);
+                                    $("#createUpdateProcessForm input[name='selectedFilePath']").rules("add", {
+                                        required: false
+                                    }); 
+                                }                                
+                            } else {
+                                $("#createUpdateProcessForm input[name='selectedInputId']").prop("checked", false);
                             }
-                        });
-                        // prevent regular ajax submit:
-                        return false;
-                    }
-                },
-                validationOptions: $.extend({}, defaultValidateOptions, {
-                    errorPlacement: function(error, element) {
-                        var state = $("#createUpdateProcessForm").formwizard("state");
-                        if (state["currentStep"] !== "SelecteerInvoer") {
-                            defaultFormWizardValidateOptions.errorPlacement(error, element);
-                        } else {
-                            if (error.length > 0 && error.text() != "") {
-                                if ($("#inputTabs").tabs("option", "selected") === 0) {
-                                    $("#databaseInputHeader").append(error);
-                                    $("#databaseTab").layout().resizeAll();
-                                } else {
-                                    $("#fileHeader").append(error);
-                                    $("#fileTab").layout().resizeAll();
+
+                            ajaxOpen({
+                                formSelector: "#createUpdateProcessForm",
+                                event: "createComplete",
+                                containerSelector: "#processesListContainer",
+                                extraParams: [{
+                                        name: "actionsList",
+                                        value: actionsListJson
+                                    }],
+                                successAfterContainerFill: function() {
+                                    $("#processContainer").dialog("close");
                                 }
-                            }
+                            });
+                            // prevent regular ajax submit:
+                            return false;
                         }
                     },
-                    success: function(label) {
-                        var state = $("#createUpdateProcessForm").formwizard("state");
-                        if (state["currentStep"] !== "SelecteerInvoer") {
-                            defaultFormWizardValidateOptions.success(label);
-                        } else {
-                            if (label.length > 0 && label.parent().length > 0) {
-                                label.remove();
-                                if ($("#inputTabs").tabs("option", "selected") === 0) {
-                                    $("#databaseTab").layout().resizeAll();
-                                } else {
-                                    $("#fileTab").layout().resizeAll();
+                    validationOptions: $.extend({}, defaultValidateOptions, {
+                        errorPlacement: function(error, element) {
+                            var state = $("#createUpdateProcessForm").formwizard("state");
+                            if (state["currentStep"] !== "SelecteerInvoer") {
+                                defaultFormWizardValidateOptions.errorPlacement(error, element);
+                            } else {
+                                if (error.length > 0 && error.text() != "") {
+                                    if ($("#inputTabs").tabs("option", "selected") === 0) {
+                                        $("#databaseInputHeader").append(error);
+                                        $("#databaseTab").layout().resizeAll();
+                                    } else {
+                                        $("#fileHeader").append(error);
+                                        $("#fileTab").layout().resizeAll();
+                                    }
+                                }
+                            }
+                        },
+                        success: function(label) {
+                            var state = $("#createUpdateProcessForm").formwizard("state");
+                            if (state["currentStep"] !== "SelecteerInvoer") {
+                                defaultFormWizardValidateOptions.success(label);
+                            } else {
+                                if (label.length > 0 && label.parent().length > 0) {
+                                    label.remove();
+                                    if ($("#inputTabs").tabs("option", "selected") === 0) {
+                                        $("#databaseTab").layout().resizeAll();
+                                    } else {
+                                        $("#fileTab").layout().resizeAll();
+                                    }
                                 }
                             }
                         }
-                    }
+                    })
                 })
-            })
-        );
+                );
 
     });
-    
-    function getDefaultActionBlocks() {        
+
+    function getDefaultActionBlocks() {
         var params = {createDefaultActionBlocks: ""};
-        
+
         blokken = $.ajax({
             url: "${processUrl}",
             data: params,
             dataType: "json",
             global: false
-        }).done(function(columns) {            
+        }).done(function(columns) {
             initActionsList(columns, "${contextPath}");
         });
     }
-    
+
     function getColumnsNames() {
         var inputText = "";
         if ($("#inputTabs").tabs("option", "selected") === 0) {
@@ -169,20 +174,20 @@
         $("#inputOverviewContainer .titleContainer").html(inputText);
         $("#inputOverviewContainer .colsContainer").html('\
             <div class="ui-widget">\
-				<div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
-					<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
-					<strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
-				</div>\
-			</div>\
+                <div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
+                    <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
+                    <strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
+                </div>\
+            </div>\
         ');
-                    
+
         var params = {getTypeNames: ""};
         if ($("#inputTabs").tabs("option", "selected") === 0) {
             params.selectedInputId = $("#inputListContainer input:radio:checked").val();
         } else {
             params.selectedFilePath = $("#filesListContainer input:radio:checked").val();
         }
-        
+
         //setTimeout(function() {
         inputColumnNamesJqXhr = $.ajax({
             url: "${inputUrl}",
@@ -203,9 +208,9 @@
         }).done(function(columns) {
             var colTable = $("<table>").css("width", "100%");
             var thead = $("<thead></thead>").append($("<tr>").append(
-                $("<td>", {text: "Attribuutnaam"}), 
-                $("<td>", {text: "Attribuuttype"})
-            )).addClass("ui-widget-header action-list-header");
+                    $("<td>", {text: "Attribuutnaam"}),
+                    $("<td>", {text: "Attribuuttype"})
+                    )).addClass("ui-widget-header action-list-header");
             colTable.append(thead);
             var tbody = $("<tbody></tbody>");
             $.each(columns, function(key, value) {
@@ -218,26 +223,26 @@
         });
         //}, 5000);
     }
-    
+
     function getColumnsNamesOutput() {
         var inputText = "";
-        
-        inputText = $("#outputListContainer .ui-state-active .ui-button-text").html();        
-        
+
+        inputText = $("#outputListContainer .ui-state-active .ui-button-text").html();
+
         $("#outputOverviewContainer .titleContainer").html(inputText);
         $("#outputOverviewContainer .colsContainer").html('\
             <div class="ui-widget">\
-				<div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
-					<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
-					<strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
-				</div>\
-			</div>\
+                <div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
+                    <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
+                    <strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
+                </div>\
+            </div>\
         ');
-                    
-        var params = {getTypeNames: ""};        
-        
+
+        var params = {getTypeNames: ""};
+
         params.selectedOutputId = $("#outputListContainer input:radio:checked").val();
-        
+
         outputColumnNamesJqXhr = $.ajax({
             url: "${outputNewUrl}",
             data: params,
@@ -254,15 +259,15 @@
                 ');
                 handleError(jqXHR, textStatus, errorThrown);
             }
-        }).done(function(columns) {            
+        }).done(function(columns) {
             /* backend geeft null indien uitvoertemplate NO_TABLE is */
             if (columns) {
                 var colTable = $("<table>").css("width", "100%");
-                
+
                 var thead = $("<thead></thead>").append($("<tr>").append(
-                    $("<td>", {text: "Attribuutnaam"}), 
-                    $("<td>", {text: "Attribuuttype"})
-                )).addClass("ui-widget-header action-list-header");
+                        $("<td>", {text: "Attribuutnaam"}),
+                        $("<td>", {text: "Attribuuttype"})
+                        )).addClass("ui-widget-header action-list-header");
                 colTable.append(thead);
                 var tbody = $("<tbody></tbody>");
 
@@ -273,29 +278,29 @@
                         var tdValue = $("<td>", {text: value});
                         tbody.append($("<tr>").append(tdKey, tdValue));
                     });
-                }            
+                }
 
                 colTable.append(tbody);
-                
+
                 $("#outputOverviewContainer .colsContainer").html(colTable);
             } else {
                 $("#outputOverviewContainer .titleContainer").html("Uitvoertabel opgeven");
-                
+
                 var html = "<p>Er is bij deze uitvoer nog geen tabel aangegeven. Gebruik\n\
 de actieblokken om zelf de tabel- en kolomnamen op te geven.</p>";
                 $("#outputOverviewContainer .colsContainer").html(html);
             }
-            
+
             /* Default blokken ophalen indien lijst nog leeg is */
-            <c:if test="${actionBean.actionsList == '[]'}">
-                getDefaultActionBlocks();
-            </c:if>
+    <c:if test="${actionBean.actionsList == '[]'}">
+            getDefaultActionBlocks();
+    </c:if>
         });
     }
 </script>
 
 <stripes:form id="createUpdateProcessForm" beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction">
-    
+
     <div id="actionsListMetadata" class="ui-layout-ignore"></div>
 
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->

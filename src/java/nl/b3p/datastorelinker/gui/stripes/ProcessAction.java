@@ -25,6 +25,7 @@ import nl.b3p.commons.stripes.Transactional;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.entity.Mail;
 import nl.b3p.datastorelinker.entity.Organization;
+import nl.b3p.datastorelinker.entity.Process;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import nl.b3p.datastorelinker.entity.Users;
 import nl.b3p.datastorelinker.json.JSONResolution;
@@ -57,6 +58,7 @@ public class ProcessAction extends DefaultAction {
     private final static String LIST_JSP = "/WEB-INF/jsp/main/process/list.jsp";
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/process/create.jsp";
     private final static String EXECUTE_JSP = "/WEB-INF/jsp/main/process/execute.jsp";
+    private final static String PROCESS_DIAGRAM_JSP = "/WEB-INF/jsp/main/process/diagram.jsp";
     
     private List<nl.b3p.datastorelinker.entity.Process> processes;
     private Long selectedProcessId;
@@ -82,7 +84,10 @@ public class ProcessAction extends DefaultAction {
     private String processRemark;
 
     private String selectedFilePath;
-
+    
+    private Long linkedProcess;
+    
+    private JSONArray jsonProcesses;
     // dummy variable
     private Boolean admin;
 
@@ -124,7 +129,23 @@ public class ProcessAction extends DefaultAction {
     public Resolution create() {        
         inputs = findInputs();
         outputs = findOutputs();
+        
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
 
+        /* show all to beheerder but organization only for plain users */
+        if(selectedProcessId == null){
+            selectedProcessId = -1L;
+        }
+        if (isUserAdmin()) {
+            processes = session.createQuery("from Process where id <> :id order by name").setParameter("id", selectedProcessId).list();
+        } else {
+            processes = session.createQuery("from Process where organization_id = :org_id and id <> :id"
+                    + " order by name")
+                    .setParameter("org_id", getUserOrganiztionId()).setParameter("id", selectedProcessId)
+                    .list();
+        }
+        processes = filterPossibleCyclicDependencies(processes, selectedProcessId);
         if (actionsList == null) {
             actionsList = new JSONArray().toString();
         }
@@ -134,9 +155,68 @@ public class ProcessAction extends DefaultAction {
 
         if (subject == null)
             subject = getContext().getServletContext().getInitParameter("defaultSubject");
-
+        
         return new ForwardResolution(CREATE_JSP);
     }    
+    
+    private List<Process> filterPossibleCyclicDependencies(List<Process> processes, Long selected){
+        // loop af
+            // zoek naar voren: haal per process alle processen op die de huidige als linked_process hebben en check tegen geselecteerd
+            // zoek naar achteren: haal elk linked_process op, en check tegen geselecteerd
+        List<Process> filteredList = new ArrayList<Process>();
+        for (Process process : processes) {
+            boolean backward = traverseBackward(process, selected);
+            boolean forward =traverseForward(process, selected); 
+            if(!backward && !forward){
+                filteredList.add(process);
+            }
+        }
+        return filteredList;
+    }
+    
+    private boolean traverseForward(Process current,Long selected){
+        List<Process> found = getLinkedProcesses(current);
+        boolean isLinked = false;
+        for (Process process : found) {
+            if(process.getId().equals(selected) && !process.getLinkedProcess().getId().equals(linkedProcess)){
+                isLinked=true;
+                break;
+            }
+        }
+        return isLinked;
+    }
+    
+    private boolean traverseBackward(Process current,Long selected){
+        boolean isFound = false;
+        do{
+            if(current.getLinkedProcess() != null ){
+                if( current.getLinkedProcess().getId().equals(selected) && !current.getLinkedProcess().getId().equals(linkedProcess)){
+                    isFound = true;
+                    break;
+                }
+                current = current.getLinkedProcess();
+            }
+        }while(current.getLinkedProcess() != null);
+        
+        return isFound;
+    }
+    
+    private List<Process> getLinkedProcesses(Process linked){
+         
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
+
+        List<Process>found;
+        if (isUserAdmin()) {
+            found = session.createQuery("from Process where linked_process = :linked order by name").setParameter("linked", linked).list();
+        } else {
+            found = session.createQuery("from Process where organization_id = :org_id and linked_process = :linked"
+                    + " order by name")
+                    .setParameter("org_id", getUserOrganiztionId()).setParameter("linked", linked)
+                    .list();
+        }
+        return found;
+    }
     
     /* Deze methode wordt in /main/process/create.jsp aangeroepen. Back-end geeft
      * een JSONArray terug van een aantal actieblokken die je daar via de methode 
@@ -152,6 +232,17 @@ public class ProcessAction extends DefaultAction {
         }
         
         return new JSONResolution(obj);
+    }
+    
+    public Resolution processDiagram(){
+        list();
+        jsonProcesses = new JSONArray();
+        for (Process process : processes) {
+            JSONObject obj = process.toJSONObject();
+            jsonProcesses.add(obj);
+            
+        }
+        return new ForwardResolution(PROCESS_DIAGRAM_JSP);
     }
 
     public Resolution createComplete() {
@@ -244,7 +335,12 @@ public class ProcessAction extends DefaultAction {
         
         process.setName(processName);
         process.setRemarks(processRemark);
-        
+        if(linkedProcess != null && linkedProcess != -1){
+            nl.b3p.datastorelinker.entity.Process link = em.find(Process.class, linkedProcess);
+            process.setLinkedProcess(link);
+        }else{
+            process.setLinkedProcess(null);
+        }
         if (selectedProcessId == null)
             selectedProcessId = (Long)session.save(process);
 
@@ -292,7 +388,10 @@ public class ProcessAction extends DefaultAction {
         subject = process.getMail().getSubject();
         processName = process.getName();
         processRemark = process.getRemarks();
-
+        if(process.getLinkedProcess() != null){
+            linkedProcess = process.getLinkedProcess().getId();
+        }
+        
         return create();
     }
 
@@ -349,6 +448,11 @@ public class ProcessAction extends DefaultAction {
             }
         }
 
+        List<nl.b3p.datastorelinker.entity.Process> linkedProcesses = em.createQuery("FROM Process WHERE linked_process = :id").setParameter("id", process).getResultList();
+        for (nl.b3p.datastorelinker.entity.Process linked : linkedProcesses) {
+            linked.setLinkedProcess(null);
+        }    
+            
         log.debug("delete process simple");
         session.delete(process);
         
@@ -667,5 +771,21 @@ public class ProcessAction extends DefaultAction {
 
     public void setProcessRemark(String processRemark) {
         this.processRemark = processRemark;
+    }
+
+    public Long getLinkedProcess() {
+        return linkedProcess;
+    }
+
+    public void setLinkedProcess(Long linkedProcess) {
+        this.linkedProcess = linkedProcess;
+    }
+
+    public JSONArray getJsonProcesses() {
+        return jsonProcesses;
+    }
+
+    public void setJsonProcesses(JSONArray jsonProcesses) {
+        this.jsonProcesses = jsonProcesses;
     }
 }

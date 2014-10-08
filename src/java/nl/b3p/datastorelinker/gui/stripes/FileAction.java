@@ -114,7 +114,6 @@ public class FileAction extends DefaultAction {
 
         //log.debug("dirs: " + directories.size());
         //log.debug("files: " + files.size());
-
         return new ForwardResolution(DIRCONTENTS_JSP);
     }
 
@@ -134,19 +133,25 @@ public class FileAction extends DefaultAction {
         });
 
         List<Dir> dirsList = new ArrayList<Dir>();
-        for (File dir : dirs) {
-            Dir newDir = new Dir();
-            newDir.setName(dir.getName());
-            newDir.setPath(getFileNameRelativeToUploadDirPP(dir));
-            dirsList.add(newDir);
+
+        if (dirs != null) {
+            for (File dir : dirs) {
+                Dir newDir = new Dir();
+                newDir.setName(dir.getName());
+                newDir.setPath(getFileNameRelativeToUploadDirPP(dir));
+                dirsList.add(newDir);
+            }
         }
 
         List<nl.b3p.datastorelinker.util.File> filesList = new ArrayList<nl.b3p.datastorelinker.util.File>();
-        for (File file : files) {
-            nl.b3p.datastorelinker.util.File newFile = new nl.b3p.datastorelinker.util.File();
-            newFile.setName(file.getName());
-            newFile.setPath(getFileNameRelativeToUploadDirPP(file));
-            filesList.add(newFile);
+
+        if (files != null) {
+            for (File file : files) {
+                nl.b3p.datastorelinker.util.File newFile = new nl.b3p.datastorelinker.util.File();
+                newFile.setName(file.getName());
+                newFile.setPath(getFileNameRelativeToUploadDirPP(file));
+                filesList.add(newFile);
+            }
         }
 
         Collections.sort(dirsList, new DirExtensionComparator());
@@ -450,10 +455,11 @@ public class FileAction extends DefaultAction {
             if (req.isMultipart()) {
                 filedata = req.getFileParameterValue("uploader");
             } /*else if (req.getParameter("status") != null) {
-                log.debug("req.getParameter('status'): " + req.getParameter("status"));
-                JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
-                uploaderStatus = (UploaderStatus) JSONObject.toBean(jsonObject, UploaderStatus.class);
-            }*/
+             log.debug("req.getParameter('status'): " + req.getParameter("status"));
+             JSONObject jsonObject = JSONObject.fromObject(req.getParameter("status"));
+             uploaderStatus = (UploaderStatus) JSONObject.toBean(jsonObject, UploaderStatus.class);
+             }*/
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -497,8 +503,7 @@ public class FileAction extends DefaultAction {
 
     public Resolution uploadProgress() {
         int progress;
-        UploadProgressListener listener = (UploadProgressListener)
-                getContext().getRequest().getSession().getAttribute(UploadProgressListener.class.toString());
+        UploadProgressListener listener = (UploadProgressListener) getContext().getRequest().getSession().getAttribute(UploadProgressListener.class.toString());
 
         if (listener != null) {
             progress = (int) (listener.getProgress() * 100);
@@ -509,8 +514,11 @@ public class FileAction extends DefaultAction {
     }
 
     /**
-     * Extract a zip tempfile to a directory. The tempfile will be deleted by this method.
-     * @param tempFile The zip file to extract. This tempfile will be deleted by this method.
+     * Extract a zip tempfile to a directory. The tempfile will be deleted by
+     * this method.
+     *
+     * @param tempFile The zip file to extract. This tempfile will be deleted by
+     * this method.
      * @param zipDir Directory to extract files into
      * @throws IOException
      */
@@ -579,7 +587,7 @@ public class FileAction extends DefaultAction {
 
             boolean deleteSuccess = tempFile.delete();
             /*if (!deleteSuccess)
-            log.warn("Could not delete: " + tempFile.getAbsolutePath());*/
+             log.warn("Could not delete: " + tempFile.getAbsolutePath());*/
         }
     }
 
@@ -715,43 +723,43 @@ public class FileAction extends DefaultAction {
     public void setAdminPage(boolean adminPage) {
         this.adminPage = adminPage;
     }
-    
-    public File getOrganizationUploadDir() {        
+
+    public File getOrganizationUploadDir() {
         if (isUserAdmin()) {
             return new File(getContext().getServletContext().getInitParameter("uploadDirectory"));
         }
-        
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
-        
-        Organization org = (Organization)session.createQuery("from Organization where id = :id")
+
+        Organization org = (Organization) session.createQuery("from Organization where id = :id")
                 .setParameter("id", getUserOrganiztionId())
                 .uniqueResult();
-        
+
         if (org != null) {
             return new File(getContext().getServletContext().getInitParameter("uploadDirectory") + File.separator + org.getUploadPath());
         }
-        
+
         return null;
     }
-    
-    public String getOrganizationUploadString() {  
+
+    public String getOrganizationUploadString() {
         String uploadPath = null;
         if (isUserAdmin()) {
             return getContext().getServletContext().getInitParameter("uploadDirectory");
         }
-        
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
-        
-        Organization org = (Organization)session.createQuery("from Organization where id = :id")
+
+        Organization org = (Organization) session.createQuery("from Organization where id = :id")
                 .setParameter("id", getUserOrganiztionId())
                 .uniqueResult();
-        
+
         if (org != null) {
             uploadPath = getContext().getServletContext().getInitParameter("uploadDirectory") + File.separator + org.getUploadPath();
         }
-        
+
         return uploadPath;
     }
 

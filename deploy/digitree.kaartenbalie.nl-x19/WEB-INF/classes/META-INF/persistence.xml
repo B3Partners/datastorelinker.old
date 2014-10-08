@@ -12,25 +12,14 @@
         <class>nl.b3p.datastorelinker.entity.Organization</class>
         <class>nl.b3p.datastorelinker.entity.Users</class>
     
-        <properties>     
+        <properties>
             <!-- Postgres -->
-            <property name="hibernate.connection.username" value="postgres"/>
-            <property name="hibernate.connection.password" value="***REMOVED***"/>
-            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5433/solparc_datastorelinker"/>
-      
+            <property name="hibernate.connection.username" value="digitree"/>
+            <property name="hibernate.connection.password" value="04zIYpUKFLUgAU0op"/>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/digitree_datastorelinker"/>      
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
-
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>      
-            
-            <!-- Oracle 
-            <property name="hibernate.connection.username" value="dsl2"/>
-            <property name="hibernate.connection.password" value="dsl2"/>
-            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@b3p-demoserver:1521:orcl"/>
-            <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
-            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
-            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
-            -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
             
             <!-- Settings -->
             <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>       

@@ -56,6 +56,12 @@
                     <fmt:message key="menu.admin.file"/>
                 </stripes:link>
             </li>
+            <%--li>
+                <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.ProcessAction" event="processDiagram" title="tabProcessDiagram">
+                    <fmt:message key="menu.home.diagram"/>
+                </stripes:link>
+            </li--%>
+  
             <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
             <li>
                 <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseOutputAction" title="tabDatabaseOutput">
@@ -82,7 +88,6 @@
                     <fmt:message key="menu.admin.output.rights"/>
                 </stripes:link>
             </li>
-            
             <%-- Voor release 4.2 even uitgecomment. Anders gaan mensen het
             toch proberen en het is nog POC
             <li>
@@ -99,6 +104,7 @@
             <div id="tabDatabase" style="height: 100%"></div>
             <div id="tabInput" style="height: 100%"></div>
             <div id="tabFile" style="height: 100%"></div>
+            <%--div id="tabProcessDiagram" style="height: 100%"></div--%>
             
             <c:if test="${b3p:isUserInRole(pageContext.request,'beheerder')}">
                 <div id="tabDatabaseOutput" style="height: 100%"></div>

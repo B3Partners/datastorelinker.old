@@ -23,6 +23,7 @@ import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
 import nl.b3p.geotools.data.linker.util.DataTypeList;
 import org.geotools.data.DataStore;
+import org.geotools.data.Query;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.hibernate.Session;
@@ -350,8 +351,10 @@ public class InputAction extends DefaultAction {
             tableName = ds.getTypeNames()[0];
         }
 
+        Query q = new Query();
+        q.setMaxFeatures(1);
         FeatureCollection<SimpleFeatureType, SimpleFeature> fc =
-                ds.getFeatureSource(tableName).getFeatures();
+                ds.getFeatureSource(tableName).getFeatures(q);
 
         FeatureIterator iterator = fc.features();
         try {

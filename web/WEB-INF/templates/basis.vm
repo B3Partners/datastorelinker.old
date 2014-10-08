@@ -1,0 +1,119 @@
+# Created on $map.createDate
+MAP
+	NAME "$map.name"
+  	SIZE $map.sizeW $map.sizeH
+  	UNITS $map.units
+	
+	#CONFIG "MS_ERRORFILE" "/tmp/ms_error.txt"
+	#DEBUG 5
+
+#if ($map.extent)
+  	EXTENT $map.extent.minX $map.extent.minY $map.extent.maxX $map.extent.maxY
+#end
+  	FONTSET '$map.fontSet'
+  	SYMBOLSET '$map.symbolSet'
+
+	PROJECTION
+		"$map.projection"
+	END
+
+  	IMAGECOLOR $map.imageColorR $map.imageColorG $map.imageColorB
+  	IMAGEQUALITY $map.imageQuality
+  	IMAGETYPE $map.imageType
+
+	OUTPUTFORMAT
+		NAME $map.outputFormat.name
+		DRIVER $map.outputFormat.driver
+		MIMETYPE "$map.outputFormat.mimeType"
+		IMAGEMODE $map.outputFormat.imageMode
+		EXTENSION "$map.outputFormat.extension"
+		FORMATOPTION "$map.outputFormat.formatOption"
+	END
+  
+  	LEGEND
+  		IMAGECOLOR $map.legend.imageColorR $map.legend.imageColorG $map.legend.imageColorB
+    	STATUS $map.legend.status
+    	KEYSIZE $map.legend.keySize
+    	LABEL
+      		TYPE $map.legend.label.type
+      		SIZE $map.legend.label.size
+      		COLOR $map.legend.label.colorR $map.legend.label.colorG $map.legend.label.colorB
+    	END
+  	END
+
+  	WEB
+    	IMAGEPATH '$map.web.imagePath'
+    	IMAGEURL '$map.web.imageUrl'
+
+		METADATA
+			'wms_title'           	'$map.web.metadata.wmsTitle'
+			'wms_onlineresource'  	'$map.web.metadata.wmsOnlineResource'
+			'wms_srs'             	'$map.web.metadata.wmsSrs'
+			'wfs_title'           	'$map.web.metadata.wfsTitle'
+			'wfs_onlineresource'  	'$map.web.metadata.wfsOnlineResource'
+			'wfs_srs'             	'$map.web.metadata.wfsSrs'
+			'ows_title'           	'$map.web.metadata.owsTitle'
+			'ows_onlineresource'  	'$map.web.metadata.owsOnlineResource'
+			'ows_srs'             	'$map.web.metadata.owsSrs'
+			'ows_enable_request' 	'$map.web.metadata.owsEnableRequest'
+		END
+
+    	TEMPLATE '$map.web.template'
+  	END
+
+	# Voor gebruik in combinatie met een SLD moeten de layernamen in deze
+	# mapfile hetzelfde zijn als de tabelnamen/sld layernamen.
+#foreach ($layer in $map.layers)
+	LAYER
+		NAME '$layer.name'
+		TYPE $layer.type
+
+		STATUS $layer.status
+		DUMP $layer.dump
+		TEMPLATE $layer.template	
+		
+		# MAXSCALEDENOM $layer.maxScaleDenom
+		# MINSCALEDENOM $layer.minScaleDenom
+		
+#if ($!map.databaseType == 'postgis')
+		CONNECTIONTYPE $layer.connectionType
+		CONNECTION "dbname='$layer.connectionDatabase' host=$layer.connectionHost port=$layer.connectionPort user='$layer.connectionUser' password='$layer.connectionPassword' sslmode=disable"
+		DATA '$layer.dataGeomColumn FROM "$layer.dataTableName" USING UNIQUE $layer.dataPrimaryKeyColumn USING srid=$layer.dataSrid'
+#end
+#if ($!map.databaseType == 'oracle')
+		CONNECTIONTYPE oraclespatial
+		CONNECTION "$layer.connectionUser/$layer.connectionPassword@//$layer.connectionHost:$layer.connectionPort/$layer.connectionDatabase"
+        DATA '$layer.dataGeomColumn FROM $layer.dataTableName USING UNIQUE $layer.dataPrimaryKeyColumn SRID $layer.dataSrid'
+#end
+
+		METADATA
+		  	'wms_title'     	'$layer.metadata.wmsTitle'
+          	'wfs_title'     	'$layer.metadata.wfsTitle'
+          	'ows_title'         '$layer.metadata.owsTitle'
+          	'ows_include_items' '$layer.metadata.owsIncludeItems'
+		END
+
+		OPACITY $layer.opacity
+
+#foreach ($class in $layer.classes)
+		CLASS
+#if ($class.expression)
+			EXPRESSION $class.expression
+#end
+			NAME '$class.name'
+			STYLE
+#if ($class.style.symbol)
+				SYMBOL '$class.style.symbol'
+#end
+				COLOR $class.style.colorR $class.style.colorG $class.style.colorB
+				OUTLINECOLOR $class.style.outlineColorR $class.style.outlineColorG $class.style.outlineColorB
+#if ($class.style.width > 0)
+				WIDTH $class.style.width
+#end
+			END
+		END # end class
+#end
+	END # end layer
+
+#end	
+END # end map file

@@ -18,6 +18,8 @@ package nl.b3p.datastorelinker.publish;
 
 import it.geosolutions.geoserver.rest.GeoServerRESTManager;
 import it.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
+import it.geosolutions.geoserver.rest.encoder.datastore.GSAbstractDatastoreEncoder;
+import it.geosolutions.geoserver.rest.encoder.datastore.GSOracleNGDatastoreEncoder;
 import it.geosolutions.geoserver.rest.encoder.datastore.GSPostGISDatastoreEncoder;
 
 import it.geosolutions.geoserver.rest.encoder.feature.GSFeatureTypeEncoder;
@@ -28,6 +30,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import javax.servlet.ServletContext;
 import net.sourceforge.stripes.util.Log;
+import nl.b3p.datastorelinker.entity.Database;
 
 /**
  *
@@ -38,11 +41,11 @@ public class GeoserverPublisher implements Publisher {
     private final static Log log = Log.getInstance(GeoserverPublisher.class);
     private final static String DEFAULT_STYLE_NAME= "WEB-INF/defaultStyle.xml";
 
-    public boolean publishDb(String url, String username, String password, String host, String dbUser, String dbPass, String schema, String database, String table, String workspace,String style, ServletContext context) {
+    public boolean publishDb(String url, String username, String password, Database.Type dbType,String host, int port,String dbUser, String dbPass, String schema, String database, String table, String workspace,String style, ServletContext context) {
         try {
             GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
             boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
-            boolean createdStore = createDatastore(host, dbUser, dbPass, schema, database, workspace, manager);
+            boolean createdStore = createDatastore(host, port,dbUser, dbPass, schema, database, workspace,dbType, manager);
             boolean published = publishLayer(table, style, database, workspace, manager);
             return published;
 
@@ -66,32 +69,41 @@ public class GeoserverPublisher implements Publisher {
         return published;
     }
 
-    private boolean createDatastore(String host, String dbUser, String dbPass, String schema, String database, String workspace,GeoServerRESTManager manager) {
+    private boolean createDatastore(String host, int port,String dbUser, String dbPass, String schema, String database, String workspace, Database.Type dbType,GeoServerRESTManager manager) {
         GeoServerRESTStoreManager storeMan = manager.getStoreManager();
-
-        GSPostGISDatastoreEncoder ds = new GSPostGISDatastoreEncoder(database);
-        ds.setDatabase(database);
-        ds.setHost(host);
-        ds.setPassword(dbPass);
-        ds.setUser(dbUser);
-        ds.setNamespace(workspace);
-        ds.setSchema(schema);
-        ds.setPort(5432);
         
+        GSAbstractDatastoreEncoder ds = null;
+        if(dbType == Database.Type.POSTGIS){
+            ds = new GSPostGISDatastoreEncoder(database);
+            ((GSPostGISDatastoreEncoder)ds).setDatabase(database);
+            ((GSPostGISDatastoreEncoder)ds).setHost(host);
+            ((GSPostGISDatastoreEncoder)ds).setPassword(dbPass);
+            ((GSPostGISDatastoreEncoder)ds).setUser(dbUser);
+            ((GSPostGISDatastoreEncoder)ds).setNamespace(workspace);
+            ((GSPostGISDatastoreEncoder)ds).setSchema(schema);
+            ((GSPostGISDatastoreEncoder)ds).setPort(port);
+        }else if(dbType == Database.Type.ORACLE){
+            ds = new GSOracleNGDatastoreEncoder(database, database);
+            ((GSOracleNGDatastoreEncoder)ds).setHost(host);
+            ((GSOracleNGDatastoreEncoder)ds).setHost(host);
+            ((GSOracleNGDatastoreEncoder)ds).setPassword(dbPass);
+            ((GSOracleNGDatastoreEncoder)ds).setUser(dbUser);
+            ((GSOracleNGDatastoreEncoder)ds).setNamespace(workspace);
+            ((GSOracleNGDatastoreEncoder)ds).setSchema(schema);
+            ((GSOracleNGDatastoreEncoder)ds).setPort(port);
+            
+        }else{
+            throw new IllegalArgumentException("Database type must be of Postgis or Oracle");
+        }
         boolean created = storeMan.create(workspace, ds);
         return created;
     }
 
-    public static void main(String[] args) {
-        GeoserverPublisher pub = new GeoserverPublisher();
-        boolean succeeded = pub.publishDb("http://localhost:8084/geoserver/", "admin", "***REMOVED***", "localhost", "flamingo", "24in0Ubg", "public", "test", "gemeentes","vru", "polygon",null);
-    }
-
-    public boolean publishDB(String url, String username, String password, String host, String dbUser, String dbPass, String schema, String database, String[] tables, String workspace, String style, ServletContext context) {
+    public boolean publishDB(String url, String username, String password, Database.Type dbType, String host, int port,String dbUser, String dbPass, String schema, String database, String[] tables, String workspace, String style, ServletContext context) {
         try {
             GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
             boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
-            boolean createdStore = createDatastore(host, dbUser, dbPass, schema, database, workspace, manager);
+            boolean createdStore = createDatastore(host, port,dbUser, dbPass, schema, database, workspace, dbType,manager);
             boolean published = true;
             for (String table : tables) {
                 published = publishLayer(table, style, database, workspace, manager) && published;

@@ -130,6 +130,15 @@
                     <stripes:text id="processName" name="processName" size="50" class="required"/>
                 </td>
             </tr>
+            <tr>
+                <td><stripes:label for="linkedProcess" name="linkedProcess"/></td>
+                <td>
+                    <stripes:select id="linkedProcess" name="linkedProcess" style="width: 373px">
+                        <stripes:option value="-1">Kies een proces</stripes:option>
+                        <stripes:options-collection collection="${actionBean.processes}" value="id" label="name"/>
+                    </stripes:select>
+                </td>
+            </tr>
             <tr title="${emailTooltip}">
                 <td>
                     <stripes:label for="emailAddress" name="emailAddressProcessDone"/>
@@ -155,6 +164,6 @@
                 </td>
             </tr>
         </table>
-    </div>
+        </div>
     
 </div>

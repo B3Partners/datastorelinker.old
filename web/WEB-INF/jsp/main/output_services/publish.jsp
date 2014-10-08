@@ -9,9 +9,14 @@
             <tr>
                 <td><stripes:label name="publish.table.type" for="typePublisher"/></td>
                 <td><stripes:select name="typePublisher" id="publisherType">
-                        <stripes:option value="GEOSERVER">Geoserver</stripes:option>
-                        <stripes:option value="MAPSERVER" disabled="true">Mapserver</stripes:option>
+                        <stripes:option value="MAPSERVER">Mapserver</stripes:option>
+                        <stripes:option value="GEOSERVER">Geoserver</stripes:option>                        
                     </stripes:select></td>
+            </tr>
+            
+            <tr>
+                <td><stripes:label name="publish.table.name" for="namePublisher"/></td>
+                <td><stripes:text name="namePublisher" id="namePublisher"/></td>
             </tr>
         </tbody>
     </table>

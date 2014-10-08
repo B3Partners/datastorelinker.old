@@ -70,6 +70,11 @@
                              title="<fmt:message key="process.append"/>"
                              alt="process.append" />
                     </c:if>
+                    <c:if test="${process.linkedProcess != null}">
+                        <img src="<stripes:url value="/images/link_go.png"/>"
+                             title="<fmt:message key="process.triggeredBy"><fmt:param value="${process.linkedProcess.name}"/></fmt:message>"
+                             alt="process.triggeredBy"/>
+                    </c:if>
                     <c:choose>
                         <c:when test="${process.processStatus.processStatusType == 'RUNNING'}">
                             <img src="<stripes:url value="/images/spinner.gif"/>"

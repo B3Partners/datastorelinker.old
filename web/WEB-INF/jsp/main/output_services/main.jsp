@@ -37,7 +37,8 @@
                     extraParams: [
                         {name: "selectedTables", value: getId()},
                         {name: "selectedDatabaseId", value: $("#selectedDatabaseId").val()},
-                        {name: "publisherType", value: $("#publisherType").val()}
+                        {name: "publisherType", value: $("#publisherType").val()},
+                        {name: "namePublisher", value: $("#namePublisher").val()}
                     ],
                     containerSelector: "#databasesListContainer",
                     successAfterContainerFill: function(data, textStatus, xhr) {
