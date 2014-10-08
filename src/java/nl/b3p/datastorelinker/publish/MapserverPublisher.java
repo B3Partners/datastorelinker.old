@@ -75,12 +75,12 @@ public class MapserverPublisher implements Publisher {
 
         /* Basis mapfile velocity template */
         Mapfile map = new Mapfile();
-        
+
         /* nu */
         Date now = new Date();
         SimpleDateFormat df = new SimpleDateFormat("d MMMMM yyyy HH:mm",
                 new Locale("NL"));
-        
+
         map.setCreateDate(df.format(now));
         map.setName(serviceName.replaceAll(" ", "_") + "_Service");
         map.setDatabaseType(dbType.toString().toLowerCase());

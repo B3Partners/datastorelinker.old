@@ -908,6 +908,9 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
+        <ant antfile="${project.b3p-mapfile}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
@@ -944,6 +947,9 @@ exists or setup the property manually. For example like this:
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="jar">
+            <property name="deploy.on.save" value="false"/>
+        </ant>
+        <ant antfile="${project.b3p-mapfile}/build.xml" inheritall="false" target="jar">
             <property name="deploy.on.save" value="false"/>
         </ant>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="jar">
@@ -1122,6 +1128,8 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.POI.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.JTS.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <copyfiles files="${libs.GeoserverRESTAPI.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${libs.Velocity.classpath}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
+        <copyfiles files="${reference.b3p-mapfile.jar}" iftldtodir="${build.web.dir}/WEB-INF" todir="${dist.ear.dir}/lib"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update"/>
     </target>
@@ -1152,6 +1160,8 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${libs.POI.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.JTS.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${libs.GeoserverRESTAPI.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${libs.Velocity.classpath}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${reference.b3p-mapfile.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init" if="dist.ear.dir" name="-clean-webinf-lib">
         <delete dir="${build.web.dir}/WEB-INF/lib"/>
@@ -1575,6 +1585,7 @@ exists or setup the property manually. For example like this:
         <ant antfile="${project.b3p-gt2-ogr}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-sdl}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-gt2-suf2}/build.xml" inheritall="false" target="clean"/>
+        <ant antfile="${project.b3p-mapfile}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.b3p-suf2}/build.xml" inheritall="false" target="clean"/>
         <ant antfile="${project.securityfilter-b3p}/build.xml" inheritall="false" target="clean"/>
     </target>
