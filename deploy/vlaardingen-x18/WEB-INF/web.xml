@@ -85,12 +85,31 @@
         </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
+    
+    <servlet>
+        <servlet-name>PublishProcessServlet</servlet-name>
+        <servlet-class>nl.b3p.datastorelinker.services.PublishProcessServlet</servlet-class>
+        <init-param>
+            <param-name>outputDatabase</param-name>
+            <param-value>demo_gisdata_extern</param-value>
+        </init-param>    
+        <init-param>
+            <param-name>uploadFolder</param-name>
+            <param-value>/opt/configs/vlaardingen/datastorelinker/</param-value>
+        </init-param>
+        <load-on-startup>4</load-on-startup>
+    </servlet>    
+    <servlet-mapping>
+        <servlet-name>PublishProcessServlet</servlet-name>
+        <url-pattern>/publish/*</url-pattern>
+    </servlet-mapping>
+    
     <servlet>
         <servlet-name>securityconfig</servlet-name>
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
         <init-param>
             <param-name>kburl</param-name>
-            <param-value>http://webgis.vlaardingen.nl/kaartenbalie/services/</param-value>
+            <param-value>http://vlaardingen42.kaartenbalie.nl/kaartenbalie/services/</param-value>
         </init-param>
         <init-param>
             <param-name>anonymous_user</param-name>
@@ -110,7 +129,7 @@
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
     <session-config>
         <session-timeout>600</session-timeout>
     </session-config>
@@ -145,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>C:\b3p\config\datastorelinker\etl\</param-value>
+        <param-value>/opt/configs/vlaardingen/datastorelinker/upload/</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
@@ -157,7 +176,7 @@
     </context-param>
     <context-param>
         <param-name>defaultToEmailAddress</param-name>
-        <param-value>boy@b3p.nl</param-value>
+        <param-value>support@b3p.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
