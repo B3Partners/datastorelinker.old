@@ -95,7 +95,7 @@
         </init-param>    
         <init-param>
             <param-name>uploadFolder</param-name>
-            <param-value>/opt/config/solutionparc/datastorelinker</param-value>
+            <param-value>/opt/configs/solparc.kaartenbalie.nl/datastorelinker</param-value>
         </init-param>
         <load-on-startup>4</load-on-startup>
     </servlet>    
@@ -109,7 +109,7 @@
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
         <init-param>
             <param-name>kburl</param-name>
-            <param-value>http://test.kaartenbalie.nl/kaartenbalie/services/</param-value>
+            <param-value>http://solparc.kaartenbalie.nl/kaartenbalie/services/</param-value>
         </init-param>
         <init-param>
             <param-name>anonymous_user</param-name>
@@ -164,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>c:\uploadedFiles</param-value>
+        <param-value>/opt/configs/solparc.kaartenbalie.nl/datastorelinker/upload/</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
@@ -176,7 +176,7 @@
     </context-param>
     <context-param>
         <param-name>defaultToEmailAddress</param-name>
-        <param-value>jytte@b3p.nl</param-value>
+        <param-value>support@b3p.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
