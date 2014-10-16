@@ -87,29 +87,29 @@
     </servlet>
     
     <servlet>
-        <servlet-name>PublishProcessServlet</servlet-name>
-        <servlet-class>nl.b3p.datastorelinker.services.PublishProcessServlet</servlet-class>
-        <init-param>
-            <param-name>outputDatabase</param-name>
-            <param-value>gisdata_extern</param-value>
-        </init-param>    
-        <init-param>
-            <param-name>uploadFolder</param-name>
-            <param-value>/mnt/data/gisdata/dsl</param-value>
-        </init-param>
-        <load-on-startup>4</load-on-startup>
-    </servlet>    
-    <servlet-mapping>
-        <servlet-name>PublishProcessServlet</servlet-name>
-        <url-pattern>/publish/*</url-pattern>
-    </servlet-mapping>
+            <servlet-name>PublishProcessServlet</servlet-name>
+            <servlet-class>nl.b3p.datastorelinker.services.PublishProcessServlet</servlet-class>
+            <init-param>
+                <param-name>outputDatabase</param-name>
+                <param-value>gisdata_extern</param-value>
+            </init-param>    
+            <init-param>
+                <param-name>uploadFolder</param-name>
+                <param-value>/mnt/data/gisdata/dsl</param-value>
+            </init-param>
+            <load-on-startup>4</load-on-startup>
+        </servlet>    
+        <servlet-mapping>
+            <servlet-name>PublishProcessServlet</servlet-name>
+            <url-pattern>/publish/*</url-pattern>
+        </servlet-mapping>
     
     <servlet>
         <servlet-name>securityconfig</servlet-name>
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
         <init-param>
             <param-name>kburl</param-name>
-            <param-value></param-value>
+            <param-value>http://vlaardingen42.kaartenbalie.nl/kaartenbalie/services/</param-value>
         </init-param>
         <init-param>
             <param-name>anonymous_user</param-name>
@@ -129,7 +129,7 @@
     <servlet-mapping>
         <servlet-name>StripesDispatcher</servlet-name>
         <url-pattern>*.action</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
     <session-config>
         <session-timeout>600</session-timeout>
     </session-config>
@@ -164,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>/mnt/data/gisdata/dsl</param-value>
+        <param-value>/srv/datastorelinker/vlaardingen/etl/</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
@@ -172,41 +172,30 @@
     </context-param>
     <context-param>
         <param-name>defaultFromEmailAddress</param-name>
-        <param-value>noreply@b3partners.nl</param-value>
+        <param-value>ed.vander.linden@vlaardingen.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultToEmailAddress</param-name>
-        <param-value>support@b3p.nl</param-value>
+        <param-value>ed.vander.linden@vlaardingen.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
-        <param-value>DataStoreLinker proces is klaar</param-value>
+        <param-value>Datastorelinker proces is klaar.</param-value>
     </context-param>
-    
     <context-param>
         <param-name>geoserverUrl</param-name>
-        <param-value>http://localhost:8084/geoserver</param-value>
+        <param-value>GEOSERVERURL</param-value>
     </context-param>
     <context-param>
         <param-name>geoserverUser</param-name>
-        <param-value>admin</param-value>
+        <param-value>GEOSERVERWACHTWOORD</param-value>
     </context-param>
     <context-param>
         <param-name>geoserverPassword</param-name>
-        <param-value>***REMOVED***</param-value>
+        <param-value>WACHTWOORD</param-value>
     </context-param>
     <context-param>
         <param-name>geoserverWorkspace</param-name>
-        <param-value>vru</param-value>
-    </context-param>
-    
-    <!-- Needed for Mapserver publishing -->
-    <context-param>
-        <param-name>mapserverUrl</param-name>
-        <param-value>http://kx1/cgi-bin/mapserv</param-value>
-    </context-param>
-    <context-param>
-        <param-name>mapFilePath</param-name>
-        <param-value>/srv/maps</param-value>
+        <param-value>WORKSPACENAAM</param-value>
     </context-param>
 </web-app>
