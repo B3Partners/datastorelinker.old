@@ -39,6 +39,7 @@ import nl.b3p.datastorelinker.util.SchedulerUtils;
 import nl.b3p.geotools.data.linker.DataStoreLinker;
 import nl.b3p.geotools.data.linker.Status;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -53,22 +54,22 @@ import org.quartz.TriggerUtils;
 public class ProcessAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(ProcessAction.class);
-    
+
     private final static String JSP = "/WEB-INF/jsp/main/process/overview.jsp";
     private final static String LIST_JSP = "/WEB-INF/jsp/main/process/list.jsp";
     private final static String CREATE_JSP = "/WEB-INF/jsp/main/process/create.jsp";
     private final static String EXECUTE_JSP = "/WEB-INF/jsp/main/process/execute.jsp";
     private final static String PROCESS_DIAGRAM_JSP = "/WEB-INF/jsp/main/process/diagram.jsp";
-    
+
     private List<nl.b3p.datastorelinker.entity.Process> processes;
     private Long selectedProcessId;
-    
+
     private List<Inout> inputs;
     private Long selectedInputId;
 
     private List<Inout> inputsFile;
     private List<Inout> inputsDB;
-    
+
     private List<Inout> outputs;
     private Long selectedOutputId;
 
@@ -84,9 +85,9 @@ public class ProcessAction extends DefaultAction {
     private String processRemark;
 
     private String selectedFilePath;
-    
+
     private Long linkedProcess;
-    
+
     private JSONArray jsonProcesses;
     // dummy variable
     private Boolean admin;
@@ -104,17 +105,19 @@ public class ProcessAction extends DefaultAction {
                     .setParameter("org_id", getUserOrganiztionId())
                     .list();
         }
-        
+
         /* Gebruikernaam en opmerking zetten voor in overzicht */
-        for (nl.b3p.datastorelinker.entity.Process process : processes) {            
+        for (nl.b3p.datastorelinker.entity.Process process : processes) {
             Users user = (Users) session.createQuery("from Users where id = :userid")
                     .setParameter("userid", process.getUserId()).uniqueResult();
-            
+            if(process.getLinkedProcess() != null){
+                Hibernate.initialize(process.getLinkedProcess());
+            }
             if (user != null) {
                 process.setUserName(user.getName());
             }
         }
-        
+
         Collections.sort(processes, new NameableComparer());
 
         return new ForwardResolution(LIST_JSP);
@@ -126,10 +129,10 @@ public class ProcessAction extends DefaultAction {
         return new ForwardResolution(JSP);
     }
 
-    public Resolution create() {        
+    public Resolution create() {
         inputs = findInputs();
         outputs = findOutputs();
-        
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -155,10 +158,10 @@ public class ProcessAction extends DefaultAction {
 
         if (subject == null)
             subject = getContext().getServletContext().getInitParameter("defaultSubject");
-        
+
         return new ForwardResolution(CREATE_JSP);
-    }    
-    
+    }
+
     private List<Process> filterPossibleCyclicDependencies(List<Process> processes, Long selected){
         // loop af
             // zoek naar voren: haal per process alle processen op die de huidige als linked_process hebben en check tegen geselecteerd
@@ -166,14 +169,14 @@ public class ProcessAction extends DefaultAction {
         List<Process> filteredList = new ArrayList<Process>();
         for (Process process : processes) {
             boolean backward = traverseBackward(process, selected);
-            boolean forward =traverseForward(process, selected); 
+            boolean forward =traverseForward(process, selected);
             if(!backward && !forward){
                 filteredList.add(process);
             }
         }
         return filteredList;
     }
-    
+
     private boolean traverseForward(Process current,Long selected){
         List<Process> found = getLinkedProcesses(current);
         boolean isLinked = false;
@@ -185,7 +188,7 @@ public class ProcessAction extends DefaultAction {
         }
         return isLinked;
     }
-    
+
     private boolean traverseBackward(Process current,Long selected){
         boolean isFound = false;
         do{
@@ -197,12 +200,12 @@ public class ProcessAction extends DefaultAction {
                 current = current.getLinkedProcess();
             }
         }while(current.getLinkedProcess() != null);
-        
+
         return isFound;
     }
-    
+
     private List<Process> getLinkedProcesses(Process linked){
-         
+
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
 
@@ -217,30 +220,30 @@ public class ProcessAction extends DefaultAction {
         }
         return found;
     }
-    
+
     /* Deze methode wordt in /main/process/create.jsp aangeroepen. Back-end geeft
-     * een JSONArray terug van een aantal actieblokken die je daar via de methode 
-     * getDefaultActionBlocks() kunt opgeven. Let op: Als je mapping blokken opgeeft 
+     * een JSONArray terug van een aantal actieblokken die je daar via de methode
+     * getDefaultActionBlocks() kunt opgeven. Let op: Als je mapping blokken opgeeft
      * moet hiervoor eerst invoer/uitvoer kolommen klaargezet zijn. Deze kolommen
      * zijn nodig voor sommige constructors van actie blokken.
      */
     public Resolution createDefaultActionBlocks() {
         JSONArray obj = null;
-        
-        if (actionsList == null) {         
+
+        if (actionsList == null) {
             obj = ActionsAction.createDefaultActionList(getContext());
         }
-        
+
         return new JSONResolution(obj);
     }
-    
+
     public Resolution processDiagram(){
         list();
         jsonProcesses = new JSONArray();
         for (Process process : processes) {
             JSONObject obj = process.toJSONObject();
             jsonProcesses.add(obj);
-            
+
         }
         return new ForwardResolution(PROCESS_DIAGRAM_JSP);
     }
@@ -263,10 +266,10 @@ public class ProcessAction extends DefaultAction {
                 input.setDatatype(Inout.Datatype.FILE);
                 input.setFile(fullPath);
                 input.setName(selectedFilePath);
-                
+
                 input.setOrganizationId(getUserOrganiztionId());
                 input.setUserId(getUserId());
-                
+
                 session.save(input);
             }
         }
@@ -278,7 +281,7 @@ public class ProcessAction extends DefaultAction {
         } else {
             process = (nl.b3p.datastorelinker.entity.Process)
                     session.get(nl.b3p.datastorelinker.entity.Process.class, selectedProcessId);
-            
+
             Inout oldInput = process.getInput();
             if (oldInput.getDatatype() == Inout.Datatype.FILE &&
                     !oldInput.getFile().equals(input.getFile()) &&
@@ -293,24 +296,24 @@ public class ProcessAction extends DefaultAction {
                 session.delete(process.getInput());
             }
         }
-        
-        /* add organizationid and userid if the process is new. 
+
+        /* add organizationid and userid if the process is new.
          * Else the user that made the process will stay the owner */
         if(process.getUserId() == null && process.getOrganizationId() == null){
             process.setOrganizationId(getUserOrganiztionId());
-            process.setUserId(getUserId()); 
+            process.setUserId(getUserId());
         }
-        
+
         output.setOrganizationId(getUserOrganiztionId());
         output.setUserId(getUserId());
-        
+
         process.setInput(input);
         process.setOutput(output);
-        
+
         process.setActionsString(getActionsListJsonToXmlString());
         process.setDrop(drop);
         process.setAppend(append);
-        
+
         Mail mail = null;
         if (process.getMail() == null)
             mail = new Mail();
@@ -332,7 +335,7 @@ public class ProcessAction extends DefaultAction {
             session.save(processStatus);
             process.setProcessStatus(processStatus);
         }
-        
+
         process.setName(processName);
         process.setRemarks(processRemark);
         if(linkedProcess != null && linkedProcess != -1){
@@ -350,15 +353,15 @@ public class ProcessAction extends DefaultAction {
     private String getActionsListJsonToXmlString() {
         if (actionsList == null || actionsList.trim().equals("")) {
             actionsList = new JSONArray().toString();
-        }         
+        }
 
         JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        
+
         ActionsAction.removeViewData(actionsListJSONArray);
         ActionsAction.addExpandableProperty(actionsListJSONArray);
 
         JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
-        
+
         XMLSerializer xmlSerializer = new XMLSerializer();
         xmlSerializer.setArrayName("actions");
         xmlSerializer.setElementName("action");
@@ -391,7 +394,7 @@ public class ProcessAction extends DefaultAction {
         if(process.getLinkedProcess() != null){
             linkedProcess = process.getLinkedProcess().getId();
         }
-        
+
         return create();
     }
 
@@ -451,11 +454,11 @@ public class ProcessAction extends DefaultAction {
         List<nl.b3p.datastorelinker.entity.Process> linkedProcesses = em.createQuery("FROM Process WHERE linked_process = :id").setParameter("id", process).getResultList();
         for (nl.b3p.datastorelinker.entity.Process linked : linkedProcesses) {
             linked.setLinkedProcess(null);
-        }    
-            
+        }
+
         log.debug("delete process simple");
         session.delete(process);
-        
+
         return list();
     }
 
@@ -476,14 +479,14 @@ public class ProcessAction extends DefaultAction {
             JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
             jobDetail.getJobDataMap().put("processId", process.getId());
             jobDetail.getJobDataMap().put("locale", getContext().getLocale());
-            
+
             Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());
             Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
             process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
             process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
             scheduler.scheduleJob(jobDetail, trigger);
-            
+
             //log.debug(result);
             return new JSONResolution(new SuccessMessage(true, generatedJobUUID, null));
         } catch(Exception e) {
@@ -578,13 +581,13 @@ public class ProcessAction extends DefaultAction {
             return new DefaultErrorResolution(ex.getLocalizedMessage());
         }
     }
-    
+
     public List<Inout> findInputs() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
-        
+
         List<Inout> list = new ArrayList();
-        
+
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
             list = session.createQuery("from Inout where input_output_type = :type"
@@ -600,16 +603,16 @@ public class ProcessAction extends DefaultAction {
                 .setParameter("orgid", getUserOrganiztionId())
                 .list();
         }
-        
+
         Collections.sort(list, new NameableComparer());
-        
+
         return list;
     }
-    
+
     public List<Inout> findOutputs() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
-        
+
         List<Inout> list = new ArrayList();
 
         /* show all to beheerder but organization only for plain users */
@@ -617,13 +620,13 @@ public class ProcessAction extends DefaultAction {
             list = session.createQuery("from Inout where input_output_type = :type")
                 .setParameter("type", Inout.TYPE_OUTPUT)
                 .list();
-        } else {            
+        } else {
             Organization org = (Organization)session.get(Organization.class, getUserOrganiztionId());
             list = org.getOutputs();
         }
-        
+
         Collections.sort(list, new NameableComparer());
-        
+
         return list;
     }
 
