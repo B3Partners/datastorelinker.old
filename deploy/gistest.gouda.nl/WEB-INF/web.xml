@@ -141,7 +141,7 @@
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
-        <param-value>gdamail1.gouda.lok</param-value>
+        <param-value>smtprelay.gouda.lok</param-value>
     </context-param>
     <context-param>
         <param-name>defaultFromEmailAddress</param-name>
