@@ -31,6 +31,8 @@ public class DataStoreLinkJob implements Job {
     private nl.b3p.datastorelinker.entity.Process process = null;
     private Long processId = null;
     private Throwable fatalException = null;
+    public static final String KEY_DEFAULT_SMTP_HOST = "defaultSmtpHost";
+    public static final String KEY_DEFAULT_FROM_ADDRESS = "defaultFromEmailAddress";
 
     public synchronized void setFatalException(Throwable fatalException) {
         this.fatalException = fatalException;
@@ -100,9 +102,9 @@ public class DataStoreLinkJob implements Job {
             locale = (Locale)jec.getJobDetail().getJobDataMap().get("locale");
             
             DataStoreLinker.DEFAULT_SMTPHOST = 
-                    (String)jec.getJobDetail().getJobDataMap().get("defaultSmtpHost");
+                    (String)jec.getJobDetail().getJobDataMap().get(KEY_DEFAULT_SMTP_HOST);
             DataStoreLinker.DEFAULT_FROM = 
-                    (String)jec.getJobDetail().getJobDataMap().get("defaultFromEmailAddress");
+                    (String)jec.getJobDetail().getJobDataMap().get(KEY_DEFAULT_FROM_ADDRESS);
 
             setProcessStatus(new ProcessStatus(ProcessStatus.Type.RUNNING));
 

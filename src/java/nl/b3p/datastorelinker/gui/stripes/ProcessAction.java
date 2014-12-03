@@ -483,8 +483,8 @@ public class ProcessAction extends DefaultAction {
             JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
             jobDetail.getJobDataMap().put("processId", process.getId());
             jobDetail.getJobDataMap().put("locale", getContext().getLocale());
-            jobDetail.getJobDataMap().put("smtphost", getContext().getServletContext().getInitParameter("defaultSmtpHost"));
-            jobDetail.getJobDataMap().put("from", getContext().getServletContext().getInitParameter("defaultFromEmailAddress"));
+            jobDetail.getJobDataMap().put(DataStoreLinkJob.KEY_DEFAULT_SMTP_HOST, getContext().getServletContext().getInitParameter("defaultSmtpHost"));
+            jobDetail.getJobDataMap().put(DataStoreLinkJob.KEY_DEFAULT_FROM_ADDRESS, getContext().getServletContext().getInitParameter("defaultFromEmailAddress"));
             
             Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());

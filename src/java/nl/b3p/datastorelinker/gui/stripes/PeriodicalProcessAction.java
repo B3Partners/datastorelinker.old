@@ -101,8 +101,8 @@ public class PeriodicalProcessAction extends DefaultAction {
             JobDetail jobDetail = new JobDetail(jobName, DataStoreLinkJob.class);
             jobDetail.getJobDataMap().put("processId", process.getId());
             jobDetail.getJobDataMap().put("locale", getContext().getLocale());
-            jobDetail.getJobDataMap().put("smtphost", getContext().getServletContext().getInitParameter("defaultSmtpHost"));
-            jobDetail.getJobDataMap().put("from", getContext().getServletContext().getInitParameter("defaultFromEmailAddress"));
+            jobDetail.getJobDataMap().put((DataStoreLinkJob.KEY_DEFAULT_SMTP_HOST), getContext().getServletContext().getInitParameter("defaultSmtpHost"));
+            jobDetail.getJobDataMap().put((DataStoreLinkJob.KEY_DEFAULT_FROM_ADDRESS), getContext().getServletContext().getInitParameter("defaultFromEmailAddress"));
 
             String triggerName = "trig" + uuid;
 
