@@ -98,6 +98,11 @@ public class DataStoreLinkJob implements Job {
             log.debug("Quartz started process");
             processId = jec.getJobDetail().getJobDataMap().getLong("processId");
             locale = (Locale)jec.getJobDetail().getJobDataMap().get("locale");
+            
+            DataStoreLinker.DEFAULT_SMTPHOST = 
+                    (String)jec.getJobDetail().getJobDataMap().get("defaultSmtpHost");
+            DataStoreLinker.DEFAULT_FROM = 
+                    (String)jec.getJobDetail().getJobDataMap().get("defaultFromEmailAddress");
 
             setProcessStatus(new ProcessStatus(ProcessStatus.Type.RUNNING));
 

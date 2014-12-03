@@ -195,10 +195,10 @@ public class PublishProcessServlet extends HttpServlet {
         /* TODO: Eenmalig Mail aanmaken obv web xml instellingen */
         
         Mail mail = new Mail();
-        mail.setFromEmailAddress("dsl@b3partners.nl");
-        mail.setSmtpHost("kmail.b3partners.nl");
+        //mail.setFromEmailAddress("dsl@b3partners.nl");
+        //mail.setSmtpHost("kmail.b3partners.nl");
         mail.setSubject("Webservice proces " + identifier);
-        mail.setToEmailAddress("boy@b3p.nl");
+        mail.setToEmailAddress("support@b3partners.nl");
         
         session.save(mail);
         
