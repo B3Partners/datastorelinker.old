@@ -87,7 +87,7 @@
                                  alt="process.lastRunOk" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK_WITH_ERRORS'}">
-                            <img src="<stripes:url value="/images/circle_orange.gif"/>"
+                            <img src="<stripes:url value="/images/circle_groengeel.gif"/>"
                                  title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunOkWithErrors" />
                         </c:when>
