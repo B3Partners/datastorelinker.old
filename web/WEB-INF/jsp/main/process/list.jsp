@@ -82,22 +82,22 @@
                                  alt="process.running" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK'}">
-                            <img src="<stripes:url value="/images/circle_green.gif"/>"
+                            <img src="<stripes:url value="/images/circle_green.png"/>"
                                  title="<fmt:message key="process.lastRunOk"/>"
                                  alt="process.lastRunOk" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK_WITH_ERRORS'}">
-                            <img src="<stripes:url value="/images/circle_groengeel.gif"/>"
+                            <img src="<stripes:url value="/images/circle_groengeel.png"/>"
                                  title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunOkWithErrors" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_FATAL_ERROR'}">
-                            <img src="<stripes:url value="/images/circle_red.gif"/>"
+                            <img src="<stripes:url value="/images/circle_red.png"/>"
                                  title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunFatalError" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'CANCELED_BY_USER'}">
-                            <img src="<stripes:url value="/images/circle_blue.gif"/>"
+                            <img src="<stripes:url value="/images/circle_blue.png"/>"
                                  title="<fmt:message key="process.canceledByUser"/>"
                                  alt="process.canceledByUser" />
                         </c:when>
