@@ -442,17 +442,7 @@ public class ProcessAction extends DefaultAction {
         log.debug("delete process");
         Inout input = process.getInput();
         if (input.getFile() != null && !input.getFile().trim().equals("")) {
-            if (input.getInputProcessList().size() == 1) {
-                // if this is the only process using this file input, delete this file input object.
-                log.debug("deleting input: " + input + " from process: " + process + "; cascades delete project too.");
-                session.delete(input);
-                // cascades will make sure process itself also gets deleted.
-            } else {
-                log.debug("clearing InputProcessList");
-                // prevents org.hibernate.ObjectDeletedException: deleted entity passed to persist. -errors
-                // reference to the (soon to be deleted) process must be cleared, otherwise Hibernate will try to persist the process that was deleted.
-                input.getInputProcessList().clear();
-            }
+            input.getInputProcessList().remove(process);
         }
 
         List<nl.b3p.datastorelinker.entity.Process> linkedProcesses = em.createQuery("FROM Process WHERE linked_process = :id").setParameter("id", process).getResultList();
