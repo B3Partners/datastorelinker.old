@@ -109,7 +109,7 @@
         <servlet-class>nl.b3p.datastorelinker.security.ConfigServlet</servlet-class>
         <init-param>
             <param-name>kburl</param-name>
-            <param-value>http://vlaardingen42.kaartenbalie.nl/kaartenbalie/services/</param-value>
+            <param-value>http://solparc.kaartenbalie.nl/kaartenbalie/services/</param-value>
         </init-param>
         <init-param>
             <param-name>anonymous_user</param-name>
@@ -164,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>/srv/datastorelinker/vlaardingen/etl/</param-value>
+        <param-value>/UPLOAD_DIRECTORY/CHANGE/ME</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
@@ -172,11 +172,11 @@
     </context-param>
     <context-param>
         <param-name>defaultFromEmailAddress</param-name>
-        <param-value>ed.vander.linden@vlaardingen.nl</param-value>
+        <param-value>support@b3partners.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultToEmailAddress</param-name>
-        <param-value>ed.vander.linden@vlaardingen.nl</param-value>
+        <param-value>support@b3partners.nl</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSubject</param-name>
