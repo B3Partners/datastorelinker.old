@@ -198,6 +198,7 @@ public class ActionsAction extends DefaultAction {
                     
                     paramInterior.element("name", paramName);
                     paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("optional", paramName + ".optional");
                     paramInterior.element("inputmapping", "true");
                 }
                 
@@ -206,6 +207,7 @@ public class ActionsAction extends DefaultAction {
                     
                     paramInterior.element("name", paramName);
                     paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("optional", paramName + ".optional");
                     paramInterior.element("outputmapping", "true");
                 }               
                         
@@ -214,6 +216,7 @@ public class ActionsAction extends DefaultAction {
                     if (res != null) {
                         paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
                         paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));                   
+                        paramInterior.element("optional", res.getString("keys." + paramName.toUpperCase() + ".optional"));                   
                     }
                 } catch (MissingResourceException mre) {}                
                 
@@ -274,6 +277,7 @@ public class ActionsAction extends DefaultAction {
                     
                     paramInterior.element("name", paramName);
                     paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("optional", paramName + ".optional");
                     paramInterior.element("inputmapping", "true");
                 }
                 
@@ -282,6 +286,7 @@ public class ActionsAction extends DefaultAction {
                     
                     paramInterior.element("name", paramName);
                     paramInterior.element("type", paramName + ".type");
+                    paramInterior.element("optional", paramName + ".optional");
                     paramInterior.element("outputmapping", "true");
                 }
                 
@@ -289,6 +294,7 @@ public class ActionsAction extends DefaultAction {
                 try {
                     paramInterior.element("name", res.getString("keys." + paramName.toUpperCase()));
                     paramInterior.element("type", res.getString("keys." + paramName.toUpperCase() + ".type"));                   
+                    paramInterior.element("optional", res.getString("keys." + paramName.toUpperCase() + ".optional"));                   
                 } catch (MissingResourceException mre) {}                
                 
                 parameters.add(paramInterior);
@@ -326,6 +332,7 @@ public class ActionsAction extends DefaultAction {
                     JSONObject parameter = (JSONObject)parameterObject;
                     parameter.remove("name");
                     parameter.remove("type");// old: type needed by dsl backend (Geotools)
+                    parameter.remove("optional");
                 }
             }
         }
@@ -394,6 +401,7 @@ public class ActionsAction extends DefaultAction {
             
             parameter.put("name", nameResourceKey);
             parameter.put("type", nameResourceKey + ".type");
+            parameter.put("optional", nameResourceKey + ".optional");
             parameter.put("inputmapping", "true");
         }
         
@@ -402,12 +410,14 @@ public class ActionsAction extends DefaultAction {
             
             parameter.put("name", nameResourceKey);
             parameter.put("type", nameResourceKey + ".type");
+            parameter.put("optional", nameResourceKey + ".optional");
             parameter.put("outputmapping", "true");
         }  
         
         try {
             parameter.put("name", res.getString(nameResourceKey));
             parameter.put("type", res.getString(nameResourceKey + ".type"));
+            parameter.put("optional", res.getString(nameResourceKey + ".optional"));
         } catch (MissingResourceException mre) {}                
     }
 

@@ -226,7 +226,12 @@ function openParametersDialog(action) {
                     input.val(parameter.value);
                 }
                 input.addClass(parameter.type);
-                input.addClass("required"); // checkbox is not required (can be false), only textbox.
+                
+                if (parameter.optional && parameter.optional === "true") {
+                    input.addClass("optional"); 
+                } else {
+                    input.addClass("required"); 
+                }
             }
         }
         
