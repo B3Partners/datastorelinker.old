@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Webapp-users>
-    <role rolename="beheerder"/>
-    <role rolename="gebruiker"/>
-    <user username="beheerder" password="geheim" roles="beheerder"/>
-</Webapp-users>
