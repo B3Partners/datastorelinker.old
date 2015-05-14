@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.web.project</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
-            <name>DataStoreLinkerGui</name>
+            <name>datastorelinker</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
                 <library dirs="200">
@@ -41,7 +41,7 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${reference.b3p-gt2-datastorelinker.jar}</file>
+                    <file>${reference.b3p-datastorelinker.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
@@ -81,7 +81,7 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
-                    <file>${reference.b3p-suf2.jar}</file>
+                    <file>${reference.b3p-suf2-reader.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library dirs="200">
@@ -134,7 +134,7 @@
             </test-roots>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
-            <definitions>../libs\nblibraries.properties</definitions>
+            <definitions>../libs/nblibraries.properties</definitions>
         </libraries>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
@@ -162,7 +162,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>b3p-gt2-csv</foreign-project>
+                <foreign-project>b3p-datastorelinker</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -170,7 +170,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>b3p-gt2-datastorelinker</foreign-project>
+                <foreign-project>b3p-gt2-csv</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -226,7 +226,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>b3p-suf2</foreign-project>
+                <foreign-project>b3p-suf2-reader</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>

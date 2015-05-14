@@ -68,7 +68,7 @@
     nbproject/build-impl.xml file. 
 
     -->
-	<import file="deploy/build.xml"/>
+	<import file="deploy/build.xml" optional="true"/>
 	<import file="database/datastorelinker_gui/hibernate-schemaexport.xml"/>
 
 </project>
