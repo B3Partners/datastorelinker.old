@@ -19,24 +19,21 @@
             <groupId>net.sf</groupId>
             <artifactId>json-lib</artifactId>
             <version>2.3</version>
-            <type>jar</type>
         </dependency>
-         <dependency>
-         <groupId>xom</groupId>
-         <artifactId>xom</artifactId>
-         <version>1.1</version>
-      </dependency>
+        <dependency>
+            <groupId>xom</groupId>
+            <artifactId>xom</artifactId>
+            <version>1.1</version>
+        </dependency>
         <dependency>
             <groupId>net.sourceforge.stripes</groupId>
             <artifactId>stripes</artifactId>
             <version>1.5.8</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>b3p-commons-core</artifactId>
             <version>4.2-SNAPSHOT</version>
-            <type>jar</type>
             <exclusions>
                 <exclusion>
                     <groupId>commons-beanutils</groupId>
@@ -143,12 +140,10 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>3.6.3.Final</version>
-            <type>jar</type>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -156,7 +151,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
