@@ -1,0 +1,20 @@
+jquery_ui_upload_messages_nl = {
+    browse:          'Nieuw bestand uploaden...', //Bladeren...',
+    submitfile:      'Bestand uploaden',
+    submitfiles:     'Bestanden uploaden',
+    cancel:          'Annuleren',
+    completed:       'Klaar',
+    error:           'Fout',
+    errorfiletype:   'Het bestand {file} is van het type {mimetype} en wordt door het systeem niet ondersteund.',
+    errorfilesize:   'Het bestand {file} is te groot. De maximaal toegestane bestandsgrootte is {file_size}.',
+    errorfileexist:  'Het bestand {file} bestaat al.',
+    errorfileupload: 'Het bestand {file} kon niet worden ge\u00FCploaded.',
+    no:              'Nee',
+    notice:          'Bericht',
+    ok:              'Ok',
+    overwrite:       'Het bestand {file} bestaat al. Wilt u het bestand {file} met het nieuwe bestand overschrijven?',
+    remove:          'Bestand verwijderen',
+    queuefull:       'De wachtrij voor uploads is vol. Er kunnen maximaal {files} in de wachtrij zitten.',
+    warning:         'Waarschuwing',
+    yes:             'Ja'
+};

@@ -1,0 +1,90 @@
+/*
+* jQuery UI CSS Framework for jquery-ui-upload
+* Copyright (c) 2010 Michael Keck
+*/
+
+/* jQuery UI Upload
+----------------------------------*/
+.ui-upload, .ui-upload-buttonpane, .ui-upload-queue {
+    display:                        block;
+    width:                          40em;
+}
+.ui-upload-buttonpane {
+    margin-top:                     .5em;
+}
+.ui-upload-queue {}
+.ui-upload-buttonpane .ui-button {
+    display:                        block;
+    float:                          left;
+    margin-right:                   .5em;
+}
+
+.ui-upload-item {
+    display:                        block;
+    margin-top:                     .5em;
+    padding:                        .5em;
+    width:                          37em;
+}
+.ui-upload-item .ui-icon {
+    cursor:                         pointer;
+    float:                          right;
+    margin-bottom:                  5px;
+    height:                         16px;
+    width:                          16px;
+}
+.ui-upload-item .ui-progressbar {
+    position:                       relative;
+    clear:                          both;
+    height:                         1.2em !important;
+}
+.ui-upload-item .ui-progressbar .ui-progressbar-value {
+    position:                       absolute;
+    top:                            0px;
+    left:                           0px;
+}
+.ui-upload-item .ui-progressbar .ui-progressbar-label {
+    font-size:                      1em;
+    line-height:                    1.2em !important;
+    height:                         1.2em !important;
+    text-align:                     center;
+    vertical-align:                 middle;
+}
+.ui-upload-item .ui-progressbar .ui-widget-header {
+    background-color:               #9acd32;
+    color:                          #006400;
+}
+
+.ui-upload-item .ui-upload-label {
+    display:                        block;
+    float:                          left;
+    font-size:                      1em;
+    vertical-align:                 middle;
+}
+.ui-upload-item .ui-upload-label em {
+    font-size:                      .9em;
+    font-style:                     normal;
+}
+
+.ui-upload-queue {
+    height:                         10em;
+    padding:                        .5em 1em 1em 1em;
+    width:                          40em;
+    overflow:                       auto;
+}
+
+
+/* Success State */
+.ui-state-success, .ui-widget-content .ui-state-success {
+    background-color:               #dff0d0;
+    background-repeat:              repeat-x;
+    border:                         1px solid #006400;
+    color:                          #006400;
+}
+.ui-state-success a, .ui-widget-content .ui-state-success a {
+    color:                          #006400;
+}
+.ui-state-success-text, .ui-widget-content .ui-state-success-text {
+    color:                          #006400;
+}
+
+
