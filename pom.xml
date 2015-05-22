@@ -4,7 +4,7 @@
 
     <groupId>nl.b3p</groupId>
     <artifactId>datastorelinker</artifactId>
-    <version>4.2</version>
+    <version>4.2-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>datastorelinker</name>
@@ -30,44 +30,44 @@
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>b3p-commons-core</artifactId>
-            <version>4.2</version>
+            <version>4.2-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>datastorelinkerEntities</artifactId>
-            <version>4.2</version>
-            <type>jar</type>
+            <version>4.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
-            <version>4.2</version>
-            <type>jar</type>
+            <version>4.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>provided</scope>
+            <version>8.4-701.jdbc3</version>
         </dependency>
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>b3p-commons-gis</artifactId>
-            <version>4.2</version>
-            <type>jar</type>
+            <version>4.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>it.geosolutions</groupId>
             <artifactId>geoserver-manager</artifactId>
             <version>1.6-SNAPSHOT</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>nl.b3p</groupId>
             <artifactId>b3p-mapfile</artifactId>
-            <version>4.2</version>
-            <type>jar</type>
+            <version>4.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -78,7 +78,6 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -86,13 +85,31 @@
             <version>2.4</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>3.6.3.Final</version>
+            <type>jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>3.6.3.Final</version>
+        </dependency>
     </dependencies>
 
     <repositories>
         <repository>
             <id>nl.b3p.gissuite</id>
             <name>B3P GIS Suite Maven Repository</name>
-            <url>file://${project.basedir}/../repo</url>
+            <url>file://${project.basedir}/../B3pGisSuiteMvnRepo</url>
         </repository>
         <repository>
             <id>osgeo</id>
