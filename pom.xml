@@ -4,7 +4,7 @@
 
     <groupId>nl.b3p</groupId>
     <artifactId>datastorelinker</artifactId>
-    <version>4.2-SNAPSHOT</version>
+    <version>4.2.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>datastorelinker</name>
@@ -13,6 +13,7 @@
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
     </properties>
+    
 
     <dependencies>
         <dependency>
@@ -31,9 +32,9 @@
             <version>1.5.8</version>
         </dependency>
         <dependency>
-            <groupId>nl.b3p</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-core</artifactId>
-            <version>4.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-beanutils</groupId>
@@ -50,9 +51,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>nl.b3p</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>datastorelinkerEntities</artifactId>
-            <version>4.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -61,9 +62,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>nl.b3p</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
-            <version>4.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -78,9 +79,9 @@
             <version>8.4-701.jdbc3</version>
         </dependency>
         <dependency>
-            <groupId>nl.b3p</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-gis</artifactId>
-            <version>4.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -98,9 +99,9 @@
             <version>1.6-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>nl.b3p</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>b3p-mapfile</artifactId>
-            <version>4.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -163,11 +164,6 @@
             <id>nl.b3p.gissuite</id>
             <name>B3P GIS Suite Maven Repository</name>
             <url>file://${project.basedir}/../B3pGisSuiteMvnRepo</url>
-        </repository>
-        <repository>
-            <id>osgeo</id>
-            <name>Open Source Geospatial Foundation Repository</name>
-            <url>http://download.osgeo.org/webdav/geotools/</url>
         </repository>
     </repositories>
 
