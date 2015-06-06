@@ -515,6 +515,10 @@ public class ProcessAction extends DefaultAction {
                 if (dsl == null) {
                     log.debug("dsl null! dslJob niet, dus bezig met starten van job.");
                     return new JSONResolution(new ProgressMessage(0));
+                } else if (dsl.isDisposed()) {
+                    ProgressMessage progressMessage = new ProgressMessage(100);
+                    progressMessage.setMessage(dsl.getStatus().getNonFatalErrorReport("<br />", 3));
+                    return new JSONResolution(progressMessage);
                 } else {
                     Status dslStatus = dsl.getStatus();
 
@@ -527,10 +531,9 @@ public class ProcessAction extends DefaultAction {
                         fraction = (double)visitedFeatures / (double)totalFeatureSize;
                     }
                     int percentage = (int)Math.floor(100 * fraction);
-                    //log.debug("execution progress report: " + percentage + "%");
                     ProgressMessage progressMessage = new ProgressMessage(percentage);
                     if (percentage >= 100) {
-                        progressMessage.setMessage(dsl.getStatus().getNonFatalErrorReport("<br />", 3));
+                        progressMessage = new ProgressMessage(99);
                     }
                     return new JSONResolution(progressMessage);
                 }

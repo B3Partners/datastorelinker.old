@@ -19,17 +19,21 @@ import org.quartz.impl.StdSchedulerFactory;
  * @author Erik van de Pol
  */
 public class SchedulerUtils {
+    // save servlet context for use in quartz threads
+    public static StdSchedulerFactory schedulerFactory = null;
+    
     private final static Log log = Log.getInstance(SchedulerUtils.class);
 
     public static Scheduler getScheduler(ServletContext context) throws SchedulerException {
-        StdSchedulerFactory factory = (StdSchedulerFactory)
+        if (schedulerFactory == null) {
+            schedulerFactory = (StdSchedulerFactory)
                 context.getAttribute(QuartzInitializerListener.QUARTZ_FACTORY_KEY);
-        
-        if (factory == null) {
-            return getScheduler(context);
+        }
+       if (schedulerFactory == null) {
+            throw new SchedulerException("No quartz factory available!");
         }
         
-        return factory.getScheduler();
+        return schedulerFactory.getScheduler();
     }
 
     public static DataStoreLinkJob getProcessJob(ServletContext context, String jobUUID) {

@@ -4,7 +4,9 @@
  */
 package nl.b3p.datastorelinker.util;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import net.sourceforge.stripes.action.LocalizableMessage;
@@ -19,6 +21,11 @@ import org.quartz.JobExecutionException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerUtils;
 
 /**
  *
@@ -30,6 +37,7 @@ public class DataStoreLinkJob implements Job {
     private DataStoreLinker dsl = null;
     private nl.b3p.datastorelinker.entity.Process process = null;
     private Long processId = null;
+    private Locale locale = Locale.getDefault();;
     private Throwable fatalException = null;
     public static final String KEY_DEFAULT_SMTP_HOST = "defaultSmtpHost";
     public static final String KEY_DEFAULT_FROM_ADDRESS = "defaultFromEmailAddress";
@@ -95,17 +103,25 @@ public class DataStoreLinkJob implements Job {
         ProcessStatus finishedStatus = null;
         EntityTransaction tx = null;
         
-        Locale locale = Locale.getDefault();
         try {
             log.debug("Quartz started process");
             processId = jec.getJobDetail().getJobDataMap().getLong("processId");
-            locale = (Locale)jec.getJobDetail().getJobDataMap().get("locale");
             
-            DataStoreLinker.DEFAULT_SMTPHOST = 
-                    (String)jec.getJobDetail().getJobDataMap().get(KEY_DEFAULT_SMTP_HOST);
-            DataStoreLinker.DEFAULT_FROM = 
-                    (String)jec.getJobDetail().getJobDataMap().get(KEY_DEFAULT_FROM_ADDRESS);
-
+            Locale providedLocale = (Locale)jec.getJobDetail().getJobDataMap().get("locale");
+            if (providedLocale != null) {
+                locale = providedLocale;
+            }
+            String providedSmtpHost
+                    = (String) jec.getJobDetail().getJobDataMap().get(KEY_DEFAULT_SMTP_HOST);
+            if (providedSmtpHost != null && !providedSmtpHost.isEmpty()) {
+                DataStoreLinker.DEFAULT_SMTPHOST = providedSmtpHost;
+            }
+            String providedFromAddress
+                    = (String) jec.getJobDetail().getJobDataMap().get(KEY_DEFAULT_FROM_ADDRESS);
+            if (providedFromAddress != null && !providedFromAddress.isEmpty()) {
+                DataStoreLinker.DEFAULT_FROM = providedFromAddress;
+            }
+ 
             setProcessStatus(new ProcessStatus(ProcessStatus.Type.RUNNING));
 
             EntityManager em = JpaUtilServlet.getThreadEntityManager();
@@ -175,22 +191,48 @@ public class DataStoreLinkJob implements Job {
                 log.error("", e);
             }
 
-            // We keep this thread alive for 10 seconds
-            // to let the execution progress polling system know we are done.
-            // For some obscure reason wait() does not wait.
-            /*try {
-            synchronized(this) {
-            log.debug("start wait");
-            this.wait(10000);
-            if (log != null) // server could be shutting down; leaving us without a logger.
-            log.debug("woken up from wait");
+        }
+        
+        //check linked processes
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        List<nl.b3p.datastorelinker.entity.Process> linkedProcesses = em.createQuery("FROM Process WHERE linked_process = :id").setParameter("id", this.process.getId()).getResultList();
+        if (linkedProcesses != null && !linkedProcesses.isEmpty()) {
+            if (finishedStatus.getProcessStatusType() == ProcessStatus.Type.LAST_RUN_OK
+                    || finishedStatus.getProcessStatusType() == ProcessStatus.Type.LAST_RUN_OK_WITH_ERRORS) {
+                try {
+                    for (nl.b3p.datastorelinker.entity.Process linked : linkedProcesses) {
+                        log.info("Schedule linked process: " + linked.getName() + " from parent process: " + this.process.getName());
+                        scheduleDslJobImmediately(linked);
+                    }
+                } catch (SchedulerException ex) {
+                    //geen verder foutmelding naar gebruiker, misschien later aparte status toevoegen
+                    log.error("Linked process schedule could not be created: ", ex);
+                }
+            } else {
+                log.error("Linked process not started due to errors in previous process.");
             }
-            } catch (InterruptedException intEx) {
-            log.debug("wait interrupted");
-            }*/
         }
     }
+    
+    public void scheduleDslJobImmediately(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException {
+ 
+        String generatedJobUUID = "job" + UUID.randomUUID().toString();
+        JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+        jobDetail.getJobDataMap().put("processId", process.getId());
 
+        jobDetail.getJobDataMap().put("locale", locale);
+        //already provided by parent job: host and email
+
+        Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+        // null context means the context should have been saved earlier
+        Scheduler scheduler = SchedulerUtils.getScheduler(null);
+
+        process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
+        process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
+        scheduler.scheduleJob(jobDetail, trigger);
+    }
+
+    
     private void tryRollback(EntityTransaction tx) {
         if (tx != null && tx.isActive()) {
             log.error("Exception occurred - rolling back active transaction");
