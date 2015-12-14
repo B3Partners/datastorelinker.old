@@ -86,7 +86,7 @@ public class ConvertLargeObjectsAction implements ActionBean {
         f.setAccessible(true);
         Object pgconnMetadata = f.get(metadata);
         statusArray.put("Retrieving postgres connection..");
-        org.postgresql.PGConnection connection =(org.postgresql.PGConnection) ((org.postgresql.jdbc3.Jdbc3DatabaseMetaData) pgconnMetadata).getConnection();
+        org.postgresql.PGConnection connection =(org.postgresql.PGConnection) ((org.postgresql.jdbc4.Jdbc4DatabaseMetaData) pgconnMetadata).getConnection();
         statusArray.put("Connection established");
         lom = connection.getLargeObjectAPI();
         statusArray.put("Create LargeObjectManager");

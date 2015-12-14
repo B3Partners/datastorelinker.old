@@ -51,7 +51,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>datastorelinkerEntities</artifactId>
-            <version>4.2.1</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -62,7 +62,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
-            <version>4.2.1</version>
+            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -71,12 +71,14 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+            <version>9.3-1102-jdbc4</version>
             <scope>provided</scope>
-            <version>8.4-701.jdbc3</version>
+            <!-- Bij JNDI db verbinding moeten postgis jars in tomcat lib samen
+            met postgresql jdbc driver staan -->
         </dependency>
-        <dependency>
+         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-gis</artifactId>
             <version>${project.version}</version>
