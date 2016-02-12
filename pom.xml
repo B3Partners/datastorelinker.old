@@ -46,6 +46,12 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
+                <exclusion>
+                    <!-- geeft een conflict met de hogere versie die hibernate nodig heeft in datastorelinker -->
+                    <groupId>javax.persistence</groupId>
+                    <artifactId>persistence-api</artifactId>
+                    <!--version>1.0</version -->
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
