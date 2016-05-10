@@ -18,32 +18,35 @@
             }
             
             return true;
-        }
+        };
         
         /* Event wordt aangeroepen in back-end als form is ingevuld */
         var newOrgDialogOptions = $.extend({}, defaultDialogOptions, {            
             width: 550,
             //height: 400,
             buttons: {
-                "<fmt:message key="finish"/>" : function() {                    
-                    if (!validateForm()) {
-                        return;
-                    }
-                    
-                    ajaxOpen({
-                        url: "${authUrl}",
-                        event: "createOrganizationComplete",
-                        extraParams: [
-                            {name: "orgName", value: $("#orgName").val()}
-                        ],
-                        containerSelector: "#orgListContainer",
-                        successAfterContainerFill: function(data, textStatus, xhr) {
-                            $("#orgContainer").dialog("close");
-                        }                    
-                    });
-                }
-            }
-        });
+                "<fmt:message key="finish"/>" : {
+                    text:"<fmt:message key="finish"/>",
+                    id:"newOrgCreate",
+                    click:function() {                    
+                        if (!validateForm()) {
+                            return;
+                                            }
+
+                        ajaxOpen({
+                            url: "${authUrl}",
+                            event: "createOrganizationComplete",
+                            extraParams: [
+                                {name: "orgName", value: $("#orgName").val()}
+                            ],
+                            containerSelector: "#orgListContainer",
+                            successAfterContainerFill: function (data, textStatus, xhr) {
+                                $("#orgContainer").dialog("close");
+                                                    }
+                                                });
+                                            }
+                                        }
+                        }});
         
         /* Event wordt aangeroepen in back-end als form is ingevuld */
         var updateOrgDialogOptions = $.extend({}, defaultDialogOptions, {
@@ -70,7 +73,7 @@
                         }                    
                     });
                 }
-            }
+            } 
         });
 
         /* Als er op nieuw geklikt wordt */
