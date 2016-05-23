@@ -83,7 +83,7 @@
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK'}">
                             <img src="<stripes:url value="/images/circle_green.png"/>"
-                                 title="<fmt:message key="process.lastRunOk"/>"
+                                 title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunOk" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK_WITH_ERRORS'}">
