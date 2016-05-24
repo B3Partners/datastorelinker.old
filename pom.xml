@@ -3,7 +3,7 @@
 
     <groupId>nl.b3p</groupId>
     <artifactId>datastorelinker</artifactId>
-    <version>4.2.3-SNAPSHOT</version>
+    <version>4.2.3</version>
     <packaging>war</packaging>
 
     <name>datastorelinker</name>
@@ -192,7 +192,8 @@
         <connection>scm:git:git@github.com:B3Partners/datastorelinker.git</connection>
         <developerConnection>scm:git:git@github.com:B3Partners/datastorelinker.git</developerConnection>
         <url>https://github.com/B3Partners/datastorelinker</url>
-    </scm>
+      <tag>datastorelinker-4.2.3</tag>
+  </scm>
     <distributionManagement>
         <repository>
             <id>repo.b3p.nl</id>
