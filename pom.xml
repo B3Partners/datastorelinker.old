@@ -57,7 +57,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>datastorelinkerEntities</artifactId>
-            <version>4.2.3</version>
+            <version>4.2.4</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-gis</artifactId>
-            <version>4.2.2</version>
+            <version>4.2.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
