@@ -38,38 +38,35 @@ public class MapserverPublisher implements Publisher {
     private final static Log log = Log.getInstance(MapserverPublisher.class);
 
     private String propertiesFile = "/WEB-INF/velocity.properties";
-    private String serviceName;
 
     public boolean publishDb(String url, String username, String password,
             Database.Type dbType, String host, int port, String dbUser,
             String dbPass, String schema, String database, String table,
-            String workspace, String style, ServletContext context) {
+            String serviceName, String style, ServletContext context) {
 
         String[] tables = new String[1];
         tables[0] = table;
 
         return createMapfile(dbType, host, port, dbUser, dbPass, schema,
-                database, tables, context);
+                database, tables, serviceName, context);
     }
 
     public boolean publishDB(String url, String username, String password,
             Database.Type dbType, String host, int port, String dbUser,
             String dbPass, String schema, String database, String[] table,
-            String workspace, String style, ServletContext context) {
+            String serviceName, String style, ServletContext context) {
 
         return createMapfile(dbType, host, port, dbUser, dbPass, schema,
-                database, table, context);
+                database, table, serviceName, context);
     }
 
     private boolean createMapfile(Database.Type dbType, String host, int port,
             String dbUser, String dbPass, String schema, String database,
-            String[] tables, ServletContext c) {
+            String[] tables, String serviceName, ServletContext c) {
 
-        String mapserverUrl = c.getInitParameter("mapserverUrl");
-        String mapFilePath = c.getInitParameter("mapFilePath");
-        String serviceName = getServiceName();
+        String mapFilePath = c.getInitParameter("publisher.mapfileLocation");
 
-        if (mapserverUrl == null || mapFilePath == null || serviceName == null) {
+        if (host == null || mapFilePath == null || serviceName == null) {
             throw new IllegalArgumentException("Missende Mapserver parameters.");
         }
 
@@ -87,7 +84,7 @@ public class MapserverPublisher implements Publisher {
 
         WebMetadata webMeta = new WebMetadata();
 
-        String resource = createResourceString(mapserverUrl, mapFilePath, serviceName);
+        String resource = createResourceString(host, mapFilePath, serviceName);
 
         webMeta.setWmsTitle(serviceName + " Service");
         webMeta.setWmsOnlineResource(resource);
@@ -356,13 +353,5 @@ public class MapserverPublisher implements Publisher {
             }
         }
         return p;
-    }
-
-    public String getServiceName() {
-        return serviceName;
-    }
-
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
     }
 }

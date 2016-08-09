@@ -107,31 +107,21 @@ public class OutputServicesAction extends DefaultAction {
                 String[] tablesToPublish = selectedTables.split(",");
 
                 boolean published = false;
-                if (publisherType.equals(Publisher.PUBLISHER_TYPE_GEOSERVER)) {
-                    published = publisher.publishDB(c.getInitParameter("geoserverUrl"), c.getInitParameter("geoserverUser"), c.getInitParameter("geoserverPassword"),
-                            database.getType(), database.getHost(), database.getPort(), database.getUsername(), database.getPassword(),
-                            database.getSchema(), database.getDatabaseName(), tablesToPublish, c.getInitParameter("geoserverWorkspace"), "polygon", c);
-
-                }
-
-                if (publisherType.equals(Publisher.PUBLISHER_TYPE_MAPSERVER)) {
-                    
-                    MapserverPublisher pub = (MapserverPublisher)publisher;
-                    pub.setServiceName(namePublisher);
-                    
-                    published = pub.publishDB(null, null, null,
-                            database.getType(), database.getHost(), database.getPort(),
-                            database.getUsername(), database.getPassword(),
-                            database.getSchema(), database.getDatabaseName(),
-                            tablesToPublish, null, null, c);
-                }
+                String host = c.getInitParameter("serverUrl");
+                String serviceName = c.getInitParameter("serviceName");
+                String userName = c.getInitParameter("geoserverUser");
+                String password = c.getInitParameter("geoserverPassword");
+                String style = "polygon";
+                published = publisher.publishDB(host, userName, password,
+                        database.getType(), database.getHost(), database.getPort(), database.getUsername(), database.getPassword(),
+                        database.getSchema(), database.getDatabaseName(), tablesToPublish, serviceName, style, c);
 
                 if (!published) {
                     getContext().getValidationErrors().add("Fout", new SimpleError("Service is niet gepubliceerd."));
                 }
             }
             getContext().getMessages().add(new SimpleMessage("Gelukt"));//
-        } else if (database.getType() == Database.Type.ORACLE) {
+        } else {
             getContext().getValidationErrors().add("Databasetype", new SimpleError("Database mag alleen van type postgis of oracle zijn."));
         }
 
