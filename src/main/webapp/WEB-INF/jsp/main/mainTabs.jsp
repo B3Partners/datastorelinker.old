@@ -90,12 +90,12 @@
             </li>
             <%-- Voor release 4.2 even uitgecomment. Anders gaan mensen het
             toch proberen en het is nog POC
+            --%>
             <li>
                 <stripes:link beanclass="nl.b3p.datastorelinker.gui.stripes.OutputServicesAction" title="tabOutputServices">
                     <fmt:message key="menu.admin.output.services"/>
                 </stripes:link>
             </li>
-            --%>
             </c:if>
         </ul>
         
