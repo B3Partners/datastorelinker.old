@@ -17,6 +17,7 @@
 package nl.b3p.datastorelinker.publish;
 
 import it.geosolutions.geoserver.rest.GeoServerRESTManager;
+import it.geosolutions.geoserver.rest.GeoServerRESTReader;
 import it.geosolutions.geoserver.rest.encoder.GSLayerEncoder;
 import it.geosolutions.geoserver.rest.encoder.datastore.GSAbstractDatastoreEncoder;
 import it.geosolutions.geoserver.rest.encoder.datastore.GSOracleNGDatastoreEncoder;
@@ -42,30 +43,11 @@ public class GeoserverPublisher implements Publisher {
 
     @Override
     public PublishStatus publishDb(String url, String username, String password, Database.Type dbType,String host, int port,String dbUser, String dbPass, String schema, String database, String table, String workspace,String style, ServletContext context) {
-        PublishStatus status = new PublishStatus();
-        try {
-            GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
-            boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
-            status.setServiceCreated(b);
-            boolean createdStore = createDatastore(host, port,dbUser, dbPass, schema, database, workspace,dbType, manager);
-            status.setStoreCreated(createdStore);
-            boolean published = publishLayer(table, style, database, workspace, manager);
-            if(published){
-                status.getLayersSucceeded().add(table);
-            }else{
-                status.getLayersFailed().add(table);
-            }
-        } catch (MalformedURLException ex) {
-            log.error("Failed to initialize restapi: ", ex);
-            status.setFatal(true);
-        } catch (URISyntaxException ex) {
-            log.error("Failed to initialize restapi: ", ex);
-            status.setFatal(true);
-        }
-        return status;
+        String [] tables = {table};
+        return publishDB(url, username, password, dbType, host, port, dbUser, dbPass, schema, database, tables, workspace, style, context);
     }
 
-    private boolean publishLayer( String table, String style,String database, String workspace,GeoServerRESTManager manager ){
+    private boolean publishLayer( String table, String style,String database, String workspace,GeoServerRESTManager manager, GeoServerRESTReader reader, PublishStatus status ){
         
         GSFeatureTypeEncoder type = new GSFeatureTypeEncoder();
         type.setName(table);
@@ -73,6 +55,13 @@ public class GeoserverPublisher implements Publisher {
         GSLayerEncoder layer = new GSLayerEncoder();
         layer.setDefaultStyle(style);
         boolean published = manager.getPublisher().publishDBLayer(workspace, database, type, layer);
+        if(!published){
+            if(reader.existsLayer(workspace, table, true)){
+                status.getLayersFailedMessages().append("Laag ");
+                status.getLayersFailedMessages().append(table);
+                status.getLayersFailedMessages().append(" bestaat al in service. <br/>");
+            }
+        }
         return published;
     }
 
@@ -115,17 +104,34 @@ public class GeoserverPublisher implements Publisher {
         PublishStatus status = new PublishStatus();
         try {
             GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
-            boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
-            status.setServiceCreated(b);
-            boolean createdStore = createDatastore(host, port,dbUser, dbPass, schema, database, workspace, dbType,manager);
-            status.setStoreCreated(createdStore);
-            for (String table : tables) {
-                boolean published = publishLayer(table, style, database, workspace, manager);
-                if(published){
-                    status.getLayersSucceeded().add(table);
-                }else{
-                    status.getLayersFailed().add(table);
+            GeoServerRESTReader reader = manager.getReader();
+            if (reader.existGeoserver()) {
+                boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
+                status.setServiceCreated(b);
+                if(!b){
+                    if(reader.existsWorkspace(workspace)){
+                        status.setServiceMessage("Workspace bestaat al.");
+                    }
                 }
+                boolean createdStore = createDatastore(host, port, dbUser, dbPass, schema, database, workspace, dbType, manager);
+                status.setStoreCreated(createdStore);
+                if(!createdStore){
+                    if(reader.existsDatastore(workspace, database)){
+                        status.setStoreMessage("Datastore bestaat al.");
+                    }
+                }
+
+                for (String table : tables) {
+                    boolean published = publishLayer(table, style, database, workspace, manager, reader, status);
+                    if (published) {
+                        status.getLayersSucceeded().add(table);
+                    } else {
+                        status.getLayersFailed().add(table);
+                    }
+                }
+            } else {
+                status.setFatal(true);
+                status.setFatalMessage("Geoserver bestaat niet");
             }
         } catch (MalformedURLException ex) {
             log.error("Failed to initialize restapi: ", ex);
