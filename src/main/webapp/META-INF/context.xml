@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/datastorelinker"/>
+<Context antiJARLocking="true" path="/datastorelinker">
+    
+    <Parameter name="publisher.serverUrl" value="http://localhost:8084/geoserver" override="false"/>
+    <Parameter name="publisher.serviceUser" value="admin" override="false"/>
+    <Parameter name="publisher.servicePassword" value="geoserver" override="false"/>
+    <Parameter name="publisher.mapfileLocation" value="" override="false"/>
+    <Parameter name="publisher.serviceName" value="meinetestis" override="false"/>
+   
+</Context>
