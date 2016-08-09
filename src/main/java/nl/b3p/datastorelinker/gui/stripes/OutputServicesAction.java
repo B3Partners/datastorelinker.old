@@ -107,10 +107,10 @@ public class OutputServicesAction extends DefaultAction {
                 String[] tablesToPublish = selectedTables.split(",");
 
                 boolean published = false;
-                String host = c.getInitParameter("serverUrl");
-                String serviceName = c.getInitParameter("serviceName");
-                String userName = c.getInitParameter("geoserverUser");
-                String password = c.getInitParameter("geoserverPassword");
+                String host = c.getInitParameter("publisher.serverUrl");
+                String serviceName = c.getInitParameter("publisher.serviceName");
+                String userName = c.getInitParameter("publisher.serviceUser");
+                String password = c.getInitParameter("publisher.servicePassword");
                 String style = "polygon";
                 published = publisher.publishDB(host, userName, password,
                         database.getType(), database.getHost(), database.getPort(), database.getUsername(), database.getPassword(),
