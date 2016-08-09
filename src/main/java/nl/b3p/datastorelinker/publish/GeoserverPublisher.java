@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 B3Partners B.V.
+ * Copyright (C) 2014-2016 B3Partners B.V.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,23 +39,30 @@ import nl.b3p.datastorelinker.entity.Database;
 public class GeoserverPublisher implements Publisher {
 
     private final static Log log = Log.getInstance(GeoserverPublisher.class);
-    private final static String DEFAULT_STYLE_NAME= "WEB-INF/defaultStyle.xml";
 
-    public boolean publishDb(String url, String username, String password, Database.Type dbType,String host, int port,String dbUser, String dbPass, String schema, String database, String table, String workspace,String style, ServletContext context) {
+    @Override
+    public PublishStatus publishDb(String url, String username, String password, Database.Type dbType,String host, int port,String dbUser, String dbPass, String schema, String database, String table, String workspace,String style, ServletContext context) {
+        PublishStatus status = new PublishStatus();
         try {
             GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
             boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
+            status.setServiceCreated(b);
             boolean createdStore = createDatastore(host, port,dbUser, dbPass, schema, database, workspace,dbType, manager);
+            status.setStoreCreated(createdStore);
             boolean published = publishLayer(table, style, database, workspace, manager);
-            return published;
-
+            if(published){
+                status.getLayersSucceeded().add(table);
+            }else{
+                status.getLayersFailed().add(table);
+            }
         } catch (MalformedURLException ex) {
             log.error("Failed to initialize restapi: ", ex);
-            return false;
+            status.setFatal(true);
         } catch (URISyntaxException ex) {
             log.error("Failed to initialize restapi: ", ex);
+            status.setFatal(true);
         }
-        return false;
+        return status;
     }
 
     private boolean publishLayer( String table, String style,String database, String workspace,GeoServerRESTManager manager ){
@@ -73,51 +80,61 @@ public class GeoserverPublisher implements Publisher {
         GeoServerRESTStoreManager storeMan = manager.getStoreManager();
         
         GSAbstractDatastoreEncoder ds = null;
-        if(dbType == Database.Type.POSTGIS){
-            ds = new GSPostGISDatastoreEncoder(database);
-            ((GSPostGISDatastoreEncoder)ds).setDatabase(database);
-            ((GSPostGISDatastoreEncoder)ds).setHost(host);
-            ((GSPostGISDatastoreEncoder)ds).setPassword(dbPass);
-            ((GSPostGISDatastoreEncoder)ds).setUser(dbUser);
-            ((GSPostGISDatastoreEncoder)ds).setNamespace(workspace);
-            ((GSPostGISDatastoreEncoder)ds).setSchema(schema);
-            ((GSPostGISDatastoreEncoder)ds).setPort(port);
-        }else if(dbType == Database.Type.ORACLE){
-            ds = new GSOracleNGDatastoreEncoder(database, database);
-            ((GSOracleNGDatastoreEncoder)ds).setHost(host);
-            ((GSOracleNGDatastoreEncoder)ds).setHost(host);
-            ((GSOracleNGDatastoreEncoder)ds).setPassword(dbPass);
-            ((GSOracleNGDatastoreEncoder)ds).setUser(dbUser);
-            ((GSOracleNGDatastoreEncoder)ds).setNamespace(workspace);
-            ((GSOracleNGDatastoreEncoder)ds).setSchema(schema);
-            ((GSOracleNGDatastoreEncoder)ds).setPort(port);
-            
-        }else{
-            throw new IllegalArgumentException("Database type must be of Postgis or Oracle");
+        if(null != dbType){
+            switch (dbType) {
+                case POSTGIS:
+                    ds = new GSPostGISDatastoreEncoder(database);
+                    ((GSPostGISDatastoreEncoder)ds).setDatabase(database);
+                    ((GSPostGISDatastoreEncoder)ds).setHost(host);
+                    ((GSPostGISDatastoreEncoder)ds).setPassword(dbPass);
+                    ((GSPostGISDatastoreEncoder)ds).setUser(dbUser);
+                    ((GSPostGISDatastoreEncoder)ds).setNamespace(workspace);
+                    ((GSPostGISDatastoreEncoder)ds).setSchema(schema);
+                    ((GSPostGISDatastoreEncoder)ds).setPort(port);
+                    break;
+                case ORACLE:
+                    ds = new GSOracleNGDatastoreEncoder(database, database);
+                    ((GSOracleNGDatastoreEncoder)ds).setHost(host);
+                    ((GSOracleNGDatastoreEncoder)ds).setHost(host);
+                    ((GSOracleNGDatastoreEncoder)ds).setPassword(dbPass);
+                    ((GSOracleNGDatastoreEncoder)ds).setUser(dbUser);
+                    ((GSOracleNGDatastoreEncoder)ds).setNamespace(workspace);
+                    ((GSOracleNGDatastoreEncoder)ds).setSchema(schema);
+                    ((GSOracleNGDatastoreEncoder)ds).setPort(port);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Database type must be of Postgis or Oracle");
+            }
         }
         boolean created = storeMan.create(workspace, ds);
         return created;
     }
 
-    public boolean publishDB(String url, String username, String password, Database.Type dbType, String host, int port,String dbUser, String dbPass, String schema, String database, String[] tables, String workspace, String style, ServletContext context) {
+    @Override
+    public PublishStatus publishDB(String url, String username, String password, Database.Type dbType, String host, int port,String dbUser, String dbPass, String schema, String database, String[] tables, String workspace, String style, ServletContext context) {
+        PublishStatus status = new PublishStatus();
         try {
             GeoServerRESTManager manager = new GeoServerRESTManager(new URL(url), username, password);
             boolean b = manager.getPublisher().createWorkspace(workspace, new URI(workspace));
+            status.setServiceCreated(b);
             boolean createdStore = createDatastore(host, port,dbUser, dbPass, schema, database, workspace, dbType,manager);
-            boolean published = true;
+            status.setStoreCreated(createdStore);
             for (String table : tables) {
-                published = publishLayer(table, style, database, workspace, manager) && published;
-
+                boolean published = publishLayer(table, style, database, workspace, manager);
+                if(published){
+                    status.getLayersSucceeded().add(table);
+                }else{
+                    status.getLayersFailed().add(table);
+                }
             }
-            return published;
-
         } catch (MalformedURLException ex) {
             log.error("Failed to initialize restapi: ", ex);
-            return false;
+            status.setFatal(true);
         } catch (URISyntaxException ex) {
             log.error("Failed to initialize restapi: ", ex);
+            status.setFatal(true);
         }
-        return false;
+        return status;
     }
 
 }

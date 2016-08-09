@@ -33,6 +33,7 @@ import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
 import nl.b3p.datastorelinker.publish.GeoserverPublisher;
 import nl.b3p.datastorelinker.publish.MapserverPublisher;
+import nl.b3p.datastorelinker.publish.PublishStatus;
 import nl.b3p.datastorelinker.publish.Publisher;
 import nl.b3p.datastorelinker.util.NameableComparer;
 import nl.b3p.geotools.data.linker.util.DataStoreUtil;
@@ -106,19 +107,17 @@ public class OutputServicesAction extends DefaultAction {
             if (selectedTables != null) {
                 String[] tablesToPublish = selectedTables.split(",");
 
-                boolean published = false;
                 String host = c.getInitParameter("publisher.serverUrl");
                 String serviceName = c.getInitParameter("publisher.serviceName");
                 String userName = c.getInitParameter("publisher.serviceUser");
                 String password = c.getInitParameter("publisher.servicePassword");
                 String style = "polygon";
-                published = publisher.publishDB(host, userName, password,
+                PublishStatus status = publisher.publishDB(host, userName, password,
                         database.getType(), database.getHost(), database.getPort(), database.getUsername(), database.getPassword(),
                         database.getSchema(), database.getDatabaseName(), tablesToPublish, serviceName, style, c);
 
-                if (!published) {
-                    getContext().getValidationErrors().add("Fout", new SimpleError("Service is niet gepubliceerd."));
-                }
+                getContext().getValidationErrors().add("Status", new SimpleError(status.toString()));
+                
             }
             getContext().getMessages().add(new SimpleMessage("Gelukt"));//
         } else {

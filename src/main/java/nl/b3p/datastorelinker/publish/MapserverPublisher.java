@@ -39,10 +39,11 @@ public class MapserverPublisher implements Publisher {
 
     private String propertiesFile = "/WEB-INF/velocity.properties";
 
-    public boolean publishDb(String url, String username, String password,
+    public PublishStatus publishDb(String url, String username, String password,
             Database.Type dbType, String host, int port, String dbUser,
             String dbPass, String schema, String database, String table,
             String serviceName, String style, ServletContext context) {
+                PublishStatus status = new PublishStatus();
 
         String[] tables = new String[1];
         tables[0] = table;
@@ -51,19 +52,19 @@ public class MapserverPublisher implements Publisher {
                 database, tables, serviceName, context);
     }
 
-    public boolean publishDB(String url, String username, String password,
+    public PublishStatus publishDB(String url, String username, String password,
             Database.Type dbType, String host, int port, String dbUser,
             String dbPass, String schema, String database, String[] table,
             String serviceName, String style, ServletContext context) {
-
+        PublishStatus status = new PublishStatus();
         return createMapfile(dbType, host, port, dbUser, dbPass, schema,
                 database, table, serviceName, context);
     }
 
-    private boolean createMapfile(Database.Type dbType, String host, int port,
+    private PublishStatus createMapfile(Database.Type dbType, String host, int port,
             String dbUser, String dbPass, String schema, String database,
             String[] tables, String serviceName, ServletContext c) {
-
+        PublishStatus status = new PublishStatus();
         String mapFilePath = c.getInitParameter("publisher.mapfileLocation");
 
         if (host == null || mapFilePath == null || serviceName == null) {
@@ -143,13 +144,13 @@ public class MapserverPublisher implements Publisher {
 
             log.info(writer.toString());
 
-            return true;
+            //return true;
         } catch (Exception e) {
             log.error("Fout bij maken mapfile: ", e);
         }
 
         /* Mapfile POST'en of ergens op server plaatsen ? */
-        return false;
+        return status;
     }
 
     private void fillConnectionAndData(Layer layer, String type,

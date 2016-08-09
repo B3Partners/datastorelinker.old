@@ -28,7 +28,7 @@ public interface Publisher {
     public static final String PUBLISHER_TYPE_GEOSERVER = "GEOSERVER";
     public static final String PUBLISHER_TYPE_MAPSERVER = "MAPSERVER";
     
-    boolean publishDb(String url,  String username, String password, Database.Type dbType, String host,int port, String dbUser, String dbPass,String schema,String database, String table, String workspace,String style, ServletContext context);
-    boolean publishDB(String url,  String username, String password, Database.Type dbType, String host,int port, String dbUser, String dbPass,String schema,String database, String[] table, String workspace,String style, ServletContext context);
+    PublishStatus publishDb(String url,  String username, String password, Database.Type dbType, String host,int port, String dbUser, String dbPass,String schema,String database, String table, String workspace,String style, ServletContext context);
+    PublishStatus publishDB(String url,  String username, String password, Database.Type dbType, String host,int port, String dbUser, String dbPass,String schema,String database, String[] table, String workspace,String style, ServletContext context);
     
 }
