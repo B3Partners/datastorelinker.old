@@ -24,6 +24,7 @@
         /* Event wordt aangeroepen in back-end als form is ingevuld */
     var nieuwServiceOptions = $.extend({}, defaultDialogOptions, {
         width: 550,
+        height: 500,
         formSelector: ".form-container .ui-accordion-content-active form",
         buttons: {
             "<fmt:message key="finish"/>": function() {
