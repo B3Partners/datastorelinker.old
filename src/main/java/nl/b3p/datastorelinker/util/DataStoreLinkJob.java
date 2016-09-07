@@ -204,7 +204,7 @@ public class DataStoreLinkJob implements Job {
                         log.info("Schedule linked process: " + linked.getName() + " from parent process: " + this.process.getName());
                         scheduleDslJobImmediately(linked);
                     }
-                } catch (SchedulerException ex) {
+                } catch (Exception ex) {
                     //geen verder foutmelding naar gebruiker, misschien later aparte status toevoegen
                     log.error("Linked process schedule could not be created: ", ex);
                 }
@@ -214,7 +214,7 @@ public class DataStoreLinkJob implements Job {
         }
     }
     
-    public void scheduleDslJobImmediately(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException {
+    public void scheduleDslJobImmediately_old(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException {
  
         String generatedJobUUID = "job" + UUID.randomUUID().toString();
         JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
@@ -227,8 +227,42 @@ public class DataStoreLinkJob implements Job {
         // null context means the context should have been saved earlier
         Scheduler scheduler = SchedulerUtils.getScheduler(null);
 
-        process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
+//        process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
         process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
+        scheduler.scheduleJob(jobDetail, trigger);
+    }
+    
+    public void scheduleDslJobImmediately(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException, Exception {
+
+        String generatedJobUUID = "job" + UUID.randomUUID().toString();
+        JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+        jobDetail.getJobDataMap().put("processId", process.getId());
+
+        jobDetail.getJobDataMap().put("locale", locale);
+        //already provided by parent job: host and email
+
+        Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+        // null context means the context should have been saved earlier
+        Scheduler scheduler = SchedulerUtils.getScheduler(null);
+
+//        process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
+
+            EntityManager em = JpaUtilServlet.getThreadEntityManager();
+            EntityTransaction tx = null;
+            tx = em.getTransaction();
+        try {
+
+            tx.begin();
+            process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
+
+            tx.commit();
+        } catch (Exception e) {
+            tryRollback(tx);
+            throw e;
+        } finally {
+            JpaUtilServlet.closeThreadEntityManager();
+        }
+
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
