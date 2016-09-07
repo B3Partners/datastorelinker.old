@@ -204,7 +204,7 @@ public class DataStoreLinkJob implements Job {
                         log.info("Schedule linked process: " + linked.getName() + " from parent process: " + this.process.getName());
                         scheduleDslJobImmediately(linked);
                     }
-                } catch (SchedulerException ex) {
+                } catch (Exception ex) {
                     //geen verder foutmelding naar gebruiker, misschien later aparte status toevoegen
                     log.error("Linked process schedule could not be created: ", ex);
                 }
@@ -213,9 +213,9 @@ public class DataStoreLinkJob implements Job {
             }
         }
     }
-    
-    public void scheduleDslJobImmediately(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException {
- 
+   
+    public void scheduleDslJobImmediately(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException, Exception {
+
         String generatedJobUUID = "job" + UUID.randomUUID().toString();
         JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
         jobDetail.getJobDataMap().put("processId", process.getId());
@@ -227,8 +227,24 @@ public class DataStoreLinkJob implements Job {
         // null context means the context should have been saved earlier
         Scheduler scheduler = SchedulerUtils.getScheduler(null);
 
-        process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
-        process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
+        // open the transaction manager to save the generated UUID code before scheduling the job
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        EntityTransaction tx = null;
+        tx = em.getTransaction();
+        try {
+
+            tx.begin();
+            process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
+
+            tx.commit();
+        } catch (Exception e) {
+            tryRollback(tx);
+            throw e;
+        } finally {
+            JpaUtilServlet.closeThreadEntityManager();
+        }
+        
+        // run the job
         scheduler.scheduleJob(jobDetail, trigger);
     }
 
