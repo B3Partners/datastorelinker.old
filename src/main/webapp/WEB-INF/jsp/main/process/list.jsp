@@ -9,39 +9,48 @@
 
 <script type="text/javascript" class="ui-layout-ignore">
     
+    
+    // images for the different statuses
+    var status_options = 
+            {'RUNNING': "images/spinner.gif", 
+            'LAST_RUN_OK': "images/circle_green.png" , 
+            'LAST_RUN_OK_WITH_ERRORS': "images/circle_groengeel.png", 
+            'LAST_RUN_FATAL_ERROR': "images/circle_red.png", 
+            'CANCELED_BY_USER': "images/circle_blue.png"};
+
+    // current url path
+    var current_path = location.pathname;
+
+    
+    // query the server on the status of all processes visible to this user
     function updateAllStatuses2() {
             $.ajax({
-                url: "Process.action",
-            event: "listToJson",
-                        data: [
-                {name: "listToJson", value: ""}
-            ],
-            dataType: "json",
-            success: function(data, textStatus) {
-                console.log(data);
+                    url: "Process.action",
+                    data: [{name: "listToJson", value: ""}],
+                    dataType: "json",
+                    
+                    success: function(data, textStatus) {
 
-                },
-                error: function (data, error) {
-                    console.log(error);
-                    console.log(data);
-                },
-                global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
+                        try { 
+                        for(i in data){
+                            var selector = $('#process' + data[i][0]);
+                            var label = $("label[for='"+$(selector).attr('id')+"']");
+                            var img_selector = label.find('.status_image');
+                            var image_path = current_path + status_options[data[i][1]];
+                            img_selector.attr("src", image_path);
+
+                        }} catch (err){
+                        console.log(err);
+                        }},
+                    
+                    error: function (data, error) {
+                        console.log(error);
+                        console.log(data);},
+                    
+                    global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
             });
         }
     
-    
-    console.log('this reloaded!');
-    
-    function updateAllStatuses() {
-                ajaxOpen({
-                    formSelector: "#processForm",
-                    event: "listToJson",
-                    containerSelector: "#processesListContainer",
-                    ajaxOptions: {
-                        global: false
-                    }
-                });
-                } 
     $(document).ready(function() {
         selectFirstRadioInputIfPresentAndNoneSelected($("#processesList input:radio"));
         $("#processesList").buttonset();
@@ -67,8 +76,9 @@
                 tip: true
             }
         });
-           if (updateInterval === null){updateInterval = setInterval("updateAllStatuses2()", 5000);
-           console.log('setting interval!');}
+        
+        // if this is the first time the page is loaded, set refresh interval
+           if (updateInterval === null){updateInterval = setInterval("updateAllStatuses2()", 5000);}
     });
     
 </script>
@@ -113,27 +123,27 @@
                     </c:if>
                     <c:choose>
                         <c:when test="${process.processStatus.processStatusType == 'RUNNING'}">
-                            <img src="<stripes:url value="/images/spinner.gif"/>"
+                            <img class ="status_image" src="<stripes:url value="/images/spinner.gif"/>"
                                  title="<fmt:message key="process.running"/>"
                                  alt="process.running" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK'}">
-                            <img src="<stripes:url value="/images/circle_green.png"/>"
+                            <img class ="status_image" src="<stripes:url value="/images/circle_green.png"/>"
                                  title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunOk" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_OK_WITH_ERRORS'}">
-                            <img src="<stripes:url value="/images/circle_groengeel.png"/>"
+                            <img class ="status_image" src="<stripes:url value="/images/circle_groengeel.png"/>"
                                  title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunOkWithErrors" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'LAST_RUN_FATAL_ERROR'}">
-                            <img src="<stripes:url value="/images/circle_red.png"/>"
+                            <img class ="status_image" src="<stripes:url value="/images/circle_red.png"/>"
                                  title="<c:out value="${process.processStatus.message}"/>"
                                  alt="process.lastRunFatalError" />
                         </c:when>
                         <c:when test="${process.processStatus.processStatusType == 'CANCELED_BY_USER'}">
-                            <img src="<stripes:url value="/images/circle_blue.png"/>"
+                            <img class ="status_image" src="<stripes:url value="/images/circle_blue.png"/>"
                                  title="<fmt:message key="process.canceledByUser"/>"
                                  alt="process.canceledByUser" />
                         </c:when>

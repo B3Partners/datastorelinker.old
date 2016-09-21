@@ -123,6 +123,13 @@ public class ProcessAction extends DefaultAction {
         return new ForwardResolution(LIST_JSP);
     }
     
+    
+    /**
+     * get a list of processes - processStatuses, convert to JSON 
+     * 
+     * @return 
+     */
+    
     public Resolution listToJson() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session)em.getDelegate();
@@ -149,16 +156,24 @@ public class ProcessAction extends DefaultAction {
             }
         }
         
-        processes = filterPossibleCyclicDependencies(processes, selectedInputId);
-        Collections.sort(processes, new NameableComparer());
+        ArrayList<ArrayList<String>> clean_processes = getSimpleProcessList(processes);
         JSONArray processesJson = new JSONArray();
-        processesJson.addAll(processes);
+        processesJson.addAll(clean_processes);
 
         return new JSONResolution(processesJson);
     }
 
-    
-    private List<List<String>> getSimpleProcessList(List<Process> processes){
+    /**
+     * Convert a list of Process objects to a Arraylist of tuples with
+     * - processid
+     * - processStatus
+     * 
+     * This will avoid circular references when serializing to JSON
+     * @param processes
+     * @return 
+     */
+    private ArrayList<ArrayList<String>> getSimpleProcessList(List<Process> processes){
+        
         
         ArrayList<ArrayList<String>> processResultList = new ArrayList<ArrayList<String>>() ;
         
@@ -166,9 +181,10 @@ public class ProcessAction extends DefaultAction {
             ArrayList<String> tuple = new ArrayList<String>();
             tuple.add(Long.toString(process.getId()));
             tuple.add(process.getProcessStatus().getProcessStatusType().toString());
+            processResultList.add(tuple);
         }
         
-        
+        return processResultList;
     };
     @DefaultHandler
     public Resolution overview() {
