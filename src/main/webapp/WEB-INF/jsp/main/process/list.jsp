@@ -8,6 +8,40 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <script type="text/javascript" class="ui-layout-ignore">
+    
+    function updateAllStatuses2() {
+            $.ajax({
+                url: "Process.action",
+            event: "listToJson",
+                        data: [
+                {name: "listToJson", value: ""}
+            ],
+            dataType: "json",
+            success: function(data, textStatus) {
+                console.log(data);
+
+                },
+                error: function (data, error) {
+                    console.log(error);
+                    console.log(data);
+                },
+                global: false // prevent ajaxStart and ajaxStop to be called (with blockUI in them)
+            });
+        }
+    
+    
+    console.log('this reloaded!');
+    
+    function updateAllStatuses() {
+                ajaxOpen({
+                    formSelector: "#processForm",
+                    event: "listToJson",
+                    containerSelector: "#processesListContainer",
+                    ajaxOptions: {
+                        global: false
+                    }
+                });
+                } 
     $(document).ready(function() {
         selectFirstRadioInputIfPresentAndNoneSelected($("#processesList input:radio"));
         $("#processesList").buttonset();
@@ -33,6 +67,8 @@
                 tip: true
             }
         });
+           if (updateInterval === null){updateInterval = setInterval("updateAllStatuses2()", 5000);
+           console.log('setting interval!');}
     });
     
 </script>

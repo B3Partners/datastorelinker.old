@@ -10,6 +10,21 @@
 
 
 <script type="text/javascript" class="ui-layout-ignore">
+    
+    var updateInterval = null;
+            
+            function updateAllStatuses() {
+                ajaxOpen({
+                    formSelector: "#processForm",
+                    event: "list",
+                    containerSelector: "#processesListContainer",
+                    ajaxOptions: {
+                        global: false
+                    }
+                });
+                }
+
+    
     function recalculateNewUpdateProcessCommonDialogOptions() {
         return $.extend({}, defaultDialogOptions, {
             width: calculateDialogWidth(70, 600, 1200),
