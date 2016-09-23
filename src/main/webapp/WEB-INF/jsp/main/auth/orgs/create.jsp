@@ -12,6 +12,15 @@
                 $("#orgName").val("");
             </c:otherwise>
         </c:choose>
+
+    $("#orgName").keydown(function(event){
+        // on enter skip the default behaviour and fire the button to create a new organization
+            if (event.which === 13){
+                event.preventDefault();
+                $("#newOrgCreate").trigger('click');
+ 
+            }
+        });
     });
 </script>
 
