@@ -14,6 +14,12 @@
                     var selectedOutputId = $("#orgListContainer :radio:checked").val();
                     var organizationIds = $("#organizationIds").val();
                     
+                    if (organizationIds === null){
+                    
+                        $("#msgOrgIdError").html("Selecteer een of meerdere organisaties!");
+                        return;
+        }
+                    
                     ajaxOpen({
                         url: "${outputRightsUrl}",
                         event: "createOutputRightsComplete",
