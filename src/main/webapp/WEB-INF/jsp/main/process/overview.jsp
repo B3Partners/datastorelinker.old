@@ -10,6 +10,10 @@
 
 
 <script type="text/javascript" class="ui-layout-ignore">
+    
+    // used by the list.jsp, which reloads and resets this if it is there
+    var updateInterval = null;
+            
     function recalculateNewUpdateProcessCommonDialogOptions() {
         return $.extend({}, defaultDialogOptions, {
             width: calculateDialogWidth(70, 600, 1200),

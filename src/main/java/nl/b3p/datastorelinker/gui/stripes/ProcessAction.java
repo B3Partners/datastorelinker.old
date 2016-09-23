@@ -122,7 +122,70 @@ public class ProcessAction extends DefaultAction {
 
         return new ForwardResolution(LIST_JSP);
     }
+    
+    
+    /**
+     * get a list of processes - processStatuses, convert to JSON 
+     * 
+     * @return 
+     */
+    
+    public Resolution listToJson() {
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        Session session = (Session)em.getDelegate();
 
+        /* show all to beheerder but organization only for plain users */
+        if (isUserAdmin()) {
+            processes = session.createQuery("from Process order by name").list();
+        } else {
+            processes = session.createQuery("from Process where organization_id = :org_id"
+                    + " order by name")
+                    .setParameter("org_id", getUserOrganiztionId())
+                    .list();
+        }
+        
+        /* Gebruikernaam en opmerking zetten voor in overzicht */
+        for (nl.b3p.datastorelinker.entity.Process process : processes) {            
+            Users user = (Users) session.createQuery("from Users where id = :userid")
+                    .setParameter("userid", process.getUserId()).uniqueResult();
+            if(process.getLinkedProcess() != null){
+                Hibernate.initialize(process.getLinkedProcess());
+            }
+            if (user != null) {
+                process.setUserName(user.getName());
+            }
+        }
+        
+        ArrayList<ArrayList<String>> clean_processes = getSimpleProcessList(processes);
+        JSONArray processesJson = new JSONArray();
+        processesJson.addAll(clean_processes);
+
+        return new JSONResolution(processesJson);
+    }
+
+    /**
+     * Convert a list of Process objects to a Arraylist of tuples with
+     * - processid
+     * - processStatus
+     * 
+     * This will avoid circular references when serializing to JSON
+     * @param processes
+     * @return 
+     */
+    private ArrayList<ArrayList<String>> getSimpleProcessList(List<Process> processes){
+        
+        
+        ArrayList<ArrayList<String>> processResultList = new ArrayList<ArrayList<String>>() ;
+        
+        for (Process process : processes) {
+            ArrayList<String> tuple = new ArrayList<String>();
+            tuple.add(Long.toString(process.getId()));
+            tuple.add(process.getProcessStatus().getProcessStatusType().toString());
+            processResultList.add(tuple);
+        }
+        
+        return processResultList;
+    };
     @DefaultHandler
     public Resolution overview() {
         list();
