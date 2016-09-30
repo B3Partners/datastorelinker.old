@@ -370,6 +370,7 @@ attributeTypeJavaClasses = {
     "java.lang.Boolean": {},
     "java.lang.Integer": {},
     "java.lang.Float": {},
+    "java.lang.Double": {},
     "java.util.Date": {},
     "com.vividsolutions.jts.geom.Polygon": {},
     "com.vividsolutions.jts.geom.MultiPolygon": {},
