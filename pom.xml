@@ -68,7 +68,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
-            <version>4.2.5</version>
+            <version>4.2.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
