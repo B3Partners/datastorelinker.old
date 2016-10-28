@@ -103,6 +103,9 @@ public class DataStoreLinkJob implements Job {
         ProcessStatus finishedStatus = null;
         EntityTransaction tx = null;
         
+        // get the old scheduler instance to reuse in linked jobs
+        Scheduler oldScheduler = jec.getScheduler();
+        
         try {
             log.debug("Quartz started process");
             processId = jec.getJobDetail().getJobDataMap().getLong("processId");
@@ -202,7 +205,7 @@ public class DataStoreLinkJob implements Job {
                 try {
                     for (nl.b3p.datastorelinker.entity.Process linked : linkedProcesses) {
                         log.info("Schedule linked process: " + linked.getName() + " from parent process: " + this.process.getName());
-                        scheduleDslJobImmediately(linked);
+                        scheduleDslJobImmediatelyWithOldScheduler(linked, oldScheduler);
                     }
                 } catch (Exception ex) {
                     //geen verder foutmelding naar gebruiker, misschien later aparte status toevoegen
@@ -226,7 +229,7 @@ public class DataStoreLinkJob implements Job {
         Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
         // null context means the context should have been saved earlier
         Scheduler scheduler = SchedulerUtils.getScheduler(null);
-
+        
         // open the transaction manager to save the generated UUID code before scheduling the job
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         EntityTransaction tx = null;
@@ -246,6 +249,50 @@ public class DataStoreLinkJob implements Job {
         
         // run the job
         scheduler.scheduleJob(jobDetail, trigger);
+    }
+        /**
+         * Run a linked process immediately.
+         * 
+         * Reuse the scheduler from the previous class because the linkjob 
+         * does not have access to the servlet context and will throw a 
+         * NullPointerException when trying to get schedulerFactory in 
+         * SchedulerUtils.
+         * 
+         * @param process Process
+         * @param oldScheduler Scheduler
+         * @throws SchedulerException
+         * @throws Exception 
+         */
+        public void scheduleDslJobImmediatelyWithOldScheduler(nl.b3p.datastorelinker.entity.Process process, Scheduler oldScheduler) throws SchedulerException, Exception {
+
+        String generatedJobUUID = "job" + UUID.randomUUID().toString();
+        JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+        jobDetail.getJobDataMap().put("processId", process.getId());
+
+        jobDetail.getJobDataMap().put("locale", locale);
+        //already provided by parent job: host and email
+
+        Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+        
+        // open the transaction manager to save the generated UUID code before scheduling the job
+        EntityManager em = JpaUtilServlet.getThreadEntityManager();
+        EntityTransaction tx = null;
+        tx = em.getTransaction();
+        try {
+
+            tx.begin();
+            process.getProcessStatus().setExecutingJobUUID(generatedJobUUID);
+
+            tx.commit();
+        } catch (Exception e) {
+            tryRollback(tx);
+            throw e;
+        } finally {
+            JpaUtilServlet.closeThreadEntityManager();
+        }
+        
+        // run the job
+        oldScheduler.scheduleJob(jobDetail, trigger);
     }
 
     
