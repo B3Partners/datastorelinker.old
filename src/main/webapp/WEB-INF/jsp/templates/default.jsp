@@ -64,7 +64,12 @@
             <script type="text/javascript" src="${contextPath}/scripts/json2.min.js"></script>
 
             <!-- B3p libs: -->
-            <script type="text/javascript" src="${contextPath}/scripts/log.js"></script>
+	    <%-- /script/log. path blocked by EasyPrivacy adblocker rule --%>
+            <%--script type="text/javascript" src="${contextPath}/scripts/log.js"></script--%>
+<script>
+            <%@include file="/scripts/log.js" %>
+</script>
+
             <script type="text/javascript" src="${contextPath}/scripts/init.js.jsp"></script>
             <script type="text/javascript" src="<stripes:url beanclass="nl.b3p.datastorelinker.gui.stripes.i18nAction"/>"></script>
             <script type="text/javascript" src="${contextPath}/scripts/ajax.js"></script>
