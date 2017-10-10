@@ -21,10 +21,12 @@ import org.quartz.JobExecutionException;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.TriggerUtils;
 
 /**
@@ -220,13 +222,18 @@ public class DataStoreLinkJob implements Job {
     public void scheduleDslJobImmediately(nl.b3p.datastorelinker.entity.Process process) throws SchedulerException, Exception {
 
         String generatedJobUUID = "job" + UUID.randomUUID().toString();
-        JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+        JobDetail jobDetail = JobBuilder.newJob(DataStoreLinkJob.class)
+                .withIdentity(generatedJobUUID)
+                .build();
         jobDetail.getJobDataMap().put("processId", process.getId());
-
         jobDetail.getJobDataMap().put("locale", locale);
         //already provided by parent job: host and email
 
-        Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+        //Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .forJob(jobDetail)
+                .startNow()
+                .build();
         // null context means the context should have been saved earlier
         Scheduler scheduler = SchedulerUtils.getScheduler(null);
         
@@ -266,13 +273,19 @@ public class DataStoreLinkJob implements Job {
         public void scheduleDslJobImmediatelyWithOldScheduler(nl.b3p.datastorelinker.entity.Process process, Scheduler oldScheduler) throws SchedulerException, Exception {
 
         String generatedJobUUID = "job" + UUID.randomUUID().toString();
-        JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+            JobDetail jobDetail = JobBuilder.newJob(DataStoreLinkJob.class)
+                    .withIdentity(generatedJobUUID)
+                    .build();
         jobDetail.getJobDataMap().put("processId", process.getId());
 
         jobDetail.getJobDataMap().put("locale", locale);
         //already provided by parent job: host and email
 
-        Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            //Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
+                    .startNow()
+                    .build();
         
         // open the transaction manager to save the generated UUID code before scheduling the job
         EntityManager em = JpaUtilServlet.getThreadEntityManager();

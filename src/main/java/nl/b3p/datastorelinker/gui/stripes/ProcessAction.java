@@ -41,10 +41,11 @@ import nl.b3p.geotools.data.linker.Status;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
-import org.quartz.TriggerUtils;
+import org.quartz.TriggerBuilder;
 
 /**
  *
@@ -306,7 +307,7 @@ public class ProcessAction extends DefaultAction {
         for (Process process : processes) {
             JSONObject obj = process.toJSONObject();
             jsonProcesses.add(obj);
-            
+
         }
         return new ForwardResolution(PROCESS_DIAGRAM_JSP);
     }
@@ -423,7 +424,7 @@ public class ProcessAction extends DefaultAction {
         }         
 
         JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        
+
         ActionsAction.removeViewData(actionsListJSONArray);
         ActionsAction.addExpandableProperty(actionsListJSONArray);
 
@@ -533,13 +534,19 @@ public class ProcessAction extends DefaultAction {
             //log.debug(processString);
 
             String generatedJobUUID = "job" + UUID.randomUUID().toString();
-            JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+            JobDetail jobDetail = JobBuilder.newJob(DataStoreLinkJob.class)
+                    .withIdentity(generatedJobUUID)
+                    .build();
             jobDetail.getJobDataMap().put("processId", process.getId());
             jobDetail.getJobDataMap().put("locale", getContext().getLocale());
             jobDetail.getJobDataMap().put(DataStoreLinkJob.KEY_DEFAULT_SMTP_HOST, getContext().getServletContext().getInitParameter("defaultSmtpHost"));
             jobDetail.getJobDataMap().put(DataStoreLinkJob.KEY_DEFAULT_FROM_ADDRESS, getContext().getServletContext().getInitParameter("defaultFromEmailAddress"));
             
-            Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            // Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
+                    .startNow()
+                    .build();
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());
             Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
             process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);

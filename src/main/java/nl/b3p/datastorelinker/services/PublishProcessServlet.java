@@ -33,10 +33,13 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.TriggerUtils;
+import org.quartz.impl.JobDetailImpl;
 
 /**
  *
@@ -241,11 +244,17 @@ public class PublishProcessServlet extends HttpServlet {
 
         try {
             String generatedJobUUID = "job" + UUID.randomUUID().toString();
-            JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+            JobDetail jobDetail = JobBuilder.newJob(DataStoreLinkJob.class)
+                    .withIdentity(generatedJobUUID)
+                    .build();
             jobDetail.getJobDataMap().put("processId", process.getId());
             //jobDetail.getJobDataMap().put("locale", getContext().getLocale());
             
-            Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            // Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
+                    .startNow()
+                    .build();
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());
             Scheduler scheduler = SchedulerUtils.getScheduler(getServletContext());
             process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);

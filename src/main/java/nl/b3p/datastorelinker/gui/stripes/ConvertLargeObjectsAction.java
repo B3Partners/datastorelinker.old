@@ -13,9 +13,8 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+
 import net.sourceforge.stripes.action.ActionBean;
 import net.sourceforge.stripes.action.ActionBeanContext;
 import net.sourceforge.stripes.action.Resolution;
@@ -30,10 +29,13 @@ import nl.b3p.datastorelinker.entity.Process;
 import nl.b3p.datastorelinker.entity.ProcessStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.postgresql.PGConnection;
+import org.postgresql.jdbc.PgDatabaseMetaData;
 
 /**
  *
  * @author meine
+ * @author mprins
  */
 public class ConvertLargeObjectsAction implements ActionBean {
 
@@ -86,7 +88,8 @@ public class ConvertLargeObjectsAction implements ActionBean {
         f.setAccessible(true);
         Object pgconnMetadata = f.get(metadata);
         statusArray.put("Retrieving postgres connection..");
-        org.postgresql.PGConnection connection =(org.postgresql.PGConnection) ((org.postgresql.jdbc4.Jdbc4DatabaseMetaData) pgconnMetadata).getConnection();
+        //PGConnection connection = (org.postgresql.PGConnection) ((org.postgresql.jdbc4.Jdbc4DatabaseMetaData) pgconnMetadata).getConnection();
+        PGConnection connection = (org.postgresql.PGConnection) ((PgDatabaseMetaData) pgconnMetadata).getConnection();
         statusArray.put("Connection established");
         lom = connection.getLargeObjectAPI();
         statusArray.put("Create LargeObjectManager");
