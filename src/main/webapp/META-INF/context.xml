@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/datastorelinker">
-    
-    <Parameter name="publisher.serverUrl" value="LOCATION_OF_SERVICE" override="false"/>
-    <Parameter name="publisher.serviceUser" value="GEOSERVER_USER" override="false"/>
-    <Parameter name="publisher.servicePassword" value="GEOSERVER_PASSWORD" override="false"/>
-    <Parameter name="publisher.mapfileLocation" value="MAPFILE_LOCATION" override="false"/>
-    <Parameter name="publisher.serviceName" value="serviceName" override="false"/>
-   
+<Context path="/datastorelinker">
+    <Parameter name="publisher.serverUrl" override="false" value="LOCATION_OF_SERVICE"/>
+    <Parameter name="publisher.serviceUser" override="false" value="GEOSERVER_USER"/>
+    <Parameter name="publisher.servicePassword" override="false" value="GEOSERVER_PASSWORD"/>
+    <Parameter name="publisher.mapfileLocation" override="false" value="MAPFILE_LOCATION"/>
+    <Parameter name="publisher.serviceName" override="false" value="serviceName"/>
 </Context>
