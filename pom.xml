@@ -45,26 +45,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-core</artifactId>
             <version>${project.version}</version>
-            <!--            <exclusions>
-                <exclusion>
-                    <groupId>commons-beanutils</groupId>
-                    <artifactId>commons-beanutils</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                     geeft een conflict met de hogere versie die hibernate nodig heeft in datastorelinker 
-                    <groupId>javax.persistence</groupId>
-                    <artifactId>persistence-api</artifactId>
-                    version>1.0</version 
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -75,12 +55,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
             <version>${project.version}</version>
-            <!--            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -94,19 +68,9 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-gis</artifactId>
             <version>${project.version}</version>
-            <!--            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>apache-xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
-            <!-- override de oudere versien die met
+            <!-- override de oudere versie die met
             it.geosolutions:geoserver-manager meekomt -->
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -120,12 +84,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-mapfile</artifactId>
             <version>${project.version}</version>
-            <!--            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>-->
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -172,7 +130,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
-
     </dependencies>
     <repositories>
         <repository>
@@ -219,9 +176,34 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.20.1</version>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <skip>true</skip>
-                </configuration>               
+                    <prefix>builddetails</prefix>
+                    <dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
+                    <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+                    <skipPoms>true</skipPoms>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <gitDescribe>
+                        <skip>true</skip>
+                        <always>true</always>
+                        <abbrev>7</abbrev>
+                        <dirty>-dirty</dirty>
+                        <forceLongFormat>false</forceLongFormat>
+                    </gitDescribe>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -229,6 +211,18 @@
                 <version>3.2.0</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <filters>
+                        <filter>${basedir}/src/main/resources/git.properties</filter>
+                    </filters>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp/WEB-INF/jsp/commons</directory>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>footer.jsp</include>
+                            </includes>
+                        </resource>
+                    </webResources>
                 </configuration>
             </plugin>
             <plugin>
