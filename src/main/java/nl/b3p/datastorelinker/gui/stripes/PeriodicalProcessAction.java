@@ -17,7 +17,6 @@ import nl.b3p.datastorelinker.util.SchedulerUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.quartz.CronScheduleBuilder;
-import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -25,7 +24,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.triggers.CronTriggerImpl;
 
 /**
  *
@@ -127,13 +125,11 @@ public class PeriodicalProcessAction extends DefaultAction {
 
             // Quartz scheduler:
             log.debug("fromDate:" + fromDate);// fromDate kan null zijn
-            // Als fromDate == null dan automatisch fromDate == NOW
             //TODO: time-zone mee geven aan trigger. Nodig als server in een andere timezone staat.
-            //Trigger trigger = new CronTriggerImpl(triggerName, null, jobName, null, fromDate, null, cronExpressionString);
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(triggerName)
                     .forJob(jobDetail)
-                    .startAt(fromDate)
+                    .startAt((fromDate == null ? new Date() : fromDate))
                     .withSchedule(CronScheduleBuilder.cronSchedule(cronExpressionString))
                     .build();
 
