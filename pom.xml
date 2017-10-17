@@ -191,7 +191,7 @@
                 <configuration>
                     <prefix>builddetails</prefix>
                     <dateFormat>dd.MM.yyyy '@' HH:mm:ss z</dateFormat>
-                    <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
                     <skipPoms>true</skipPoms>
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <generateGitPropertiesFilename>src/main/resources/git.properties</generateGitPropertiesFilename>
@@ -216,10 +216,10 @@
                     </filters>
                     <webResources>
                         <resource>
-                            <directory>src/main/webapp/WEB-INF/jsp/commons</directory>
+                            <directory>src/main/webapp</directory>
                             <filtering>true</filtering>
                             <includes>
-                                <include>footer.jsp</include>
+                                <include>**/footer.jsp</include>
                             </includes>
                         </resource>
                     </webResources>
