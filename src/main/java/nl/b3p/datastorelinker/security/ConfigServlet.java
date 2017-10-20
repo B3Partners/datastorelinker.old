@@ -5,8 +5,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 public class ConfigServlet extends HttpServlet {
 
@@ -19,26 +17,24 @@ public class ConfigServlet extends HttpServlet {
     public static String ANONYMOUS_USER = "anoniem";
     private static String kburl = null;
     public static String kbWfsConnectieNaam = "Kaartenbalie WFS";
-    
+
     /**
      * http://www.kaartenbalie.nl/kaartenbalie/service/0c462abe62b69b2f05d1e72862f251f6
-     * kburl: http://www.kaartenbalie.nl/kaartenbalie/service/
-     * code:  0c462abe62b69b2f05d1e72862f251f6
+     * kburl: http://www.kaartenbalie.nl/kaartenbalie/service/ code:
+     * 0c462abe62b69b2f05d1e72862f251f6
      *
-     * Code kan alleen worden toegevoegd indien de kaartenbalie url eindigt
-     * op een /. Er wordt een / toegevoegd indien dit niet het geval is.
+     * Code kan alleen worden toegevoegd indien de kaartenbalie url eindigt op
+     * een /. Er wordt een / toegevoegd indien dit niet het geval is.
      *
-     * @param code
-     * @return
      */
     public static String createPersonalKbUrl(String code) {
         if (code != null && code.startsWith("http://")) {
             return code;
         }
         String url = getKbUrl();
-        if (url!=null){
+        if (url != null) {
             url = url.trim();
-            if (code != null && code.length()>0) {
+            if (code != null && code.length() > 0) {
                 if (url.lastIndexOf('/') == url.length() - 1) {
                     url += code;
                 } else {
@@ -57,7 +53,8 @@ public class ConfigServlet extends HttpServlet {
         kburl = aKburl;
     }
 
-    /** Initializes the servlet.
+    /**
+     * Initializes the servlet.
      */
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -83,5 +80,4 @@ public class ConfigServlet extends HttpServlet {
             throw new ServletException(e);
         }
     }
-    // </editor-fold>
 }

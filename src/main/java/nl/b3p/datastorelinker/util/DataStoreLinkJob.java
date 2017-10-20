@@ -63,7 +63,6 @@ public class DataStoreLinkJob implements Job {
     /**
      * Only this method is transactional since execution of the process (execute(JobExecutionContext jec))
      * could take hours or longer, depending on the input size.
-     * @param processStatus
      */
     private void setProcessStatus(ProcessStatus processStatus) throws Exception {
         if (processId == null) {

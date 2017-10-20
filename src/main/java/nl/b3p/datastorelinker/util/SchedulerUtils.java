@@ -17,7 +17,7 @@ import org.quartz.impl.StdSchedulerFactory;
 /**
  *
  * @author Erik van de Pol
- * @mprins
+ * @author mprins
  */
 public class SchedulerUtils {
     // save servlet context for use in quartz threads
