@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context path="/datastorelinker">
-    <Parameter name="publisher.serverUrl" override="false" value="LOCATION_OF_SERVICE"/>
-    <Parameter name="publisher.serviceUser" override="false" value="GEOSERVER_USER"/>
-    <Parameter name="publisher.servicePassword" override="false" value="GEOSERVER_PASSWORD"/>
+    <Parameter name="publisher.serverUrl" override="false" value="http://localhost:8080/geoserver"/>
+    <Parameter name="publisher.serviceUser" override="false" value="admin"/>
+    <Parameter name="publisher.servicePassword" override="false" value="geoserver"/>
     <Parameter name="publisher.mapfileLocation" override="false" value="MAPFILE_LOCATION"/>
-    <Parameter name="publisher.serviceName" override="false" value="serviceName"/>
+    <!-- de (geoserver) workspace waar de services gemaakt worden -->
+    <Parameter name="publisher.serviceName" override="false" value="lokaal"/>
+    <!-- optionele SRS voor te publiceren services, default is EPSG:28992 of 90112/28992 -->
+    <Parameter name="publisher.serviceSRS" override="false" value="EPSG:28992"/>
 </Context>

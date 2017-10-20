@@ -43,6 +43,7 @@ import org.hibernate.Session;
 /**
  *
  * @author Meine Toonen
+ * @author mprins
  */
 @Transactional
 public class OutputServicesAction extends DefaultAction {
@@ -103,7 +104,7 @@ public class OutputServicesAction extends DefaultAction {
 
         if (database.getType() == Database.Type.POSTGIS || database.getType() == Database.Type.ORACLE) {
             ServletContext c = getContext().getServletContext();
-
+            publisher.setStrSRS(c.getInitParameter("publisher.serviceSRS"));
             if (selectedTables != null) {
                 String[] tablesToPublish = selectedTables.split(",");
 
