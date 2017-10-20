@@ -16,11 +16,14 @@ import nl.b3p.datastorelinker.util.DefaultErrorResolution;
 import nl.b3p.datastorelinker.util.SchedulerUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
-import org.quartz.CronTrigger;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 /**
  *
@@ -98,7 +101,9 @@ public class PeriodicalProcessAction extends DefaultAction {
             String uuid = UUID.randomUUID().toString();
 
             String jobName = "job" + uuid;
-            JobDetail jobDetail = new JobDetail(jobName, DataStoreLinkJob.class);
+            JobDetail jobDetail = JobBuilder.newJob(DataStoreLinkJob.class)
+                    .withIdentity(jobName)
+                    .build();
             jobDetail.getJobDataMap().put("processId", process.getId());
             jobDetail.getJobDataMap().put("locale", getContext().getLocale());
             jobDetail.getJobDataMap().put((DataStoreLinkJob.KEY_DEFAULT_SMTP_HOST), getContext().getServletContext().getInitParameter("defaultSmtpHost"));
@@ -120,9 +125,13 @@ public class PeriodicalProcessAction extends DefaultAction {
 
             // Quartz scheduler:
             log.debug("fromDate:" + fromDate);// fromDate kan null zijn
-            // Als fromDate == null dan automatisch fromDate == NOW
             //TODO: time-zone mee geven aan trigger. Nodig als server in een andere timezone staat.
-            Trigger trigger = new CronTrigger(triggerName, null, jobName, null, fromDate, null, cronExpressionString);
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(triggerName)
+                    .forJob(jobDetail)
+                    .startAt((fromDate == null ? new Date() : fromDate))
+                    .withSchedule(CronScheduleBuilder.cronSchedule(cronExpressionString))
+                    .build();
 
             Scheduler scheduler = SchedulerUtils.getScheduler(getContext().getServletContext());
             scheduler.scheduleJob(jobDetail, trigger);
@@ -160,11 +169,13 @@ public class PeriodicalProcessAction extends DefaultAction {
         nl.b3p.datastorelinker.entity.Process process = (nl.b3p.datastorelinker.entity.Process) session.get(nl.b3p.datastorelinker.entity.Process.class, processId);
 
         Schedule schedule = process.getSchedule();
+
         if (schedule != null) {
             try {
                 // try to unschedule from Quartz
                 Scheduler scheduler = SchedulerUtils.getScheduler(servletContext);
-                scheduler.deleteJob(schedule.getJobName(), null);
+                //scheduler.deleteJob(schedule.getJobName(), null);
+                scheduler.deleteJob(new JobKey(schedule.getJobName()));
 
                 // if success, we remove the schedule from our own tables
                 session.delete(process.getSchedule());

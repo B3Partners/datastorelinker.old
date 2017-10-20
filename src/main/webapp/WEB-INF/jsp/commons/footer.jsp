@@ -11,6 +11,6 @@
 <div id="footer">
     <div id="footer_content">
         <div id="footer_tekst_links" class="footer_tekst">This program is distributed under the terms of the <a class="gpl_link" href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a></div>
-        <div id="footer_tekst_rechts" class="footer_tekst">B3P GIS Suite 4.2</div>
+        <div id="footer_tekst_rechts" class="footer_tekst">B3P DataStoreLinker ${project.version} ${builddetails.commit.id.abbrev}</div>
     </div>
 </div>

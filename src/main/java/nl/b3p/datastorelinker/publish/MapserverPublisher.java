@@ -32,18 +32,20 @@ import org.opengis.feature.simple.SimpleFeatureType;
 /**
  *
  * @author Boy de Wit
+ * @author mprins
  */
 public class MapserverPublisher implements Publisher {
 
     private final static Log log = Log.getInstance(MapserverPublisher.class);
 
     private String propertiesFile = "/WEB-INF/velocity.properties";
+    private int strSRS = 28992;
 
     public PublishStatus publishDb(String url, String username, String password,
             Database.Type dbType, String host, int port, String dbUser,
             String dbPass, String schema, String database, String table,
             String serviceName, String style, ServletContext context) {
-                PublishStatus status = new PublishStatus();
+        PublishStatus status = new PublishStatus();
 
         String[] tables = new String[1];
         tables[0] = table;
@@ -176,9 +178,9 @@ public class MapserverPublisher implements Publisher {
         layer.setDataPrimaryKeyColumn(pkColumn);
 
         if (dbType.equals(Database.Type.ORACLE)) {
-            layer.setDataSrid(90112);
+            layer.setDataSrid(strSRS);
         } else {
-            layer.setDataSrid(28992);
+            layer.setDataSrid(strSRS);
         }
     }
 
@@ -354,5 +356,18 @@ public class MapserverPublisher implements Publisher {
             }
         }
         return p;
+    }
+
+    @Override
+    public void setStrSRS(String strSRS) {
+        if (strSRS == null) {
+            return;
+        }
+        try {
+            this.strSRS = Integer.parseInt(strSRS);
+        } catch (NumberFormatException nfe) {
+            log.error(nfe, new Object[]{nfe.getLocalizedMessage(), "Controleer de SRS waarde in de context.xml"});
+        }
+
     }
 }

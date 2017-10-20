@@ -17,6 +17,7 @@ import org.quartz.impl.StdSchedulerFactory;
 /**
  *
  * @author Erik van de Pol
+ * @mprins
  */
 public class SchedulerUtils {
     // save servlet context for use in quartz threads
@@ -43,8 +44,8 @@ public class SchedulerUtils {
             log.debug("triggers:");
             List<JobExecutionContext> jecs = scheduler.getCurrentlyExecutingJobs();
             for (JobExecutionContext jec : jecs) {
-                log.debug(jec.getTrigger().getName());
-                if (jec.getTrigger().getName().equals(jobUUID)) {
+                log.debug(jec.getTrigger().getKey().getName());
+                if (jec.getTrigger().getKey().getName().equals(jobUUID)) {
                     return (DataStoreLinkJob)jec.getJobInstance();
                 }
             }

@@ -12,7 +12,7 @@
         <class>nl.b3p.datastorelinker.entity.Organization</class>
         <class>nl.b3p.datastorelinker.entity.Users</class>
     
-        <properties>     
+        <properties>
             <!-- Postgres -->
             <property name="hibernate.connection.username" value="datastorelinker"/>
             <property name="hibernate.connection.password" value="datastorelinker"/>

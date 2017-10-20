@@ -12,10 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONSerializer;
-import net.sf.json.xml.XMLSerializer;
+
 import nl.b3p.commons.jpa.JpaUtilServlet;
 import nl.b3p.datastorelinker.entity.Database;
 import nl.b3p.datastorelinker.entity.Inout;
@@ -33,10 +30,14 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
+import org.json.JSONArray;
+import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.TriggerUtils;
+import org.quartz.impl.JobDetailImpl;
 
 /**
  *
@@ -241,11 +242,17 @@ public class PublishProcessServlet extends HttpServlet {
 
         try {
             String generatedJobUUID = "job" + UUID.randomUUID().toString();
-            JobDetail jobDetail = new JobDetail(generatedJobUUID, DataStoreLinkJob.class);
+            JobDetail jobDetail = JobBuilder.newJob(DataStoreLinkJob.class)
+                    .withIdentity(generatedJobUUID)
+                    .build();
             jobDetail.getJobDataMap().put("processId", process.getId());
             //jobDetail.getJobDataMap().put("locale", getContext().getLocale());
             
-            Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            // Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
+            Trigger trigger = TriggerBuilder.newTrigger()
+                    .forJob(jobDetail)
+                    .startNow()
+                    .build();
             //Trigger trigger = new SimpleTrigger("nowTrigger", new Date());
             Scheduler scheduler = SchedulerUtils.getScheduler(getServletContext());
             process.getProcessStatus().setProcessStatusType(ProcessStatus.Type.RUNNING);
@@ -255,27 +262,6 @@ public class PublishProcessServlet extends HttpServlet {
         } catch(Exception e) {
             log.error("Fout tijdens uitvoeren webservice process: ", e);
         }
-    }
-    
-    private String createActieBlokString(String tableName) {
-        String actionsList = new JSONArray().toString();                
-
-        JSONArray actionsListJSONArray = JSONArray.fromObject(actionsList);
-        
-        ActionsAction.removeViewData(actionsListJSONArray);
-        ActionsAction.addExpandableProperty(actionsListJSONArray);
-
-        JSON actionsListJSON = JSONSerializer.toJSON(actionsListJSONArray);
-        
-        XMLSerializer xmlSerializer = new XMLSerializer();
-        xmlSerializer.setArrayName("actions");
-        xmlSerializer.setElementName("action");
-        xmlSerializer.setExpandableProperties(new String[] {"parameter"});
-        xmlSerializer.setTypeHintsEnabled(false);
-
-        String actionsListXml = xmlSerializer.write(actionsListJSON);
-
-        return actionsListXml;
     }
     
     @Override

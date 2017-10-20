@@ -95,7 +95,7 @@
             </init-param>    
             <init-param>
                 <param-name>uploadFolder</param-name>
-                <param-value>/mnt/data/gisdata/dsl</param-value>
+                <param-value>/mnt/tera1/tmp/DSLtest</param-value>
             </init-param>
             <load-on-startup>4</load-on-startup>
         </servlet>    
@@ -164,7 +164,7 @@
     <!-- Parameters hieronder moeten iig bij iedere deployment veranderd worden -->
     <context-param>
         <param-name>uploadDirectory</param-name>
-        <param-value>/mnt/data/gisdata/dsl</param-value>
+        <param-value>/mnt/tera1/tmp/DSLtest</param-value>
     </context-param>
     <context-param>
         <param-name>defaultSmtpHost</param-name>
