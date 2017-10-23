@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
     <persistence-unit name="DataStoreLinkerGuiPU">
+        <!-- LET OP - bij aanpassingen anders dan database smaakje ook de onderstaande PUs aanpassen zodat schema generatie in-sync blijft -->
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-
         <class>nl.b3p.datastorelinker.entity.Process</class>
         <class>nl.b3p.datastorelinker.entity.Inout</class>
         <class>nl.b3p.datastorelinker.entity.Database</class>
@@ -11,19 +11,17 @@
         <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
         <class>nl.b3p.datastorelinker.entity.Organization</class>
         <class>nl.b3p.datastorelinker.entity.Users</class>
-    
+
         <properties>
             <!-- Postgres -->
             <property name="hibernate.connection.username" value="datastorelinker"/>
             <property name="hibernate.connection.password" value="datastorelinker"/>
             <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/>
-      
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>      
-            
-            <!-- Oracle 
+            <!-- Oracle
             <property name="hibernate.connection.username" value="dsl2"/>
             <property name="hibernate.connection.password" value="xxxxxxxxxxxx"/>
             <property name="hibernate.connection.url" value="jdbc:oracle:thin:@b3p-demoserver:1521:orcl"/>
@@ -31,9 +29,70 @@
             <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
             -->
-            
+
             <!-- Settings -->
-            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>       
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+            <property name="hibernate.c3p0.initial_size" value="0"/>
+            <property name="hibernate.c3p0.max_size" value="50"/>
+            <property name="hibernate.c3p0.min_size" value="0"/>
+            <property name="hibernate.c3p0.timeout" value="60"/>
+            <property name="hibernate.c3p0.idle_test_period" value="100"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+    </persistence-unit>
+
+    <!-- NB de -PostgreSQL en -Oracle PUs hieronder zijn alleen nodig om de SQL export te kunnen genereren,
+         ze worden niet gebruikt in runtime -->
+    <persistence-unit name="DataStoreLinkerGuiPU-PostgreSQL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>nl.b3p.datastorelinker.entity.Process</class>
+        <class>nl.b3p.datastorelinker.entity.Inout</class>
+        <class>nl.b3p.datastorelinker.entity.Database</class>
+        <class>nl.b3p.datastorelinker.entity.Mail</class>
+        <class>nl.b3p.datastorelinker.entity.Schedule</class>
+        <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
+        <class>nl.b3p.datastorelinker.entity.Organization</class>
+        <class>nl.b3p.datastorelinker.entity.Users</class>
+        <properties>
+            <!-- Postgres -->
+            <property name="hibernate.connection.username" value="datastorelinker"/>
+            <property name="hibernate.connection.password" value="datastorelinker"/>
+            <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/datastorelinker"/>
+            <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+
+            <!-- Settings -->
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+            <property name="hibernate.c3p0.initial_size" value="0"/>
+            <property name="hibernate.c3p0.max_size" value="50"/>
+            <property name="hibernate.c3p0.min_size" value="0"/>
+            <property name="hibernate.c3p0.timeout" value="60"/>
+            <property name="hibernate.c3p0.idle_test_period" value="100"/>
+            <property name="hibernate.show_sql" value="false"/>
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="DataStoreLinkerGuiPU-Oracle">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>nl.b3p.datastorelinker.entity.Process</class>
+        <class>nl.b3p.datastorelinker.entity.Inout</class>
+        <class>nl.b3p.datastorelinker.entity.Database</class>
+        <class>nl.b3p.datastorelinker.entity.Mail</class>
+        <class>nl.b3p.datastorelinker.entity.Schedule</class>
+        <class>nl.b3p.datastorelinker.entity.ProcessStatus</class>
+        <class>nl.b3p.datastorelinker.entity.Organization</class>
+        <class>nl.b3p.datastorelinker.entity.Users</class>
+        <properties>
+            <property name="hibernate.connection.username" value="dsl2"/>
+            <property name="hibernate.connection.password" value="xxxxxxxxxxxx"/>
+            <property name="hibernate.connection.url" value="jdbc:oracle:thin:@b3p-demoserver:1521:orcl"/>
+            <property name="hibernate.connection.driver_class" value="oracle.jdbc.OracleDriver"/>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+
+            <!-- Settings -->
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
             <property name="hibernate.c3p0.initial_size" value="0"/>
             <property name="hibernate.c3p0.max_size" value="50"/>
             <property name="hibernate.c3p0.min_size" value="0"/>
