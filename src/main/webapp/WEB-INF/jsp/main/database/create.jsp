@@ -25,6 +25,10 @@
     <div>
         <%@include file="/WEB-INF/jsp/main/database/msaccess.jsp" %>
     </div>
+    <h3><a href="#"><fmt:message key="wfs"/></a></h3>
+    <div>
+        <%@include file="/WEB-INF/jsp/main/database/wfs.jsp" %>
+    </div>
     <%--h3><a href="#"><fmt:message key="advanced"/></a></h3>
     <div>
         <stripes:form beanclass="nl.b3p.datastorelinker.gui.stripes.DatabaseAction">
