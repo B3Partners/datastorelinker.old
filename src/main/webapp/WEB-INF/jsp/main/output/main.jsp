@@ -131,6 +131,10 @@
                     <input type="checkbox" name="append" id="append" />
                     <stripes:label name="table.append" for="append"/>
                 </div>
+                <div>
+                    <input type="checkbox" name="modify" id="modify" />
+                    <stripes:label name="table.modify" for="modify"/>
+                </div>
             </div>
         </c:if>
     </div>
