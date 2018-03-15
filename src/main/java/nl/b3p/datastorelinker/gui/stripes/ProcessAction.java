@@ -76,6 +76,8 @@ public class ProcessAction extends DefaultAction {
 
     private boolean drop;
     private boolean append;
+    private boolean modify;
+    private boolean modifyGeom;
 
     private String actionsList;
     private String jobUUID;
@@ -90,6 +92,9 @@ public class ProcessAction extends DefaultAction {
     private Long linkedProcess;
     
     private JSONArray jsonProcesses;
+    
+    private String filter;
+    private String modifyFilter;
     // dummy variable
     private Boolean admin;
 
@@ -377,6 +382,8 @@ public class ProcessAction extends DefaultAction {
         process.setActionsString(getActionsListJsonToXmlString());
         process.setDrop(drop);
         process.setAppend(append);
+        process.setModify(modify);
+        process.setModifyGeom(modifyGeom);
         
         Mail mail = null;
         if (process.getMail() == null)
@@ -405,6 +412,8 @@ public class ProcessAction extends DefaultAction {
         }
         
         process.setName(processName);
+        process.setFilter(filter);
+        process.setModifyFilter(modifyFilter);
         process.setRemarks(processRemark);
         if(linkedProcess != null && linkedProcess != -1){
             nl.b3p.datastorelinker.entity.Process link = em.find(Process.class, linkedProcess);
@@ -455,9 +464,13 @@ public class ProcessAction extends DefaultAction {
         actionsList = getActionsListXmlToJsonString(process);
         drop = process.getDrop();
         append = process.getAppend();
+        modify = process.getModify();
+        modifyGeom = process.getModifyGeom();
         emailAddress = process.getMail().getToEmailAddress();
         subject = process.getMail().getSubject();
         processName = process.getName();
+        filter = process.getFilter();
+        modifyFilter = process.getModifyFilter();
         processRemark = process.getRemarks();
         if(process.getLinkedProcess() != null){
             linkedProcess = process.getLinkedProcess().getId();
@@ -796,7 +809,23 @@ public class ProcessAction extends DefaultAction {
     public void setDrop(boolean drop) {
         this.drop = drop;
     }
+    
+    public boolean isModify(){
+        return modify;
+    }
+    
+    public void setModify(boolean modify){
+        this.modify = modify;
+    }
 
+    public boolean isModifyGeom(){
+        return modifyGeom;
+    }
+    
+    public void setModifyGeom(boolean modifyGeom){
+        this.modifyGeom =  modifyGeom;
+    }
+    
     public String getEmailAddress() {
         return emailAddress;
     }
@@ -836,7 +865,23 @@ public class ProcessAction extends DefaultAction {
     public void setProcessName(String processName) {
         this.processName = processName;
     }
-
+    
+    public String getFilter(){
+        return filter;
+    }
+    
+    public void setFilter(String filter){
+        this.filter = filter;
+    }
+    
+    public String getModifyFilter(){
+        return modifyFilter;
+    }
+    
+    public void setModifyFilter(String modifyFilter){
+        this.modifyFilter = modifyFilter;
+    }
+    
     public String getProcessRemark() {
         return processRemark;
     }
