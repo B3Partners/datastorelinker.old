@@ -113,7 +113,7 @@
         <div class="ui-widget-header ui-corner-all action-list-header">
             <fmt:message key="output"/>
         </div>
-        <div id="outputOverviewContainer" class="ui-layout-east action-list">
+        <div id="outputOverviewContainer" class="ui-layout-content action-list">
             <div class="titleContainer"></div>
             <div class="colsContainer"></div>
         </div>
@@ -178,7 +178,22 @@
                 <tr>
                     <td><input type="checkbox" name="modifyGeom" id="modify"/></td>
                     <td><stripes:label name="Pas geometrie aan" for="modifyGeom"/></td>
-                    </tr>
+                </tr>
+                <c:if test="${empty actionBean.admin or actionBean.admin == false}">
+                <tr>
+                    <td><input type="checkbox" name="drop" id="drop"/></td>
+                    <td><stripes:label name="table.drop" for="drop"/></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="append" id="append" /></td>
+                    <td><stripes:label name="table.append" for="append"/></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" name="modify" id="modify" /></td>
+                    <td><stripes:label name="table.modify" for="modify"/></td>
+                </tr>
+                    
+                </c:if>
             </table>
     </div>
 
