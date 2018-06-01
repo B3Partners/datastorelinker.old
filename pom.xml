@@ -94,7 +94,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-mapfile</artifactId>
-            <version>5.0.0-RC1</version>
+            <version>5.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
