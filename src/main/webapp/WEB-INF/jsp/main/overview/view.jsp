@@ -175,10 +175,10 @@
                     <td><stripes:label name="Modify filter" for="modifyFilter"/></td>
                     <td><stripes:text id="modifyFilter" name="modifyFilter" style="width: 250px"/></td>
                 </tr>
-                <tr>
+                <%--tr>
                     <td><input type="checkbox" name="modifyGeom" id="modify"/></td>
                     <td><stripes:label name="Pas geometrie aan" for="modifyGeom"/></td>
-                </tr>
+                </tr--%>
                 <c:if test="${empty actionBean.admin or actionBean.admin == false}">
                 <tr>
                     <td><input type="checkbox" name="drop" id="drop"/></td>
