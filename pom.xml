@@ -15,7 +15,7 @@
         <netbeans.hint.jdkPlatform>JDK_${project.build.targetVersion}</netbeans.hint.jdkPlatform>
         <org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_j2eeVersion>1.7-web</org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_j2eeVersion>
         <org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>Tomcat</org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>
-        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
     </properties>
     <organization>
         <name>B3Partners B.V.</name>
