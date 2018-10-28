@@ -78,16 +78,12 @@
             <div>
                 <h1><fmt:message key="output.db.selectTable"/></h1>
                 
-                <p>
-                    Selecteer voor deze uitvoer een type en een tabel. Indien u als
-                    type kiest voor 'Geen tabel gebruiken' hoeft u geen tabel in de
-                    lijst te selecteren.
-                </p>
+                <p><fmt:message key="keys.seltypetbl"/></p>
                 <p>
                 Type: <stripes:select name="selectedTemplateOutput">
-                        <stripes:option value="USE_TABLE">1) Gebruik als echte tabel</stripes:option>
-                        <stripes:option value="AS_TEMPLATE">2) Gebruik als template voor nieuwe tabel</stripes:option>
-                        <stripes:option value="NO_TABLE">3) Geen tabel gebruiken. Wordt bepaald door proces</stripes:option>
+                        <stripes:option value="USE_TABLE"><fmt:message key="keys.type1"/></stripes:option>
+                        <stripes:option value="AS_TEMPLATE"><fmt:message key="keys.type2"/></stripes:option>
+                        <stripes:option value="NO_TABLE"><fmt:message key="keys.type3"/></stripes:option>
                     </stripes:select>
                 </p>
                 

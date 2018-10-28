@@ -16,7 +16,7 @@
                     
                     if (organizationIds === null){
                     
-                        $("#msgOrgIdError").html("Selecteer een of meerdere organisaties!");
+                        $("#msgOrgIdError").html("<fmt:message key="keys.selorgs"/>");
                         return;
         }
                     

@@ -36,8 +36,7 @@
     <c:if test="${not empty actionBean.selectedOutputId}">
         <stripes:hidden name="selectedOutputId" value="${actionBean.selectedOutputId}"/>
     </c:if>
-    <p>Selecteer een of meerdere organisaties om rechten toe te kennen. U kunt de
-        'CTRL' toets inhouden om meerdere organisaties te kunnen selecteren.</p>
+    <p><fmt:message key="keys.selorgsrights"/></p>
     <table>
         <tbody>
             <tr>

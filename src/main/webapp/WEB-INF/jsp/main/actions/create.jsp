@@ -101,7 +101,7 @@
     <!--div id="actionsListsContainer" class="ui-layout-center"-->
         <div class="ui-layout-west">
             <div id="actionsList" class="ui-widget-content ui-corner-all" style="margin-left: 10px; margin-right: 10px;">
-                <div class="ui-widget-header ui-corner-all action-list-header">Actielijst</div>
+                <div class="ui-widget-header ui-corner-all action-list-header"><fmt:message key="keys.actionlist"/></div>
                 <div id="actionsListContainer" class="action-list ui-layout-content"></div>
             </div>
         </div>
@@ -112,7 +112,7 @@
 
         <div class="ui-layout-east">
             <div id="actionsWorkbench" class="ui-widget-content ui-corner-all" style="margin-left: 10px; margin-right: 10px;">
-                <div class="ui-widget-header ui-corner-all action-list-header">Werkbank</div>
+                <div class="ui-widget-header ui-corner-all action-list-header"><fmt:message key="keys.workbench"/></div>
                 <div id="actionsWorkbenchContainer" class="action-list ui-layout-content"></div>
             </div>
         </div>

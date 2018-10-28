@@ -16,17 +16,17 @@
             $("#msgUserPassword").html("");
 
             if ($("#userName").val() == "") {
-                $("#msgUserName").html("Naam is verplicht.");
+                $("#msgUserName").html("<fmt:message key="keys.nameobl"/>");
                 return false;
             }
             
             if ($("#userPassword").val() == "") {
-                $("#msgUserPassword").html("Wachtwoord is verplicht.");
+                $("#msgUserPassword").html("<fmt:message key="keys.pwobl"/>");
                 return false;
             }
             
             if ($("#userPassword").val() != $("#userPasswordAgain").val()) {
-                $("#msgUserPassword").html("Wachtwoorden komen niet overeen.");
+                $("#msgUserPassword").html("<fmt:message key="keys.pwnomatch"/>");
                 return false;
             }
             
@@ -38,12 +38,12 @@
             $("#msgUserPassword").html("");
 
             if ($("#userName").val() == "") {
-                $("#msgUserName").html("Naam is verplicht.");
+                $("#msgUserName").html("<fmt:message key="keys.nameobl"/>");
                 return false;
             }
             
             if ($("#userPassword").val() != $("#userPasswordAgain").val()) {
-                $("#msgUserPassword").html("Wachtwoorden komen niet overeen.");
+                $("#msgUserPassword").html("<fmt:message key="keys.pwnomatch"/>");
                 return false;
             }
             

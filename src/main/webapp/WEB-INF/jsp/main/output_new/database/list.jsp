@@ -32,15 +32,15 @@
                 <c:out value="${input.name}"/>
                 
                 <c:if test="${input.templateOutput == 'USE_TABLE'}" >
-                    | Type 1: Gebruik echte tabel
+                    | <fmt:message key="keys.type1"/>
                 </c:if> 
                 
                 <c:if test="${input.templateOutput == 'AS_TEMPLATE'}" >
-                    | Type 2: Gebruik als template
+                    | <fmt:message key="keys.type2"/>
                 </c:if>
                     
                 <c:if test="${input.templateOutput == 'NO_TABLE'}" >
-                    | Type 3: Geen tabel
+                    | <fmt:message key="keys.type3"/>
                 </c:if>
                     
             </stripes:label>

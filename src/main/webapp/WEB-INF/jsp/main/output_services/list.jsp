@@ -24,7 +24,7 @@
         <script>
             var msg = {
                 title: "${actionBean.context.messages[0].getMessage()}",
-                message: "Laag/lagen zijn gepubliceerd!"
+                message: "<fmt:message key="keys.layerpublished"/>"
             };
             openJSONErrorDialog(msg);
         </script>

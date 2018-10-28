@@ -176,7 +176,7 @@
             <div class="ui-widget">\
                 <div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
                     <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
-                    <strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
+                    <strong><fmt:message key="keys.watchout"/></strong> <img src="${contextPath}/images/spinner.gif"/> <fmt:message key="keys.waitnoprocess"/></p>\
                 </div>\
             </div>\
         ');
@@ -199,7 +199,7 @@
                     <div class="ui-widget" style="margin: 0 .3em">\
                         <div style="padding: 0 .7em;" class="ui-state-error ui-corner-all"> \
                             <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span> \
-                            <strong>Let op:</strong> Het wordt sterk afgeraden om door te gaan met het invoeren van procesgegevens aangezien het proces zeer waarschijnlijk niet uitgevoerd kan worden.</p>\
+                            <strong><fmt:message key="keys.watchout"/></strong> <fmt:message key="keys.stopnoprocess"/></p>\
                         </div>\
                     </div>\
                 ');
@@ -234,7 +234,7 @@
             <div class="ui-widget">\
                 <div style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> \
                     <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>\
-                    <strong>Let op:</strong> <img src="${contextPath}/images/spinner.gif"/> Bezig met ophalen van attributen. <br /><br /> Het wordt sterk aangeraden te wachten met doorgaan met het invoeren van procesgegevens totdat de attributen hier komen te staan.</p>\
+                    <strong><fmt:message key="keys.watchout"/></strong> <img src="${contextPath}/images/spinner.gif"/> <fmt:message key="keys.waitnoprocess"/></p>\
                 </div>\
             </div>\
         ');
@@ -253,7 +253,7 @@
                     <div class="ui-widget" style="margin: 0 .3em">\
                         <div style="padding: 0 .7em;" class="ui-state-error ui-corner-all"> \
                             <p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-alert"></span> \
-                            Geen uitvoertabel gekozen. Er wordt afhankelijk van de gekozen actieblokken een nieuwe tabel aangemaakt in de database.</p>\
+                            <fmt:message key="keys.noouttbl"/> \
                         </div>\
                     </div>\
                 ');
@@ -286,8 +286,7 @@
             } else {
                 $("#outputOverviewContainer .titleContainer").html("Uitvoertabel opgeven");
 
-                var html = "<p>Er is bij deze uitvoer nog geen tabel aangegeven. Gebruik\n\
-de actieblokken om zelf de tabel- en kolomnamen op te geven.</p>";
+                var html = "<p><fmt:message key="keys.notbl"/></p>";
                 $("#outputOverviewContainer .colsContainer").html(html);
             }
 

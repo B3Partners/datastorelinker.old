@@ -343,10 +343,7 @@
         <stripes:wizard-fields/>
         <div id="processHeader" class="ui-layout-north">
             <h1><fmt:message key="main.overview"/></h1><%-- line-height is fix for IE7 --%>
-            <p>
-                Achter de naam van het proces staat ook de gebruikersnaam van degene die het
-                proces heeft gemaakt. Als u over het proces zweeft ziet u eventuele opmerkingen.
-            </p>
+            <p><fmt:message key="keys.nameexplain"/></p>
         </div>
 
         <div id="processesListContainer" class="mandatory-form-input ui-layout-center radioList ui-widget-content ui-corner-all">

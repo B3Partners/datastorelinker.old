@@ -15,7 +15,7 @@
     function validateForm(){
         $("#msgTables").html("");
         if(getId() === ""){
-            $("#msgTables").html("Selecteer minstens één tabel.");
+            $("#msgTables").html("<fmt:message key="keys.seltbl"/>");
             return false;
         }else{
             return true;

@@ -11,7 +11,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <html>
     <head>    
-        <title>Proces overzicht</title>
+        <title><fmt:message key="keys.processoverview"/></title>
         <meta http-equiv="content-type" content="text/html;charset=utf-8" />		
         <link rel="stylesheet" href="${contextPath}/styles/diagram.css">
 
@@ -25,7 +25,7 @@
         var processes = ${actionBean.jsonProcesses};
     </script>
     <body>
-        <h1>Proces overzicht</h1>
+        <h1><fmt:message key="keys.processoverview"/></h1>
         <div id="main" class="demo chart-demo">	
         </div>
     </body>

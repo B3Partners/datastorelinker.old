@@ -32,7 +32,7 @@
     <table>
         <tbody>
             <tr>
-                <td>Organisatie</td>
+                <td><fmt:message key="keys.org"/></td>
                 <td>
                     <stripes:select id="userOrgId" name="userOrg">
                     <c:forEach var="org" items="${actionBean.orgs}" varStatus="status">
@@ -43,23 +43,23 @@
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td>* Naam</td>
+                <td>* <fmt:message key="keys.name"/></td>
                 <td><stripes:text id="userName" name="userName" class="required" size="40" /></td>
                 <td><div id="msgUserName" class="verplichteInvoer"/></div>
             </tr>
             <tr>
-                <td>Wachtwoord</td>
+                <td><fmt:message key="keys.pw"/></td>
                 <td><stripes:password id="userPassword" name="userPassword" class="required" size="40"/></td>
                 <td><div id="msgUserPassword" class="verplichteInvoer"/></div>
             </tr>
             <tr>
-                <td>Wachtwoord (nogmaals)</td>
+                <td><fmt:message key="keys.pwagain"/></td>
                 <td>
                     <stripes:password id="userPasswordAgain" name="userPasswordAgain" class="required" size="40"/>
                 </td>
             </tr> 
             <tr>
-                <td>Beheerder</td>
+                <td><fmt:message key="keys.admin"/></td>
                 <td><stripes:checkbox id="userIsAdmin" name="userIsAdmin" class="required" /></td>
             </tr>  
         </tbody>

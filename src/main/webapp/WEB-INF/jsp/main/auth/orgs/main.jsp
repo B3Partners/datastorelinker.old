@@ -13,7 +13,7 @@
             $("#msgOrgName").html("");
 
             if ($("#orgName").val() == "") {
-                $("#msgOrgName").html("Naam is verplicht.");
+                $("#msgOrgName").html("<fmt:message key="keys.nameobl"/>");
                 return false;
             }
             

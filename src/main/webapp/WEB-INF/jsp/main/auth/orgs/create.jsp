@@ -31,7 +31,7 @@
     <table>
         <tbody>
             <tr>
-                <td>* Naam</td>
+                <td>* <fmt:message key="keys.name"/></td>
                 <td><stripes:text id="orgName" name="orgName" class="required"/></td>
                 <td><div id="msgOrgName" class="verplichteInvoer"/></td>
             </tr>          
