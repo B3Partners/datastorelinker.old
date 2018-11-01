@@ -15,7 +15,7 @@
             <fmt:message key="loggedInAs"/>
             ${pageContext.request.remoteUser}
         </a>
-        <stripes:link href="/logout.jsp" class="menulink logout-link"><fmt:message key="keys.logout"/>logout</stripes:link>
+        <stripes:link href="/logout.jsp" class="menulink logout-link"><fmt:message key="keys.logout"/></stripes:link>
     </div>
     <div class="header_logo"></div>
 </div>

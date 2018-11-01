@@ -3,6 +3,9 @@
     <Parameter name="publisher.serverUrl" override="false" value="http://localhost:8080/geoserver"/>
     <Parameter name="publisher.serviceUser" override="false" value="admin"/>
     <Parameter name="publisher.servicePassword" override="false" value="geoserver"/>
+    <Parameter name="publisher.defaultSRS" override="false" value="point"/>
+    <Parameter name="publisher.defaultLineStyle" override="false" value="line"/>
+    <Parameter name="publisher.defaultPolygonStyle" override="false" value="polygon"/>
     <Parameter name="publisher.mapfileLocation" override="false" value="MAPFILE_LOCATION"/>
     <!-- de (geoserver) workspace waar de services gemaakt worden -->
     <Parameter name="publisher.serviceName" override="false" value="lokaal"/>

@@ -23,7 +23,7 @@
         </init-param>
         <init-param>
             <param-name>LocalePicker.Locales</param-name>
-            <param-value>nl_NL, nl</param-value>
+            <param-value>en, en_US, nl_NL, nl</param-value>
         </init-param>
     </filter>
     <filter>

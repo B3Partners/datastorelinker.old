@@ -112,10 +112,10 @@ public class OutputServicesAction extends DefaultAction {
                 String serviceName = c.getInitParameter("publisher.serviceName");
                 String userName = c.getInitParameter("publisher.serviceUser");
                 String password = c.getInitParameter("publisher.servicePassword");
-                String style = "polygon";
+                String defaultStyle = c.getInitParameter("publisher.defaultPolygonStyle");
                 PublishStatus status = publisher.publishDB(host, userName, password,
                         database.getType(), database.getHost(), database.getPort(), database.getUsername(), database.getPassword(),
-                        database.getSchema(), database.getDatabaseName(), tablesToPublish, serviceName, style, c);
+                        database.getSchema(), database.getDatabaseName(), tablesToPublish, serviceName, defaultStyle, c);
 
                 getContext().getValidationErrors().add("Status", new SimpleError(status.toString()));
                 
