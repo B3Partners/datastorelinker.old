@@ -77,10 +77,10 @@
 <stripes:form id="createInputForm" beanclass="nl.b3p.datastorelinker.gui.stripes.InputAction">
     <stripes:wizard-fields/>
     <div id="inputSteps" class="ui-layout-center">
-        <div id="<fmt:message key="inputDB.selectDB.short"/>" class="step ui-layout-center">
+        <div id="SelecteerDatabaseconnectie" class="step ui-layout-center">
             <%@include file="/WEB-INF/jsp/main/database/main.jsp" %>
         </div>
-        <div id="<fmt:message key="inputDB.selectTable.short"/>" class="step submitstep">
+        <div id="SelecteerTabel" class="step submitstep">
             <div>
                 <h1><fmt:message key="inputDB.selectTable"/></h1>
                 <div><fmt:message key="inputDB.tablesFitAsInput"/></div>

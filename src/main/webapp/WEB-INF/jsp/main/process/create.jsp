@@ -305,13 +305,13 @@
     <!-- wizard-fields nodig voor bewerken van een proces: selectedProcessId wordt dan meegenomen -->
     <stripes:wizard-fields/>
     <div id="processSteps" class="ui-layout-center" style="height: 100%;">
-        <div id="<fmt:message key="process.selectInput.short"/>" class="step ui-layout-center">
+        <div id="SelecteerInvoer" class="step ui-layout-center">
             <%@include file="/WEB-INF/jsp/main/input/main.jsp" %>
         </div>
-        <div id="<fmt:message key="process.selectOutput.short"/>" class="step">
+        <div id="SelecteerUitvoer" class="step">
             <%@include file="/WEB-INF/jsp/main/output/main.jsp" %>
         </div>
-        <div id="<fmt:message key="process.overview.short"/>" class="step submit_step">
+        <div id="Overzicht" class="step submit_step">
             <%@include file="/WEB-INF/jsp/main/overview/view.jsp" %>
         </div>
     </div>
