@@ -134,7 +134,7 @@
                 <td><stripes:label for="linkedProcess" name="linkedProcess"/></td>
                 <td>
                     <stripes:select id="linkedProcess" name="linkedProcess" style="width: 373px">
-                        <stripes:option value="-1">Kies een proces</stripes:option>
+                        <stripes:option value="-1"><fmt:message key="pickProcess"/></stripes:option>
                         <stripes:options-collection collection="${actionBean.processes}" value="id" label="name"/>
                     </stripes:select>
                 </td>
