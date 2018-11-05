@@ -221,6 +221,7 @@ public class PublishProcessServlet extends HttpServlet {
         
         p.setProcessStatus(processStatus);            
         p.setAppend(Boolean.FALSE);
+        p.setModify(Boolean.FALSE);
         p.setOrganizationId(1);
         p.setUserId(1);
         
