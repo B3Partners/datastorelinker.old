@@ -49,7 +49,9 @@ public class DatabaseOutputAction extends DefaultAction {
     private String srs;
     private String colX;
     private String colY;
-
+    //wfs specific
+    private String timeout;
+    private String buffersize;
 
     @DefaultHandler
     public Resolution admin() {
@@ -79,18 +81,18 @@ public class DatabaseOutputAction extends DefaultAction {
     public Resolution list() {
         EntityManager em = JpaUtilServlet.getThreadEntityManager();
         Session session = (Session) em.getDelegate();
-        
+
         /* show all to beheerder but organization only for plain users */
         if (isUserAdmin()) {
             databases = session.createQuery("from Database where inout_type = :type")
-                .setParameter("type", Inout.TYPE_OUTPUT)
-                .list();
+                    .setParameter("type", Inout.TYPE_OUTPUT)
+                    .list();
         } else {
             databases = session.createQuery("from Database where inout_type = :type"
                     + " and organization_id = :orgid")
-                .setParameter("type", Inout.TYPE_OUTPUT)
-                .setParameter("orgid", getUserOrganiztionId())
-                .list();
+                    .setParameter("type", Inout.TYPE_OUTPUT)
+                    .setParameter("orgid", getUserOrganiztionId())
+                    .list();
         }
 
         Collections.sort(databases, new NameableComparer());
@@ -129,7 +131,7 @@ public class DatabaseOutputAction extends DefaultAction {
 
         Database database = getDatabase(false);
         database.setTypeInout(typeInout);
-        
+
         /* add organizationid and userid if the database is new. 
          * Else the user that made the database will stay the owner */
         if(database.getUserId() == null && database.getOrganizationId() == null){
@@ -141,7 +143,7 @@ public class DatabaseOutputAction extends DefaultAction {
         if (selectedDatabaseId == null) {
             session.save(database);
         }
-        
+
         return database;
     }
 
@@ -183,6 +185,14 @@ public class DatabaseOutputAction extends DefaultAction {
                 database.setPort(port);
                 database.setSchema(schema);
                 break;
+            case WFS:
+                database.setUrl(url);
+                database.setDatabaseName(url);
+                database.setUsername(username);
+                database.setPassword(password);
+                database.setTimeout(timeout);
+                database.setBuffersize(buffersize);
+                break;
             default:
                 log.error("Unsupported database type");
                 return null;
@@ -199,14 +209,14 @@ public class DatabaseOutputAction extends DefaultAction {
 
             // Oracle DataStore will only only complain about invalid user/pw if we use the next line:
             String[] typeNames = dataStore.getTypeNames();
-            
+
         } catch (Exception e) {
             log.debug("db connection error", e);
             return new JSONErrorResolution(e.getMessage(), "Databaseconnectie fout");
         } finally {
             if (dataStore != null)
                 dataStore.dispose();
-        }
+            }
         log.debug("db connection success");
         return new JSONResolution(new SuccessMessage());
     }
@@ -314,7 +324,23 @@ public class DatabaseOutputAction extends DefaultAction {
     public void setColY(String colY) {
         this.colY = colY;
     }
-
+    
+    public String getTimeout(){
+        return timeout;
+    }
+    
+    public void setTimeout(String timeout){
+        this.timeout = timeout;
+    }
+    
+    public String getBuffersize(){
+        return buffersize;
+    }
+    
+    public void setBuffersize(String buffersize){
+        this.buffersize = buffersize;
+    }
+    
     public Long getSelectedDatabaseId() {
         return selectedDatabaseId;
     }
