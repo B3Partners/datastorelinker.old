@@ -121,7 +121,7 @@
             </div>
         </c:if>        
 
-        <c:if test="${empty actionBean.admin or actionBean.admin == false}">
+        <!--<c:if test="${empty actionBean.admin or actionBean.admin == false}">
             <div style="margin-top: 1em">
                 <div>
                     <input type="checkbox" name="drop" id="drop"/>
@@ -131,7 +131,11 @@
                     <input type="checkbox" name="append" id="append" />
                     <stripes:label name="table.append" for="append"/>
                 </div>
+                <div>
+                    <input type="checkbox" name="modify" id="modify" />
+                    <stripes:label name="table.modify" for="modify"/>
+                </div>
             </div>
-        </c:if>
+        </c:if> -->
     </div>
 </stripes:form>

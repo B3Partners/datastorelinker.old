@@ -1,7 +1,8 @@
 <%@include file="/WEB-INF/jsp/commons/taglibs.jsp" %>
 <%@include file="/WEB-INF/jsp/commons/urls.jsp" %>
 
-<stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="DataStoreLinker login">
+<fmt:message key="index.logintitle" var="logintitle"/>
+<stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp"  pageTitle="${logintitle}">
     <stripes:layout-component name="content">
 
         <div class="login">

@@ -53,6 +53,9 @@ public class DatabaseAction extends DefaultAction {
     private String srs;
     private String colX;
     private String colY;
+    //wfs specific
+    private String timeout;
+    private String buffersize;
 
 
     @DefaultHandler
@@ -162,7 +165,7 @@ public class DatabaseAction extends DefaultAction {
         }
 
         database.setType(dbType);
-
+        
         switch (dbType) {
             case ORACLE:
                 database.setHost(host);
@@ -186,6 +189,14 @@ public class DatabaseAction extends DefaultAction {
                 database.setPassword(password);
                 database.setPort(port);
                 database.setSchema(schema);
+                break;
+            case WFS:
+                database.setUrl(url);
+                database.setDatabaseName(url);
+                database.setUsername(username);
+                database.setPassword(password);
+                database.setTimeout(timeout);
+                database.setBuffersize(buffersize);
                 break;
             default:
                 log.error("Unsupported database type");
@@ -318,7 +329,23 @@ public class DatabaseAction extends DefaultAction {
     public void setColY(String colY) {
         this.colY = colY;
     }
-
+    
+    public String getTimeout(){
+        return timeout;
+    }
+    
+    public void setTimeout(String timeout){
+        this.timeout = timeout;
+    }
+    
+    public String getBuffersize(){
+        return buffersize;
+    }
+    
+    public void setBuffersize(String buffersize){
+        this.buffersize = buffersize;
+    }
+    
     public Long getSelectedDatabaseId() {
         return selectedDatabaseId;
     }

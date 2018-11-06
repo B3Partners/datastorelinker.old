@@ -5,11 +5,12 @@
 <% request.getSession().invalidate(); %>
 
 
-<stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="DataStoreLinker uitgelogd">
+<fmt:message key="index.logouttitle" var="logouttitle"/>
+<stripes:layout-render name="/WEB-INF/jsp/templates/default.jsp" pageTitle="${logouttitle}">
     <stripes:layout-component name="content">
 
         <div class="login">
-            <div class="ui-state-success message">U bent uitgelogd.</div>
+            <div class="ui-state-success message"><fmt:message key="index.logout"/></div>
 
             <%@include file="/loginForm.jsp" %>
         </div>

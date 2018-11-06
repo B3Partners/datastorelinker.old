@@ -69,17 +69,17 @@ function handleError(xhr, textStatus, thrownError) {
             errorMessage = xhr.responseText;//thrownError + event;
         }
     } else if (thrownError == "parsererror") {
-        errorMessage = "Parsen van het request is mislukt.";
+        errorMessage = I18N.errorParsing;
     } else if (thrownError == "timeout") {
-        errorMessage = "Het ophalen van de pagina duurde te lang.";
+        errorMessage = I18N.errorFetching;
     } else if (thrownError == "abort") {
-        errorMessage = "Het request is afgebroken.";
+        errorMessage = I18N.errorClosed;
     } else if (xhr.status == 0) {
-        errorMessage = "U bent offline.\nControleer uw netwerkinstellingen.";
+        errorMessage = I18N.errorOffline;
     } else if (xhr.status == 404) {
-        errorMessage = "Opgevraagde pagina niet gevonden.";
+        errorMessage = I18N.errorNotFound;
     } else {
-        errorMessage = "Onbekende fout";
+        errorMessage = I18N.errorUnknown;
     }
     openSimpleErrorDialog(errorMessage);
 }

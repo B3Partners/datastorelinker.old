@@ -284,7 +284,7 @@
 
                 $("#outputOverviewContainer .colsContainer").html(colTable);
             } else {
-                $("#outputOverviewContainer .titleContainer").html("Uitvoertabel opgeven");
+                $("#outputOverviewContainer .titleContainer").html("<fmt:message key="keys.settbl"/>");
 
                 var html = "<p><fmt:message key="keys.notbl"/></p>";
                 $("#outputOverviewContainer .colsContainer").html(html);
