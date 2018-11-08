@@ -255,7 +255,7 @@ public class InputAction extends DefaultAction {
             } else {
                 srcAttrDesc = ds.getFeatureSource(tableName).getSchema().getAttributeDescriptors();
             }            
-            
+
             List<AttributeDescriptor> attrDescs = new ArrayList<AttributeDescriptor>(srcAttrDesc.size());
             for (AttributeDescriptor ad : srcAttrDesc) {
                 attrDescs.add(ad);
@@ -361,7 +361,7 @@ public class InputAction extends DefaultAction {
             if (iterator.hasNext())
                 return (SimpleFeature)iterator.next();
         } finally {
-            //fc.close(iterator);
+            iterator.close();
         }
 
         throw new Exception("Geen features gevonden.");
