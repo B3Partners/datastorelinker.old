@@ -557,6 +557,7 @@ public class ProcessAction extends DefaultAction {
             
             // Trigger trigger = TriggerUtils.makeImmediateTrigger(generatedJobUUID, 0, 0);
             Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(generatedJobUUID)
                     .forJob(jobDetail)
                     .startNow()
                     .build();
