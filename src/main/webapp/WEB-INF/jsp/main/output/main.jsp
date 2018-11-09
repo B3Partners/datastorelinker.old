@@ -7,12 +7,15 @@
     $(document).ready(function() {
         $("#drop").prop("checked", ${actionBean.drop ? 'true' : 'false'});
         $("#append").prop("checked", ${actionBean.append ? 'true' : 'false'});
-
+        $("#modify").prop("checked", ${actionBean.modify ? 'true' : 'false'});
+        
         $("#drop").change(function() {
             var drop = !!$("#drop").attr("checked");
             $("#append").attr("disabled", drop);
+            $("#modify").attr("disabled", drop);
             if (drop) {
                 $("#append").attr("checked", false);
+                $("#modify").attr("checked", false);
             }
         });      
 
