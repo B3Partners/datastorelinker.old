@@ -31,7 +31,7 @@
             <dependency>
                 <groupId>nl.b3p</groupId>
                 <artifactId>datastorelinker-bom</artifactId>
-                <version>5.0.7</version>
+                <version>5.0.8</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -84,7 +84,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-commons-gis</artifactId>
-            <version>5.0.4</version>
+            <version>5.0.5</version>
         </dependency>
         <dependency>
             <!-- override de oudere versie die met
