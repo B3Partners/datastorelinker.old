@@ -66,12 +66,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>datastorelinkerEntities</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-mapfile</artifactId>
-            <version>5.0.0-RC1</version>
+            <version>5.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
@@ -170,12 +170,12 @@
         <repository>
             <id>repo.b3p.nl</id>
             <name>B3P release Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/repositories/releases/</url>
+            <url>https://repo.b3p.nl/nexus/repository/releases/</url>
         </repository>
         <snapshotRepository>
             <id>repo.b3p.nl</id>
             <name>B3P snapshot Repository</name>
-            <url>http://repo.b3p.nl/nexus/content/repositories/snapshots/</url>
+            <url>https://repo.b3p.nl/nexus/repository/snapshots/</url>
         </snapshotRepository>
         <site>
             <id>gh-pages</id>
@@ -196,7 +196,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
+                <version>3.0.0-M1</version>
             </plugin>
             <plugin>
                 <groupId>pl.project13.maven</groupId>
@@ -298,6 +298,28 @@
                         <goals>
                             <goal>publish-scm</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[3.3.9,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${java.version}</version>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
