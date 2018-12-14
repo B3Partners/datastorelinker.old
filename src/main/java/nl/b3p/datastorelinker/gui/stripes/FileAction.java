@@ -53,7 +53,6 @@ import org.hibernate.Session;
 public class FileAction extends DefaultAction {
 
     private final static Log log = Log.getInstance(FileAction.class);
-    protected final static boolean ALWAYS_EXPAND_DIRS = true;
     protected final static String SHAPE_EXT = ".shp";
     protected final static String ZIP_EXT = ".zip";
     protected final static String PRETTY_DIR_SEPARATOR = "/";
@@ -77,7 +76,7 @@ public class FileAction extends DefaultAction {
     public Resolution listDir() {
         log.debug("Directory requested: " + dir);
         log.debug("expandTo: " + expandTo);
-
+        Boolean expandDir  = Boolean.valueOf(getContext().getServletContext().getInitParameter("expandAllDirsDirectly"));
         File directory = null;
         if (dir != null) {
             // wordt dit niet gewoon goed geregeld met user privileges?
@@ -93,10 +92,10 @@ public class FileAction extends DefaultAction {
             directory = getOrganizationUploadDir();
         }
 
-        if (ALWAYS_EXPAND_DIRS) {
-            dirContent = getDirContent(directory, null);
+        if (expandDir) {
+            dirContent = getDirContent(directory, null,expandDir);
         } else if (expandTo == null) {
-            dirContent = getDirContent(directory, null);
+            dirContent = getDirContent(directory, null,expandDir);
         } else {
             selectedFilePath = expandTo.trim().replace("\n", "").replace("\r", "");
             log.debug("selectedFilePath/expandTo: " + selectedFilePath);
@@ -109,7 +108,7 @@ public class FileAction extends DefaultAction {
                 currentDirFile = currentDirFile.getParentFile();
             }
 
-            dirContent = getDirContent(directory, subDirList);
+            dirContent = getDirContent(directory, subDirList,expandDir);
         }
 
         //log.debug("dirs: " + directories.size());
@@ -117,7 +116,7 @@ public class FileAction extends DefaultAction {
         return new ForwardResolution(DIRCONTENTS_JSP);
     }
 
-    protected DirContent getDirContent(File directory, List<String> subDirList) {
+    protected DirContent getDirContent(File directory, List<String> subDirList, Boolean expandDirs) {
         DirContent dc = new DirContent();
 
         File[] dirs = directory.listFiles(new FileFilter() {
@@ -162,10 +161,10 @@ public class FileAction extends DefaultAction {
 
         filterOutFilesToHide(dc);
 
-        if (ALWAYS_EXPAND_DIRS) {
+        if (expandDirs) {
             for (Dir subDir : dc.getDirs()) {
                 File followSubDir = getFileFromPPFileName(subDir.getPath());
-                subDir.setContent(getDirContent(followSubDir, null));
+                subDir.setContent(getDirContent(followSubDir, null,expandDirs));
             }
         } else if (subDirList != null && subDirList.size() > 0) {
             String subDirString = subDirList.remove(0);
@@ -173,7 +172,7 @@ public class FileAction extends DefaultAction {
             for (Dir subDir : dc.getDirs()) {
                 if (subDir.getName().equals(subDirString)) {
                     File followSubDir = getFileFromPPFileName(subDir.getPath());
-                    subDir.setContent(getDirContent(followSubDir, subDirList));
+                    subDir.setContent(getDirContent(followSubDir, subDirList,expandDirs));
                     break;
                 }
             }
@@ -699,7 +698,7 @@ public class FileAction extends DefaultAction {
     public void setSelectedFilePaths(String selectedFilePaths) {
         this.selectedFilePaths = selectedFilePaths;
     }
-
+    
     public String getDir() {
         return dir;
     }
