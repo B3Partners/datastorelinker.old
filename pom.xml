@@ -71,7 +71,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>b3p-datastorelinker</artifactId>
-            <version>5.0.0</version>
+            <version>5.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
