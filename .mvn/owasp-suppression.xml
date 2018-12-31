@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+    <suppress>
+        <notes>
+            <![CDATA[
+                     file name: gt-main-19.3.jar
+            ]]>
+        </notes>
+        <gav regex="true">^org\.geotools:gt-main:.*$</gav>
+        <cve>CVE-2018-18749</cve>
+    </suppress>
+    <suppress>
+        <notes>
+            <![CDATA[
+                     file name: gt-data-19.3.jar
+            ]]>
+        </notes>
+        <gav regex="true">^org\.geotools:gt-data:.*$</gav>
+        <cve>CVE-2018-18749</cve>
+    </suppress>
+    <suppress>
+        <notes>
+            <![CDATA[
+                     file name: gt-app-schema-resolver-19.3.jar
+            ]]>
+        </notes>
+        <gav regex="true">^org\.geotools:gt-app-schema-resolver:.*$</gav>
+        <cve>CVE-2018-13661</cve>
+    </suppress>
+    <suppress>
+        <notes>
+            <![CDATA[
+                     file name: gt-coverage-19.3.jar
+            ]]>
+        </notes>
+        <gav regex="true">^org\.geotools:gt-coverage:.*$</gav>
+        <cve>CVE-2005-0406</cve>
+    </suppress>
+    <suppress>
+        <notes>
+            <![CDATA[
+                     file name: geoserver-manager-1.7.0.jar
+            ]]>
+        </notes>
+        <gav regex="true">^it\.geosolutions:geoserver-manager:.*$</gav>
+        <cve>CVE-2008-7227</cve>
+    </suppress>
+</suppressions>
