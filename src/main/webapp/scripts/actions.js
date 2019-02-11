@@ -373,10 +373,10 @@ attributeTypeJavaClasses = {
     "java.lang.Double": {},
     "java.lang.Short": {},
     "java.util.Date": {},
-    "com.vividsolutions.jts.geom.Polygon": {},
-    "com.vividsolutions.jts.geom.MultiPolygon": {},
-    "com.vividsolutions.jts.geom.Point": {},
-    "com.vividsolutions.jts.geom.MultiPoint": {},
-    "com.vividsolutions.jts.geom.LineString": {},
-    "com.vividsolutions.jts.geom.MultiLineString": {}
+    "org.locationtech.jts.geom.Polygon": {},
+    "org.locationtech.jts.geom.MultiPolygon": {},
+    "org.locationtech.jts.geom.Point": {},
+    "org.locationtech.jts.geom.MultiPoint": {},
+    "org.locationtech.jts.geom.LineString": {},
+    "org.locationtech.jts.geom.MultiLineString": {}
 };
